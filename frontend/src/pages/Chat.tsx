@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useParams, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   MessageSquare,
   FolderKanban,
@@ -37,10 +38,7 @@ import {
 } from '@/components/ui';
 import type { CommandCenterHandle } from '@/components/ui';
 import { Tooltip } from '@/components/design-system/Tooltip/Tooltip';
-import {
-  UserMessage,
-  AssistantMessage,
-} from '@/components/chat';
+import { UserMessage, AssistantMessage } from '@/components/chat';
 import { useChatStore } from '@/store/useChatStore';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useModelStore } from '@/store/useModelStore';
@@ -84,6 +82,7 @@ const CHAT_FOOTER_LINKS: FooterLink[] = [
 ];
 
 export const Chat = () => {
+  const { t } = useTranslation('chat');
   // URL parameters and navigation
   const { chatId } = useParams<{ chatId?: string }>();
   const navigate = useNavigate();
@@ -1459,12 +1458,11 @@ export const Chat = () => {
     },
     {
       id: 'artifacts',
-      label: 'Artifacts',
+      label: t('sidebar.artifacts'),
       icon: Box,
       // Only active when explicitly viewing artifacts gallery (not in a chat)
       isActive: activeNav === 'artifacts' && !chat,
       onClick: () => {
-        // Navigate to /artifacts
         navigate('/artifacts');
         setActiveNav('artifacts');
         showHistory();
@@ -1472,21 +1470,21 @@ export const Chat = () => {
     },
     {
       id: 'projects',
-      label: 'Projects',
+      label: t('sidebar.projects'),
       icon: FolderKanban,
       isActive: activeNav === 'projects',
       onClick: () => setActiveNav('projects'),
       disabled: true,
-      tooltip: 'Coming Soon',
+      tooltip: t('common:comingSoon', { ns: ['chat', 'common'] }),
     },
     {
       id: 'code',
-      label: 'Code',
+      label: t('sidebar.code'),
       icon: Code2,
       isActive: activeNav === 'code',
       onClick: () => setActiveNav('code'),
       disabled: true,
-      tooltip: 'Coming Soon',
+      tooltip: t('common:comingSoon', { ns: ['chat', 'common'] }),
     },
   ];
 
@@ -2686,25 +2684,29 @@ export const Chat = () => {
   );
 };
 
+import i18n from '@/i18n';
+
 /**
  * Get a random thinking verb for the thinking pane
  */
-const thinkingVerbs = [
-  'Clara is thinking',
-  'Clara is wondering',
-  'Clara is figuring out',
-  'Clara is pondering',
-  'Clara is analyzing',
-  'Clara is reasoning',
-  'Clara is considering',
-];
+function getThinkingVerbs(): string[] {
+  return [
+    i18n.t('chat:thinking.claraThinking'),
+    i18n.t('chat:thinking.claraWondering'),
+    i18n.t('chat:thinking.claraFiguring'),
+    i18n.t('chat:thinking.claraPondering'),
+    i18n.t('chat:thinking.claraAnalyzing'),
+    i18n.t('chat:thinking.claraReasoning'),
+    i18n.t('chat:thinking.claraConsidering'),
+  ];
+}
 
 let currentThinkingVerb: string | null = null;
 
 function getThinkingVerb(): string {
-  // Keep the same verb for the duration of a thinking session
   if (!currentThinkingVerb) {
-    currentThinkingVerb = thinkingVerbs[Math.floor(Math.random() * thinkingVerbs.length)];
+    const verbs = getThinkingVerbs();
+    currentThinkingVerb = verbs[Math.floor(Math.random() * verbs.length)];
   }
   return currentThinkingVerb;
 }
@@ -2717,29 +2719,29 @@ function resetThinkingVerb(): void {
  * Format a date as relative time (e.g., "5 hours ago")
  */
 function formatRelativeTime(date: Date | undefined | null): string {
-  if (!date) return 'Unknown';
+  if (!date) return i18n.t('chat:time.justNow');
 
   try {
     const now = new Date();
     const dateObj = date instanceof Date ? date : new Date(date);
-    if (isNaN(dateObj.getTime())) return 'Unknown';
+    if (isNaN(dateObj.getTime())) return i18n.t('common:unknown', { ns: ['chat', 'common'] });
 
     const diffMs = now.getTime() - dateObj.getTime();
     const diffMins = Math.floor(diffMs / 60000);
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return 'just now';
-    if (diffMins < 60) return `${diffMins} ${diffMins === 1 ? 'minute' : 'minutes'} ago`;
-    if (diffHours < 24) return `${diffHours} ${diffHours === 1 ? 'hour' : 'hours'} ago`;
-    if (diffDays < 7) return `${diffDays} ${diffDays === 1 ? 'day' : 'days'} ago`;
+    if (diffMins < 1) return i18n.t('chat:time.justNow');
+    if (diffMins < 60) return i18n.t('chat:time.minutesAgo', { n: diffMins });
+    if (diffHours < 24) return i18n.t('chat:time.hoursAgo', { n: diffHours });
+    if (diffDays < 7) return i18n.t('chat:time.daysAgo', { n: diffDays });
     if (diffDays < 30) {
       const weeks = Math.floor(diffDays / 7);
-      return `${weeks} ${weeks === 1 ? 'week' : 'weeks'} ago`;
+      return i18n.t('chat:time.weeksAgo', { n: weeks });
     }
 
     return dateObj.toLocaleDateString();
   } catch {
-    return 'Unknown';
+    return i18n.t('common:unknown', { ns: ['chat', 'common'] });
   }
 }

@@ -1,15 +1,13 @@
 import { LogIn, UserPlus } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface GuestLimitBannerProps {
   onSignIn: () => void;
   onSignUp: () => void;
 }
 
-/**
- * In-chat banner shown when guest users reach their free message limit.
- * Renders as a card within the message flow (not a modal).
- */
 export const GuestLimitBanner: React.FC<GuestLimitBannerProps> = ({ onSignIn, onSignUp }) => {
+  const { t } = useTranslation('chat');
   return (
     <div
       style={{
@@ -37,7 +35,7 @@ export const GuestLimitBanner: React.FC<GuestLimitBannerProps> = ({ onSignIn, on
             marginBottom: '0.5rem',
           }}
         >
-          You&apos;ve used your free messages
+          {t('guest.limitReached')}
         </h3>
         <p
           style={{
@@ -46,7 +44,7 @@ export const GuestLimitBanner: React.FC<GuestLimitBannerProps> = ({ onSignIn, on
             marginBottom: '1rem',
           }}
         >
-          Sign in to continue chatting. Your conversation will be saved.
+          {t('guest.signInToContinue')}
         </p>
 
         <div
@@ -73,7 +71,7 @@ export const GuestLimitBanner: React.FC<GuestLimitBannerProps> = ({ onSignIn, on
             }}
           >
             <LogIn size={16} />
-            Sign In
+            {t('auth:signIn', { ns: ['chat', 'auth'] })}
           </button>
           <button
             onClick={onSignUp}
@@ -92,7 +90,7 @@ export const GuestLimitBanner: React.FC<GuestLimitBannerProps> = ({ onSignIn, on
             }}
           >
             <UserPlus size={16} />
-            Create Account
+            {t('auth:createAccount', { ns: ['chat', 'auth'] })}
           </button>
         </div>
       </div>

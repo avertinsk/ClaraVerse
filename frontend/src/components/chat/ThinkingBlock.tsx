@@ -1,4 +1,5 @@
 import { ChevronDown } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import styles from './ThinkingBlock.module.css';
 
 interface ThinkingBlockProps {
@@ -18,6 +19,7 @@ export function ThinkingBlock({
   onToggle,
   messageId,
 }: ThinkingBlockProps) {
+  const { t } = useTranslation('chat');
   return (
     <div className={styles.wrapper} data-thinking-id={messageId}>
       {/* Header row — clickable */}
@@ -28,7 +30,7 @@ export function ThinkingBlock({
           </div>
         </div>
         <span className={`${styles.titleText} ${isStreaming ? styles.titleTextActive : ''}`}>
-          {isStreaming ? thinkingVerb : 'Thought process'}
+          {isStreaming ? thinkingVerb : t('thinking.process')}
         </span>
         <ChevronDown
           size={14}

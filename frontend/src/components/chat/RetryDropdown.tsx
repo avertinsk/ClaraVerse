@@ -8,6 +8,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
+import { useTranslation } from 'react-i18next';
 import {
   RotateCcw,
   ChevronDown,
@@ -26,46 +27,47 @@ interface RetryOption {
   description?: string;
 }
 
-const RETRY_OPTIONS: RetryOption[] = [
-  { id: 'regenerate', label: 'Try again', icon: RotateCcw },
-  {
-    id: 'add_details',
-    label: 'Add more details',
-    icon: FileText,
-    description: 'Get a more detailed response',
-  },
-  {
-    id: 'more_concise',
-    label: 'More concise',
-    icon: Scissors,
-    description: 'Get a shorter response',
-  },
-  {
-    id: 'no_search',
-    label: "Don't search the web",
-    icon: Globe,
-    description: 'Answer without web search',
-  },
-  {
-    id: 'think_longer',
-    label: 'Think longer',
-    icon: Brain,
-    description: 'Take more time to reason',
-  },
-];
-
 interface RetryDropdownProps {
   onRetry: (type: RetryType) => void;
   disabled?: boolean;
 }
 
 export function RetryDropdown({ onRetry, disabled }: RetryDropdownProps) {
+  const { t } = useTranslation('chat');
   const [isOpen, setIsOpen] = useState(false);
   const [openDirection, setOpenDirection] = useState<'up' | 'down'>('down');
   const [focusedIndex, setFocusedIndex] = useState(-1);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
+
+  const RETRY_OPTIONS: RetryOption[] = [
+    { id: 'regenerate', label: t('retry.tryAgain'), icon: RotateCcw },
+    {
+      id: 'add_details',
+      label: t('retry.addDetails'),
+      icon: FileText,
+      description: t('retry.addDetailsDesc'),
+    },
+    {
+      id: 'more_concise',
+      label: t('retry.moreConcise'),
+      icon: Scissors,
+      description: t('retry.moreConciseDesc'),
+    },
+    {
+      id: 'no_search',
+      label: t('retry.noSearch'),
+      icon: Globe,
+      description: t('retry.noSearchDesc'),
+    },
+    {
+      id: 'think_longer',
+      label: t('retry.thinkLonger'),
+      icon: Brain,
+      description: t('retry.thinkLongerDesc'),
+    },
+  ];
 
   // Calculate menu position and direction
   const updateMenuPosition = useCallback(() => {
