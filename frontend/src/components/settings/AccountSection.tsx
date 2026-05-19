@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   User,
   Palette,
@@ -19,6 +20,7 @@ import {
   FileText,
   ExternalLink,
   Loader2,
+  Languages,
 } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useSettingsStore } from '@/store/useSettingsStore';
@@ -37,7 +39,8 @@ export interface AccountSectionProps {
 export const AccountSection: React.FC<AccountSectionProps> = ({ onSave: _onSave }) => {
   const navigate = useNavigate();
   const { user, signOut } = useAuthStore();
-  const { theme, fontSize, chatPrivacyMode } = useSettingsStore();
+  const { theme, fontSize, language, setLanguage, chatPrivacyMode } = useSettingsStore();
+  const { t } = useTranslation('settings');
 
   const [deleteConfirmation, setDeleteConfirmation] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
@@ -126,10 +129,8 @@ export const AccountSection: React.FC<AccountSectionProps> = ({ onSave: _onSave 
     <section className="settings-section account-section">
       <header className="account-header">
         <div className="account-title-section">
-          <h1 className="account-main-title">Account</h1>
-          <p className="account-subtitle">
-            Manage your profile, preferences, export data, or delete your account.
-          </p>
+          <h1 className="account-main-title">{t('account.title')}</h1>
+          <p className="account-subtitle">{t('account.subtitle')}</p>
         </div>
       </header>
 
@@ -140,16 +141,16 @@ export const AccountSection: React.FC<AccountSectionProps> = ({ onSave: _onSave 
           <div className="account-card">
             <div className="account-card-header">
               <User size={18} />
-              <h3>Profile</h3>
+              <h3>{t('account.profile')}</h3>
             </div>
             <div className="account-profile-content">
               <div className="account-avatar-large">{getInitials(user?.email)}</div>
               <div className="account-profile-details">
-                <span className="account-email-large">{user?.email || 'Not signed in'}</span>
+                <span className="account-email-large">{user?.email || t('auth:notSignedIn', { ns: ['settings', 'auth'] })}</span>
                 <div className="account-id-row">
-                  <span className="account-id-label">User ID:</span>
+                  <span className="account-id-label">{t('account.userId')}</span>
                   <code className="account-id-value">{user?.id?.slice(0, 12) || 'N/A'}...</code>
-                  <button className="account-copy-btn" onClick={handleCopyId} title="Copy full ID">
+                  <button className="account-copy-btn" onClick={handleCopyId} title={t('account.copyId')}>
                     {copiedId ? <Check size={14} /> : <Copy size={14} />}
                   </button>
                 </div>
@@ -167,27 +168,41 @@ export const AccountSection: React.FC<AccountSectionProps> = ({ onSave: _onSave 
           <div className="account-card">
             <div className="account-card-header">
               <Palette size={18} />
-              <h3>Preferences</h3>
+              <h3>{t('account.preferences')}</h3>
             </div>
             <div className="account-preferences-grid">
               <div className="account-pref-item">
                 <Palette size={16} />
                 <div className="account-pref-content">
-                  <span className="account-pref-label">Theme</span>
+                  <span className="account-pref-label">{t('account.theme')}</span>
                   <span className="account-pref-value">{formatTheme(theme)}</span>
                 </div>
               </div>
               <div className="account-pref-item">
                 <Type size={16} />
                 <div className="account-pref-content">
-                  <span className="account-pref-label">Font Size</span>
+                  <span className="account-pref-label">{t('account.fontSize')}</span>
                   <span className="account-pref-value">{formatFontSize(fontSize)}</span>
+                </div>
+              </div>
+              <div className="account-pref-item">
+                <Languages size={16} />
+                <div className="account-pref-content">
+                  <span className="account-pref-label">{t('account.language')}</span>
+                  <select
+                    value={language}
+                    onChange={e => setLanguage(e.target.value as 'en' | 'ru')}
+                    className="account-pref-select"
+                  >
+                    <option value="en">English</option>
+                    <option value="ru">Русский</option>
+                  </select>
                 </div>
               </div>
               <div className="account-pref-item">
                 {chatPrivacyMode === 'cloud' ? <Cloud size={16} /> : <HardDrive size={16} />}
                 <div className="account-pref-content">
-                  <span className="account-pref-label">Storage</span>
+                  <span className="account-pref-label">{t('account.storage')}</span>
                   <span className="account-pref-value">{formatPrivacyMode(chatPrivacyMode)}</span>
                 </div>
               </div>
@@ -199,12 +214,12 @@ export const AccountSection: React.FC<AccountSectionProps> = ({ onSave: _onSave 
             <div className="account-card-content-row">
               <Shield size={20} className="account-privacy-icon" />
               <div>
-                <h3>Privacy Policy</h3>
-                <p>Learn how we handle your data and your rights under GDPR</p>
+                <h3>{t('account.privacyPolicy')}</h3>
+                <p>{t('account.privacyPolicyDesc')}</p>
               </div>
             </div>
             <Link to="/privacy" className="account-link-btn">
-              View Policy <ExternalLink size={14} />
+              {t('account.viewPolicy')} <ExternalLink size={14} />
             </Link>
           </div>
         </div>
@@ -215,20 +230,18 @@ export const AccountSection: React.FC<AccountSectionProps> = ({ onSave: _onSave 
           <div className="account-card account-export-card">
             <div className="account-card-header">
               <Download size={18} />
-              <h3>Export Your Data</h3>
+              <h3>{t('account.exportData')}</h3>
             </div>
-            <p className="account-export-description">
-              Download all your data in JSON format. This includes:
-            </p>
+            <p className="account-export-description">{t('account.exportDesc')}</p>
             <ul className="account-export-list">
               <li>
-                <MessageSquare size={14} /> All conversations and messages
+                <MessageSquare size={14} /> {t('account.exportConversations')}
               </li>
               <li>
-                <FileText size={14} /> Uploaded file metadata
+                <FileText size={14} /> {t('account.exportFiles')}
               </li>
               <li>
-                <Database size={14} /> User preferences and settings
+                <Database size={14} /> {t('account.exportPrefs')}
               </li>
             </ul>
             <button
@@ -239,18 +252,18 @@ export const AccountSection: React.FC<AccountSectionProps> = ({ onSave: _onSave 
               {isExporting ? (
                 <>
                   <Loader2 size={16} className="animate-spin" />
-                  Exporting...
+                  {t('account.exporting')}
                 </>
               ) : (
                 <>
                   <Download size={16} />
-                  Export My Data
+                  {t('account.exportBtn')}
                 </>
               )}
             </button>
             <p className="account-export-note">
               <Lock size={12} />
-              GDPR Article 20 - Right to Data Portability
+              {t('account.exportNote')}
             </p>
           </div>
 
@@ -288,36 +301,36 @@ export const AccountSection: React.FC<AccountSectionProps> = ({ onSave: _onSave 
           <div className="account-danger-zone">
             <div className="danger-zone-header">
               <AlertTriangle size={20} />
-              <h3>Danger Zone</h3>
+              <h3>{t('account.dangerZone')}</h3>
             </div>
 
             <div className="danger-zone-content">
               <div className="danger-warning">
                 <p>
-                  <strong>This action is permanent and cannot be undone.</strong>
+                  <strong>{t('account.dangerWarning')}</strong>
                 </p>
-                <p>Deleting your account will permanently remove:</p>
+                <p>{t('account.dangerDesc')}</p>
                 <ul>
-                  <li>All your agents and workflows</li>
-                  <li>All execution history</li>
-                  <li>All API keys you've created</li>
-                  <li>All saved credentials and integrations</li>
-                  <li>All conversations and messages</li>
-                  <li>All uploaded files</li>
-                  <li>Your user preferences and settings</li>
+                  <li>{t('account.deleteAgents')}</li>
+                  <li>{t('account.deleteHistory')}</li>
+                  <li>{t('account.deleteApiKeys')}</li>
+                  <li>{t('account.deleteCredentials')}</li>
+                  <li>{t('account.deleteConversations')}</li>
+                  <li>{t('account.deleteFiles')}</li>
+                  <li>{t('account.deletePrefs')}</li>
                 </ul>
               </div>
 
               <div className="delete-confirmation">
                 <label htmlFor="delete-confirm">
-                  Type <code>delete my account</code> to confirm:
+                  {t('account.deleteConfirmLabel')}
                 </label>
                 <input
                   id="delete-confirm"
                   type="text"
                   value={deleteConfirmation}
                   onChange={e => setDeleteConfirmation(e.target.value)}
-                  placeholder="delete my account"
+                  placeholder={t('account.deletePlaceholder')}
                   className="delete-confirm-input"
                   disabled={isDeleting}
                 />
@@ -333,12 +346,12 @@ export const AccountSection: React.FC<AccountSectionProps> = ({ onSave: _onSave 
                 {isDeleting ? (
                   <>
                     <Loader2 size={16} className="animate-spin" />
-                    Deleting Account...
+                    {t('account.deleting')}
                   </>
                 ) : (
                   <>
                     <Trash2 size={16} />
-                    Delete My Account
+                    {t('account.deleteBtn')}
                   </>
                 )}
               </button>

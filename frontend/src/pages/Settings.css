@@ -3954,6 +3954,31 @@
   color: #ededed;
 }
 
+.account-pref-select {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 4px 8px;
+  color: #ededed;
+  font-size: 0.875rem;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.account-pref-select:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.account-pref-select:focus {
+  border-color: #6366f1;
+}
+
+.account-pref-select option {
+  background: #1a1a2e;
+  color: #ededed;
+}
+
 /* Privacy Card */
 .account-privacy-card {
   display: flex;
