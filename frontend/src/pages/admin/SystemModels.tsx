@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Settings, Save, AlertCircle } from 'lucide-react';
 import { fetchModels } from '@/services/modelService';
 import {
@@ -10,6 +11,7 @@ import { toast } from '@/store/useToastStore';
 import type { Model } from '@/types/websocket';
 
 export const SystemModels = () => {
+  const { t } = useTranslation('admin');
   const [models, setModels] = useState<Model[]>([]);
   const [assignments, setAssignments] = useState<SystemModelAssignments>({
     tool_selector: '',
@@ -36,7 +38,7 @@ export const SystemModels = () => {
       setAssignments(assignmentsData);
     } catch (error) {
       console.error('Failed to load system models:', error);
-      toast.error('Failed to load system model assignments', 'Error');
+      toast.error(t('systemModels.errorLoad'), 'Error');
     } finally {
       setIsLoading(false);
     }
@@ -46,10 +48,10 @@ export const SystemModels = () => {
     try {
       setIsSaving(true);
       await updateSystemModelAssignments(assignments);
-      toast.success('System model assignments updated successfully', 'Success');
+      toast.success(t('systemModels.saveSuccess'), 'Success');
     } catch (error) {
       console.error('Failed to save system models:', error);
-      toast.error('Failed to save system model assignments', 'Error');
+      toast.error(t('systemModels.saveError'), 'Error');
     } finally {
       setIsSaving(false);
     }
@@ -63,9 +65,9 @@ export const SystemModels = () => {
     return (
       <div className="space-y-6">
         <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">
-          System Model Assignments
+          {t('nav.systemModels')}
         </h1>
-        <p className="text-[var(--color-text-secondary)]">Loading...</p>
+        <p className="text-[var(--color-text-secondary)]">{t('dashboard.loading')}</p>
       </div>
     );
   }
@@ -109,7 +111,7 @@ export const SystemModels = () => {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">
-          System Model Assignments
+          {t('nav.systemModels')}
         </h1>
         <p className="text-[var(--color-text-secondary)] mt-2">
           Configure which models are used for different system operations. These assignments override
@@ -174,7 +176,7 @@ export const SystemModels = () => {
           className="px-4 py-2 text-sm font-medium text-white bg-[var(--color-accent)] rounded-lg hover:bg-[var(--color-accent-hover)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
         >
           <Save size={16} />
-          {isSaving ? 'Saving...' : 'Save Changes'}
+          {isSaving ? t('e2b.saving') : t('e2b.save')}
         </button>
       </div>
     </div>

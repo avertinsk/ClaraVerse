@@ -1,5 +1,6 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/store/useAuthStore';
 import faviconIcon from '@/assets/favicon-32x32.png';
 import {
@@ -17,6 +18,7 @@ import {
 } from 'lucide-react';
 
 export const AdminLayout = () => {
+  const { t } = useTranslation('admin');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const { user, signOut } = useAuthStore();
   const navigate = useNavigate();
@@ -27,13 +29,13 @@ export const AdminLayout = () => {
   };
 
   const navItems = [
-    { path: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { path: '/admin/providers', label: 'Providers', icon: Plug },
-    { path: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
-    { path: '/admin/models', label: 'Models', icon: Box },
-    { path: '/admin/system-models', label: 'System Models', icon: Settings },
-    { path: '/admin/code-execution', label: 'Code Execution', icon: Code },
-    { path: '/admin/users', label: 'Users', icon: Users },
+    { path: '/admin/dashboard', label: t('nav.dashboard'), icon: LayoutDashboard },
+    { path: '/admin/providers', label: t('nav.providers'), icon: Plug },
+    { path: '/admin/analytics', label: t('nav.analytics'), icon: BarChart3 },
+    { path: '/admin/models', label: t('nav.models'), icon: Box },
+    { path: '/admin/system-models', label: t('nav.systemModels'), icon: Settings },
+    { path: '/admin/code-execution', label: t('nav.codeExecution'), icon: Code },
+    { path: '/admin/users', label: t('nav.users'), icon: Users },
   ];
 
   return (
@@ -51,7 +53,7 @@ export const AdminLayout = () => {
             <div className="flex items-center gap-3">
               <img src={faviconIcon} alt="Clara" className="w-8 h-8" />
               <h1 className="text-xl font-semibold bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-hover)] bg-clip-text text-transparent">
-                Admin
+                {t('brand')}
               </h1>
             </div>
           ) : (
@@ -63,7 +65,7 @@ export const AdminLayout = () => {
             <button
               onClick={() => setIsSidebarOpen(false)}
               className="p-1.5 rounded-lg hover:bg-[var(--color-surface-hover)] text-[var(--color-text-tertiary)] transition-colors"
-              aria-label="Collapse sidebar"
+              aria-label={t('collapseSidebar')}
             >
               <ChevronLeft size={18} />
             </button>
@@ -98,8 +100,8 @@ export const AdminLayout = () => {
             <button
               onClick={() => setIsSidebarOpen(true)}
               className="w-full flex items-center justify-center px-3 py-2.5 rounded-lg text-sm font-medium text-[var(--color-text-tertiary)] hover:bg-[var(--color-surface-hover)] hover:text-[var(--color-text-primary)] transition-all duration-200 mt-2"
-              aria-label="Expand sidebar"
-              title="Expand sidebar"
+              aria-label={t('expandSidebar')}
+              title={t('expandSidebar')}
             >
               <ChevronRight size={20} strokeWidth={2} />
             </button>
@@ -121,15 +123,15 @@ export const AdminLayout = () => {
                 className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-[var(--color-surface-hover)] hover:bg-[var(--color-surface-elevated)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-all duration-200 text-sm font-medium"
               >
                 <LogOut size={16} />
-                <span>Sign Out</span>
+                <span>{t('signOut')}</span>
               </button>
             </div>
           ) : (
             <button
               onClick={handleSignOut}
               className="p-2 rounded-lg hover:bg-[var(--color-surface-hover)] text-[var(--color-text-tertiary)] w-full flex items-center justify-center transition-colors"
-              aria-label="Sign out"
-              title="Sign out"
+              aria-label={t('signOut')}
+              title={t('signOut')}
             >
               <LogOut size={20} />
             </button>
@@ -143,7 +145,7 @@ export const AdminLayout = () => {
         <header className="h-16 bg-[var(--color-surface)] flex items-center justify-between px-6">
           <div className="flex items-center gap-3">
             <div className="px-3 py-1 bg-[var(--color-accent-light)] text-[var(--color-accent)] rounded-full text-xs font-semibold uppercase tracking-wide">
-              Admin
+              {t('badge')}
             </div>
           </div>
 
@@ -152,7 +154,7 @@ export const AdminLayout = () => {
             className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] hover:bg-[var(--color-surface-hover)] transition-all duration-200"
           >
             <ArrowLeft size={16} />
-            <span>Back to App</span>
+            <span>{t('backToApp')}</span>
           </button>
         </header>
 

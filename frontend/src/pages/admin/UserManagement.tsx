@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { adminService } from '@/services/adminService';
 import type { UserListItem, GDPRDataPolicy } from '@/types/admin';
 import {
@@ -17,6 +18,7 @@ import {
 } from 'lucide-react';
 
 export const UserManagement = () => {
+  const { t } = useTranslation('admin');
   const [users, setUsers] = useState<UserListItem[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = useState(1);

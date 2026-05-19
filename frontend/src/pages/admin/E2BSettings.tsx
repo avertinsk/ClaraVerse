@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Save, AlertCircle, Eye, EyeOff, Trash2, ExternalLink } from 'lucide-react';
 import { fetchE2BSettings, updateE2BApiKey } from '@/services/e2bService';
 import { toast } from '@/store/useToastStore';
 
 export const E2BSettings = () => {
+  const { t } = useTranslation('admin');
   const [apiKeySet, setApiKeySet] = useState(false);
   const [apiKeyMasked, setApiKeyMasked] = useState('');
   const [newApiKey, setNewApiKey] = useState('');
@@ -23,7 +25,7 @@ export const E2BSettings = () => {
       setApiKeyMasked(settings.api_key_masked);
     } catch (error) {
       console.error('Failed to load E2B settings:', error);
-      toast.error('Failed to load E2B settings', 'Error');
+      toast.error(t('e2b.errorLoad'), 'Error');
     } finally {
       setIsLoading(false);
     }
@@ -38,12 +40,12 @@ export const E2BSettings = () => {
     try {
       setIsSaving(true);
       await updateE2BApiKey(newApiKey.trim());
-      toast.success('E2B API key saved successfully', 'Success');
+      toast.success(t('e2b.saveSuccess'), 'Success');
       setNewApiKey('');
       await loadSettings();
     } catch (error) {
       console.error('Failed to save E2B settings:', error);
-      toast.error('Failed to save E2B API key', 'Error');
+      toast.error(t('e2b.saveError'), 'Error');
     } finally {
       setIsSaving(false);
     }
@@ -53,12 +55,12 @@ export const E2BSettings = () => {
     try {
       setIsSaving(true);
       await updateE2BApiKey('');
-      toast.success('E2B API key removed', 'Success');
+      toast.success(t('e2b.removeSuccess'), 'Success');
       setNewApiKey('');
       await loadSettings();
     } catch (error) {
       console.error('Failed to clear E2B settings:', error);
-      toast.error('Failed to remove E2B API key', 'Error');
+      toast.error(t('e2b.removeError'), 'Error');
     } finally {
       setIsSaving(false);
     }
@@ -67,8 +69,8 @@ export const E2BSettings = () => {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">Code Execution</h1>
-        <p className="text-[var(--color-text-secondary)]">Loading...</p>
+        <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">{t('nav.codeExecution')}</h1>
+        <p className="text-[var(--color-text-secondary)]">{t('dashboard.loading')}</p>
       </div>
     );
   }
@@ -77,7 +79,7 @@ export const E2BSettings = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">Code Execution</h1>
+        <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">{t('nav.codeExecution')}</h1>
         <p className="text-[var(--color-text-secondary)] mt-2">
           Configure E2B for sandboxed Python code execution. E2B provides secure cloud sandboxes for
           running user code.
@@ -129,7 +131,7 @@ export const E2BSettings = () => {
                 : 'bg-yellow-500/15 text-yellow-400 border border-yellow-500/30'
             }`}
           >
-            {apiKeySet ? 'Active' : 'Not Configured'}
+            {apiKeySet ? t('e2b.active') : t('e2b.notConfigured')}
           </div>
         </div>
 
@@ -180,7 +182,7 @@ export const E2BSettings = () => {
               className="px-4 py-2 text-sm font-medium text-white bg-[var(--color-accent)] rounded-lg hover:bg-[var(--color-accent-hover)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap"
             >
               <Save size={16} />
-              {isSaving ? 'Saving...' : 'Save'}
+              {isSaving ? t('e2b.saving') : t('e2b.save')}
             </button>
           </div>
         </div>

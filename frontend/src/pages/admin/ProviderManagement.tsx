@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { adminService } from '@/services/adminService';
 import type { ProvidersConfig, ProviderConfig, CreateProviderRequest } from '@/types/admin';
 import { ProviderForm } from '@/components/admin';
@@ -26,6 +27,7 @@ import {
 } from 'lucide-react';
 
 export const ProviderManagement = () => {
+  const { t } = useTranslation('admin');
   const [providersConfig, setProvidersConfig] = useState<ProvidersConfig | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -374,7 +376,7 @@ export const ProviderManagement = () => {
                           : modelSource === 'default'
                             ? '1 Default Model'
                             : modelSource === 'aliases'
-                              ? `${modelCount} ${modelCount === 1 ? 'Model' : 'Models'}`
+                              ? `${modelCount} ${modelCount === 1 ? t('provider.modelCountSingular') : t('provider.modelCountPlural')}`
                               : 'No Models'}
                       </span>
                     </div>
@@ -702,8 +704,8 @@ export const ProviderManagement = () => {
         onConfirm={handleDeleteConfirm}
         title="Delete Provider"
         message={`Are you sure you want to delete "${providerToDelete?.name}"? This will also remove all associated models and cannot be undone.`}
-        confirmText="Delete"
-        cancelText="Cancel"
+        confirmText={t('provider.confirmDelete')}
+        cancelText={t('provider.cancelDelete')}
         variant="danger"
       />
     </div>

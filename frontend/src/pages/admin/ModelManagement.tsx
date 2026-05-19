@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { createPortal } from 'react-dom';
 import { adminService } from '@/services/adminService';
 import type {
@@ -28,6 +29,7 @@ import {
 } from 'lucide-react';
 
 export const ModelManagement = () => {
+  const { t } = useTranslation('admin');
   const [models, setModels] = useState<AdminModelView[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -929,13 +931,13 @@ const ModelRow = ({
                     <div>
                       <span className="text-[var(--color-text-tertiary)]">Display Name:</span>
                       <span className="ml-2 text-[var(--color-text-primary)]">
-                        {model.display_name || 'Not set'}
+                        {model.display_name || t('model.notSet')}
                       </span>
                     </div>
                     <div>
                       <span className="text-[var(--color-text-tertiary)]">Description:</span>
                       <span className="ml-2 text-[var(--color-text-primary)]">
-                        {model.description || 'Not set'}
+                        {model.description || t('model.notSet')}
                       </span>
                     </div>
                     <div>
