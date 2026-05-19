@@ -264,7 +264,11 @@ export default function Dashboard() {
           className="dashboard-grid"
         >
           {apps.map(app => (
-            <div key={app.id} data-tour={`${app.id}-card`} style={{ width: 'calc((100% - 40px) / 3)', minWidth: '180px' }}>
+            <div
+              key={app.id}
+              data-tour={`${app.id}-card`}
+              style={{ width: 'calc((100% - 40px) / 3)', minWidth: '180px' }}
+            >
               <AppCard
                 icon={app.icon}
                 title={app.title}

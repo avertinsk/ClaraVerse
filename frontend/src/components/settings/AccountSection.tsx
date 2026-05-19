@@ -146,11 +146,17 @@ export const AccountSection: React.FC<AccountSectionProps> = ({ onSave: _onSave 
             <div className="account-profile-content">
               <div className="account-avatar-large">{getInitials(user?.email)}</div>
               <div className="account-profile-details">
-                <span className="account-email-large">{user?.email || t('auth:notSignedIn', { ns: ['settings', 'auth'] })}</span>
+                <span className="account-email-large">
+                  {user?.email || t('auth:notSignedIn', { ns: ['settings', 'auth'] })}
+                </span>
                 <div className="account-id-row">
                   <span className="account-id-label">{t('account.userId')}</span>
                   <code className="account-id-value">{user?.id?.slice(0, 12) || 'N/A'}...</code>
-                  <button className="account-copy-btn" onClick={handleCopyId} title={t('account.copyId')}>
+                  <button
+                    className="account-copy-btn"
+                    onClick={handleCopyId}
+                    title={t('account.copyId')}
+                  >
                     {copiedId ? <Check size={14} /> : <Copy size={14} />}
                   </button>
                 </div>
@@ -322,9 +328,7 @@ export const AccountSection: React.FC<AccountSectionProps> = ({ onSave: _onSave 
               </div>
 
               <div className="delete-confirmation">
-                <label htmlFor="delete-confirm">
-                  {t('account.deleteConfirmLabel')}
-                </label>
+                <label htmlFor="delete-confirm">{t('account.deleteConfirmLabel')}</label>
                 <input
                   id="delete-confirm"
                   type="text"

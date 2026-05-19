@@ -1,0 +1,156 @@
+# ============================================================
+# ClaraVerse Production Stack — адаптировано под инфраструктуру:
+#   LAN: 10.10.0.1/20 (вторая сетевая карта)
+#   Диски: sda1 (/srv/ai), sdb1 (/srv/smb), sdc1 (/var/lib/docker)
+#   GPU: NVIDIA RTX 2070 Super (8GB VRAM)
+#   Ollama: работает на хосте, порт 11434
+# ============================================================
+
+services:
+  claraverse:
+    image: ghcr.io/claraverse-space/claraverse:${CLARAVERSE_TAG:-latest}
+    container_name: claraverse
+    # Режим host-сети — прямой доступ из LAN без NAT-проброса портов
+    network_mode: "host"
+    # Монтируем SMB-шары для сканирования и обработки документов
+    volumes:
+      - claraverse-data:/app/data
+      - claraverse-uploads:/app/uploads
+      - /srv/smb:/data/smb:rw                     # Точка входа для документов из Samba
+    extra_hosts:
+      - "host.docker.internal:host-gateway"       # Доступ к Ollama на хосте
+    environment:
+      # Подключения к базам данных (127.0.0.1, т.к. host-сеть)
+      - DATABASE_URL=mysql://claraverse:${MYSQL_PASSWORD}@127.0.0.1:3306/claraverse?parseTime=true
+      - MONGODB_URI=mongodb://127.0.0.1:27017/claraverse
+      - REDIS_URL=redis://127.0.0.1:6380              # ← ПОРТ 6380, КАК У REDIS-СЕРВИСА
+      - SEARXNG_URL=http://127.0.0.1:8080
+      - SEARXNG_URLS=http://127.0.0.1:8080
+      # URL-адреса
+      - SERVE_FRONTEND=true
+      - FRONTEND_URL=http://10.10.0.1:3000
+      - BACKEND_URL=http://10.10.0.1:3000
+      - ALLOWED_ORIGINS=*
+      # AI-провайдеры
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      # Безопасность — ПЕРЕДАЁМ ИЗ .env
+      - JWT_SECRET=${JWT_SECRET}
+      - ENCRYPTION_MASTER_KEY=${ENCRYPTION_MASTER_KEY}
+      # Интеграции
+      - COMPOSIO_API_KEY=${COMPOSIO_API_KEY}
+      - E2B_API_KEY=${E2B_API_KEY}
+      
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:3000/health"]
+      interval: 30s
+      timeout: 5s
+      start_period: 15s
+      retries: 3
+
+  # ============================
+  # Базы данных (все в host-сети, доступны на localhost)
+  # ============================
+  mongodb:
+    image: mongo:7
+    container_name: claraverse-mongodb
+    network_mode: "host"
+    volumes:
+      - mongodb-data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=claraverse
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      start_period: 30s
+      retries: 3
+
+  mysql:
+    image: mysql:8.0
+    container_name: claraverse-mysql
+    network_mode: "host"
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}     # ← БЕРЁМ ИЗ .env
+      MYSQL_DATABASE: claraverse
+      MYSQL_USER: claraverse
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}               # ← БЕРЁМ ИЗ .env
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1"]
+      interval: 10s
+      timeout: 5s
+      start_period: 30s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: claraverse-redis
+    network_mode: "host"
+    command: redis-server --appendonly yes --maxmemory 100mb --maxmemory-policy allkeys-lru --port 6380
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "-p", "6380", "ping"]
+      interval: 10s
+      timeout: 5s
+      start_period: 5s
+      retries: 5
+
+  # ============================
+  # Поисковый движок SearXNG (для веб-поиска)
+  # ============================
+  searxng:
+    image: searxng/searxng:latest
+    container_name: claraverse-searxng
+    network_mode: "host"
+    volumes:
+      - searxng-config:/etc/searxng
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        if [ ! -f /etc/searxng/settings.yml ]; then
+          cat > /etc/searxng/settings.yml <<'SETTINGS'
+        use_default_settings: true
+        server:
+          limiter: false
+          secret_key: "claraverse-searxng-$(head -c 16 /dev/urandom | od -A n -t x1 | tr -d ' \n')"
+          image_proxy: true
+        search:
+          formats:
+            - html
+            - json
+          autocomplete: "duckduckgo"
+        SETTINGS
+        fi
+        exec /usr/local/searxng/entrypoint.sh
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:8080/"]
+      interval: 30s
+      timeout: 3s
+      start_period: 15s
+      retries: 3
+
+# ============================================================
+# Тома — привязаны к диску sdc1 (/var/lib/docker/volumes)
+# ============================================================
+volumes:
+  claraverse-data:
+  claraverse-uploads:
+  mongodb-data:
+  mysql-data:
+  redis-data:
+  searxng-config:
