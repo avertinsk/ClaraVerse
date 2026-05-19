@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Menu, Check } from 'lucide-react';
 import { SettingsSidebar } from './SettingsSidebar';
 import styles from './SettingsLayout.module.css';
@@ -34,6 +35,7 @@ export const SettingsLayout: React.FC<SettingsLayoutProps> = ({
   children,
   showSaveIndicator = false,
 }) => {
+  const { t } = useTranslation('settings');
   const [isMobile, setIsMobile] = useState(() => isMobileDevice());
   const [sidebarOpen, setSidebarOpen] = useState(() => !isMobileDevice());
 
@@ -89,15 +91,15 @@ export const SettingsLayout: React.FC<SettingsLayoutProps> = ({
           <button
             className={styles.menuButton}
             onClick={() => setSidebarOpen(true)}
-            aria-label="Open menu"
+            aria-label={t('settings.openMenu')}
             type="button"
           >
             <Menu size={20} />
           </button>
-          <h1 className={styles.title}>Settings</h1>
+          <h1 className={styles.title}>{t('settings.title')}</h1>
           <div className={`${styles.saveIndicator} ${showSaveIndicator ? styles.visible : ''}`}>
             <Check size={16} />
-            <span>Saved</span>
+            <span>{t('settings.saved')}</span>
           </div>
         </header>
 

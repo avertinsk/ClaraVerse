@@ -1,59 +1,61 @@
 import { MessageSquare, Workflow, Settings, Shield, BrainCircuit, Brain } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { AppCard } from '@/components/dashboard';
 import { UserMenu, Snowfall } from '@/components/ui';
 import { useIsMobile } from '@/hooks';
 import { useAuthStore } from '@/store/useAuthStore';
 import faviconIcon from '@/assets/favicon-32x32.png';
 
-const apps = [
-  {
-    id: 'chat',
-    icon: MessageSquare,
-    title: 'Chat',
-    description: 'Talk with Clara AI assistant',
-    href: '/chat',
-  },
-  {
-    id: 'agents',
-    icon: Workflow,
-    title: 'Workflows',
-    description: 'Build Automations',
-    href: '/agents',
-  },
-{
-    id: 'nexus',
-    icon: Brain,
-    title: 'Nexus',
-    description: 'Multi-agent task system',
-    href: '/nexus',
-  },
-  {
-    id: 'skills',
-    icon: BrainCircuit,
-    title: 'Skills',
-    description: 'Browse and enable AI skills',
-    href: '/skills',
-  },
-  {
-    id: 'settings',
-    icon: Settings,
-    title: 'Settings',
-    description: 'Configure your workspace',
-    href: '/settings',
-  },
-];
-
-const adminApp = {
-  id: 'admin',
-  icon: Shield,
-  title: 'Admin',
-  description: 'Manage your platform',
-  href: '/admin/dashboard',
-};
-
 export default function Dashboard() {
+  const { t } = useTranslation('dashboard');
   const isMobile = useIsMobile();
   const { isAdmin } = useAuthStore();
+
+  const apps = [
+    {
+      id: 'chat',
+      icon: MessageSquare,
+      title: t('dashboard.chat.title'),
+      description: t('dashboard.chat.desc'),
+      href: '/chat',
+    },
+    {
+      id: 'agents',
+      icon: Workflow,
+      title: t('dashboard.workflows.title'),
+      description: t('dashboard.workflows.desc'),
+      href: '/agents',
+    },
+    {
+      id: 'nexus',
+      icon: Brain,
+      title: t('dashboard.nexus.title'),
+      description: t('dashboard.nexus.desc'),
+      href: '/nexus',
+    },
+    {
+      id: 'skills',
+      icon: BrainCircuit,
+      title: t('dashboard.skills.title'),
+      description: t('dashboard.skills.desc'),
+      href: '/skills',
+    },
+    {
+      id: 'settings',
+      icon: Settings,
+      title: t('dashboard.settings.title'),
+      description: t('dashboard.settings.desc'),
+      href: '/settings',
+    },
+  ];
+
+  const adminApp = {
+    id: 'admin',
+    icon: Shield,
+    title: t('dashboard.admin.title'),
+    description: t('dashboard.admin.desc'),
+    href: '/admin/dashboard',
+  };
 
   // =============================================================================
   // MOBILE LAYOUT - Phone-style app grid
@@ -119,7 +121,7 @@ export default function Dashboard() {
                 backgroundClip: 'text',
               }}
             >
-              Your AI Workspace
+              {t('dashboard.title')}
             </h1>
             <p
               style={{
@@ -127,7 +129,7 @@ export default function Dashboard() {
                 color: 'var(--color-text-secondary)',
               }}
             >
-              What would you like to do today?
+              {t('dashboard.subtitle')}
             </p>
           </div>
 
@@ -237,7 +239,7 @@ export default function Dashboard() {
               backgroundClip: 'text',
             }}
           >
-            Your AI Workspace
+            {t('dashboard.title')}
           </h1>
           <p
             style={{
@@ -245,7 +247,7 @@ export default function Dashboard() {
               color: 'var(--color-text-secondary)',
             }}
           >
-            What would you like to do today?
+            {t('dashboard.subtitle')}
           </p>
         </div>
 

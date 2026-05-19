@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Bot,
   KeyRound,
@@ -42,61 +43,61 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({
   isOpen,
   onOpenChange,
 }) => {
-  // Define navigation items for settings tabs only
-  // Home and Chats are handled by the Sidebar footer
+  const { t } = useTranslation('settings');
+
   const navItems: NavItem[] = [
     {
       id: 'ai',
-      label: 'AI Configuration',
+      label: t('settings.nav.ai'),
       icon: Bot,
       isActive: activeTab === 'ai',
       onClick: () => onTabChange('ai'),
     },
     {
       id: 'api-keys',
-      label: 'API Keys',
+      label: t('settings.nav.apiKeys'),
       icon: KeyRound,
       isActive: activeTab === 'api-keys',
       onClick: () => onTabChange('api-keys'),
     },
     {
       id: 'credentials',
-      label: 'Integrations',
+      label: t('settings.nav.integrations'),
       icon: Key,
       isActive: activeTab === 'credentials',
       onClick: () => onTabChange('credentials'),
     },
     {
       id: 'channels',
-      label: 'Channels',
+      label: t('settings.nav.channels'),
       icon: Radio,
       isActive: activeTab === 'channels',
       onClick: () => onTabChange('channels'),
     },
     {
       id: 'devices',
-      label: 'Devices',
+      label: t('settings.nav.devices'),
       icon: Smartphone,
       isActive: activeTab === 'devices',
       onClick: () => onTabChange('devices'),
     },
     {
       id: 'usage',
-      label: 'Usage',
+      label: t('settings.nav.usage'),
       icon: Activity,
       isActive: activeTab === 'usage',
       onClick: () => onTabChange('usage'),
     },
     {
       id: 'privacy',
-      label: 'Privacy',
+      label: t('settings.nav.privacy'),
       icon: Shield,
       isActive: activeTab === 'privacy',
       onClick: () => onTabChange('privacy'),
     },
     {
       id: 'account',
-      label: 'Account',
+      label: t('settings.nav.account'),
       icon: User,
       isActive: activeTab === 'account',
       onClick: () => onTabChange('account'),
@@ -105,7 +106,7 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({
 
   return (
     <Sidebar
-      brandName="Settings"
+      brandName={t('settings.title')}
       navItems={navItems}
       isOpen={isOpen}
       onOpenChange={onOpenChange}
