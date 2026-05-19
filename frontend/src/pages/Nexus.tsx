@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Menu } from 'lucide-react';
 import { CommandCenterView } from '@/components/nexus/CommandCenterView';
@@ -19,6 +20,7 @@ import styles from '@/components/nexus/Nexus.module.css';
 const MOBILE_BREAKPOINT = 768;
 
 export function Nexus() {
+  const { t } = useTranslation('nexus');
   const { projectId: urlProjectId } = useParams<{ projectId?: string }>();
   const navigate = useNavigate();
 
@@ -128,7 +130,7 @@ export function Nexus() {
       .then(async fetched => {
         if (fetched.length === 0) {
           const created = await nexusService.createProject({
-            name: 'General',
+            name: t('nexus.defaultProject'),
             icon: 'folder',
             color: '#2196F3',
           });

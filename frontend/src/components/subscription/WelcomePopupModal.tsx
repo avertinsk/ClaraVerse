@@ -1,22 +1,12 @@
+import { useTranslation } from 'react-i18next';
 import { Modal } from '@/components/design-system/feedback/Modal/Modal';
 import { Button } from '@/components/design-system/Button/Button';
 import { useSubscriptionStore } from '@/store/useSubscriptionStore';
 import { userService } from '@/services/api';
 import { useState, useMemo } from 'react';
 
-// Privacy quotes pool (randomly selected)
-const PRIVACY_QUOTES = [
-  "Privacy is not about hiding; it's about control over your own information.",
-  'Your data is yours. We encrypt everything so only you can access it.',
-  'We believe in privacy by design, not privacy as an afterthought.',
-  "Encryption isn't just a feature—it's your right to digital privacy.",
-  'Local-first means your data stays with you, always.',
-  'Privacy is a fundamental human right, not a premium feature.',
-  "We don't sell your data because it's not ours to sell.",
-  'End-to-end encryption: What happens in your chat, stays in your chat.',
-];
-
 export function WelcomePopupModal() {
+  const { t } = useTranslation('subscription');
   const { subscription, fetchSubscription } = useSubscriptionStore();
   const [isClosing, setIsClosing] = useState(false);
 
@@ -35,10 +25,14 @@ export function WelcomePopupModal() {
   const _originalShouldShow =
     subscription?.is_promo_user === true && subscription?.has_seen_welcome_popup === false;
 
-  // Random privacy quote (memoized to prevent re-rendering changes)
-  const randomQuote = useMemo(() => {
-    return PRIVACY_QUOTES[Math.floor(Math.random() * PRIVACY_QUOTES.length)];
+  // Random privacy quote index (memoized to prevent re-rendering changes)
+  const randomQuoteIndex = useMemo(() => {
+    return Math.floor(Math.random() * 8);
   }, []);
+
+  const randomQuote = useMemo(() => {
+    return t(`welcome.privacyQuote.${randomQuoteIndex}`);
+  }, [t, randomQuoteIndex]);
 
   // Calculate days remaining
   const daysRemaining = useMemo(() => {
@@ -94,11 +88,10 @@ export function WelcomePopupModal() {
             {/* Welcome Message */}
             <div>
               <h2 className="text-2xl font-bold mb-3 text-gray-900 dark:text-gray-100">
-                Welcome Onboard!
+                {t('welcome.title')}
               </h2>
               <p className="text-base text-gray-700 dark:text-gray-300">
-                Enjoy <strong className="text-blue-600 dark:text-blue-400">Clara PRO</strong> for
-                the next <strong>{daysRemaining} days</strong>
+                {t('welcome.proTrial', { days: daysRemaining })}
               </p>
             </div>
 

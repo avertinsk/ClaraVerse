@@ -1,4 +1,5 @@
 import { useEffect, useRef, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom';
 import {
   AgentSidebar,
@@ -334,11 +335,12 @@ function UnsavedChangesDialog({
   onDiscard: () => void;
   onSaveAndSwitch: () => void;
 }) {
+  const { t } = useTranslation('agents');
   return (
     <Modal
       isOpen={isOpen}
       onClose={onCancel}
-      title="Unsaved Changes"
+      title={t('agents.unsavedChanges')}
       size="sm"
       closeOnBackdrop={true}
       closeOnEscape={true}
@@ -346,26 +348,26 @@ function UnsavedChangesDialog({
     >
       <div className="flex flex-col gap-4">
         <p className="text-[var(--color-text-primary)] leading-relaxed m-0">
-          You have unsaved changes. What would you like to do?
+          {t('agents.unsavedChanges')}
         </p>
         <div className="flex justify-end gap-2 mt-2">
           <button
             onClick={onCancel}
             className="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--color-surface)] text-[var(--color-text-primary)] border border-[var(--color-border)] hover:bg-[var(--color-surface-hover)] transition-all cursor-pointer"
           >
-            Cancel
+            {t('agents.cancel')}
           </button>
           <button
             onClick={onDiscard}
             className="px-4 py-2 rounded-lg text-sm font-medium bg-red-500/80 text-white hover:bg-red-500 transition-all cursor-pointer"
           >
-            Discard
+            {t('agents.discard')}
           </button>
           <button
             onClick={onSaveAndSwitch}
             className="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--color-accent)] text-white hover:opacity-90 transition-all cursor-pointer"
           >
-            Save & Switch
+            {t('agents.saveAndSwitch')}
           </button>
         </div>
       </div>

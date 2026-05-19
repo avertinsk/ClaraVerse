@@ -1,66 +1,66 @@
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 
 export const PrivacyPolicy = () => {
+  const { t } = useTranslation('privacy');
   return (
     <div className="privacy-policy-page">
       <header className="privacy-policy-header">
         <Link to="/" className="privacy-policy-back-link">
           <ChevronLeft size={20} />
         </Link>
-        <h1 className="privacy-policy-title">Privacy Policy</h1>
+        <h1 className="privacy-policy-title">{t('privacyPolicy.title')}</h1>
       </header>
 
       <main className="privacy-policy-container">
         <article className="privacy-policy-content">
           {/* Hero Section */}
           <div className="privacy-hero">
-            <h1>Privacy Policy</h1>
+            <h1>{t('privacyPolicy.title')}</h1>
             <p className="privacy-tagline">
-              We believe in transparency. Here's exactly what we do with your data.
+              {t('privacyPolicy.tagline')}
             </p>
-            <p className="privacy-updated">Last updated: December 25, 2024</p>
+            <p className="privacy-updated">{t('privacyPolicy.lastUpdated')}</p>
           </div>
 
           {/* Quick Summary */}
           <section className="privacy-summary">
-            <h2>The Short Version</h2>
+            <h2>{t('privacyPolicy.shortVersion')}</h2>
             <p>
-              We collect only what's necessary to provide ClaraVerse services. Your data is
-              encrypted, you can export it anytime, and you can delete everything with one click. We
-              don't sell your data. Ever.
+              {t('privacyPolicy.shortVersionText')}
             </p>
           </section>
 
           {/* Data We Collect */}
           <section className="privacy-section">
-            <h2>1. Data We Collect</h2>
+            <h2>{t('privacyPolicy.dataCollect')}</h2>
 
-            <h3>Account Information</h3>
+            <h3>{t('privacyPolicy.accountInfo')}</h3>
             <p>
               User ID and email address provided by your authentication provider (Supabase). This is
               the minimum needed to identify your account.
             </p>
 
-            <h3>Content You Create</h3>
+            <h3>{t('privacyPolicy.contentCreate')}</h3>
             <ul>
               <li>
-                <strong>Conversations</strong> — Chat messages and conversation history
+                <strong>{t('privacyPolicy.conversations')}</strong> — Chat messages and conversation history
               </li>
               <li>
-                <strong>Uploaded Files</strong> — Images, PDFs, CSV, Excel, JSON, and other files
+                <strong>{t('privacyPolicy.uploadedFiles')}</strong> — Images, PDFs, CSV, Excel, JSON, and other files
                 you upload for AI processing
               </li>
               <li>
-                <strong>Agents & Workflows</strong> — Custom AI agents and workflows you build
+                <strong>{t('privacyPolicy.agentsWorkflows')}</strong> — Custom AI agents and workflows you build
               </li>
               <li>
-                <strong>Credentials</strong> — Encrypted API keys for external providers you
+                <strong>{t('privacyPolicy.credentials')}</strong> — Encrypted API keys for external providers you
                 configure
               </li>
             </ul>
 
-            <h3>Usage Data</h3>
+            <h3>{t('privacyPolicy.usageData')}</h3>
             <p>
               Timestamps, model selections, and feature usage patterns. This helps us improve the
               service and debug issues.
@@ -69,7 +69,7 @@ export const PrivacyPolicy = () => {
 
           {/* How We Use Your Data */}
           <section className="privacy-section">
-            <h2>2. How We Use Your Data</h2>
+            <h2>{t('privacyPolicy.howUse')}</h2>
             <ul>
               <li>To provide and operate ClaraVerse services</li>
               <li>To process your requests through AI model providers</li>
@@ -85,7 +85,7 @@ export const PrivacyPolicy = () => {
 
           {/* Data Retention */}
           <section className="privacy-section">
-            <h2>3. Data Retention</h2>
+            <h2>{t('privacyPolicy.dataRetention')}</h2>
             <table className="privacy-table">
               <thead>
                 <tr>
@@ -96,7 +96,7 @@ export const PrivacyPolicy = () => {
               </thead>
               <tbody>
                 <tr>
-                  <td>Temporary Files</td>
+                  <td>{t('privacyPolicy.tempFiles')}</td>
                   <td>30 minutes</td>
                   <td>Auto-deleted after processing</td>
                 </tr>
@@ -121,22 +121,22 @@ export const PrivacyPolicy = () => {
 
           {/* Your Rights */}
           <section className="privacy-section">
-            <h2>4. Your Rights (GDPR)</h2>
+            <h2>{t('privacyPolicy.yourRights')}</h2>
             <p>You have full control over your data:</p>
 
             <div className="privacy-rights">
               <div className="privacy-right">
-                <h4>Right to Access</h4>
+                <h4>{t('privacyPolicy.accessData')}</h4>
                 <p>Download all your personal data at any time from Settings → Account.</p>
                 <code>Article 15</code>
               </div>
               <div className="privacy-right">
-                <h4>Right to Erasure</h4>
+                <h4>{t('privacyPolicy.deleteData')}</h4>
                 <p>Delete your account and all associated data permanently.</p>
                 <code>Article 17</code>
               </div>
               <div className="privacy-right">
-                <h4>Right to Portability</h4>
+                <h4>{t('privacyPolicy.portability')}</h4>
                 <p>Export your data in machine-readable JSON format.</p>
                 <code>Article 20</code>
               </div>
@@ -166,7 +166,7 @@ export const PrivacyPolicy = () => {
 
           {/* Security */}
           <section className="privacy-section">
-            <h2>6. Security Measures</h2>
+            <h2>{t('privacyPolicy.security')}</h2>
             <ul>
               <li>AES-256-GCM encryption for sensitive data at rest</li>
               <li>Bcrypt hashing for API key storage</li>
@@ -188,7 +188,7 @@ export const PrivacyPolicy = () => {
 
           {/* Changes */}
           <section className="privacy-section">
-            <h2>8. Changes to This Policy</h2>
+            <h2>{t('privacyPolicy.changes')}</h2>
             <p>
               We'll notify you of significant changes via email or in-app notification. Continued
               use after changes constitutes acceptance.
@@ -197,7 +197,7 @@ export const PrivacyPolicy = () => {
 
           {/* Contact */}
           <section className="privacy-section privacy-contact">
-            <h2>9. Contact Us</h2>
+            <h2>{t('privacyPolicy.contact')}</h2>
             <p>Questions about this policy or want to exercise your rights?</p>
             <a href="mailto:privacy@claraverse.app" className="privacy-email-link">
               privacy@claraverse.app

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
   Plus,
@@ -35,6 +36,7 @@ export function AgentSidebar({
   isMobile = false,
   onNavigate,
 }: AgentSidebarProps) {
+  const { t } = useTranslation('agents');
   const navigate = useNavigate();
   const {
     backendAgents,
@@ -83,7 +85,7 @@ export function AgentSidebar({
     if (isCreating) return;
     setIsCreating(true);
     try {
-      const agent = await createAgent('New Agent', 'Describe what this agent does...');
+      const agent = await createAgent(t('agents.newAgent'), t('agents.describeAgent'));
       if (agent) {
         trackAgentAccess(agent.id);
         setActiveView('onboarding');
@@ -158,7 +160,7 @@ export function AgentSidebar({
           <div className="flex items-center gap-2 flex-1 overflow-hidden">
             <img src={faviconIcon} alt="Clara" className="w-6 h-6 flex-shrink-0 rounded-full" />
             <span className="text-[1.375rem] font-semibold text-[var(--color-text-primary)] whitespace-nowrap overflow-hidden">
-              Agents
+              {t('agents.myAgents')}
             </span>
           </div>
         )}
@@ -181,7 +183,7 @@ export function AgentSidebar({
             'flex items-center text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-hover)] transition-all rounded-md disabled:opacity-50',
             isExpanded ? 'w-full gap-3 p-3 justify-start' : 'w-8 h-8 justify-center'
           )}
-          title="New Agent"
+          title={t('agents.newAgent')}
         >
           {isCreating ? (
             <Loader2 size={20} className="animate-spin" />
@@ -190,7 +192,7 @@ export function AgentSidebar({
           )}
           {isExpanded && (
             <span className="text-[0.9375rem] font-medium whitespace-nowrap overflow-hidden">
-              {isCreating ? 'Creating...' : 'New agent'}
+              {isCreating ? 'Creating...' : t('agents.newAgent')}
             </span>
           )}
         </button>
@@ -208,12 +210,12 @@ export function AgentSidebar({
               ? 'bg-[var(--color-surface-hover)] text-[var(--color-text-primary)]'
               : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-hover)]'
           )}
-          title="My Agents"
+          title={t('agents.myAgents')}
         >
           <Bot size={18} strokeWidth={2} />
           {isExpanded && (
             <span className="text-[0.9375rem] font-medium whitespace-nowrap overflow-hidden">
-              My Agents
+              {t('agents.myAgents')}
             </span>
           )}
         </button>
@@ -228,12 +230,12 @@ export function AgentSidebar({
               ? 'bg-[var(--color-surface-hover)] text-[var(--color-text-primary)]'
               : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-hover)]'
           )}
-          title="Deployed"
+          title={t('agents.deployed')}
         >
           <Rocket size={18} strokeWidth={2} />
           {isExpanded && (
             <span className="text-[0.9375rem] font-medium whitespace-nowrap overflow-hidden">
-              Deployed
+              {t('agents.deployed')}
             </span>
           )}
         </button>

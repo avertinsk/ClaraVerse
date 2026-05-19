@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { ChevronLeft, Plus, Search, Upload, Layers, Globe } from 'lucide-react';
 import { Button, SearchInput, Spinner, Tabs } from '@/components/design-system';
@@ -12,27 +13,8 @@ import { useSkillStore } from '@/store/useSkillStore';
 import type { Skill } from '@/services/skillService';
 import './Skills.css';
 
-const CATEGORIES = [
-  { key: '', label: 'All' },
-  { key: 'research', label: 'Research' },
-  { key: 'communication', label: 'Communication' },
-  { key: 'project-management', label: 'Project Mgmt' },
-  { key: 'data', label: 'Data' },
-  { key: 'content', label: 'Content' },
-  { key: 'productivity', label: 'Productivity' },
-  { key: 'sales', label: 'Sales' },
-  { key: 'code', label: 'Code' },
-  { key: 'database', label: 'Database' },
-  { key: 'ecommerce', label: 'E-Commerce' },
-  { key: 'writing', label: 'Writing' },
-];
-
-const PAGE_TABS = [
-  { id: 'my-skills', label: 'My Skills', icon: <Layers size={14} /> },
-  { id: 'community', label: 'Community', icon: <Globe size={14} /> },
-];
-
 export const Skills = () => {
+  const { t } = useTranslation('skills');
   const navigate = useNavigate();
   const {
     skills,
@@ -52,6 +34,32 @@ export const Skills = () => {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [importModalOpen, setImportModalOpen] = useState(false);
   const [detailSkill, setDetailSkill] = useState<Skill | null>(null);
+
+  const CATEGORIES = useMemo(
+    () => [
+      { key: '', label: t('skills.cat.all') },
+      { key: 'research', label: t('skills.cat.research') },
+      { key: 'communication', label: t('skills.cat.communication') },
+      { key: 'project-management', label: t('skills.cat.projectMgmt') },
+      { key: 'data', label: t('skills.cat.data') },
+      { key: 'content', label: t('skills.cat.content') },
+      { key: 'productivity', label: t('skills.cat.productivity') },
+      { key: 'sales', label: t('skills.cat.sales') },
+      { key: 'code', label: t('skills.cat.code') },
+      { key: 'database', label: t('skills.cat.database') },
+      { key: 'ecommerce', label: t('skills.cat.ecommerce') },
+      { key: 'writing', label: t('skills.cat.writing') },
+    ],
+    [t]
+  );
+
+  const PAGE_TABS = useMemo(
+    () => [
+      { id: 'my-skills', label: t('skills.tab.mySkills'), icon: <Layers size={14} /> },
+      { id: 'community', label: t('skills.tab.community'), icon: <Globe size={14} /> },
+    ],
+    [t]
+  );
 
   useEffect(() => {
     fetchSkills();
@@ -146,20 +154,20 @@ export const Skills = () => {
             <Link to="/" className="skills-header__back">
               <ChevronLeft size={18} />
             </Link>
-            <h1 className="skills-header__title">Skills</h1>
+            <h1 className="skills-header__title">{t('skills.title')}</h1>
             <span className="skills-header__subtitle">
-              {enabledCount} enabled &middot; {skills.length} available
+              {t('skills.enabledAvailable', { enabled: enabledCount, total: skills.length })}
             </span>
           </div>
 
           <div className="skills-header__actions">
             <Button variant="secondary" size="sm" onClick={() => setImportModalOpen(true)}>
               <Upload size={14} />
-              Import
+              {t('skills.import')}
             </Button>
             <Button variant="primary" size="sm" onClick={() => navigate('/skills/new')}>
               <Plus size={14} />
-              Create Skill
+              {t('skills.createSkill')}
             </Button>
           </div>
         </div>
@@ -172,7 +180,7 @@ export const Skills = () => {
               <SearchInput
                 value={searchQuery}
                 onChange={setSearchQuery}
-                placeholder="Search skills..."
+                placeholder={t('skills.searchPlaceholder')}
               />
             </div>
 

@@ -1,4 +1,5 @@
 import { useMemo, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Bot,
   CalendarClock,
@@ -53,11 +54,6 @@ import { Sidebar } from '@/components/ui/Sidebar';
 import type { NavItem, FooterLink } from '@/components/ui/Sidebar';
 import { useNexusStore } from '@/store/useNexusStore';
 import styles from './Nexus.module.css';
-
-const NEXUS_FOOTER_LINKS: FooterLink[] = [
-  { href: '/', label: 'Home', icon: Home, ariaLabel: 'Navigate to home' },
-  { href: '/chat', label: 'Chat', icon: MessageSquare, ariaLabel: 'Navigate to chat' },
-];
 
 const ICON_MAP: Record<string, LucideIcon> = {
   folder: Folder,
@@ -133,6 +129,7 @@ export function NexusSidebar({
   onNewProject,
   onSelectProject,
 }: NexusSidebarProps) {
+  const { t } = useTranslation('nexus');
   const activeView = useNexusStore(s => s.activeView);
   const setActiveView = useNexusStore(s => s.setActiveView);
   const projects = useNexusStore(s => s.projects);
@@ -140,6 +137,14 @@ export function NexusSidebar({
   const activeProjectId = useNexusStore(s => s.activeProjectId);
   const setActiveProjectId = useNexusStore(s => s.setActiveProjectId);
   const bridgeConnected = useNexusStore(s => s.bridgeConnected);
+
+  const nexusFooterLinks: FooterLink[] = useMemo(
+    () => [
+      { href: '/', label: t('nexus.home'), icon: Home, ariaLabel: t('nexus.home') },
+      { href: '/chat', label: t('nexus.chat'), icon: MessageSquare, ariaLabel: t('nexus.navigateChat') },
+    ],
+    [t]
+  );
 
   const handleProjectClick = useCallback(
     (id: string) => {
@@ -184,7 +189,7 @@ export function NexusSidebar({
     if (onNewProject) {
       items.push({
         id: 'add-project',
-        label: 'New Project',
+        label: t('nexus.newProject'),
         icon: Plus,
         onClick: onNewProject,
       });
@@ -194,28 +199,28 @@ export function NexusSidebar({
     items.push(
       {
         id: 'saves',
-        label: 'Saved',
+        label: t('nexus.saved'),
         icon: Bookmark,
         isActive: activeView === 'saves',
         onClick: () => setActiveView('saves'),
       },
       {
         id: 'daemons',
-        label: 'Daemons',
+        label: t('nexus.daemons'),
         icon: Bot,
         isActive: activeView === 'daemons',
         onClick: () => setActiveView('daemons'),
       },
       {
         id: 'routines',
-        label: 'Routines',
+        label: t('nexus.routines'),
         icon: CalendarClock,
         isActive: activeView === 'routines',
         onClick: () => setActiveView('routines'),
       },
       {
         id: 'settings',
-        label: 'Settings',
+        label: t('nexus.settings'),
         icon: Settings,
         isActive: activeView === 'settings',
         onClick: () => setActiveView('settings'),
@@ -231,6 +236,7 @@ export function NexusSidebar({
     activeProjectId,
     handleProjectClick,
     onNewProject,
+    t,
   ]);
 
   const isCollapsed = !isOpen;
@@ -240,7 +246,7 @@ export function NexusSidebar({
       isCollapsed ? (
         <div
           className={styles.bridgeStatusCompact}
-          title={bridgeConnected ? 'Clara Companion: Connected' : 'Clara Companion: Offline'}
+          title={bridgeConnected ? t('nexus.companionConnected') : t('nexus.companionOffline')}
         >
           <Terminal
             size={14}
@@ -262,14 +268,14 @@ export function NexusSidebar({
                   : styles.bridgeStatusIconDisconnected
               }`}
             />
-            <span className={styles.bridgeStatusLabel}>Clara Companion</span>
+            <span className={styles.bridgeStatusLabel}>{t('nexus.companionLabel')}</span>
             <span className={styles.bridgeStatusValue}>
-              {bridgeConnected ? 'Connected' : 'Offline'}
+              {bridgeConnected ? t('nexus.companionStatusConnected') : t('nexus.companionStatusOffline')}
             </span>
           </div>
           {!bridgeConnected && (
             <div className={styles.bridgeSetupHint}>
-              Install &amp; run the companion:
+              {t('nexus.companionSetupHint')}
               <code className={styles.bridgeSetupCode}>
                 curl -fsSL
                 https://gist.githubusercontent.com/claraverse-space/87a840d4a462c2787ce958691fa267b4/raw/install.sh
@@ -279,15 +285,15 @@ export function NexusSidebar({
           )}
         </div>
       ),
-    [bridgeConnected, isCollapsed]
+    [bridgeConnected, isCollapsed, t]
   );
 
   return (
     <Sidebar
-      brandName="Nexus"
+      brandName={t('nexus.brand')}
       navItems={navItems}
       recentChats={[]}
-      footerLinks={NEXUS_FOOTER_LINKS}
+      footerLinks={nexusFooterLinks}
       isOpen={isOpen}
       onOpenChange={onOpenChange}
       statusSlot={bridgeStatusSlot}
