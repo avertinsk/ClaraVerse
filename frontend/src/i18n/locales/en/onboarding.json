@@ -1,0 +1,104 @@
+{
+  "nameModal.title": "Welcome to ClaraVerse Chat",
+  "nameModal.description": "Before we start, what should we call you?",
+  "nameModal.placeholder": "Enter your name",
+  "nameModal.submit": "Let's Go!",
+  "nameModal.note": "We'll use this to personalize your experience",
+  "nameModal.validation.required": "Please enter your name",
+  "nameModal.validation.minLength": "Name should be at least 2 characters",
+  "nameModal.validation.maxLength": "Name is too long (max 50 characters)",
+  "privacyModal.title": "Where should we save your chats?",
+  "privacyModal.localTitle": "This device only",
+  "privacyModal.localDesc": "Private, but won't sync to other devices",
+  "privacyModal.cloudTitle": "Sync across devices",
+  "privacyModal.cloudDesc": "Securely saved, access anywhere with your account",
+  "privacyModal.submit": "Continue",
+  "privacyModal.note": "You can change this later in Settings",
+  "greeting.earlyMorning": [
+    "Good morning, {name}! Early bird gets the worm",
+    "Rise and shine, {name}!",
+    "Morning, {name}! Ready to seize the day?",
+    "Hey {name}, you're up early! Coffee time?"
+  ],
+  "greeting.morning": [
+    "Good morning, {name}!",
+    "Morning, {name}! Ready to tackle {day}?",
+    "Hey {name}! Did you have your coffee yet?",
+    "Happy {day}, {name}! Let's make it productive",
+    "Morning vibes, {name}! What are we building today?"
+  ],
+  "greeting.lateMorning": [
+    "Hey {name}! Mid-morning productivity?",
+    "Hi {name}! How's your {day} going so far?",
+    "Hello {name}! Pre-lunch creativity time?",
+    "What's up, {name}? Almost lunch time!"
+  ],
+  "greeting.afternoon": [
+    "Good afternoon, {name}!",
+    "Hey {name}! Post-lunch energy? Let's go!",
+    "Afternoon, {name}! How's {day} treating you?",
+    "Hi {name}! Midday creativity boost?",
+    "What's cooking, {name}?"
+  ],
+  "greeting.evening": [
+    "Good evening, {name}!",
+    "Hey {name}! Winding down or second wind?",
+    "Evening, {name}! Still going strong?",
+    "Hi {name}! Golden hour productivity?",
+    "What's up, {name}? Dinner done?"
+  ],
+  "greeting.night": [
+    "Good evening, {name}!",
+    "Hey {name}! Night owl mode activated?",
+    "Late {day} vibes, {name}! Still grinding?",
+    "What's up, {name}? Burning the midnight oil?",
+    "Evening, {name}! Second shift energy?"
+  ],
+  "greeting.lateNight": [
+    "Whoa, {name}! Night owl, huh?",
+    "Hey {name}! Can't sleep or still working?",
+    "Late night energy, {name}! You got this",
+    "Burning the midnight oil, {name}?",
+    "Still up, {name}? Let's make it count!"
+  ],
+  "greeting.anonymous.earlyMorning": [
+    "Good morning! Early bird, huh?",
+    "Rise and shine! Ready to start the day?"
+  ],
+  "greeting.anonymous.morning": [
+    "Good morning!",
+    "Happy {day}! Let's make it count",
+    "Morning! Coffee first?"
+  ],
+  "greeting.anonymous.lateMorning": [
+    "Hey there! How's your morning going?",
+    "Hi! Mid-morning productivity?"
+  ],
+  "greeting.anonymous.afternoon": [
+    "Good afternoon!",
+    "Hey! Post-lunch energy?",
+    "Afternoon vibes! How can I help?"
+  ],
+  "greeting.anonymous.evening": [
+    "Good evening!",
+    "Evening! Still going strong?",
+    "Hey! Winding down or second wind?"
+  ],
+  "greeting.anonymous.night": [
+    "Good evening!",
+    "Night owl mode?",
+    "Late {day} vibes! What's up?"
+  ],
+  "greeting.anonymous.lateNight": [
+    "Whoa! Night owl, huh?",
+    "Still up? Let's make it count!",
+    "Burning the midnight oil?"
+  ],
+  "days.sunday": "Sunday",
+  "days.monday": "Monday",
+  "days.tuesday": "Tuesday",
+  "days.wednesday": "Wednesday",
+  "days.thursday": "Thursday",
+  "days.friday": "Friday",
+  "days.saturday": "Saturday"
+}

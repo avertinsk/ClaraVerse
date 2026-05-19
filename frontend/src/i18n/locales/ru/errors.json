@@ -1,0 +1,21 @@
+{
+  "errors.anErrorOccurred": "Произошла ошибка",
+  "errors.apiError": "Произошла ошибка",
+  "errors.failedToLoad": "Не удалось загрузить {{resource}}",
+  "errors.failedToSave": "Не удалось сохранить {{resource}}",
+  "errors.failedToDelete": "Не удалось удалить {{resource}}",
+  "errors.tryAgain": "Попробуйте ещё раз.",
+  "errors.networkError": "Произошла сетевая ошибка",
+  "errors.syncFailed": "Не удалось синхронизировать с облаком",
+  "errors.syncPendingDeletes": "{{n}} чат(ов) ожидают удаления из облака",
+  "errors.chatTooLarge": "Чат слишком большой для синхронизации",
+  "errors.chatTooLargeMsg": "\"{{title}}\" превышает лимит облачной синхронизации 16 МБ. Он останется только локально.",
+  "errors.downloadBackup": "Скачать резервную копию",
+  "errors.signInToSync": "Войдите, чтобы синхронизировать чаты",
+  "errors.syncFailedChats": "Не удалось синхронизировать чаты с облаком",
+  "errors.promptTimedOut": "Время ожидания запроса истекло",
+  "errors.validationError": "Ошибка валидации: {{errors}}",
+  "upload.failed": "Загрузка не удалась",
+  "upload.noFiles": "Нет файлов для загрузки",
+  "chat.defaultTitle": "Новый чат"
+}

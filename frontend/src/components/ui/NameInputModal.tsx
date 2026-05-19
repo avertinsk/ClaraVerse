@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { KeyboardEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import styles from './NameInputModal.module.css';
 
 interface NameInputModalProps {
@@ -10,6 +11,7 @@ interface NameInputModalProps {
 export const NameInputModal: React.FC<NameInputModalProps> = ({ isOpen, onSubmit }) => {
   const [name, setName] = useState('');
   const [error, setError] = useState('');
+  const { t } = useTranslation('onboarding');
 
   useEffect(() => {
     if (isOpen) {
@@ -23,17 +25,17 @@ export const NameInputModal: React.FC<NameInputModalProps> = ({ isOpen, onSubmit
     const trimmedName = name.trim();
 
     if (!trimmedName) {
-      setError('Please enter your name');
+      setError(t('nameModal.validation.required'));
       return;
     }
 
     if (trimmedName.length < 2) {
-      setError('Name should be at least 2 characters');
+      setError(t('nameModal.validation.minLength'));
       return;
     }
 
     if (trimmedName.length > 50) {
-      setError('Name is too long (max 50 characters)');
+      setError(t('nameModal.validation.maxLength'));
       return;
     }
 
@@ -52,9 +54,9 @@ export const NameInputModal: React.FC<NameInputModalProps> = ({ isOpen, onSubmit
   return (
     <div className={styles.overlay}>
       <div className={styles.modal}>
-        <h1 className={styles.title}>Welcome to ClaraVerse Chat</h1>
+        <h1 className={styles.title}>{t('nameModal.title')}</h1>
 
-        <p className={styles.description}>Before we start, what should we call you?</p>
+        <p className={styles.description}>{t('nameModal.description')}</p>
 
         <div className={styles.inputContainer}>
           <input
@@ -65,7 +67,7 @@ export const NameInputModal: React.FC<NameInputModalProps> = ({ isOpen, onSubmit
               setError('');
             }}
             onKeyDown={handleKeyDown}
-            placeholder="Enter your name"
+            placeholder={t('nameModal.placeholder')}
             className={styles.input}
             autoFocus
             maxLength={50}
@@ -74,10 +76,10 @@ export const NameInputModal: React.FC<NameInputModalProps> = ({ isOpen, onSubmit
         </div>
 
         <button onClick={handleSubmit} className={styles.button}>
-          Let's Go!
+          {t('nameModal.submit')}
         </button>
 
-        <p className={styles.note}>We'll use this to personalize your experience</p>
+        <p className={styles.note}>{t('nameModal.note')}</p>
       </div>
     </div>
   );

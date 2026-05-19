@@ -1,0 +1,21 @@
+{
+  "skills.title": "Skills",
+  "skills.enabledAvailable": "{{enabled}} enabled · {{total}} available",
+  "skills.import": "Import",
+  "skills.createSkill": "Create Skill",
+  "skills.searchPlaceholder": "Search skills...",
+  "skills.tab.mySkills": "My Skills",
+  "skills.tab.community": "Community",
+  "skills.cat.all": "All",
+  "skills.cat.research": "Research",
+  "skills.cat.communication": "Communication",
+  "skills.cat.projectMgmt": "Project Mgmt",
+  "skills.cat.data": "Data",
+  "skills.cat.content": "Content",
+  "skills.cat.productivity": "Productivity",
+  "skills.cat.sales": "Sales",
+  "skills.cat.code": "Code",
+  "skills.cat.database": "Database",
+  "skills.cat.ecommerce": "E-Commerce",
+  "skills.cat.writing": "Writing"
+}

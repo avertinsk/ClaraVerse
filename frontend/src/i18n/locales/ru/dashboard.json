@@ -1,0 +1,16 @@
+{
+  "dashboard.title": "Ваше AI-пространство",
+  "dashboard.subtitle": "Что бы вы хотели сделать сегодня?",
+  "dashboard.chat.title": "Чат",
+  "dashboard.chat.desc": "Общайтесь с AI-ассистентом Кларой",
+  "dashboard.workflows.title": "Воркфлоу",
+  "dashboard.workflows.desc": "Создавайте автоматизации",
+  "dashboard.nexus.title": "Nexus",
+  "dashboard.nexus.desc": "Мультиагентная система задач",
+  "dashboard.skills.title": "Навыки",
+  "dashboard.skills.desc": "Просматривайте и включайте AI-навыки",
+  "dashboard.settings.title": "Настройки",
+  "dashboard.settings.desc": "Настройте ваше пространство",
+  "dashboard.admin.title": "Админ",
+  "dashboard.admin.desc": "Управляйте платформой"
+}

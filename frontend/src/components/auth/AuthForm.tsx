@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 // import { Github } from 'lucide-react'; // Removed - social login disabled
 import { Button } from '@/components/design-system';
 import { Input } from '@/components/design-system';
@@ -29,6 +30,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
   const [success, setSuccess] = useState<string | null>(null);
   const navigate = useNavigate();
   const { setUser } = useAuthStore();
+  const { t } = useTranslation('auth');
 
   React.useEffect(() => {
     setMode(defaultMode);
@@ -49,25 +51,25 @@ export const AuthForm: React.FC<AuthFormProps> = ({
       // Validation for sign-up mode
       if (mode === 'signup') {
         if (!username.trim()) {
-          setError('Username is required');
+          setError(t('validation.usernameRequired'));
           setIsLoading(false);
           return;
         }
 
         if (username.length < 3) {
-          setError('Username must be at least 3 characters');
+          setError(t('validation.usernameMinLength'));
           setIsLoading(false);
           return;
         }
 
         if (password !== confirmPassword) {
-          setError('Passwords do not match');
+          setError(t('validation.passwordsMismatch'));
           setIsLoading(false);
           return;
         }
 
         if (password.length < 8) {
-          setError('Password must be at least 8 characters');
+          setError(t('validation.passwordMinLength'));
           setIsLoading(false);
           return;
         }
@@ -80,7 +82,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         response = await authService.signIn(email, password);
 
         if (response.error) {
-          setError(response.error.message || 'Invalid email or password');
+          setError(response.error.message || t('error.invalidCredentials'));
           setIsLoading(false);
           return;
         }
@@ -109,11 +111,11 @@ export const AuthForm: React.FC<AuthFormProps> = ({
           navigate(redirectUrl);
         }
       } else if (mode === 'signup' && response.user) {
-        setError('Account created! Please check your email to confirm.');
+        setError(t('error.accountCreated'));
         setIsLoading(false);
       }
     } catch {
-      setError('An unexpected error occurred. Please try again.');
+      setError(t('error.unexpectedError'));
       setIsLoading(false);
     }
   };
@@ -161,7 +163,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
 
     try {
       if (!email) {
-        setError('Please enter your email address');
+        setError(t('validation.emailRequired'));
         setIsLoading(false);
         return;
       }
@@ -171,11 +173,11 @@ export const AuthForm: React.FC<AuthFormProps> = ({
       if (error) {
         setError(error.message);
       } else {
-        setSuccess('Password reset link sent! Please check your email.');
+        setSuccess(t('resetLinkSent'));
         setEmail('');
       }
     } catch {
-      setError('Failed to send password reset email. Please try again.');
+      setError(t('error.resetFailed'));
     } finally {
       setIsLoading(false);
     }
@@ -187,17 +189,17 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         <div className="auth-form-header">
           <h2>
             {mode === 'signin'
-              ? 'Welcome Back'
+              ? t('welcomeBack')
               : mode === 'signup'
-                ? 'Create Account'
-                : 'Reset Password'}
+                ? t('createAccount')
+                : t('resetPassword')}
           </h2>
           <p>
             {mode === 'signin'
-              ? 'Sign in to continue to ClaraVerse'
+              ? t('signInToContinue')
               : mode === 'signup'
-                ? 'Sign up to get started with ClaraVerse'
-                : 'Enter your email to receive a password reset link'}
+                ? t('signUpToStart')
+                : t('enterEmailForReset')}
           </p>
         </div>
 
@@ -268,7 +270,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
           {mode === 'signup' && (
             <Input
               type="text"
-              placeholder="Username"
+              placeholder={t('username')}
               value={username}
               onChange={e => setUsername(e.target.value)}
               required
@@ -279,7 +281,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
 
           <Input
             type="email"
-            placeholder="Email"
+            placeholder={t('email')}
             value={email}
             onChange={e => setEmail(e.target.value)}
             required
@@ -289,7 +291,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
           {mode !== 'forgot-password' && (
             <Input
               type="password"
-              placeholder="Password"
+              placeholder={t('password')}
               value={password}
               onChange={e => setPassword(e.target.value)}
               required
@@ -301,7 +303,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
           {mode === 'signup' && (
             <Input
               type="password"
-              placeholder="Confirm Password"
+              placeholder={t('confirmPassword')}
               value={confirmPassword}
               onChange={e => setConfirmPassword(e.target.value)}
               required
@@ -318,7 +320,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                 onClick={() => setMode('forgot-password')}
                 disabled={isLoading}
               >
-                Forgot password?
+                {t('forgotPassword')}
               </button>
             </div>
           )}
@@ -331,12 +333,12 @@ export const AuthForm: React.FC<AuthFormProps> = ({
             className="auth-submit-button"
           >
             {isLoading
-              ? 'Loading...'
+              ? t('loading', { ns: 'common' })
               : mode === 'signin'
-                ? 'Sign In'
+                ? t('signIn')
                 : mode === 'signup'
-                  ? 'Sign Up'
-                  : 'Send Reset Link'}
+                  ? t('signUp')
+                  : t('sendResetLink')}
           </Button>
         </form>
 
@@ -344,38 +346,38 @@ export const AuthForm: React.FC<AuthFormProps> = ({
           <p>
             {mode === 'forgot-password' ? (
               <>
-                Remember your password?{' '}
+                {t('rememberPassword')}{' '}
                 <button
                   type="button"
                   className="auth-toggle-button"
                   onClick={() => setMode('signin')}
                   disabled={isLoading}
                 >
-                  Sign In
+                  {t('signIn')}
                 </button>
               </>
             ) : mode === 'signin' ? (
               <>
-                Don&apos;t have an account?{' '}
+                {t('dontHaveAccount')}{' '}
                 <button
                   type="button"
                   className="auth-toggle-button"
                   onClick={() => setMode('signup')}
                   disabled={isLoading}
                 >
-                  Sign Up
+                  {t('signUp')}
                 </button>
               </>
             ) : (
               <>
-                Already have an account?{' '}
+                {t('alreadyHaveAccount')}{' '}
                 <button
                   type="button"
                   className="auth-toggle-button"
                   onClick={() => setMode('signin')}
                   disabled={isLoading}
                 >
-                  Sign In
+                  {t('signIn')}
                 </button>
               </>
             )}

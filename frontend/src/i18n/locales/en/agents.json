@@ -1,0 +1,16 @@
+{
+  "agents.newAgent": "New Agent",
+  "agents.describeAgent": "Describe what this agent does...",
+  "agents.myAgents": "My Agents",
+  "agents.deployed": "Deployed",
+  "agents.canvas": "Canvas",
+  "agents.onboarding": "Onboarding",
+  "agents.unsavedChanges": "Unsaved changes",
+  "agents.cancel": "Cancel",
+  "agents.discard": "Discard",
+  "agents.saveAndSwitch": "Save & Switch",
+  "agents.failedDelete": "Failed to delete agent",
+  "agents.deepLinkBuilder": "builder",
+  "agents.deepLinkDeployed": "deployed",
+  "agents.loadingOverview": "Loading overview..."
+}

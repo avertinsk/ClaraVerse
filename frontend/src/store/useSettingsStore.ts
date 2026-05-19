@@ -108,6 +108,7 @@ export interface SettingsState {
   // Appearance
   theme: 'dark' | 'light' | 'system';
   fontSize: 'small' | 'medium' | 'large';
+  language: 'en' | 'ru';
 
   // Memory System
   memoryEnabled: boolean;
@@ -134,6 +135,7 @@ export interface SettingsState {
 
   setTheme: (theme: 'dark' | 'light' | 'system') => void;
   setFontSize: (size: 'small' | 'medium' | 'large') => void;
+  setLanguage: (language: 'en' | 'ru') => void;
   setChatPrivacyMode: (mode: ChatPrivacyMode) => void;
   resetSettings: () => void;
 
@@ -175,6 +177,7 @@ export const useSettingsStore = create<SettingsState>()(
         chatPrivacyMode: null,
         theme: 'dark',
         fontSize: 'medium',
+        language: 'en',
         isSyncingPreferences: false,
 
         // Memory system defaults
@@ -282,6 +285,14 @@ export const useSettingsStore = create<SettingsState>()(
           }
         },
 
+        setLanguage: (language: 'en' | 'ru') => {
+          set({ language });
+          // Update i18n language
+          import('@/i18n').then(({ default: i18n }) => {
+            i18n.changeLanguage(language);
+          });
+        },
+
         setChatPrivacyMode: (mode: ChatPrivacyMode) => {
           set({ chatPrivacyMode: mode });
 
@@ -361,6 +372,7 @@ export const useSettingsStore = create<SettingsState>()(
             chatPrivacyMode: null,
             theme: 'dark',
             fontSize: 'medium',
+            language: 'en',
             memoryEnabled: false,
             memoryExtractionThreshold: 20,
             memoryMaxInjection: 5,

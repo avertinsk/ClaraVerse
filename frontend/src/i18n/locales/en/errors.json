@@ -1,0 +1,21 @@
+{
+  "errors.anErrorOccurred": "An error occurred",
+  "errors.apiError": "An error occurred",
+  "errors.failedToLoad": "Failed to load {{resource}}",
+  "errors.failedToSave": "Failed to save {{resource}}",
+  "errors.failedToDelete": "Failed to delete {{resource}}",
+  "errors.tryAgain": "Please try again.",
+  "errors.networkError": "A network error occurred",
+  "errors.syncFailed": "Failed to sync with cloud",
+  "errors.syncPendingDeletes": "{{n}} chat(s) pending deletion from cloud",
+  "errors.chatTooLarge": "Chat Too Large to Sync",
+  "errors.chatTooLargeMsg": "\"{{title}}\" exceeds the 16MB cloud sync limit. It will remain stored locally only.",
+  "errors.downloadBackup": "Download Backup",
+  "errors.signInToSync": "Please sign in to sync chats",
+  "errors.syncFailedChats": "Failed to sync chats to cloud",
+  "errors.promptTimedOut": "Prompt timed out",
+  "errors.validationError": "Validation error: {{errors}}",
+  "upload.failed": "Upload failed",
+  "upload.noFiles": "No files to upload",
+  "chat.defaultTitle": "New Chat"
+}

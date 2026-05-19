@@ -1,0 +1,18 @@
+{
+  "nexus.brand": "Nexus",
+  "nexus.newProject": "New Project",
+  "nexus.saved": "Saved",
+  "nexus.daemons": "Daemons",
+  "nexus.routines": "Routines",
+  "nexus.settings": "Settings",
+  "nexus.chat": "Chat",
+  "nexus.home": "Home",
+  "nexus.companionConnected": "Clara Companion: Connected",
+  "nexus.companionOffline": "Clara Companion: Offline",
+  "nexus.companionLabel": "Clara Companion",
+  "nexus.companionStatusConnected": "Connected",
+  "nexus.companionStatusOffline": "Offline",
+  "nexus.companionSetupHint": "Install & run the companion:",
+  "nexus.defaultProject": "General",
+  "nexus.navigateChat": "Navigate to chat"
+}

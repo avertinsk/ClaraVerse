@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Shield, Smartphone, Cloud, Lock } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import type { ChatPrivacyMode } from '@/store/useSettingsStore';
 import styles from './PrivacySettingsModal.module.css';
 
@@ -10,6 +11,7 @@ interface PrivacySettingsModalProps {
 
 export const PrivacySettingsModal: React.FC<PrivacySettingsModalProps> = ({ isOpen, onSubmit }) => {
   const [selectedMode, setSelectedMode] = useState<ChatPrivacyMode>(null);
+  const { t } = useTranslation('onboarding');
 
   const handleSubmit = () => {
     if (selectedMode) {
@@ -27,7 +29,7 @@ export const PrivacySettingsModal: React.FC<PrivacySettingsModalProps> = ({ isOp
           <div className={styles.iconContainer}>
             <Shield size={24} />
           </div>
-          <h2 className={styles.title}>Where should we save your chats?</h2>
+          <h2 className={styles.title}>{t('privacyModal.title')}</h2>
         </div>
 
         {/* Options */}
@@ -42,8 +44,8 @@ export const PrivacySettingsModal: React.FC<PrivacySettingsModalProps> = ({ isOp
               <Smartphone size={20} />
             </div>
             <div className={styles.optionText}>
-              <span className={styles.optionTitle}>This device only</span>
-              <span className={styles.optionDesc}>Private, but won't sync to other devices</span>
+              <span className={styles.optionTitle}>{t('privacyModal.localTitle')}</span>
+              <span className={styles.optionDesc}>{t('privacyModal.localDesc')}</span>
             </div>
             {selectedMode === 'local' && <div className={styles.check}>✓</div>}
           </button>
@@ -58,9 +60,9 @@ export const PrivacySettingsModal: React.FC<PrivacySettingsModalProps> = ({ isOp
               <Cloud size={20} />
             </div>
             <div className={styles.optionText}>
-              <span className={styles.optionTitle}>Sync across devices</span>
+              <span className={styles.optionTitle}>{t('privacyModal.cloudTitle')}</span>
               <span className={styles.optionDesc}>
-                <Lock size={10} /> Securely saved, access anywhere with your account
+                <Lock size={10} /> {t('privacyModal.cloudDesc')}
               </span>
             </div>
             {selectedMode === 'cloud' && <div className={styles.check}>✓</div>}
@@ -69,10 +71,10 @@ export const PrivacySettingsModal: React.FC<PrivacySettingsModalProps> = ({ isOp
 
         {/* Button */}
         <button onClick={handleSubmit} className={styles.button} disabled={!selectedMode}>
-          Continue
+          {t('privacyModal.submit')}
         </button>
 
-        <p className={styles.note}>You can change this later in Settings</p>
+        <p className={styles.note}>{t('privacyModal.note')}</p>
       </div>
     </div>
   );

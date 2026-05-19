@@ -1,0 +1,16 @@
+{
+  "dashboard.title": "Your AI Workspace",
+  "dashboard.subtitle": "What would you like to do today?",
+  "dashboard.chat.title": "Chat",
+  "dashboard.chat.desc": "Talk with Clara AI assistant",
+  "dashboard.workflows.title": "Workflows",
+  "dashboard.workflows.desc": "Build Automations",
+  "dashboard.nexus.title": "Nexus",
+  "dashboard.nexus.desc": "Multi-agent task system",
+  "dashboard.skills.title": "Skills",
+  "dashboard.skills.desc": "Browse and enable AI skills",
+  "dashboard.settings.title": "Settings",
+  "dashboard.settings.desc": "Configure your workspace",
+  "dashboard.admin.title": "Admin",
+  "dashboard.admin.desc": "Manage your platform"
+}

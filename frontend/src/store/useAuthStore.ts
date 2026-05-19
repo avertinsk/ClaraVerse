@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import i18n from '@/i18n';
 import type { User, Session } from '@/services/authService';
 import { authService } from '@/services/authService';
 import { migrateLegacyData, clearUserData } from '@/services/dataBackupService';
@@ -312,7 +313,7 @@ export const useAuthStore = create<AuthState>()(
           if (error || !session) {
             console.error('Failed to refresh session:', error);
             // Session refresh failed - force logout
-            get().forceLogout('Your session has expired. Please sign in again.');
+            get().forceLogout(i18n.t('auth:sessionExpiredMessage'));
             return;
           }
 
@@ -325,8 +326,7 @@ export const useAuthStore = create<AuthState>()(
           });
         } catch (error) {
           console.error('Error refreshing session:', error);
-          // Unexpected error during refresh - force logout
-          get().forceLogout('An error occurred. Please sign in again.');
+          get().forceLogout(i18n.t('auth:errorOccurredSignIn'));
         }
       },
 

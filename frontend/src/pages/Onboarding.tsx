@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { AuthForm } from '@/components/auth';
 import { useAuthStore } from '@/store/useAuthStore';
 import { toast } from '@/store/useToastStore';
@@ -10,6 +11,7 @@ export const Onboarding = () => {
   const [searchParams] = useSearchParams();
   const { isAuthenticated, isAdmin, sessionExpiredReason, clearSessionExpiredReason } =
     useAuthStore();
+  const { t } = useTranslation('auth');
 
   // Get redirect URL from query params
   const redirectUrl = searchParams.get('redirect') || '/';
@@ -17,10 +19,10 @@ export const Onboarding = () => {
   useEffect(() => {
     // If session expired, show toast and clear the reason
     if (sessionExpiredReason) {
-      toast.error(sessionExpiredReason, 'Session Expired');
+      toast.error(sessionExpiredReason, t('sessionExpired'));
       clearSessionExpiredReason();
     }
-  }, [sessionExpiredReason, clearSessionExpiredReason]);
+  }, [sessionExpiredReason, clearSessionExpiredReason, t]);
 
   useEffect(() => {
     // If user is already authenticated, redirect based on admin status

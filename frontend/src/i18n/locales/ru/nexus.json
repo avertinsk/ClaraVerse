@@ -1,0 +1,18 @@
+{
+  "nexus.brand": "Nexus",
+  "nexus.newProject": "Новый проект",
+  "nexus.saved": "Сохранено",
+  "nexus.daemons": "Демоны",
+  "nexus.routines": "Рутины",
+  "nexus.settings": "Настройки",
+  "nexus.chat": "Чат",
+  "nexus.home": "Главная",
+  "nexus.companionConnected": "Clara Companion: Подключено",
+  "nexus.companionOffline": "Clara Companion: Не в сети",
+  "nexus.companionLabel": "Clara Companion",
+  "nexus.companionStatusConnected": "Подключено",
+  "nexus.companionStatusOffline": "Не в сети",
+  "nexus.companionSetupHint": "Установите и запустите companion:",
+  "nexus.defaultProject": "Общий",
+  "nexus.navigateChat": "Перейти к чату"
+}

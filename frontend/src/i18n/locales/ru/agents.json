@@ -1,0 +1,16 @@
+{
+  "agents.newAgent": "Новый агент",
+  "agents.describeAgent": "Опишите, что делает этот агент...",
+  "agents.myAgents": "Мои агенты",
+  "agents.deployed": "Развёрнутые",
+  "agents.canvas": "Холст",
+  "agents.onboarding": "Онбординг",
+  "agents.unsavedChanges": "Несохранённые изменения",
+  "agents.cancel": "Отмена",
+  "agents.discard": "Отменить",
+  "agents.saveAndSwitch": "Сохранить и переключить",
+  "agents.failedDelete": "Не удалось удалить агент",
+  "agents.deepLinkBuilder": "конструктор",
+  "agents.deepLinkDeployed": "развёрнут",
+  "agents.loadingOverview": "Загрузка обзора..."
+}
