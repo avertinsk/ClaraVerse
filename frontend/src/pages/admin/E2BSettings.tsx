@@ -33,7 +33,7 @@ export const E2BSettings = () => {
 
   const handleSave = async () => {
     if (!newApiKey.trim()) {
-      toast.error('Please enter an API key', 'Validation Error');
+      toast.error(t('e2b.validationError'), 'Validation Error');
       return;
     }
 
@@ -69,7 +69,9 @@ export const E2BSettings = () => {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">{t('nav.codeExecution')}</h1>
+        <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">
+          {t('nav.codeExecution')}
+        </h1>
         <p className="text-[var(--color-text-secondary)]">{t('dashboard.loading')}</p>
       </div>
     );
@@ -79,11 +81,8 @@ export const E2BSettings = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">{t('nav.codeExecution')}</h1>
-        <p className="text-[var(--color-text-secondary)] mt-2">
-          Configure E2B for sandboxed Python code execution. E2B provides secure cloud sandboxes for
-          running user code.
-        </p>
+        <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">{t('e2b.title')}</h1>
+        <p className="text-[var(--color-text-secondary)] mt-2">{t('e2b.subtitle')}</p>
       </div>
 
       {/* Info Banner */}
@@ -94,18 +93,17 @@ export const E2BSettings = () => {
         <AlertCircle size={20} className="text-[var(--color-info)] flex-shrink-0 mt-0.5" />
         <div>
           <p className="text-sm text-[var(--color-text-primary)] font-medium">
-            E2B API Key Required
+            {t('e2b.apiKeyRequired')}
           </p>
           <p className="text-sm text-[var(--color-text-secondary)] mt-1">
-            Code execution tools (Python runner, data analyst, ML trainer, API tester) require an
-            E2B API key.{' '}
+            {t('e2b.step1').split('E2B')[0]}
             <a
               href="https://e2b.dev"
               target="_blank"
               rel="noopener noreferrer"
               className="text-[var(--color-accent)] hover:underline inline-flex items-center gap-1"
             >
-              Get your free API key at e2b.dev
+              {t('e2b.getApiKey')}
               <ExternalLink size={12} />
             </a>
           </p>
@@ -119,9 +117,11 @@ export const E2BSettings = () => {
       >
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-medium text-[var(--color-text-primary)]">Current Status</h3>
+            <h3 className="text-sm font-medium text-[var(--color-text-primary)]">
+              {t('e2b.currentStatus')}
+            </h3>
             <p className="text-xs text-[var(--color-text-tertiary)] mt-1">
-              {apiKeySet ? 'API key is configured' : 'No API key set'}
+              {apiKeySet ? t('e2b.apiKeyConfigured') : t('e2b.noApiKey')}
             </p>
           </div>
           <div
@@ -138,7 +138,7 @@ export const E2BSettings = () => {
         {apiKeySet && (
           <div className="flex items-center justify-between p-3 bg-[var(--color-surface-hover)] rounded-lg">
             <div>
-              <p className="text-xs text-[var(--color-text-tertiary)]">Current Key</p>
+              <p className="text-xs text-[var(--color-text-tertiary)]">{t('e2b.currentKey')}</p>
               <p className="text-sm font-mono text-[var(--color-text-primary)] mt-1">
                 {apiKeyMasked}
               </p>
@@ -147,7 +147,7 @@ export const E2BSettings = () => {
               onClick={handleClear}
               disabled={isSaving}
               className="p-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
-              title="Remove API key"
+              title={t('e2b.removeKey')}
             >
               <Trash2 size={16} />
             </button>
@@ -157,7 +157,7 @@ export const E2BSettings = () => {
         {/* Set/Update API Key */}
         <div className="space-y-2">
           <label className="block text-sm font-medium text-[var(--color-text-primary)]">
-            {apiKeySet ? 'Update API Key' : 'Set API Key'}
+            {apiKeySet ? t('e2b.updateKey') : t('e2b.setKey')}
           </label>
           <div className="flex gap-3">
             <div className="flex-1 relative">
@@ -193,20 +193,21 @@ export const E2BSettings = () => {
         className="bg-[var(--color-surface)] rounded-lg p-6"
         style={{ backdropFilter: 'blur(20px)' }}
       >
-        <h3 className="text-sm font-medium text-[var(--color-text-primary)] mb-3">How it works</h3>
+        <h3 className="text-sm font-medium text-[var(--color-text-primary)] mb-3">
+          {t('e2b.howItWorks')}
+        </h3>
         <ul className="space-y-2 text-sm text-[var(--color-text-secondary)]">
           <li className="flex items-start gap-2">
             <span className="text-[var(--color-accent)] mt-0.5">1.</span>
-            When a user runs code (Python, data analysis, etc.), the request goes to the E2B
-            microservice.
+            {t('e2b.step1')}
           </li>
           <li className="flex items-start gap-2">
             <span className="text-[var(--color-accent)] mt-0.5">2.</span>
-            E2B creates an isolated cloud sandbox, runs the code safely, and returns results.
+            {t('e2b.step2')}
           </li>
           <li className="flex items-start gap-2">
             <span className="text-[var(--color-accent)] mt-0.5">3.</span>
-            The E2B service must also be running (uncomment it in docker-compose.yml).
+            {t('e2b.step3')}
           </li>
         </ul>
       </div>

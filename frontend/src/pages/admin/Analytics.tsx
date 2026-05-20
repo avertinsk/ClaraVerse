@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAdminStore } from '@/store/useAdminStore';
 import { adminService } from '@/services/adminService';
 import {
@@ -44,6 +45,7 @@ ChartJS.register(
 type DateRange = '7' | '14' | '30' | '90';
 
 export const Analytics = () => {
+  const { t } = useTranslation('admin');
   const {
     overviewStats,
     providerAnalytics,
@@ -113,8 +115,10 @@ export const Analytics = () => {
   if (isLoadingStats) {
     return (
       <div className="space-y-6">
-        <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">Analytics</h1>
-        <p className="text-[var(--color-text-secondary)]">Loading analytics...</p>
+        <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">
+          {t('analytics.title')}
+        </h1>
+        <p className="text-[var(--color-text-secondary)]">{t('analytics.loading')}</p>
       </div>
     );
   }
@@ -122,7 +126,9 @@ export const Analytics = () => {
   if (statsError) {
     return (
       <div className="space-y-6">
-        <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">Analytics</h1>
+        <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">
+          {t('analytics.title')}
+        </h1>
         <div
           className="bg-[var(--color-error-light)] rounded-lg p-4"
           style={{ backdropFilter: 'blur(20px)' }}
@@ -133,7 +139,7 @@ export const Analytics = () => {
           onClick={loadAnalytics}
           className="px-4 py-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white rounded-lg transition-colors"
         >
-          Retry
+          {t('analytics.retry')}
         </button>
       </div>
     );
@@ -192,7 +198,7 @@ export const Analytics = () => {
     }),
     datasets: [
       {
-        label: 'Chats',
+        label: t('analytics.chart.chats'),
         data: filteredData.map(d => d.chat_count),
         borderColor: 'rgb(233, 30, 99)',
         backgroundColor: 'rgba(233, 30, 99, 0.1)',
@@ -200,7 +206,7 @@ export const Analytics = () => {
         tension: 0.4,
       },
       {
-        label: 'Messages',
+        label: t('analytics.chart.messages'),
         data: filteredData.map(d => d.message_count),
         borderColor: 'rgb(63, 127, 191)',
         backgroundColor: 'rgba(63, 127, 191, 0.1)',
@@ -208,7 +214,7 @@ export const Analytics = () => {
         tension: 0.4,
       },
       {
-        label: 'Active Users',
+        label: t('analytics.chart.activeUsers'),
         data: filteredData.map(d => d.user_count),
         borderColor: 'rgb(76, 175, 80)',
         backgroundColor: 'rgba(76, 175, 80, 0.1)',
@@ -216,7 +222,7 @@ export const Analytics = () => {
         tension: 0.4,
       },
       {
-        label: 'Agent Executions',
+        label: t('analytics.chart.agentExecutions'),
         data: filteredData.map(d => d.agent_count),
         borderColor: 'rgb(255, 152, 0)',
         backgroundColor: 'rgba(255, 152, 0, 0.1)',
@@ -290,14 +296,14 @@ export const Analytics = () => {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">Analytics</h1>
-          <p className="text-[var(--color-text-secondary)] mt-2">
-            Executive insights and product metrics
-          </p>
+          <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">
+            {t('analytics.title')}
+          </h1>
+          <p className="text-[var(--color-text-secondary)] mt-2">{t('analytics.subtitle')}</p>
         </div>
         <div className="flex items-center gap-4">
           <span className="text-xs text-[var(--color-text-tertiary)]">
-            Last updated: {lastRefresh.toLocaleTimeString()}
+            {t('analytics.lastUpdated')}: {lastRefresh.toLocaleTimeString()}
           </span>
 
           {/* Migration Result Message */}
@@ -317,7 +323,7 @@ export const Analytics = () => {
             >
               <Clock size={16} className={isMigrating ? 'animate-spin' : ''} />
               <span className="text-sm font-medium">
-                {isMigrating ? 'Migrating...' : 'Fix Timestamps'}
+                {isMigrating ? t('analytics.migrating') : t('analytics.fixTimestamps')}
               </span>
             </button>
           )}
@@ -330,7 +336,9 @@ export const Analytics = () => {
             style={{ backdropFilter: 'blur(20px)' }}
           >
             <RefreshCw size={16} className={isRefreshing ? 'animate-spin' : ''} />
-            <span className="text-sm font-medium text-[var(--color-text-primary)]">Refresh</span>
+            <span className="text-sm font-medium text-[var(--color-text-primary)]">
+              {t('analytics.refresh')}
+            </span>
           </button>
         </div>
       </div>
@@ -346,7 +354,7 @@ export const Analytics = () => {
             <Users size={24} className="text-[var(--color-accent)]" />
           </div>
           <div>
-            <p className="text-sm text-[var(--color-text-tertiary)]">Total Users</p>
+            <p className="text-sm text-[var(--color-text-tertiary)]">{t('analytics.totalUsers')}</p>
             <p className="text-3xl font-bold text-[var(--color-text-primary)] mt-1">
               {overviewStats?.total_users || 0}
             </p>
@@ -362,12 +370,14 @@ export const Analytics = () => {
             <MessageSquare size={24} className="text-[var(--color-success)]" />
           </div>
           <div>
-            <p className="text-sm text-[var(--color-text-tertiary)]">Active Chats</p>
+            <p className="text-sm text-[var(--color-text-tertiary)]">
+              {t('analytics.activeChats')}
+            </p>
             <p className="text-3xl font-bold text-[var(--color-text-primary)] mt-1">
               {overviewStats?.active_chats || 0}
             </p>
             <p className="text-xs text-[var(--color-text-tertiary)] mt-2">
-              {engagementRate}% engagement rate
+              {engagementRate}% {t('analytics.engagementRate')}
             </p>
           </div>
         </div>
@@ -381,12 +391,14 @@ export const Analytics = () => {
             <Activity size={24} className="text-[var(--color-info)]" />
           </div>
           <div>
-            <p className="text-sm text-[var(--color-text-tertiary)]">Total Messages</p>
+            <p className="text-sm text-[var(--color-text-tertiary)]">
+              {t('analytics.totalMessages')}
+            </p>
             <p className="text-3xl font-bold text-[var(--color-text-primary)] mt-1">
               {(overviewStats?.total_messages || 0).toLocaleString()}
             </p>
             <p className="text-xs text-[var(--color-text-tertiary)] mt-2">
-              {avgMessagesPerChat.toFixed(1)} avg per chat
+              {avgMessagesPerChat.toFixed(1)} {t('analytics.avgPerChat')}
             </p>
           </div>
         </div>
@@ -400,12 +412,14 @@ export const Analytics = () => {
             <Zap size={24} className="text-[var(--color-warning)]" />
           </div>
           <div>
-            <p className="text-sm text-[var(--color-text-tertiary)]">API Calls Today</p>
+            <p className="text-sm text-[var(--color-text-tertiary)]">
+              {t('analytics.apiCallsToday')}
+            </p>
             <p className="text-3xl font-bold text-[var(--color-text-primary)] mt-1">
               {overviewStats?.api_calls_today || 0}
             </p>
             <p className="text-xs text-[var(--color-text-tertiary)] mt-2">
-              {chatAnalytics?.chats_created_today || 0} chats created
+              {chatAnalytics?.chats_created_today || 0} {t('analytics.chatsCreated')}
             </p>
           </div>
         </div>
@@ -423,12 +437,14 @@ export const Analytics = () => {
             />
           </div>
           <div>
-            <p className="text-sm text-[var(--color-text-tertiary)]">Agent Executions</p>
+            <p className="text-sm text-[var(--color-text-tertiary)]">
+              {t('analytics.agentExecutions')}
+            </p>
             <p className="text-3xl font-bold text-[var(--color-text-primary)] mt-1">
               {overviewStats?.agent_executions || 0}
             </p>
             <p className="text-xs text-[var(--color-text-tertiary)] mt-2">
-              {overviewStats?.agents_run_today || 0} run today
+              {overviewStats?.agents_run_today || 0} {t('analytics.runToday')}
             </p>
           </div>
         </div>
@@ -443,7 +459,7 @@ export const Analytics = () => {
           <div className="flex items-center gap-2">
             <BarChart3 size={20} className="text-[var(--color-accent)]" />
             <h2 className="text-lg font-semibold text-[var(--color-text-primary)]">
-              Activity Trends
+              {t('analytics.activityTrends')}
             </h2>
           </div>
 
@@ -478,25 +494,33 @@ export const Analytics = () => {
           style={{ borderTop: '1px solid var(--color-surface-hover)' }}
         >
           <div className="text-center">
-            <p className="text-xs text-[var(--color-text-tertiary)] mb-1">Total Chats</p>
+            <p className="text-xs text-[var(--color-text-tertiary)] mb-1">
+              {t('analytics.totalChats')}
+            </p>
             <p className="text-lg font-bold text-[var(--color-accent)]">
               {filteredData.reduce((sum, d) => sum + d.chat_count, 0)}
             </p>
           </div>
           <div className="text-center">
-            <p className="text-xs text-[var(--color-text-tertiary)] mb-1">Total Messages</p>
+            <p className="text-xs text-[var(--color-text-tertiary)] mb-1">
+              {t('analytics.totalMessages')}
+            </p>
             <p className="text-lg font-bold text-[var(--color-info)]">
               {filteredData.reduce((sum, d) => sum + d.message_count, 0)}
             </p>
           </div>
           <div className="text-center">
-            <p className="text-xs text-[var(--color-text-tertiary)] mb-1">Unique Users</p>
+            <p className="text-xs text-[var(--color-text-tertiary)] mb-1">
+              {t('analytics.uniqueUsers')}
+            </p>
             <p className="text-lg font-bold text-[var(--color-success)]">
               {Math.max(...filteredData.map(d => d.user_count), 0)}
             </p>
           </div>
           <div className="text-center">
-            <p className="text-xs text-[var(--color-text-tertiary)] mb-1">Agent Runs</p>
+            <p className="text-xs text-[var(--color-text-tertiary)] mb-1">
+              {t('analytics.agentRuns')}
+            </p>
             <p className="text-lg font-bold" style={{ color: 'rgb(255, 152, 0)' }}>
               {filteredData.reduce((sum, d) => sum + d.agent_count, 0)}
             </p>
@@ -518,7 +542,7 @@ export const Analytics = () => {
                 style={{ color: 'rgb(255, 152, 0)' }}
               />
               <h2 className="text-lg font-semibold text-[var(--color-text-primary)]">
-                Agent Activity
+                {t('analytics.agentActivity')}
               </h2>
             </div>
 
@@ -552,7 +576,7 @@ export const Analytics = () => {
                 }),
                 datasets: [
                   {
-                    label: 'Agents Created',
+                    label: t('analytics.chart.agentsCreated'),
                     data: agentAnalytics.time_series
                       .slice(-parseInt(dateRange))
                       .map(d => d.agents_created),
@@ -562,7 +586,7 @@ export const Analytics = () => {
                     tension: 0.4,
                   },
                   {
-                    label: 'Agents Deployed',
+                    label: t('analytics.chart.agentsDeployed'),
                     data: agentAnalytics.time_series
                       .slice(-parseInt(dateRange))
                       .map(d => d.agents_deployed),
@@ -572,7 +596,7 @@ export const Analytics = () => {
                     tension: 0.4,
                   },
                   {
-                    label: 'Agent Runs',
+                    label: t('analytics.chart.agentRuns'),
                     data: agentAnalytics.time_series
                       .slice(-parseInt(dateRange))
                       .map(d => d.agent_runs),
@@ -582,7 +606,7 @@ export const Analytics = () => {
                     tension: 0.4,
                   },
                   {
-                    label: 'Schedules Created',
+                    label: t('analytics.chart.schedulesCreated'),
                     data: agentAnalytics.time_series
                       .slice(-parseInt(dateRange))
                       .map(d => d.schedules_created),
@@ -603,7 +627,9 @@ export const Analytics = () => {
             style={{ borderTop: '1px solid var(--color-surface-hover)' }}
           >
             <div className="text-center">
-              <p className="text-xs text-[var(--color-text-tertiary)] mb-1">Total Created</p>
+              <p className="text-xs text-[var(--color-text-tertiary)] mb-1">
+                {t('analytics.totalCreated')}
+              </p>
               <p className="text-lg font-bold" style={{ color: 'rgb(139, 92, 246)' }}>
                 {agentAnalytics.time_series
                   .slice(-parseInt(dateRange))
@@ -611,7 +637,9 @@ export const Analytics = () => {
               </p>
             </div>
             <div className="text-center">
-              <p className="text-xs text-[var(--color-text-tertiary)] mb-1">Total Deployed</p>
+              <p className="text-xs text-[var(--color-text-tertiary)] mb-1">
+                {t('analytics.totalDeployed')}
+              </p>
               <p className="text-lg font-bold" style={{ color: 'rgb(34, 197, 94)' }}>
                 {agentAnalytics.time_series
                   .slice(-parseInt(dateRange))
@@ -619,7 +647,9 @@ export const Analytics = () => {
               </p>
             </div>
             <div className="text-center">
-              <p className="text-xs text-[var(--color-text-tertiary)] mb-1">Total Runs</p>
+              <p className="text-xs text-[var(--color-text-tertiary)] mb-1">
+                {t('analytics.totalRuns')}
+              </p>
               <p className="text-lg font-bold" style={{ color: 'rgb(255, 152, 0)' }}>
                 {agentAnalytics.time_series
                   .slice(-parseInt(dateRange))
@@ -627,7 +657,9 @@ export const Analytics = () => {
               </p>
             </div>
             <div className="text-center">
-              <p className="text-xs text-[var(--color-text-tertiary)] mb-1">Schedules Created</p>
+              <p className="text-xs text-[var(--color-text-tertiary)] mb-1">
+                {t('analytics.schedulesCreated')}
+              </p>
               <p className="text-lg font-bold" style={{ color: 'rgb(59, 130, 246)' }}>
                 {agentAnalytics.time_series
                   .slice(-parseInt(dateRange))
@@ -648,30 +680,36 @@ export const Analytics = () => {
           <div className="flex items-center gap-2 mb-4">
             <MessageSquare size={20} className="text-[var(--color-accent)]" />
             <h2 className="text-lg font-semibold text-[var(--color-text-primary)]">
-              Chat Activity
+              {t('analytics.chatActivity')}
             </h2>
           </div>
 
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-[var(--color-text-secondary)]">Total Chats</span>
+              <span className="text-sm text-[var(--color-text-secondary)]">
+                {t('analytics.totalChats')}
+              </span>
               <span className="text-lg font-bold text-[var(--color-text-primary)]">
                 {totalChats}
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-[var(--color-text-secondary)]">Active Chats</span>
+              <span className="text-sm text-[var(--color-text-secondary)]">
+                {t('analytics.activeChats')}
+              </span>
               <span className="text-lg font-bold text-[var(--color-success)]">{activeChats}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-[var(--color-text-secondary)]">Avg Messages/Chat</span>
+              <span className="text-sm text-[var(--color-text-secondary)]">
+                {t('analytics.avgMessagesChat')}
+              </span>
               <span className="text-lg font-bold text-[var(--color-text-primary)]">
                 {avgMessagesPerChat.toFixed(1)}
               </span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-[var(--color-text-secondary)]">
-                Chats Created Today
+                {t('analytics.chatsCreatedToday')}
               </span>
               <span className="text-lg font-bold text-[var(--color-accent)]">
                 {chatAnalytics?.chats_created_today || 0}
@@ -683,7 +721,7 @@ export const Analytics = () => {
           <div className="mt-6 pt-6" style={{ borderTop: '1px solid var(--color-surface-hover)' }}>
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium text-[var(--color-text-secondary)]">
-                Engagement Rate
+                {t('analytics.engagementRate')}
               </span>
               <span className="text-sm font-bold text-[var(--color-accent)]">
                 {engagementRate}%
@@ -697,10 +735,10 @@ export const Analytics = () => {
             </div>
             <p className="text-xs text-[var(--color-text-tertiary)] mt-2">
               {parseFloat(engagementRate) > 50
-                ? 'Excellent user retention'
+                ? t('analytics.insights.excellentRetention')
                 : parseFloat(engagementRate) > 30
-                  ? 'Good engagement levels'
-                  : 'Focus on re-engagement strategies'}
+                  ? t('analytics.insights.goodEngagement')
+                  : t('analytics.insights.focusReengagement')}
             </p>
           </div>
         </div>
@@ -713,19 +751,23 @@ export const Analytics = () => {
           <div className="flex items-center gap-2 mb-4">
             <Server size={20} className="text-[var(--color-info)]" />
             <h2 className="text-lg font-semibold text-[var(--color-text-primary)]">
-              Provider Performance
+              {t('analytics.providerPerformance')}
             </h2>
           </div>
 
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-[var(--color-text-secondary)]">Active Providers</span>
+              <span className="text-sm text-[var(--color-text-secondary)]">
+                {t('analytics.activeProviders')}
+              </span>
               <span className="text-lg font-bold text-[var(--color-success)]">
                 {overviewStats?.active_providers || 0}
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-[var(--color-text-secondary)]">Total Models</span>
+              <span className="text-sm text-[var(--color-text-secondary)]">
+                {t('analytics.totalModels')}
+              </span>
               <span className="text-lg font-bold text-[var(--color-text-primary)]">
                 {overviewStats?.total_models || 0}
               </span>
@@ -739,7 +781,7 @@ export const Analytics = () => {
               style={{ borderTop: '1px solid var(--color-surface-hover)' }}
             >
               <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-3">
-                Most Used Providers
+                {t('analytics.mostUsedProviders')}
               </h3>
               <div className="space-y-2">
                 {topProviders.map((provider, index) => {
@@ -753,7 +795,7 @@ export const Analytics = () => {
                           {provider.provider_name}
                         </span>
                         <span className="text-xs font-medium text-[var(--color-text-primary)]">
-                          {provider.total_requests || 0} requests
+                          {provider.total_requests || 0} {t('analytics.requests')}
                         </span>
                       </div>
                       <div className="w-full bg-[var(--color-surface-hover)] rounded-full h-1.5">
@@ -779,7 +821,7 @@ export const Analytics = () => {
         <div className="flex items-center gap-2 mb-6">
           <BarChart3 size={20} className="text-[var(--color-accent)]" />
           <h2 className="text-lg font-semibold text-[var(--color-text-primary)]">
-            System Health & Insights
+            {t('analytics.systemHealth')}
           </h2>
         </div>
 
@@ -789,13 +831,15 @@ export const Analytics = () => {
             <div className="flex items-center gap-2 mb-3">
               <TrendingUp size={16} className="text-[var(--color-success)]" />
               <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">
-                User Growth
+                {t('analytics.userGrowth')}
               </h3>
             </div>
             <p className="text-2xl font-bold text-[var(--color-text-primary)] mb-2">
               {overviewStats?.total_users || 0}
             </p>
-            <p className="text-xs text-[var(--color-text-tertiary)]">Total registered users</p>
+            <p className="text-xs text-[var(--color-text-tertiary)]">
+              {t('analytics.totalRegisteredUsers')}
+            </p>
           </div>
 
           {/* Message Velocity */}
@@ -803,13 +847,15 @@ export const Analytics = () => {
             <div className="flex items-center gap-2 mb-3">
               <Activity size={16} className="text-[var(--color-info)]" />
               <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">
-                Message Velocity
+                {t('analytics.messageVelocity')}
               </h3>
             </div>
             <p className="text-2xl font-bold text-[var(--color-text-primary)] mb-2">
               {chatAnalytics?.messages_sent_today || 0}
             </p>
-            <p className="text-xs text-[var(--color-text-tertiary)]">Messages sent today</p>
+            <p className="text-xs text-[var(--color-text-tertiary)]">
+              {t('analytics.messagesSentToday')}
+            </p>
           </div>
 
           {/* Response Time */}
@@ -817,20 +863,22 @@ export const Analytics = () => {
             <div className="flex items-center gap-2 mb-3">
               <Clock size={16} className="text-[var(--color-warning)]" />
               <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">
-                Provider Health
+                {t('analytics.providerHealth')}
               </h3>
             </div>
             <p className="text-2xl font-bold text-[var(--color-text-primary)] mb-2">
               {overviewStats?.active_providers || 0}/{overviewStats?.total_models || 0}
             </p>
-            <p className="text-xs text-[var(--color-text-tertiary)]">Active providers/models</p>
+            <p className="text-xs text-[var(--color-text-tertiary)]">
+              {t('analytics.activeProvidersModels')}
+            </p>
           </div>
         </div>
 
         {/* Actionable Insights */}
         <div className="mt-6 pt-6" style={{ borderTop: '1px solid var(--color-surface-hover)' }}>
           <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-3">
-            Actionable Insights
+            {t('analytics.actionableInsights')}
           </h3>
           <div className="space-y-2">
             {parseFloat(engagementRate) < 30 && (
@@ -838,10 +886,10 @@ export const Analytics = () => {
                 <TrendingDown size={16} className="text-[var(--color-warning)] mt-0.5" />
                 <div>
                   <p className="text-sm font-medium text-[var(--color-warning)]">
-                    Low engagement rate detected
+                    {t('analytics.insights.lowEngagement')}
                   </p>
                   <p className="text-xs text-[var(--color-text-secondary)] mt-1">
-                    Consider implementing re-engagement campaigns or improving onboarding flow
+                    {t('analytics.insights.lowEngagementDesc')}
                   </p>
                 </div>
               </div>
@@ -851,10 +899,10 @@ export const Analytics = () => {
                 <Activity size={16} className="text-[var(--color-info)] mt-0.5" />
                 <div>
                   <p className="text-sm font-medium text-[var(--color-info)]">
-                    Short conversation lengths
+                    {t('analytics.insights.shortConversations')}
                   </p>
                   <p className="text-xs text-[var(--color-text-secondary)] mt-1">
-                    Users may need better prompts or conversation starters to increase engagement
+                    {t('analytics.insights.shortConversationsDesc')}
                   </p>
                 </div>
               </div>
@@ -864,10 +912,10 @@ export const Analytics = () => {
                 <TrendingUp size={16} className="text-[var(--color-success)] mt-0.5" />
                 <div>
                   <p className="text-sm font-medium text-[var(--color-success)]">
-                    Healthy provider diversity
+                    {t('analytics.insights.healthyDiversity')}
                   </p>
                   <p className="text-xs text-[var(--color-text-secondary)] mt-1">
-                    {overviewStats?.active_providers} active providers ensuring service reliability
+                    {overviewStats?.active_providers} {t('analytics.insights.healthyDiversityDesc')}
                   </p>
                 </div>
               </div>

@@ -269,10 +269,12 @@ export const ModelManagement = () => {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">Model Management</h1>
+        <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">
+          {t('model.management.title')}
+        </h1>
         <div className="flex items-center gap-2 text-[var(--color-text-secondary)]">
           <Loader2 size={20} className="animate-spin" />
-          <span>Loading models...</span>
+          <span>{t('model.management.loading')}</span>
         </div>
       </div>
     );
@@ -281,7 +283,9 @@ export const ModelManagement = () => {
   if (error) {
     return (
       <div className="space-y-6">
-        <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">Model Management</h1>
+        <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">
+          {t('model.management.title')}
+        </h1>
         <div
           className="bg-[var(--color-error-light)] rounded-lg p-4"
           style={{ backdropFilter: 'blur(20px)' }}
@@ -292,7 +296,7 @@ export const ModelManagement = () => {
           onClick={loadModels}
           className="px-4 py-2 bg-[var(--color-accent)] text-white rounded-lg hover:bg-[var(--color-accent-dark)] transition-colors"
         >
-          Retry
+          {t('model.management.retry')}
         </button>
       </div>
     );
@@ -302,10 +306,10 @@ export const ModelManagement = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">Model Management</h1>
-        <p className="text-[var(--color-text-secondary)] mt-2">
-          Configure and manage AI models across all providers
-        </p>
+        <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">
+          {t('model.management.title')}
+        </h1>
+        <p className="text-[var(--color-text-secondary)] mt-2">{t('model.management.subtitle')}</p>
       </div>
 
       {/* Stats Cards */}
@@ -314,7 +318,9 @@ export const ModelManagement = () => {
           className="bg-[var(--color-surface)] rounded-lg p-4"
           style={{ backdropFilter: 'blur(20px)' }}
         >
-          <p className="text-sm text-[var(--color-text-tertiary)]">Total Models</p>
+          <p className="text-sm text-[var(--color-text-tertiary)]">
+            {t('model.management.totalModels')}
+          </p>
           <p className="text-2xl font-bold text-[var(--color-text-primary)] mt-1">
             {models.length}
           </p>
@@ -323,7 +329,9 @@ export const ModelManagement = () => {
           className="bg-[var(--color-surface)] rounded-lg p-4"
           style={{ backdropFilter: 'blur(20px)' }}
         >
-          <p className="text-sm text-[var(--color-text-tertiary)]">Visible Models</p>
+          <p className="text-sm text-[var(--color-text-tertiary)]">
+            {t('model.management.visibleModels')}
+          </p>
           <p className="text-2xl font-bold text-[var(--color-text-primary)] mt-1">
             {models.filter(m => m.is_visible).length}
           </p>
@@ -332,7 +340,9 @@ export const ModelManagement = () => {
           className="bg-[var(--color-surface)] rounded-lg p-4"
           style={{ backdropFilter: 'blur(20px)' }}
         >
-          <p className="text-sm text-[var(--color-text-tertiary)]">Providers</p>
+          <p className="text-sm text-[var(--color-text-tertiary)]">
+            {t('model.management.providers')}
+          </p>
           <p className="text-2xl font-bold text-[var(--color-text-primary)] mt-1">
             {uniqueProviders.length}
           </p>
@@ -341,7 +351,9 @@ export const ModelManagement = () => {
           className="bg-[var(--color-surface)] rounded-lg p-4"
           style={{ backdropFilter: 'blur(20px)' }}
         >
-          <p className="text-sm text-[var(--color-text-tertiary)]">Selected</p>
+          <p className="text-sm text-[var(--color-text-tertiary)]">
+            {t('model.management.selected')}
+          </p>
           <p className="text-2xl font-bold text-[var(--color-text-primary)] mt-1">
             {selectedModels.size}
           </p>
@@ -366,7 +378,7 @@ export const ModelManagement = () => {
               />
               <input
                 type="text"
-                placeholder="Search models by name, ID, or description..."
+                placeholder={t('model.management.searchPlaceholder')}
                 value={filters.search}
                 onChange={e => setFilters({ ...filters, search: e.target.value })}
                 className="w-full pl-10 pr-4 py-2 bg-[var(--color-surface-hover)] text-[var(--color-text-primary)] rounded-lg border border-[var(--color-border)] focus:outline-none focus:border-[var(--color-accent)]"
@@ -385,7 +397,7 @@ export const ModelManagement = () => {
             }
             className="px-4 py-2 bg-[var(--color-surface-hover)] text-[var(--color-text-primary)] rounded-lg border border-[var(--color-border)] focus:outline-none focus:border-[var(--color-accent)]"
           >
-            <option value="">All Providers</option>
+            <option value="">{t('model.management.allProviders')}</option>
             {uniqueProviders.map(p => (
               <option key={p.id} value={p.id}>
                 {p.name}
@@ -399,10 +411,10 @@ export const ModelManagement = () => {
             onChange={e => setFilters({ ...filters, capability: e.target.value as any })}
             className="px-4 py-2 bg-[var(--color-surface-hover)] text-[var(--color-text-primary)] rounded-lg border border-[var(--color-border)] focus:outline-none focus:border-[var(--color-accent)]"
           >
-            <option value="">All Capabilities</option>
-            <option value="tools">Tools</option>
-            <option value="vision">Vision</option>
-            <option value="streaming">Streaming</option>
+            <option value="">{t('model.management.allCapabilities')}</option>
+            <option value="tools">{t('model.management.tools')}</option>
+            <option value="vision">{t('model.management.vision')}</option>
+            <option value="streaming">{t('model.management.streaming')}</option>
           </select>
 
           {/* Visibility Filter */}
@@ -411,9 +423,9 @@ export const ModelManagement = () => {
             onChange={e => setFilters({ ...filters, visibility: e.target.value as any })}
             className="px-4 py-2 bg-[var(--color-surface-hover)] text-[var(--color-text-primary)] rounded-lg border border-[var(--color-border)] focus:outline-none focus:border-[var(--color-accent)]"
           >
-            <option value="all">All Models</option>
-            <option value="visible">Visible Only</option>
-            <option value="hidden">Hidden Only</option>
+            <option value="all">{t('model.management.allModels')}</option>
+            <option value="visible">{t('model.management.visibleOnly')}</option>
+            <option value="hidden">{t('model.management.hiddenOnly')}</option>
           </select>
 
           {/* Actions */}
@@ -422,7 +434,7 @@ export const ModelManagement = () => {
             className="px-4 py-2 bg-[var(--color-accent)] text-white rounded-lg hover:bg-[var(--color-accent-dark)] transition-colors flex items-center gap-2 whitespace-nowrap"
           >
             <Download size={18} />
-            <span>Fetch Models</span>
+            <span>{t('model.management.fetchModels')}</span>
           </button>
 
           <button
@@ -430,16 +442,16 @@ export const ModelManagement = () => {
             className="px-4 py-2 bg-[var(--color-surface-hover)] text-[var(--color-text-primary)] rounded-lg hover:bg-[var(--color-accent-light)] transition-colors flex items-center gap-2 whitespace-nowrap"
           >
             <Plus size={18} />
-            <span>Add Model</span>
+            <span>{t('model.management.addModel')}</span>
           </button>
 
           <button
             onClick={handleImportAliases}
             className="px-4 py-2 bg-[var(--color-info)] text-white rounded-lg hover:bg-[var(--color-info-dark)] transition-colors flex items-center gap-2 whitespace-nowrap"
-            title="Import aliases from providers.json into database"
+            title={t('model.management.importAliases')}
           >
             <Download size={18} />
-            <span>Import Aliases</span>
+            <span>{t('model.management.importAliases')}</span>
           </button>
         </div>
       </div>
@@ -452,13 +464,13 @@ export const ModelManagement = () => {
         >
           <div className="flex items-center gap-4">
             <span className="text-sm font-medium text-[var(--color-text-primary)]">
-              {selectedModels.size} model{selectedModels.size !== 1 ? 's' : ''} selected
+              {selectedModels.size} {t('model.management.modelsSelected')}
             </span>
             <button
               onClick={() => setSelectedModels(new Set())}
               className="text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] underline"
             >
-              Clear selection
+              {t('model.management.clearSelection')}
             </button>
           </div>
           <div className="flex items-center gap-3">
@@ -488,7 +500,7 @@ export const ModelManagement = () => {
               className="px-4 py-2 bg-[var(--color-success)] text-white rounded-lg hover:bg-[var(--color-success-dark)] transition-colors flex items-center gap-2 text-sm font-medium"
             >
               <Eye size={16} />
-              Show Selected
+              {t('model.management.showSelected')}
             </button>
             <button
               onClick={async () => {
@@ -516,7 +528,7 @@ export const ModelManagement = () => {
               className="px-4 py-2 bg-[var(--color-surface)] text-[var(--color-text-primary)] rounded-lg hover:bg-[var(--color-surface-hover)] transition-colors flex items-center gap-2 text-sm font-medium"
             >
               <XCircle size={16} />
-              Hide Selected
+              {t('model.management.hideSelected')}
             </button>
             <div className="w-px h-6 bg-[var(--color-border)]" />
             <button
@@ -545,7 +557,7 @@ export const ModelManagement = () => {
               className="px-4 py-2 bg-[var(--color-accent)] text-white rounded-lg hover:bg-[var(--color-accent-dark)] transition-colors flex items-center gap-2 text-sm font-medium"
             >
               <CheckCircle size={16} />
-              Enable for Agents
+              {t('model.management.enableAgents')}
             </button>
             <button
               onClick={async () => {
@@ -573,7 +585,7 @@ export const ModelManagement = () => {
               className="px-4 py-2 bg-[var(--color-surface)] text-[var(--color-text-primary)] rounded-lg hover:bg-[var(--color-surface-hover)] transition-colors flex items-center gap-2 text-sm font-medium"
             >
               <XCircle size={16} />
-              Disable for Agents
+              {t('model.management.disableAgents')}
             </button>
           </div>
         </div>
@@ -599,19 +611,19 @@ export const ModelManagement = () => {
                   />
                 </th>
                 <th className="text-left p-4 text-sm font-semibold text-[var(--color-text-primary)]">
-                  Model
+                  {t('model.management.model')}
                 </th>
                 <th className="text-left p-4 text-sm font-semibold text-[var(--color-text-primary)]">
-                  Provider
+                  {t('model.management.provider')}
                 </th>
                 <th className="text-left p-4 text-sm font-semibold text-[var(--color-text-primary)]">
-                  Capabilities
+                  {t('model.management.capabilities')}
                 </th>
                 <th className="text-left p-4 text-sm font-semibold text-[var(--color-text-primary)]">
-                  Status
+                  {t('model.management.status')}
                 </th>
                 <th className="text-left p-4 text-sm font-semibold text-[var(--color-text-primary)]">
-                  Actions
+                  {t('model.management.actions')}
                 </th>
               </tr>
             </thead>
@@ -619,7 +631,7 @@ export const ModelManagement = () => {
               {filteredModels.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="p-8 text-center text-[var(--color-text-tertiary)]">
-                    No models found matching your filters
+                    {t('model.management.noModelsFound')}
                   </td>
                 </tr>
               ) : (
@@ -651,13 +663,13 @@ export const ModelManagement = () => {
         >
           <div className="flex items-center gap-4">
             <span className="text-sm text-[var(--color-text-primary)]">
-              {selectedModels.size} model{selectedModels.size !== 1 ? 's' : ''} selected
+              {selectedModels.size} {t('model.management.modelsSelected')}
             </span>
             <button
               onClick={() => setSelectedModels(new Set())}
               className="text-sm text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)]"
             >
-              Deselect All
+              {t('model.management.deselectAll')}
             </button>
           </div>
         </div>
@@ -885,13 +897,13 @@ const ModelRow = ({
               {/* Metadata Section */}
               <div>
                 <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-3">
-                  Metadata
+                  {t('model.management.metadata')}
                 </h3>
                 {isEditing ? (
                   <div className="space-y-3">
                     <div>
                       <label className="block text-xs text-[var(--color-text-tertiary)] mb-1">
-                        Display Name
+                        {t('model.management.displayName')}
                       </label>
                       <input
                         type="text"
@@ -902,7 +914,7 @@ const ModelRow = ({
                     </div>
                     <div>
                       <label className="block text-xs text-[var(--color-text-tertiary)] mb-1">
-                        Description
+                        {t('model.management.description')}
                       </label>
                       <textarea
                         value={editedDescription}
@@ -916,13 +928,13 @@ const ModelRow = ({
                         onClick={handleSave}
                         className="px-4 py-2 bg-[var(--color-accent)] text-white rounded hover:bg-[var(--color-accent-dark)] transition-colors"
                       >
-                        Save Changes
+                        {t('model.management.saveChanges')}
                       </button>
                       <button
                         onClick={() => setIsEditing(false)}
                         className="px-4 py-2 bg-[var(--color-surface)] text-[var(--color-text-primary)] rounded hover:bg-[var(--color-surface-hover)] transition-colors"
                       >
-                        Cancel
+                        {t('model.management.cancel')}
                       </button>
                     </div>
                   </div>
@@ -941,15 +953,21 @@ const ModelRow = ({
                       </span>
                     </div>
                     <div>
-                      <span className="text-[var(--color-text-tertiary)]">Context Length:</span>
+                      <span className="text-[var(--color-text-tertiary)]">
+                        {t('model.management.contextLength')}:
+                      </span>
                       <span className="ml-2 text-[var(--color-text-primary)]">
-                        {model.context_length || 'Unknown'}
+                        {model.context_length || t('model.management.unknown')}
                       </span>
                     </div>
                     <div>
-                      <span className="text-[var(--color-text-tertiary)]">Fetched At:</span>
+                      <span className="text-[var(--color-text-tertiary)]">
+                        {t('model.management.fetchedAt')}:
+                      </span>
                       <span className="ml-2 text-[var(--color-text-primary)]">
-                        {model.fetched_at ? new Date(model.fetched_at).toLocaleString() : 'Unknown'}
+                        {model.fetched_at
+                          ? new Date(model.fetched_at).toLocaleString()
+                          : t('model.management.unknown')}
                       </span>
                     </div>
                   </div>
@@ -959,30 +977,30 @@ const ModelRow = ({
               {/* Capabilities Grid */}
               <div>
                 <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-3">
-                  Capabilities
+                  {t('model.management.capabilitiesTitle')}
                 </h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   <CapabilityToggle
                     icon={<MessageSquare size={16} />}
-                    label="Tools"
+                    label={t('model.management.tools')}
                     enabled={model.supports_tools}
                     onToggle={() => onUpdate({ supports_tools: !model.supports_tools })}
                   />
                   <CapabilityToggle
                     icon={<Eye size={16} />}
-                    label="Vision"
+                    label={t('model.management.vision')}
                     enabled={model.supports_vision}
                     onToggle={() => onUpdate({ supports_vision: !model.supports_vision })}
                   />
                   <CapabilityToggle
                     icon={<Wifi size={16} />}
-                    label="Streaming"
+                    label={t('model.management.streaming')}
                     enabled={model.supports_streaming}
                     onToggle={() => onUpdate({ supports_streaming: !model.supports_streaming })}
                   />
                   <CapabilityToggle
                     icon={<Zap size={16} />}
-                    label="Smart Router"
+                    label={t('model.management.smartRouter')}
                     enabled={model.smart_tool_router || false}
                     onToggle={() => onUpdate({ smart_tool_router: !model.smart_tool_router })}
                   />
@@ -993,26 +1011,25 @@ const ModelRow = ({
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">
-                    Aliases ({aliases.length})
+                    {t('model.management.aliases')} ({aliases.length})
                   </h3>
                   <button
                     onClick={handleAddAlias}
                     className="flex items-center gap-1 px-3 py-1 bg-[var(--color-accent)] text-white rounded hover:bg-[var(--color-accent-dark)] transition-colors text-sm"
                   >
                     <Plus size={14} />
-                    Add Alias
+                    {t('model.management.addAlias')}
                   </button>
                 </div>
 
                 {loadingAliases ? (
                   <div className="flex items-center gap-2 text-[var(--color-text-tertiary)] text-sm">
                     <Loader2 size={16} className="animate-spin" />
-                    <span>Loading aliases...</span>
+                    <span>{t('model.management.loadingAliases')}</span>
                   </div>
                 ) : aliases.length === 0 ? (
                   <p className="text-sm text-[var(--color-text-tertiary)]">
-                    No aliases yet. Add an alias to create alternative configurations for this
-                    model.
+                    {t('model.management.noAliasesYet')}
                   </p>
                 ) : (
                   <div className="space-y-2">
@@ -1039,32 +1056,32 @@ const ModelRow = ({
                             <div className="flex flex-wrap gap-1">
                               {alias.agents_enabled && (
                                 <span className="px-2 py-0.5 bg-[var(--color-accent-light)] text-[var(--color-accent)] text-xs rounded">
-                                  Agents
+                                  {t('model.management.agents')}
                                 </span>
                               )}
                               {alias.supports_vision && (
                                 <span className="px-2 py-0.5 bg-[var(--color-success-light)] text-[var(--color-success)] text-xs rounded">
-                                  Vision
+                                  {t('model.management.vision')}
                                 </span>
                               )}
                               {alias.smart_tool_router && (
                                 <span className="px-2 py-0.5 bg-[var(--color-info-light)] text-[var(--color-info)] text-xs rounded">
-                                  Smart Router
+                                  {t('model.management.smartRouter')}
                                 </span>
                               )}
                               {alias.free_tier && (
                                 <span className="px-2 py-0.5 bg-[var(--color-warning-light)] text-[var(--color-warning)] text-xs rounded">
-                                  Free Tier
+                                  {t('model.management.freeTier')}
                                 </span>
                               )}
                               {alias.memory_extractor && (
                                 <span className="px-2 py-0.5 bg-[var(--color-info-light)] text-[var(--color-info)] text-xs rounded">
-                                  Memory Extractor
+                                  {t('model.management.memoryExtractor')}
                                 </span>
                               )}
                               {alias.memory_selector && (
                                 <span className="px-2 py-0.5 bg-[var(--color-info-light)] text-[var(--color-info)] text-xs rounded">
-                                  Memory Selector
+                                  {t('model.management.memorySelector')}
                                 </span>
                               )}
                             </div>
@@ -1202,20 +1219,20 @@ const FetchModelsModal = ({
         onClick={e => e.stopPropagation()}
       >
         <h2 className="text-xl font-bold text-[var(--color-text-primary)] mb-4">
-          Fetch Models from Provider
+          {t('model.management.fetchFromProvider')}
         </h2>
 
         <div className="space-y-4">
           <div>
             <label className="block text-sm text-[var(--color-text-tertiary)] mb-2">
-              Select Provider
+              {t('model.management.selectProvider')}
             </label>
             <select
               value={selectedProvider || ''}
               onChange={e => setSelectedProvider(parseInt(e.target.value))}
               className="w-full px-3 py-2 bg-[var(--color-surface-hover)] text-[var(--color-text-primary)] rounded border border-[var(--color-border)] focus:outline-none focus:border-[var(--color-accent)]"
             >
-              <option value="">Choose a provider...</option>
+              <option value="">{t('model.management.chooseProvider')}</option>
               {providers.map(p => (
                 <option key={p.id} value={p.id}>
                   {p.name}
@@ -1233,12 +1250,12 @@ const FetchModelsModal = ({
               {isFetching ? (
                 <>
                   <Loader2 size={16} className="animate-spin" />
-                  <span>Fetching...</span>
+                  <span>{t('model.management.fetching')}</span>
                 </>
               ) : (
                 <>
                   <Download size={16} />
-                  <span>Fetch Models</span>
+                  <span>{t('model.management.fetchModels')}</span>
                 </>
               )}
             </button>
@@ -1246,7 +1263,7 @@ const FetchModelsModal = ({
               onClick={onClose}
               className="px-4 py-2 bg-[var(--color-surface-hover)] text-[var(--color-text-primary)] rounded hover:bg-[var(--color-surface)] transition-colors"
             >
-              Cancel
+              {t('model.management.cancel')}
             </button>
           </div>
         </div>
@@ -1273,18 +1290,19 @@ const CreateModelModal = ({
         style={{ backdropFilter: 'blur(20px)' }}
         onClick={e => e.stopPropagation()}
       >
-        <h2 className="text-xl font-bold text-[var(--color-text-primary)] mb-4">Create Model</h2>
+        <h2 className="text-xl font-bold text-[var(--color-text-primary)] mb-4">
+          {t('model.management.createModel')}
+        </h2>
 
         <p className="text-sm text-[var(--color-text-secondary)] mb-4">
-          Manual model creation coming soon. For now, use "Fetch Models" to import models from
-          providers.
+          {t('model.management.createModelDesc')}
         </p>
 
         <button
           onClick={onClose}
           className="w-full px-4 py-2 bg-[var(--color-surface-hover)] text-[var(--color-text-primary)] rounded hover:bg-[var(--color-surface)] transition-colors"
         >
-          Close
+          {t('model.management.close')}
         </button>
       </div>
     </div>
@@ -1464,7 +1482,7 @@ const AliasEditorModal = ({
         onClick={e => e.stopPropagation()}
       >
         <h2 className="text-xl font-bold text-[var(--color-text-primary)] mb-4">
-          {isEditing ? 'Edit Alias' : 'Create Alias'}
+          {isEditing ? t('model.management.editAlias') : t('model.management.createAlias')}
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -1472,7 +1490,7 @@ const AliasEditorModal = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-[var(--color-text-primary)] mb-1">
-                Alias Name *
+                {t('model.management.aliasName')} *
               </label>
               <input
                 type="text"
@@ -1483,13 +1501,13 @@ const AliasEditorModal = ({
                 className="w-full px-3 py-2 bg-[var(--color-surface-hover)] text-[var(--color-text-primary)] rounded border border-[var(--color-border)] opacity-60 cursor-not-allowed"
               />
               <p className="text-xs text-[var(--color-text-tertiary)] mt-1">
-                Auto-populated from model ID (read-only)
+                {t('model.management.autoPopulated')}
               </p>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-[var(--color-text-primary)] mb-1">
-                Display Name *
+                {t('model.management.displayNameLabel')} *
               </label>
               <input
                 type="text"
@@ -1500,20 +1518,20 @@ const AliasEditorModal = ({
                 className="w-full px-3 py-2 bg-[var(--color-surface-hover)] text-[var(--color-text-primary)] rounded border border-[var(--color-border)] focus:outline-none focus:border-[var(--color-accent)]"
               />
               <p className="text-xs text-[var(--color-text-tertiary)] mt-1">
-                User-friendly name shown in the UI
+                {t('model.management.userFriendlyName')}
               </p>
             </div>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-[var(--color-text-primary)] mb-1">
-              Description
+              {t('model.management.descriptionLabel')}
             </label>
             <textarea
               value={formData.description}
               onChange={e => updateField('description', e.target.value)}
               rows={3}
-              placeholder="Optional description for this alias"
+              placeholder={t('model.management.optionalDesc')}
               className="w-full px-3 py-2 bg-[var(--color-surface-hover)] text-[var(--color-text-primary)] rounded border border-[var(--color-border)] focus:outline-none focus:border-[var(--color-accent)]"
             />
           </div>
@@ -1521,7 +1539,7 @@ const AliasEditorModal = ({
           {/* Capabilities */}
           <div>
             <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-2">
-              Capabilities
+              {t('model.management.capabilitiesTitle')}
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               <label className="flex items-center gap-2 cursor-pointer">
@@ -1531,7 +1549,9 @@ const AliasEditorModal = ({
                   onChange={e => updateField('supports_vision', e.target.checked)}
                   className="rounded"
                 />
-                <span className="text-sm text-[var(--color-text-primary)]">Supports Vision</span>
+                <span className="text-sm text-[var(--color-text-primary)]">
+                  {t('model.management.supportsVision')}
+                </span>
               </label>
 
               <label className="flex items-center gap-2 cursor-pointer">
@@ -1541,7 +1561,9 @@ const AliasEditorModal = ({
                   onChange={e => updateField('agents_enabled', e.target.checked)}
                   className="rounded"
                 />
-                <span className="text-sm text-[var(--color-text-primary)]">Enable for Agents</span>
+                <span className="text-sm text-[var(--color-text-primary)]">
+                  {t('model.management.enableForAgents')}
+                </span>
               </label>
 
               <label className="flex items-center gap-2 cursor-pointer">
@@ -1551,7 +1573,9 @@ const AliasEditorModal = ({
                   onChange={e => updateField('smart_tool_router', e.target.checked)}
                   className="rounded"
                 />
-                <span className="text-sm text-[var(--color-text-primary)]">Smart Tool Router</span>
+                <span className="text-sm text-[var(--color-text-primary)]">
+                  {t('model.management.smartToolRouter')}
+                </span>
               </label>
 
               <label className="flex items-center gap-2 cursor-pointer">
@@ -1561,7 +1585,9 @@ const AliasEditorModal = ({
                   onChange={e => updateField('free_tier', e.target.checked)}
                   className="rounded"
                 />
-                <span className="text-sm text-[var(--color-text-primary)]">Free Tier</span>
+                <span className="text-sm text-[var(--color-text-primary)]">
+                  {t('model.management.freeTier')}
+                </span>
               </label>
 
               <label className="flex items-center gap-2 cursor-pointer">
@@ -1571,7 +1597,9 @@ const AliasEditorModal = ({
                   onChange={e => updateField('memory_extractor', e.target.checked)}
                   className="rounded"
                 />
-                <span className="text-sm text-[var(--color-text-primary)]">Memory Extractor</span>
+                <span className="text-sm text-[var(--color-text-primary)]">
+                  {t('model.management.memoryExtractor')}
+                </span>
               </label>
 
               <label className="flex items-center gap-2 cursor-pointer">
@@ -1581,7 +1609,9 @@ const AliasEditorModal = ({
                   onChange={e => updateField('memory_selector', e.target.checked)}
                   className="rounded"
                 />
-                <span className="text-sm text-[var(--color-text-primary)]">Memory Selector</span>
+                <span className="text-sm text-[var(--color-text-primary)]">
+                  {t('model.management.memorySelector')}
+                </span>
               </label>
             </div>
           </div>
@@ -1590,7 +1620,7 @@ const AliasEditorModal = ({
           <div>
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">
-                Structured Output Settings
+                {t('model.management.structuredOutput')}
               </h3>
               <button
                 type="button"
@@ -1601,12 +1631,12 @@ const AliasEditorModal = ({
                 {isTesting ? (
                   <>
                     <Loader2 size={14} className="animate-spin" />
-                    <span>Testing...</span>
+                    <span>{t('model.management.testing')}</span>
                   </>
                 ) : (
                   <>
                     <Zap size={14} />
-                    <span>Run Test</span>
+                    <span>{t('model.management.runTest')}</span>
                   </>
                 )}
               </button>
@@ -1615,24 +1645,24 @@ const AliasEditorModal = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs text-[var(--color-text-tertiary)] mb-1">
-                  Support Level
+                  {t('model.management.supportLevel')}
                 </label>
                 <select
                   value={formData.structured_output_support}
                   onChange={e => updateField('structured_output_support', e.target.value)}
                   className="w-full px-3 py-2 bg-[var(--color-surface-hover)] text-[var(--color-text-primary)] rounded border border-[var(--color-border)] focus:outline-none focus:border-[var(--color-accent)]"
                 >
-                  <option value="">Unknown</option>
-                  <option value="excellent">Excellent</option>
-                  <option value="good">Good</option>
-                  <option value="fair">Fair</option>
-                  <option value="poor">Poor</option>
+                  <option value="">{t('model.management.unknownLevel')}</option>
+                  <option value="excellent">{t('model.management.excellent')}</option>
+                  <option value="good">{t('model.management.good')}</option>
+                  <option value="fair">{t('model.management.fair')}</option>
+                  <option value="poor">{t('model.management.poor')}</option>
                 </select>
               </div>
 
               <div>
                 <label className="block text-xs text-[var(--color-text-tertiary)] mb-1">
-                  Compliance %
+                  {t('model.management.compliance')}
                 </label>
                 <input
                   type="number"
@@ -1648,7 +1678,7 @@ const AliasEditorModal = ({
 
               <div>
                 <label className="block text-xs text-[var(--color-text-tertiary)] mb-1">
-                  Speed (ms)
+                  {t('model.management.speed')}
                 </label>
                 <input
                   type="number"
@@ -1663,7 +1693,7 @@ const AliasEditorModal = ({
 
               <div>
                 <label className="block text-xs text-[var(--color-text-tertiary)] mb-1">
-                  Badge
+                  {t('model.management.badge')}
                 </label>
                 <input
                   type="text"
@@ -1676,20 +1706,20 @@ const AliasEditorModal = ({
 
               <div className="md:col-span-2">
                 <label className="block text-xs text-[var(--color-text-tertiary)] mb-1">
-                  Warning Message
+                  {t('model.management.warningMessage')}
                 </label>
                 <input
                   type="text"
                   value={formData.structured_output_warning}
                   onChange={e => updateField('structured_output_warning', e.target.value)}
-                  placeholder="Optional warning about structured output limitations"
+                  placeholder={t('model.management.warningPlaceholder')}
                   className="w-full px-3 py-2 bg-[var(--color-surface-hover)] text-[var(--color-text-primary)] rounded border border-[var(--color-border)] focus:outline-none focus:border-[var(--color-accent)]"
                 />
               </div>
             </div>
 
             <p className="text-xs text-[var(--color-text-tertiary)] mt-2">
-              Click "Run Test" to automatically populate these fields with benchmark results
+              {t('model.management.runTestHint')}
             </p>
           </div>
 
@@ -1703,10 +1733,14 @@ const AliasEditorModal = ({
               {isSaving ? (
                 <>
                   <Loader2 size={16} className="animate-spin" />
-                  <span>Saving...</span>
+                  <span>{t('model.management.saving')}</span>
                 </>
               ) : (
-                <span>{isEditing ? 'Update Alias' : 'Create Alias'}</span>
+                <span>
+                  {isEditing
+                    ? t('model.management.updateAlias')
+                    : t('model.management.createAliasBtn')}
+                </span>
               )}
             </button>
             <button
@@ -1715,7 +1749,7 @@ const AliasEditorModal = ({
               disabled={isSaving}
               className="px-4 py-2 bg-[var(--color-surface-hover)] text-[var(--color-text-primary)] rounded hover:bg-[var(--color-surface)] transition-colors disabled:opacity-50"
             >
-              Cancel
+              {t('model.management.cancel')}
             </button>
           </div>
         </form>

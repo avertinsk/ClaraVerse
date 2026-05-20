@@ -79,30 +79,28 @@ export const SystemModels = () => {
   }> = [
     {
       key: 'tool_selector',
-      label: 'Tool Selector',
-      description:
-        'Model used for intelligent tool selection in chat. Analyzes user requests and selects relevant tools.',
+      label: t('systemModels.toolSelector'),
+      description: t('systemModels.toolSelectorDesc'),
     },
     {
       key: 'memory_extractor',
-      label: 'Memory Extractor',
-      description:
-        'Model used for extracting important facts from conversations to build user memory.',
+      label: t('systemModels.memoryExtractor'),
+      description: t('systemModels.memoryExtractorDesc'),
     },
     {
       key: 'title_generator',
-      label: 'Title Generator',
-      description: 'Model used for generating short, descriptive titles for conversations.',
+      label: t('systemModels.titleGenerator'),
+      description: t('systemModels.titleGeneratorDesc'),
     },
     {
       key: 'workflow_validator',
-      label: 'Workflow Validator',
-      description: 'Model used for validating and checking workflow configurations before execution.',
+      label: t('systemModels.workflowValidator'),
+      description: t('systemModels.workflowValidatorDesc'),
     },
     {
       key: 'agent_default',
-      label: 'Agent Default',
-      description: 'Default model for agent workflows when no specific model is selected.',
+      label: t('systemModels.agentDefault'),
+      description: t('systemModels.agentDefaultDesc'),
     },
   ];
 
@@ -111,12 +109,9 @@ export const SystemModels = () => {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">
-          {t('nav.systemModels')}
+          {t('systemModels.title')}
         </h1>
-        <p className="text-[var(--color-text-secondary)] mt-2">
-          Configure which models are used for different system operations. These assignments override
-          user preferences.
-        </p>
+        <p className="text-[var(--color-text-secondary)] mt-2">{t('systemModels.subtitle')}</p>
       </div>
 
       {/* Info Banner */}
@@ -126,10 +121,11 @@ export const SystemModels = () => {
       >
         <AlertCircle size={20} className="text-[var(--color-info)] flex-shrink-0 mt-0.5" />
         <div>
-          <p className="text-sm text-[var(--color-text-primary)] font-medium">Admin Override</p>
+          <p className="text-sm text-[var(--color-text-primary)] font-medium">
+            {t('systemModels.adminOverride')}
+          </p>
           <p className="text-sm text-[var(--color-text-secondary)] mt-1">
-            System model assignments take priority over user-specific model preferences. Leave a
-            field empty to allow user preferences or use the default model pool.
+            {t('systemModels.overrideDesc')}
           </p>
         </div>
       </div>
@@ -150,7 +146,7 @@ export const SystemModels = () => {
               onChange={e => handleChange(field.key, e.target.value)}
               className="w-full px-4 py-2 bg-[var(--color-surface-hover)] border border-[var(--color-border)] rounded-lg text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent"
             >
-              <option value="">-- Use Default Pool --</option>
+              <option value="">{t('systemModels.useDefaultPool')}</option>
               {models.map(model => (
                 <option key={model.id} value={model.id}>
                   {model.name} ({model.providerName})
@@ -168,7 +164,7 @@ export const SystemModels = () => {
           disabled={isSaving}
           className="px-4 py-2 text-sm font-medium text-[var(--color-text-primary)] bg-[var(--color-surface-hover)] rounded-lg hover:bg-[var(--color-surface)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Reset
+          {t('systemModels.reset')}
         </button>
         <button
           onClick={handleSave}

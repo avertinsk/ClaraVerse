@@ -94,18 +94,20 @@ export const UserManagement = () => {
       <div className="flex items-start justify-between">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">User Management</h1>
+            <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">
+              {t('users.title')}
+            </h1>
             <div
               className="flex items-center gap-2 px-3 py-1.5 bg-green-500/10 border border-green-500/30 rounded-lg cursor-pointer hover:bg-green-500/20 transition-colors"
               onClick={() => setShowGDPRInfo(!showGDPRInfo)}
             >
               <Shield size={16} className="text-green-500" />
-              <span className="text-xs font-semibold text-green-500">GDPR Compliant</span>
+              <span className="text-xs font-semibold text-green-500">
+                {t('users.gdprCompliant')}
+              </span>
             </div>
           </div>
-          <p className="text-[var(--color-text-secondary)] mt-2">
-            Performance metrics and user analytics
-          </p>
+          <p className="text-[var(--color-text-secondary)] mt-2">{t('users.subtitle')}</p>
         </div>
 
         <button
@@ -115,7 +117,9 @@ export const UserManagement = () => {
           style={{ backdropFilter: 'blur(20px)' }}
         >
           <RefreshCw size={16} className={isLoading ? 'animate-spin' : ''} />
-          <span className="text-sm font-medium text-[var(--color-text-primary)]">Refresh</span>
+          <span className="text-sm font-medium text-[var(--color-text-primary)]">
+            {t('users.refresh')}
+          </span>
         </button>
       </div>
 
@@ -129,13 +133,13 @@ export const UserManagement = () => {
             <Shield size={24} className="text-green-500 mt-1" />
             <div className="flex-1">
               <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-2">
-                GDPR Data Privacy Policy
+                {t('users.gdprPolicyTitle')}
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                 <div>
                   <p className="text-sm font-medium text-[var(--color-text-secondary)] mb-2">
-                    Data Collected:
+                    {t('users.dataCollected')}:
                   </p>
                   <ul className="text-xs text-[var(--color-text-tertiary)] space-y-1">
                     {gdprPolicy.data_collected.map((item, idx) => (
@@ -146,7 +150,7 @@ export const UserManagement = () => {
 
                 <div>
                   <p className="text-sm font-medium text-[var(--color-text-secondary)] mb-2">
-                    User Rights (GDPR):
+                    {t('users.userRights')}:
                   </p>
                   <ul className="text-xs text-[var(--color-text-tertiary)] space-y-1">
                     {gdprPolicy.user_rights.map((right, idx) => (
@@ -158,21 +162,27 @@ export const UserManagement = () => {
 
               <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
                 <div className="bg-[var(--color-surface)] rounded-lg p-3">
-                  <p className="text-xs text-[var(--color-text-tertiary)] mb-1">Purpose</p>
+                  <p className="text-xs text-[var(--color-text-tertiary)] mb-1">
+                    {t('users.purpose')}
+                  </p>
                   <p className="text-sm font-medium text-[var(--color-text-primary)]">
                     {gdprPolicy.purpose}
                   </p>
                 </div>
                 <div className="bg-[var(--color-surface)] rounded-lg p-3">
-                  <p className="text-xs text-[var(--color-text-tertiary)] mb-1">Legal Basis</p>
+                  <p className="text-xs text-[var(--color-text-tertiary)] mb-1">
+                    {t('users.legalBasis')}
+                  </p>
                   <p className="text-sm font-medium text-[var(--color-text-primary)]">
                     {gdprPolicy.legal_basis}
                   </p>
                 </div>
                 <div className="bg-[var(--color-surface)] rounded-lg p-3">
-                  <p className="text-xs text-[var(--color-text-tertiary)] mb-1">Retention</p>
+                  <p className="text-xs text-[var(--color-text-tertiary)] mb-1">
+                    {t('users.retention')}
+                  </p>
                   <p className="text-sm font-medium text-[var(--color-text-primary)]">
-                    {gdprPolicy.data_retention_days} days
+                    {gdprPolicy.data_retention_days} {t('users.days')}
                   </p>
                 </div>
               </div>
@@ -205,12 +215,12 @@ export const UserManagement = () => {
             <Users size={24} className="text-[var(--color-accent)]" />
           </div>
           <div>
-            <p className="text-sm text-[var(--color-text-tertiary)]">Total Users</p>
+            <p className="text-sm text-[var(--color-text-tertiary)]">{t('users.totalUsers')}</p>
             <p className="text-3xl font-bold text-[var(--color-text-primary)] mt-1">
               {totalCount.toLocaleString()}
             </p>
             <p className="text-xs text-[var(--color-text-tertiary)] mt-2">
-              Showing {users.length} on page
+              {t('users.showingPage', { count: users.length })}
             </p>
           </div>
         </div>
@@ -224,12 +234,12 @@ export const UserManagement = () => {
             <Activity size={24} className="text-[var(--color-success)]" />
           </div>
           <div>
-            <p className="text-sm text-[var(--color-text-tertiary)]">Total Chats</p>
+            <p className="text-sm text-[var(--color-text-tertiary)]">{t('users.totalChats')}</p>
             <p className="text-3xl font-bold text-[var(--color-text-primary)] mt-1">
               {totalChats.toLocaleString()}
             </p>
             <p className="text-xs text-[var(--color-text-tertiary)] mt-2">
-              {avgChatsPerUser} avg/user
+              {avgChatsPerUser} {t('users.avgPerUser')}
             </p>
           </div>
         </div>
@@ -243,12 +253,12 @@ export const UserManagement = () => {
             <TrendingUp size={24} className="text-[var(--color-info)]" />
           </div>
           <div>
-            <p className="text-sm text-[var(--color-text-tertiary)]">Total Messages</p>
+            <p className="text-sm text-[var(--color-text-tertiary)]">{t('users.totalMessages')}</p>
             <p className="text-3xl font-bold text-[var(--color-text-primary)] mt-1">
               {totalMessages.toLocaleString()}
             </p>
             <p className="text-xs text-[var(--color-text-tertiary)] mt-2">
-              {avgMessagesPerUser} avg/user
+              {avgMessagesPerUser} {t('users.avgPerUser')}
             </p>
           </div>
         </div>
@@ -262,11 +272,13 @@ export const UserManagement = () => {
             <Activity size={24} className="text-[var(--color-warning)]" />
           </div>
           <div>
-            <p className="text-sm text-[var(--color-text-tertiary)]">Agent Runs</p>
+            <p className="text-sm text-[var(--color-text-tertiary)]">{t('users.agentRuns')}</p>
             <p className="text-3xl font-bold text-[var(--color-text-primary)] mt-1">
               {totalAgentRuns.toLocaleString()}
             </p>
-            <p className="text-xs text-[var(--color-text-tertiary)] mt-2">Across all users</p>
+            <p className="text-xs text-[var(--color-text-tertiary)] mt-2">
+              {t('users.acrossAllUsers')}
+            </p>
           </div>
         </div>
 
@@ -279,7 +291,7 @@ export const UserManagement = () => {
             <Clock size={24} className="text-[var(--color-success)]" />
           </div>
           <div>
-            <p className="text-sm text-[var(--color-text-tertiary)]">Active (24h)</p>
+            <p className="text-sm text-[var(--color-text-tertiary)]">{t('users.active24h')}</p>
             <p className="text-3xl font-bold text-[var(--color-text-primary)] mt-1">
               {
                 users.filter(u => {
@@ -289,7 +301,9 @@ export const UserManagement = () => {
                 }).length
               }
             </p>
-            <p className="text-xs text-[var(--color-text-tertiary)] mt-2">Users online recently</p>
+            <p className="text-xs text-[var(--color-text-tertiary)] mt-2">
+              {t('users.usersOnlineRecently')}
+            </p>
           </div>
         </div>
       </div>
@@ -312,7 +326,7 @@ export const UserManagement = () => {
                 value={searchInput}
                 onChange={e => setSearchInput(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && handleSearch()}
-                placeholder="Search by domain..."
+                placeholder={t('users.searchPlaceholder')}
                 className="w-full pl-10 pr-4 py-2 bg-[var(--color-background)] border border-[var(--color-surface-hover)] rounded-lg text-[var(--color-text-primary)] placeholder-[var(--color-text-tertiary)] focus:outline-none focus:border-[var(--color-accent)]"
               />
             </div>
@@ -320,7 +334,7 @@ export const UserManagement = () => {
               onClick={handleSearch}
               className="px-4 py-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white rounded-lg transition-colors"
             >
-              Search
+              {t('users.search')}
             </button>
           </div>
 
@@ -335,11 +349,11 @@ export const UserManagement = () => {
               }}
               className="px-4 py-2 bg-[var(--color-background)] border border-[var(--color-surface-hover)] rounded-lg text-[var(--color-text-primary)] focus:outline-none focus:border-[var(--color-accent)]"
             >
-              <option value="">All Tiers</option>
-              <option value="free">Free</option>
-              <option value="pro">Pro</option>
-              <option value="max">Max</option>
-              <option value="enterprise">Enterprise</option>
+              <option value="">{t('users.allTiers')}</option>
+              <option value="free">{t('users.tierFree')}</option>
+              <option value="pro">{t('users.tierPro')}</option>
+              <option value="max">{t('users.tierMax')}</option>
+              <option value="enterprise">{t('users.tierEnterprise')}</option>
             </select>
           </div>
         </div>
@@ -362,7 +376,7 @@ export const UserManagement = () => {
           style={{ backdropFilter: 'blur(20px)' }}
         >
           <RefreshCw size={32} className="animate-spin mx-auto text-[var(--color-accent)] mb-4" />
-          <p className="text-[var(--color-text-secondary)]">Loading user analytics...</p>
+          <p className="text-[var(--color-text-secondary)]">{t('users.loadingAnalytics')}</p>
         </div>
       ) : users.length === 0 ? (
         <div
@@ -370,7 +384,7 @@ export const UserManagement = () => {
           style={{ backdropFilter: 'blur(20px)' }}
         >
           <Users size={48} className="mx-auto text-[var(--color-text-tertiary)] mb-4" />
-          <p className="text-[var(--color-text-secondary)]">No users found</p>
+          <p className="text-[var(--color-text-secondary)]">{t('users.noUsersFound')}</p>
         </div>
       ) : (
         <>
@@ -383,28 +397,28 @@ export const UserManagement = () => {
                 <thead className="bg-[var(--color-background)]">
                   <tr>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--color-text-tertiary)] uppercase tracking-wider">
-                      User ID (Anonymized)
+                      {t('users.userId')}
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--color-text-tertiary)] uppercase tracking-wider">
-                      Domain
+                      {t('users.domain')}
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--color-text-tertiary)] uppercase tracking-wider">
-                      Tier
+                      {t('users.tier')}
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--color-text-tertiary)] uppercase tracking-wider">
-                      Chats
+                      {t('users.chats')}
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--color-text-tertiary)] uppercase tracking-wider">
-                      Messages
+                      {t('users.messages')}
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--color-text-tertiary)] uppercase tracking-wider">
-                      Agents
+                      {t('users.agents')}
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--color-text-tertiary)] uppercase tracking-wider">
-                      Last Active
+                      {t('users.lastActive')}
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--color-text-tertiary)] uppercase tracking-wider">
-                      Created
+                      {t('users.created')}
                     </th>
                   </tr>
                 </thead>
@@ -421,14 +435,14 @@ export const UserManagement = () => {
                           </span>
                           {user.has_overrides && (
                             <span className="px-2 py-0.5 bg-[var(--color-warning-light)] text-[var(--color-warning)] text-xs rounded">
-                              Override
+                              {t('users.override')}
                             </span>
                           )}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className="text-sm text-[var(--color-text-secondary)]">
-                          {user.email_domain || 'N/A'}
+                          {user.email_domain || t('users.na')}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -458,7 +472,7 @@ export const UserManagement = () => {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--color-text-secondary)]">
                         {user.last_active
                           ? new Date(user.last_active).toLocaleDateString()
-                          : 'Never'}
+                          : t('users.never')}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--color-text-secondary)]">
                         {new Date(user.created_at).toLocaleDateString()}
@@ -474,8 +488,11 @@ export const UserManagement = () => {
           {totalPages > 1 && (
             <div className="flex items-center justify-between">
               <p className="text-sm text-[var(--color-text-secondary)]">
-                Showing {(page - 1) * pageSize + 1} to {Math.min(page * pageSize, totalCount)} of{' '}
-                {totalCount} users
+                {t('users.showingRange', {
+                  from: (page - 1) * pageSize + 1,
+                  to: Math.min(page * pageSize, totalCount),
+                  total: totalCount,
+                })}
               </p>
 
               <div className="flex items-center gap-2">
@@ -489,7 +506,7 @@ export const UserManagement = () => {
                 </button>
 
                 <span className="px-4 py-2 text-sm text-[var(--color-text-primary)]">
-                  Page {page} of {totalPages}
+                  {t('users.pageOf', { current: page, total: totalPages })}
                 </span>
 
                 <button

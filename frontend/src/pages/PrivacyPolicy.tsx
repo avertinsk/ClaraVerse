@@ -18,18 +18,14 @@ export const PrivacyPolicy = () => {
           {/* Hero Section */}
           <div className="privacy-hero">
             <h1>{t('privacyPolicy.title')}</h1>
-            <p className="privacy-tagline">
-              {t('privacyPolicy.tagline')}
-            </p>
+            <p className="privacy-tagline">{t('privacyPolicy.tagline')}</p>
             <p className="privacy-updated">{t('privacyPolicy.lastUpdated')}</p>
           </div>
 
           {/* Quick Summary */}
           <section className="privacy-summary">
             <h2>{t('privacyPolicy.shortVersion')}</h2>
-            <p>
-              {t('privacyPolicy.shortVersionText')}
-            </p>
+            <p>{t('privacyPolicy.shortVersionText')}</p>
           </section>
 
           {/* Data We Collect */}
@@ -37,49 +33,44 @@ export const PrivacyPolicy = () => {
             <h2>{t('privacyPolicy.dataCollect')}</h2>
 
             <h3>{t('privacyPolicy.accountInfo')}</h3>
-            <p>
-              User ID and email address provided by your authentication provider (Supabase). This is
-              the minimum needed to identify your account.
-            </p>
+            <p>{t('privacyPolicy.accountInfoDesc')}</p>
 
             <h3>{t('privacyPolicy.contentCreate')}</h3>
             <ul>
               <li>
-                <strong>{t('privacyPolicy.conversations')}</strong> — Chat messages and conversation history
+                <strong>{t('privacyPolicy.conversations')}</strong> —{' '}
+                {t('privacyPolicy.conversationsDesc')}
               </li>
               <li>
-                <strong>{t('privacyPolicy.uploadedFiles')}</strong> — Images, PDFs, CSV, Excel, JSON, and other files
-                you upload for AI processing
+                <strong>{t('privacyPolicy.uploadedFiles')}</strong> —{' '}
+                {t('privacyPolicy.uploadedFilesDesc')}
               </li>
               <li>
-                <strong>{t('privacyPolicy.agentsWorkflows')}</strong> — Custom AI agents and workflows you build
+                <strong>{t('privacyPolicy.agentsWorkflows')}</strong> —{' '}
+                {t('privacyPolicy.agentsWorkflowsDesc')}
               </li>
               <li>
-                <strong>{t('privacyPolicy.credentials')}</strong> — Encrypted API keys for external providers you
-                configure
+                <strong>{t('privacyPolicy.credentials')}</strong> —{' '}
+                {t('privacyPolicy.credentialsDesc')}
               </li>
             </ul>
 
             <h3>{t('privacyPolicy.usageData')}</h3>
-            <p>
-              Timestamps, model selections, and feature usage patterns. This helps us improve the
-              service and debug issues.
-            </p>
+            <p>{t('privacyPolicy.usageDataDesc')}</p>
           </section>
 
           {/* How We Use Your Data */}
           <section className="privacy-section">
             <h2>{t('privacyPolicy.howUse')}</h2>
             <ul>
-              <li>To provide and operate ClaraVerse services</li>
-              <li>To process your requests through AI model providers</li>
-              <li>To sync your data across devices (when you enable cloud sync)</li>
-              <li>To authenticate and secure your account</li>
-              <li>To improve the service based on usage patterns</li>
+              <li>{t('privacyPolicy.howUse.operate')}</li>
+              <li>{t('privacyPolicy.howUse.process')}</li>
+              <li>{t('privacyPolicy.howUse.sync')}</li>
+              <li>{t('privacyPolicy.howUse.auth')}</li>
+              <li>{t('privacyPolicy.howUse.improve')}</li>
             </ul>
             <p className="privacy-legal">
-              <strong>Legal Basis:</strong> Legitimate interest in providing the service (GDPR
-              Article 6(1)(f))
+              <strong>{t('privacyPolicy.legalBasis')}</strong> {t('privacyPolicy.legalBasisText')}
             </p>
           </section>
 
@@ -89,31 +80,31 @@ export const PrivacyPolicy = () => {
             <table className="privacy-table">
               <thead>
                 <tr>
-                  <th>Data Type</th>
-                  <th>Retention Period</th>
-                  <th>Notes</th>
+                  <th>{t('privacyPolicy.table.dataType')}</th>
+                  <th>{t('privacyPolicy.table.retentionPeriod')}</th>
+                  <th>{t('privacyPolicy.table.notes')}</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
                   <td>{t('privacyPolicy.tempFiles')}</td>
-                  <td>30 minutes</td>
-                  <td>Auto-deleted after processing</td>
+                  <td>{t('privacyPolicy.retention.tempPeriod')}</td>
+                  <td>{t('privacyPolicy.retention.tempNotes')}</td>
                 </tr>
                 <tr>
-                  <td>Local Conversations</td>
-                  <td>Until you clear them</td>
-                  <td>Stored only on your device</td>
+                  <td>{t('privacyPolicy.localConversations')}</td>
+                  <td>{t('privacyPolicy.retention.localPeriod')}</td>
+                  <td>{t('privacyPolicy.retention.localNotes')}</td>
                 </tr>
                 <tr>
-                  <td>Cloud-Synced Data</td>
-                  <td>Until you delete it</td>
-                  <td>AES-256 encrypted at rest</td>
+                  <td>{t('privacyPolicy.cloudData')}</td>
+                  <td>{t('privacyPolicy.retention.cloudPeriod')}</td>
+                  <td>{t('privacyPolicy.retention.cloudNotes')}</td>
                 </tr>
                 <tr>
-                  <td>Audit Logs</td>
-                  <td>90 days</td>
-                  <td>Security & compliance only</td>
+                  <td>{t('privacyPolicy.auditLogs')}</td>
+                  <td>{t('privacyPolicy.retention.auditPeriod')}</td>
+                  <td>{t('privacyPolicy.retention.auditNotes')}</td>
                 </tr>
               </tbody>
             </table>
@@ -122,44 +113,44 @@ export const PrivacyPolicy = () => {
           {/* Your Rights */}
           <section className="privacy-section">
             <h2>{t('privacyPolicy.yourRights')}</h2>
-            <p>You have full control over your data:</p>
+            <p>{t('privacyPolicy.yourRightsDesc')}</p>
 
             <div className="privacy-rights">
               <div className="privacy-right">
                 <h4>{t('privacyPolicy.accessData')}</h4>
-                <p>Download all your personal data at any time from Settings → Account.</p>
-                <code>Article 15</code>
+                <p>{t('privacyPolicy.accessDataDesc')}</p>
+                <code>{t('privacyPolicy.gdpr.article15')}</code>
               </div>
               <div className="privacy-right">
                 <h4>{t('privacyPolicy.deleteData')}</h4>
-                <p>Delete your account and all associated data permanently.</p>
-                <code>Article 17</code>
+                <p>{t('privacyPolicy.deleteDataDesc')}</p>
+                <code>{t('privacyPolicy.gdpr.article17')}</code>
               </div>
               <div className="privacy-right">
                 <h4>{t('privacyPolicy.portability')}</h4>
-                <p>Export your data in machine-readable JSON format.</p>
-                <code>Article 20</code>
+                <p>{t('privacyPolicy.portabilityDesc')}</p>
+                <code>{t('privacyPolicy.gdpr.article20')}</code>
               </div>
             </div>
           </section>
 
           {/* Third Parties */}
           <section className="privacy-section">
-            <h2>5. Third-Party Services</h2>
+            <h2>{t('privacyPolicy.thirdParty')}</h2>
 
             <div className="privacy-third-party">
-              <h4>Supabase</h4>
-              <p>Authentication and user management</p>
-              <span className="privacy-data-shared">Data shared: User ID, email, auth tokens</span>
+              <h4>{t('privacyPolicy.thirdParty.supabase')}</h4>
+              <p>{t('privacyPolicy.thirdParty.supabaseDesc')}</p>
+              <span className="privacy-data-shared">
+                {t('privacyPolicy.thirdParty.supabaseShared')}
+              </span>
             </div>
 
             <div className="privacy-third-party">
-              <h4>AI Model Providers</h4>
-              <p>Processing chat messages and generating responses</p>
+              <h4>{t('privacyPolicy.thirdParty.aiProviders')}</h4>
+              <p>{t('privacyPolicy.thirdParty.aiProvidersDesc')}</p>
               <span className="privacy-data-shared">
-                Data shared: Messages and file content you send. Provider varies based on your
-                selection (OpenAI, Anthropic, Google, etc.) <br /> (Note: TEE Provider never store
-                data and they cannot access it as well)
+                {t('privacyPolicy.thirdParty.aiProvidersShared')}
               </span>
             </div>
           </section>
@@ -168,22 +159,19 @@ export const PrivacyPolicy = () => {
           <section className="privacy-section">
             <h2>{t('privacyPolicy.security')}</h2>
             <ul>
-              <li>AES-256-GCM encryption for sensitive data at rest</li>
-              <li>Bcrypt hashing for API key storage</li>
-              <li>JWT-based authentication with secure token handling</li>
-              <li>HTTPS encryption for all data in transit</li>
-              <li>Rate limiting and DDoS protection</li>
-              <li>Automatic data expiration for temporary files</li>
+              <li>{t('privacyPolicy.security.encryption')}</li>
+              <li>{t('privacyPolicy.security.bcrypt')}</li>
+              <li>{t('privacyPolicy.security.jwt')}</li>
+              <li>{t('privacyPolicy.security.https')}</li>
+              <li>{t('privacyPolicy.security.rateLimit')}</li>
+              <li>{t('privacyPolicy.security.expiration')}</li>
             </ul>
           </section>
 
           {/* Cookies */}
           <section className="privacy-section">
-            <h2>7. Cookies</h2>
-            <p>
-              We use minimal cookies for authentication purposes only. No tracking cookies, no
-              third-party analytics, no advertising cookies.
-            </p>
+            <h2>{t('privacyPolicy.cookies')}</h2>
+            <p>{t('privacyPolicy.cookiesDesc')}</p>
           </section>
 
           {/* Changes */}
@@ -198,7 +186,7 @@ export const PrivacyPolicy = () => {
           {/* Contact */}
           <section className="privacy-section privacy-contact">
             <h2>{t('privacyPolicy.contact')}</h2>
-            <p>Questions about this policy or want to exercise your rights?</p>
+            <p>{t('privacyPolicy.contactDesc')}</p>
             <a href="mailto:privacy@claraverse.app" className="privacy-email-link">
               privacy@claraverse.app
             </a>
@@ -206,10 +194,7 @@ export const PrivacyPolicy = () => {
 
           {/* Footer */}
           <footer className="privacy-footer">
-            <p>
-              This policy is written in plain language because we believe privacy policies shouldn't
-              require a law degree to understand.
-            </p>
+            <p>{t('privacyPolicy.footer')}</p>
           </footer>
         </article>
       </main>

@@ -176,8 +176,10 @@ export const ProviderManagement = () => {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">Provider Management</h1>
-        <p className="text-[var(--color-text-secondary)]">Loading providers...</p>
+        <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">
+          {t('provider.management.title')}
+        </h1>
+        <p className="text-[var(--color-text-secondary)]">{t('model.management.loading')}</p>
       </div>
     );
   }
@@ -185,7 +187,9 @@ export const ProviderManagement = () => {
   if (error) {
     return (
       <div className="space-y-6">
-        <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">Provider Management</h1>
+        <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">
+          {t('provider.management.title')}
+        </h1>
         <div
           className="bg-[var(--color-error-light)] rounded-lg p-4"
           style={{ backdropFilter: 'blur(20px)' }}
@@ -196,7 +200,7 @@ export const ProviderManagement = () => {
           onClick={loadProviders}
           className="px-4 py-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white rounded-lg transition-colors"
         >
-          Retry
+          {t('model.management.retry')}
         </button>
       </div>
     );
@@ -210,10 +214,10 @@ export const ProviderManagement = () => {
       <div className="flex items-start justify-between">
         <div>
           <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">
-            Provider Management
+            {t('provider.management.title')}
           </h1>
           <p className="text-[var(--color-text-secondary)] mt-2">
-            Manage AI providers and model configurations
+            {t('provider.management.subtitle')}
           </p>
         </div>
         <button
@@ -222,7 +226,7 @@ export const ProviderManagement = () => {
           style={{ backdropFilter: 'blur(20px)' }}
         >
           <Plus size={18} />
-          Add Provider
+          {t('provider.management.addProvider')}
         </button>
       </div>
 
@@ -235,7 +239,7 @@ export const ProviderManagement = () => {
           />
           <input
             type="text"
-            placeholder="Search providers or models..."
+            placeholder={t('provider.management.searchPlaceholder')}
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-4 py-2 bg-[var(--color-surface)] rounded-lg text-[var(--color-text-primary)] placeholder-[var(--color-text-tertiary)] focus:outline-none focus:bg-[var(--color-surface-hover)] transition-colors"
@@ -252,7 +256,7 @@ export const ProviderManagement = () => {
             }`}
             style={{ backdropFilter: 'blur(20px)' }}
           >
-            All ({providersConfig?.providers?.length || 0})
+            {t('provider.management.all')} ({providersConfig?.providers?.length || 0})
           </button>
           <button
             onClick={() => setFilter('enabled')}
@@ -263,7 +267,8 @@ export const ProviderManagement = () => {
             }`}
             style={{ backdropFilter: 'blur(20px)' }}
           >
-            Enabled ({providersConfig?.providers?.filter(p => p.enabled).length || 0})
+            {t('provider.management.enabled')} (
+            {providersConfig?.providers?.filter(p => p.enabled).length || 0})
           </button>
           <button
             onClick={() => setFilter('disabled')}
@@ -274,7 +279,8 @@ export const ProviderManagement = () => {
             }`}
             style={{ backdropFilter: 'blur(20px)' }}
           >
-            Disabled ({providersConfig?.providers?.filter(p => !p.enabled).length || 0})
+            {t('provider.management.disabled')} (
+            {providersConfig?.providers?.filter(p => !p.enabled).length || 0})
           </button>
         </div>
       </div>
@@ -346,45 +352,47 @@ export const ProviderManagement = () => {
                         ) : (
                           <Circle size={14} strokeWidth={2} />
                         )}
-                        {provider.enabled ? 'Enabled' : 'Disabled'}
+                        {provider.enabled
+                          ? t('provider.management.enabledStatus')
+                          : t('provider.management.disabledStatus')}
                       </span>
 
                       {provider.secure && (
                         <span className="flex items-center gap-1.5 px-2 py-1 text-xs font-medium rounded bg-[var(--color-info-light)] text-[var(--color-info)]">
                           <Shield size={14} strokeWidth={2} />
-                          Private TEE
+                          {t('provider.management.privateTee')}
                         </span>
                       )}
 
                       {provider.audio_only && (
                         <span className="flex items-center gap-1.5 px-2 py-1 text-xs font-medium rounded bg-[var(--color-accent-light)] text-[var(--color-accent)]">
                           <Mic size={14} strokeWidth={2} />
-                          Audio
+                          {t('provider.management.audio')}
                         </span>
                       )}
 
                       {provider.image_only && (
                         <span className="flex items-center gap-1.5 px-2 py-1 text-xs font-medium rounded bg-[var(--color-warning-light)] text-[var(--color-warning)]">
                           <ImageIcon size={14} strokeWidth={2} />
-                          Image
+                          {t('provider.management.image')}
                         </span>
                       )}
 
                       <span className="px-2 py-1 text-xs font-medium rounded bg-[var(--color-surface-hover)] text-[var(--color-text-secondary)]">
                         {modelSource === 'dynamic'
-                          ? 'Dynamic Models'
+                          ? t('provider.management.dynamicModels')
                           : modelSource === 'default'
-                            ? '1 Default Model'
+                            ? t('provider.management.defaultModel')
                             : modelSource === 'aliases'
                               ? `${modelCount} ${modelCount === 1 ? t('provider.modelCountSingular') : t('provider.modelCountPlural')}`
-                              : 'No Models'}
+                              : t('provider.management.noModels')}
                       </span>
                     </div>
 
                     {/* API Key */}
                     <div className="mt-3">
                       <span className="text-xs text-[var(--color-text-tertiary)]">
-                        API Key:{' '}
+                        {t('provider.management.apiKey')}:{' '}
                         <code className="bg-[var(--color-background)] px-2 py-1 rounded ml-1 text-[var(--color-text-secondary)]">
                           {maskApiKey(provider.api_key)}
                         </code>
@@ -460,7 +468,7 @@ export const ProviderManagement = () => {
                   {provider.recommended_models && (
                     <div>
                       <h4 className="text-sm font-semibold text-[var(--color-text-primary)] mb-2">
-                        Recommended:
+                        {t('provider.management.recommended')}:
                       </h4>
                       <div className="flex flex-wrap gap-2">
                         {provider.recommended_models.top && (
@@ -495,16 +503,16 @@ export const ProviderManagement = () => {
                   {modelSource === 'default' && provider.default_model && (
                     <div>
                       <h4 className="text-sm font-semibold text-[var(--color-text-primary)] mb-2">
-                        Default Model:
+                        {t('provider.management.defaultModelLabel')}:
                       </h4>
                       <div className="bg-[var(--color-surface)] rounded-lg p-3">
                         <p className="text-sm font-medium text-[var(--color-text-primary)]">
                           {provider.default_model}
                         </p>
                         <p className="text-xs text-[var(--color-text-tertiary)] mt-1">
-                          {provider.audio_only && 'Audio generation model'}
-                          {provider.image_only && 'Image generation model'}
-                          {provider.image_edit_only && 'Image editing model'}
+                          {provider.audio_only && t('provider.management.audioModel')}
+                          {provider.image_only && t('provider.management.imageModel')}
+                          {provider.image_edit_only && t('provider.management.imageEditModel')}
                         </p>
                       </div>
                     </div>
@@ -514,7 +522,7 @@ export const ProviderManagement = () => {
                   {modelSource === 'dynamic' && provider.filters && provider.filters.length > 0 && (
                     <div>
                       <h4 className="text-sm font-semibold text-[var(--color-text-primary)] mb-2">
-                        Model Filters:
+                        {t('provider.management.modelFilters')}:
                       </h4>
                       <div className="space-y-2">
                         {provider.filters.map((filter, idx) => (
@@ -552,16 +560,16 @@ export const ProviderManagement = () => {
                         <thead>
                           <tr className="opacity-60">
                             <th className="text-left py-2 text-xs font-medium text-[var(--color-text-tertiary)] uppercase">
-                              Model
+                              {t('provider.management.modelLabel')}
                             </th>
                             <th className="text-left py-2 text-xs font-medium text-[var(--color-text-tertiary)] uppercase">
-                              Capabilities
+                              {t('provider.management.capabilitiesLabel')}
                             </th>
                             <th className="text-left py-2 text-xs font-medium text-[var(--color-text-tertiary)] uppercase">
-                              Output Quality
+                              {t('provider.management.outputQuality')}
                             </th>
                             <th className="text-right py-2 text-xs font-medium text-[var(--color-text-tertiary)] uppercase">
-                              Speed
+                              {t('provider.management.speed')}
                             </th>
                           </tr>
                         </thead>
@@ -677,7 +685,7 @@ export const ProviderManagement = () => {
           style={{ backdropFilter: 'blur(20px)' }}
         >
           <p className="text-[var(--color-text-tertiary)]">
-            No providers found matching your filters
+            {t('provider.management.noProvidersMatch')}
           </p>
         </div>
       )}
@@ -702,8 +710,8 @@ export const ProviderManagement = () => {
           setProviderToDelete(null);
         }}
         onConfirm={handleDeleteConfirm}
-        title="Delete Provider"
-        message={`Are you sure you want to delete "${providerToDelete?.name}"? This will also remove all associated models and cannot be undone.`}
+        title={t('provider.management.deleteTitle')}
+        message={t('provider.management.deleteMessage', { name: providerToDelete?.name })}
         confirmText={t('provider.confirmDelete')}
         cancelText={t('provider.cancelDelete')}
         variant="danger"
