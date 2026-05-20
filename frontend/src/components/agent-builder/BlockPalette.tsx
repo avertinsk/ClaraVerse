@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Brain,
   Globe,
@@ -385,6 +386,7 @@ interface BlockPaletteProps {
 }
 
 export function BlockPalette({ className, onClose }: BlockPaletteProps) {
+  const { t } = useTranslation('agents');
   const { addBlock, workflow } = useAgentBuilderStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [showIntegrations, setShowIntegrations] = useState(false);
@@ -434,7 +436,7 @@ export function BlockPalette({ className, onClose }: BlockPaletteProps) {
   const handleAddBlock = useCallback(
     (blockDef: BlockDef) => {
       if (!workflow) {
-        toast.warning('Create or select an agent first to add blocks.');
+        toast.warning(t('blockPalette.noWorkflowToast'));
         return;
       }
 
@@ -456,13 +458,13 @@ export function BlockPalette({ className, onClose }: BlockPaletteProps) {
 
       addBlock(newBlock);
     },
-    [workflow, addBlock]
+    [workflow, addBlock, t]
   );
 
   const handleAddIntegrationTool = useCallback(
     (tool: ToolItem) => {
       if (!workflow) {
-        toast.warning('Create or select an agent first to add blocks.');
+        toast.warning(t('blockPalette.noWorkflowToast'));
         return;
       }
 
@@ -488,7 +490,7 @@ export function BlockPalette({ className, onClose }: BlockPaletteProps) {
 
       addBlock(newBlock);
     },
-    [workflow, addBlock]
+    [workflow, addBlock, t]
   );
 
   // Filter blocks by search
@@ -528,12 +530,12 @@ export function BlockPalette({ className, onClose }: BlockPaletteProps) {
       {/* Header */}
       <div className="px-3 py-2 border-b border-[var(--color-border)]">
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">Add Blocks</h3>
+          <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">{t('blockPalette.title')}</h3>
           {onClose && (
             <button
               onClick={onClose}
               className="p-1 rounded-md text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-tertiary)] transition-colors"
-              title="Hide Block Palette"
+              title={t('blockPalette.hide')}
             >
               <PanelLeftClose size={16} />
             </button>
@@ -548,7 +550,7 @@ export function BlockPalette({ className, onClose }: BlockPaletteProps) {
             type="text"
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            placeholder="Search blocks & tools..."
+            placeholder={t('blockPalette.search')}
             className="w-full pl-8 pr-3 py-1.5 text-xs rounded-md bg-[var(--color-bg-tertiary)] border border-[var(--color-border)] text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] focus:outline-none focus:border-[var(--color-accent)]"
           />
         </div>
@@ -558,7 +560,7 @@ export function BlockPalette({ className, onClose }: BlockPaletteProps) {
       {!hasWorkflow && (
         <div className="mx-3 mt-2 p-2 rounded-md bg-amber-500/10 border border-amber-500/20">
           <p className="text-[11px] text-amber-400">
-            Create or select an agent first to add blocks to the canvas.
+            {t('blockPalette.noWorkflow')}
           </p>
         </div>
       )}
@@ -587,7 +589,7 @@ export function BlockPalette({ className, onClose }: BlockPaletteProps) {
         {/* No results for blocks */}
         {query && filteredCategories.length === 0 && filteredIntegrations.length === 0 && (
           <p className="text-xs text-[var(--color-text-tertiary)] text-center py-4">
-            No blocks match &quot;{searchQuery}&quot;
+            {t('blockPalette.noResults', { query: searchQuery })}
           </p>
         )}
 
@@ -598,7 +600,7 @@ export function BlockPalette({ className, onClose }: BlockPaletteProps) {
             className="flex items-center gap-1.5 w-full px-1 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] transition-colors"
           >
             <Plug size={12} />
-            Integrations
+            {t('blockPalette.integrations')}
             {totalIntegrationCount > 0 && (
               <span className="text-[10px] font-normal opacity-60">{totalIntegrationCount}</span>
             )}
@@ -611,7 +613,7 @@ export function BlockPalette({ className, onClose }: BlockPaletteProps) {
             />
           </button>
           <p className="px-1 text-[10px] text-[var(--color-text-tertiary)] mb-1">
-            Pre-configured tool blocks (Discord, Slack, GitHub, etc.)
+            {t('blockPalette.integrationsDesc')}
           </p>
 
           {showIntegrations && (
@@ -619,7 +621,7 @@ export function BlockPalette({ className, onClose }: BlockPaletteProps) {
               {isLoadingTools ? (
                 <div className="flex items-center gap-2 px-2 py-3 text-xs text-[var(--color-text-tertiary)]">
                   <Loader2 size={14} className="animate-spin" />
-                  Loading integrations...
+                  {t('blockPalette.loadingIntegrations')}
                 </div>
               ) : (
                 (query ? filteredIntegrations : integrationTools).map(cat => (

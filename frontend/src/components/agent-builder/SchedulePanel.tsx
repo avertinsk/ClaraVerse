@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Clock,
   Play,
@@ -47,6 +48,7 @@ export function SchedulePanel({
   agentStatus,
   onDeployAgent,
 }: SchedulePanelProps) {
+  const { t } = useTranslation('agents');
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -284,12 +286,12 @@ export function SchedulePanel({
       >
         <div className="flex items-center gap-2">
           <Clock size={16} className="text-[var(--color-accent)]" />
-          <span className="text-sm font-medium text-[var(--color-text-primary)]">Schedule</span>
+          <span className="text-sm font-medium text-[var(--color-text-primary)]">{t('schedulePanel.title')}</span>
           {!isLoading && schedule !== null && schedule.enabled && (
             <>
-              <span className="px-1.5 py-0.5 text-[10px] rounded bg-[var(--color-accent)]/20 text-[var(--color-accent)]">
-                Active
-              </span>
+                <span className="px-1.5 py-0.5 text-[10px] rounded bg-[var(--color-accent)]/20 text-[var(--color-accent)]">
+                  {t('schedulePanel.active')}
+                </span>
               {countdown && (
                 <span className="text-[10px] text-[var(--color-text-secondary)] font-mono">
                   {countdown}
@@ -314,18 +316,16 @@ export function SchedulePanel({
               <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30">
                 <div className="flex items-center gap-2 text-amber-500 mb-2">
                   <FileWarning size={16} />
-                  <span className="text-sm font-medium">Scheduling Not Available</span>
+                  <span className="text-sm font-medium">{t('schedulePanel.schedulingNotAvailable')}</span>
                 </div>
                 <p className="text-xs text-[var(--color-text-secondary)]">
-                  This workflow uses file inputs which expire after 30 minutes. Schedules cannot
-                  provide fresh files at execution time.
+                  {t('schedulePanel.fileInputWarning')}
                 </p>
               </div>
 
               <div className="p-3 rounded-lg bg-[var(--color-surface)]">
                 <p className="text-xs text-[var(--color-text-secondary)]">
-                  Use the <strong className="text-[var(--color-text-primary)]">API Docs</strong> tab
-                  to learn how to trigger this agent programmatically with file uploads.
+                  {t('schedulePanel.apiDocsHint')}
                 </p>
               </div>
             </div>
@@ -364,7 +364,7 @@ export function SchedulePanel({
                 // No schedule exists yet - show informational message
                 <div className="flex items-center gap-2 p-2 rounded bg-[var(--color-surface)] text-xs text-[var(--color-text-tertiary)]">
                   <Clock size={14} />
-                  <span>No schedule configured. Create one below.</span>
+                  <span>{t('schedulePanel.noSchedule')}</span>
                 </div>
               ) : (
                 // Schedule exists - show enable/disable toggle
@@ -389,7 +389,7 @@ export function SchedulePanel({
                       />
                     </div>
                     <span className="text-sm text-[var(--color-text-secondary)]">
-                      {enabled ? 'Enabled' : 'Disabled'}
+                      {enabled ? t('schedulePanel.enabled') : t('schedulePanel.disabled')}
                     </span>
                   </label>
                   {schedule.enabled && countdown && (
@@ -426,7 +426,7 @@ export function SchedulePanel({
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-medium text-[var(--color-text-secondary)]">
-                    Input Template (JSON)
+                    {t('schedulePanel.inputTemplate')}
                   </label>
                   {startBlockInput && Object.keys(startBlockInput).length > 0 && (
                     <button
@@ -435,7 +435,7 @@ export function SchedulePanel({
                       title="Use the test input from your workflow's Start block"
                     >
                       <Sparkles size={12} />
-                      Use workflow input
+                      {t('schedulePanel.useWorkflowInput')}
                     </button>
                   )}
                 </div>
@@ -443,12 +443,12 @@ export function SchedulePanel({
                   value={inputTemplate}
                   onChange={e => setInputTemplate(e.target.value)}
                   rows={3}
-                  placeholder='{ "topic": "news" }'
+                  placeholder={t('schedulePanel.placeholder')}
                   className="w-full px-3 py-2 rounded-lg bg-[var(--color-bg-primary)] border border-[var(--color-border)] text-sm text-[var(--color-text-primary)] font-mono resize-none focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent"
                 />
                 {startBlockInput && Object.keys(startBlockInput).length > 0 && (
                   <p className="text-[10px] text-[var(--color-text-tertiary)]">
-                    Your workflow has a test input saved. Click "Use workflow input" to apply it.
+                    {t('schedulePanel.workflowInputHint')}
                   </p>
                 )}
               </div>
@@ -480,7 +480,7 @@ export function SchedulePanel({
                   className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg bg-[var(--color-accent)] text-white text-sm font-medium hover:bg-[var(--color-accent-hover)] disabled:opacity-50 transition-colors"
                 >
                   {isSaving ? <Loader2 size={14} className="animate-spin" /> : null}
-                  {schedule ? 'Update' : 'Create'} Schedule
+                  {schedule ? t('schedulePanel.update') : t('schedulePanel.create')} {t('schedulePanel.schedule')}
                 </button>
 
                 {schedule && (
@@ -489,7 +489,7 @@ export function SchedulePanel({
                       onClick={handleTriggerNow}
                       disabled={isTriggering || !schedule.enabled}
                       className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] text-sm hover:bg-[var(--color-surface-hover)] disabled:opacity-50 transition-colors"
-                      title="Run now"
+                      title={t('schedulePanel.runNow')}
                     >
                       {isTriggering ? (
                         <Loader2 size={14} className="animate-spin" />
@@ -502,7 +502,7 @@ export function SchedulePanel({
                       disabled={isSaving}
                       className="px-3 py-2 rounded-lg text-red-400 text-sm hover:bg-red-500/10 disabled:opacity-50 transition-colors"
                     >
-                      Delete
+                      {t('schedulePanel.delete')}
                     </button>
                   </>
                 )}

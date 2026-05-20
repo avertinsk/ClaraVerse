@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Brain,
   Variable,
@@ -119,6 +120,7 @@ export function MobileBlockListView({
   selectedBlockId,
   onBlockSelect,
 }: MobileBlockListViewProps) {
+  const { t } = useTranslation('agents');
   // Sort blocks by execution order
   const orderedBlocks = useMemo(
     () => sortBlocksByExecutionOrder(blocks, connections),
@@ -129,9 +131,9 @@ export function MobileBlockListView({
     return (
       <div className="flex-1 flex items-center justify-center p-6 text-center">
         <div className="space-y-2">
-          <p className="text-[var(--color-text-secondary)]">No blocks in workflow</p>
+          <p className="text-[var(--color-text-secondary)]">{t('mobileBlockList.noBlocks')}</p>
           <p className="text-sm text-[var(--color-text-tertiary)]">
-            Chat with the agent to build your workflow
+            {t('mobileBlockList.chatToBuild')}
           </p>
         </div>
       </div>
@@ -143,7 +145,7 @@ export function MobileBlockListView({
       {/* Header */}
       <div className="sticky top-0 z-10 px-4 py-3 bg-[var(--color-bg-primary)] border-b border-[var(--color-border)]">
         <h2 className="text-sm font-semibold text-[var(--color-text-secondary)] uppercase tracking-wide">
-          Workflow Blocks ({blocks.length})
+          {t('mobileBlockList.workflowBlocks', { count: blocks.length })}
         </h2>
       </div>
 
@@ -193,7 +195,7 @@ export function MobileBlockListView({
                       </span>
                       {isStartBlock && (
                         <span className="text-xs px-1.5 py-0.5 rounded bg-green-500/20 text-green-400">
-                          Start
+                          {t('mobileBlockList.start')}
                         </span>
                       )}
                     </div>

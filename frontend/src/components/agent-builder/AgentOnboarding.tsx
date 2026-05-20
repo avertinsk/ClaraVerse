@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ArrowRight, Loader2, ChevronDown, Sparkles, Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAgentBuilderStore } from '@/store/useAgentBuilderStore';
@@ -62,6 +63,7 @@ function detectRequiresInput(userMessage: string): boolean {
 }
 
 export function AgentOnboarding() {
+  const { t } = useTranslation('agents');
   const [inputValue, setInputValue] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [suggestions, setSuggestions] = useState<AgentSuggestion[]>([]);
@@ -470,10 +472,10 @@ export function AgentOnboarding() {
         {/* Header */}
         <div className="text-center space-y-4">
           <h1 className="text-4xl font-bold text-[var(--color-text-primary)] tracking-tight">
-            What would you like to build?
+            {t('onboarding.title')}
           </h1>
           <p className="text-lg text-[var(--color-text-secondary)] max-w-lg mx-auto">
-            Describe your workflow and I'll build the initial structure for you.
+            {t('onboarding.subtitle')}
           </p>
         </div>
 
@@ -504,9 +506,9 @@ export function AgentOnboarding() {
               ) : (
                 <Sparkles size={16} className="text-[var(--color-accent)]" />
               )}
-              <span className="text-[var(--color-text-tertiary)]">Using:</span>
+              <span className="text-[var(--color-text-tertiary)]">{t('onboarding.using')}:</span>
               <span className="text-[var(--color-text-primary)] max-w-[200px] truncate">
-                {modelsLoading ? 'Loading...' : selectedModel?.name || 'Select a model'}
+                {modelsLoading ? t('onboarding.loading') : selectedModel?.name || t('onboarding.selectModel')}
               </span>
               <ChevronDown
                 size={16}
@@ -531,7 +533,7 @@ export function AgentOnboarding() {
                       type="text"
                       value={modelSearchQuery}
                       onChange={e => setModelSearchQuery(e.target.value)}
-                      placeholder="Search models..."
+                      placeholder={t('agents.searchModels')}
                       className="w-full pl-9 pr-3 py-2 text-sm bg-[#0d0d0d] rounded-lg text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
                       autoFocus
                     />
@@ -542,7 +544,7 @@ export function AgentOnboarding() {
                 <div className="max-h-[300px] overflow-y-auto p-1 bg-[#1a1a1a]">
                   {filteredModels.length === 0 ? (
                     <div className="px-3 py-4 text-center text-sm text-[var(--color-text-tertiary)]">
-                      No models found
+                      {t('onboarding.noModelsFound')}
                     </div>
                   ) : (
                     filteredModels.map(model => {
@@ -616,7 +618,7 @@ export function AgentOnboarding() {
                 {/* Hint */}
                 <div className="px-3 py-2 bg-[#151515]">
                   <p className="text-xs text-[var(--color-text-tertiary)]">
-                    This model will generate your workflow structure
+                    {t('onboarding.modelHint')}
                   </p>
                 </div>
               </div>
@@ -641,7 +643,7 @@ export function AgentOnboarding() {
                   handleGenerate(inputValue);
                 }
               }}
-              placeholder="e.g. Create a Discord bot that summarizes Hacker News top stories every morning..."
+              placeholder={t('onboarding.placeholder')}
               className="w-full bg-transparent text-[var(--color-text-primary)] p-6 text-lg placeholder:text-[var(--color-text-tertiary)] focus:outline-none resize-none min-h-[120px] max-h-[300px]"
               disabled={isGenerating}
             />
@@ -651,7 +653,7 @@ export function AgentOnboarding() {
                 disabled={isGenerating}
                 className="flex items-center gap-2 px-4 py-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-elevated)] rounded-lg font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                I'll build it manually
+                {t('onboarding.manualBuild')}
               </button>
               <button
                 onClick={() => handleGenerate(inputValue)}
@@ -661,11 +663,11 @@ export function AgentOnboarding() {
                 {isGenerating ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    Building...
+                    {t('onboarding.building')}
                   </>
                 ) : (
                   <>
-                    Generate Workflow
+                    {t('onboarding.generate')}
                     <ArrowRight className="w-4 h-4" />
                   </>
                 )}
@@ -678,7 +680,7 @@ export function AgentOnboarding() {
         {!inputValue.trim() && (
           <div className="space-y-3 animate-in fade-in duration-300">
             <p className="text-sm font-medium text-[var(--color-text-tertiary)] uppercase tracking-wider text-center">
-              Try these examples
+              {t('onboarding.tryExamples')}
             </p>
             <div className="grid grid-cols-1 gap-3">
               {suggestions.map((suggestion, index) => (

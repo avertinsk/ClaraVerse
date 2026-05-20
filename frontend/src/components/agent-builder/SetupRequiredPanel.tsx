@@ -7,6 +7,7 @@
  */
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   AlertTriangle,
@@ -57,6 +58,7 @@ export function SetupRequiredPanel({
   onSelectBlock,
   onOpenCredentials,
 }: SetupRequiredPanelProps) {
+  const { t } = useTranslation('agents');
   const [expandedSection, setExpandedSection] = useState<'credentials' | 'config' | null>(
     'credentials'
   );
@@ -97,8 +99,8 @@ export function SetupRequiredPanel({
                   <AlertTriangle size={20} className="text-amber-400" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-semibold text-white">Setup Required</h2>
-                  <p className="text-sm text-white/50">Complete these items to run your workflow</p>
+                  <h2 className="text-lg font-semibold text-white">{t('setupRequired.title')}</h2>
+                  <p className="text-sm text-white/50">{t('setupRequired.subtitle')}</p>
                 </div>
               </div>
               <button
@@ -117,14 +119,13 @@ export function SetupRequiredPanel({
                   <AlertTriangle size={18} className="text-amber-400 mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="text-sm font-medium text-amber-300">
-                      {validation.issues.length} issue{validation.issues.length !== 1 ? 's' : ''}{' '}
-                      found
+                      {t('setupRequired.issuesFound', { count: validation.issues.length })}
                     </p>
                     <p className="text-xs text-amber-300/60 mt-1">
                       {hasCredentialIssues &&
-                        `${missingSummary.length} integration${missingSummary.length !== 1 ? 's' : ''} need credentials. `}
+                        `${missingSummary.length} ${t('setupRequired.integrationsNeedCreds', { count: missingSummary.length }).split(' ')[0]} `}
                       {hasConfigIssues &&
-                        `${otherIssues.length} block${otherIssues.length !== 1 ? 's' : ''} need configuration.`}
+                        `${otherIssues.length} ${t('setupRequired.blocksNeedConfig', { count: otherIssues.length }).split(' ')[0]}`}
                     </p>
                   </div>
                 </div>
@@ -142,10 +143,9 @@ export function SetupRequiredPanel({
                     <div className="flex items-center gap-3">
                       <Key size={18} className="text-red-400" />
                       <div className="text-left">
-                        <p className="text-sm font-medium text-white">Missing Credentials</p>
+                        <p className="text-sm font-medium text-white">{t('setupRequired.missingCredentials')}</p>
                         <p className="text-xs text-white/40">
-                          {missingSummary.length} integration
-                          {missingSummary.length !== 1 ? 's' : ''} need API keys
+                          {missingSummary.length} {t('setupRequired.integrationsNeedKeys', { count: missingSummary.length })}
                         </p>
                       </div>
                     </div>
@@ -180,17 +180,16 @@ export function SetupRequiredPanel({
                                   <p className="text-sm font-medium text-white">
                                     {integration.name}
                                   </p>
-                                  <p className="text-xs text-white/40">
-                                    Used by {integration.blockCount} block
-                                    {integration.blockCount !== 1 ? 's' : ''}
-                                  </p>
+                                    <p className="text-xs text-white/40">
+                                      {t('setupRequired.usedByBlocks', { count: integration.blockCount })}
+                                    </p>
                                 </div>
                               </div>
                               <button
                                 onClick={() => onOpenCredentials([integration.type])}
                                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--color-accent)]/20 hover:bg-[var(--color-accent)]/30 text-[var(--color-accent)] text-xs font-medium transition-colors"
                               >
-                                Add
+                                {t('setupRequired.add')}
                                 <ExternalLink size={12} />
                               </button>
                             </div>
@@ -202,7 +201,7 @@ export function SetupRequiredPanel({
                             className="w-full flex items-center justify-center gap-2 p-3 rounded-xl bg-white/5 hover:bg-[var(--color-accent)]/10 text-white/40 hover:text-[var(--color-accent)] transition-colors"
                           >
                             <Key size={16} />
-                            <span className="text-sm font-medium">Open Credentials Manager</span>
+                            <span className="text-sm font-medium">{t('setupRequired.openCredsManager')}</span>
                           </button>
                         </div>
                       </motion.div>
@@ -223,10 +222,9 @@ export function SetupRequiredPanel({
                     <div className="flex items-center gap-3">
                       <Settings size={18} className="text-amber-400" />
                       <div className="text-left">
-                        <p className="text-sm font-medium text-white">Block Configuration</p>
+                        <p className="text-sm font-medium text-white">{t('setupRequired.blockConfig')}</p>
                         <p className="text-xs text-white/40">
-                          {otherIssues.length} item{otherIssues.length !== 1 ? 's' : ''} need
-                          attention
+                          {otherIssues.length} {t('setupRequired.itemsNeedAttention', { count: otherIssues.length })}
                         </p>
                       </div>
                     </div>
@@ -299,9 +297,9 @@ export function SetupRequiredPanel({
               {validation.isValid && validation.issues.length === 0 && (
                 <div className="p-6 rounded-2xl bg-green-500/10 text-center">
                   <CheckCircle size={40} className="text-green-400 mx-auto mb-3" />
-                  <p className="text-lg font-medium text-green-300">Ready to Run!</p>
+                  <p className="text-lg font-medium text-green-300">{t('setupRequired.readyToRun')}</p>
                   <p className="text-sm text-green-300/60 mt-1">
-                    All blocks are properly configured
+                    {t('setupRequired.allConfigured')}
                   </p>
                 </div>
               )}
@@ -314,7 +312,7 @@ export function SetupRequiredPanel({
                   onClick={onClose}
                   className="flex-1 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white/70 hover:text-white transition-colors text-sm font-medium"
                 >
-                  Close
+                  {t('setupRequired.close')}
                 </button>
                 {hasCredentialIssues && (
                   <button
@@ -322,7 +320,7 @@ export function SetupRequiredPanel({
                     className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white transition-colors text-sm font-medium"
                   >
                     <Key size={16} />
-                    Add Credentials
+                    {t('setupRequired.addCredentials')}
                   </button>
                 )}
               </div>

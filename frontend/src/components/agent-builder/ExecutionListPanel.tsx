@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   History,
   X,
@@ -25,6 +26,7 @@ import {
 } from '@/services/executionService';
 
 export function ExecutionListPanel() {
+  const { t } = useTranslation('agents');
   const {
     selectedAgentId,
     selectedExecutionId,
@@ -204,7 +206,7 @@ export function ExecutionListPanel() {
       <div className="flex-shrink-0 flex items-center justify-between px-4 py-3 border-b border-[var(--color-border)]">
         <div className="flex items-center gap-2">
           <History size={16} className="text-[var(--color-accent)]" />
-          <span className="text-sm font-semibold text-[var(--color-text-primary)]">Executions</span>
+          <span className="text-sm font-semibold text-[var(--color-text-primary)]">{t('execList.title')}</span>
           {data && data.total > 0 && (
             <span className="px-1.5 py-0.5 text-[10px] rounded-full bg-[var(--color-surface)] text-[var(--color-text-secondary)]">
               {data.total}
@@ -214,7 +216,7 @@ export function ExecutionListPanel() {
         <button
           onClick={() => setExecutionViewerMode('editor')}
           className="p-1 rounded-md hover:bg-[var(--color-surface-hover)] text-[var(--color-text-tertiary)] transition-colors"
-          title="Back to Editor"
+          title={t('execList.backToEditor')}
         >
           <X size={16} />
         </button>
@@ -227,17 +229,17 @@ export function ExecutionListPanel() {
           onChange={e => setStatusFilter(e.target.value)}
           className="flex-1 px-2 py-1.5 rounded-md bg-[var(--color-bg-primary)] border border-[var(--color-border)] text-xs text-[var(--color-text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)] [color-scheme:dark]"
         >
-          <option value="all">All Status</option>
-          <option value="completed">Completed</option>
-          <option value="failed">Failed</option>
-          <option value="running">Running</option>
-          <option value="pending">Pending</option>
+          <option value="all">{t('execHistory.allStatus')}</option>
+          <option value="completed">{t('execHistory.completed')}</option>
+          <option value="failed">{t('execHistory.failed')}</option>
+          <option value="running">{t('execHistory.running')}</option>
+          <option value="pending">{t('execHistory.pending')}</option>
         </select>
         <button
           onClick={() => loadExecutions(0)}
           disabled={isLoading}
           className="p-1.5 rounded-md hover:bg-[var(--color-surface-hover)] text-[var(--color-text-secondary)] transition-colors disabled:opacity-50"
-          title="Refresh"
+          title={t('deployedListView.refresh')}
         >
           {isLoading ? <Loader2 size={14} className="animate-spin" /> : <RefreshCw size={14} />}
         </button>
@@ -252,9 +254,9 @@ export function ExecutionListPanel() {
         ) : !data || data.executions.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
             <History size={32} className="text-[var(--color-text-tertiary)] mb-3 opacity-40" />
-            <p className="text-sm text-[var(--color-text-secondary)]">No executions yet</p>
+            <p className="text-sm text-[var(--color-text-secondary)]">{t('execList.noExecutions')}</p>
             <p className="text-xs text-[var(--color-text-tertiary)] mt-1">
-              Run your workflow to see execution history
+              {t('execList.runWorkflow')}
             </p>
           </div>
         ) : (
@@ -296,7 +298,7 @@ export function ExecutionListPanel() {
                       {isRunning && (
                         <span className="flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-[var(--color-accent)]/20 text-[var(--color-accent)]">
                           <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)] animate-pulse" />
-                          LIVE
+                          {t('execList.live')}
                         </span>
                       )}
                       <span className="text-[10px] text-[var(--color-text-tertiary)]">
@@ -327,10 +329,10 @@ export function ExecutionListPanel() {
                 {isLoadingMore ? (
                   <span className="flex items-center justify-center gap-2">
                     <Loader2 size={12} className="animate-spin" />
-                    Loading...
+                    {t('execList.loading')}
                   </span>
                 ) : (
-                  'Load more...'
+                  t('execList.loadMore')
                 )}
               </button>
             )}

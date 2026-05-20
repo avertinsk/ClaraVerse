@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ChevronDown,
   ChevronRight,
@@ -20,6 +21,7 @@ import type { ExecutionStatus } from '@/types/agent';
  * Shows execution status and block outputs in a full-height scrollable layout.
  */
 export function MobileExecutionOutput() {
+  const { t } = useTranslation('agents');
   const { blockStates, workflow, executionStatus, lastExecutionResult } = useAgentBuilderStore();
   const [expandedBlocks, setExpandedBlocks] = useState<Set<string>>(new Set());
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -96,9 +98,9 @@ export function MobileExecutionOutput() {
           <div className="w-16 h-16 mx-auto rounded-full bg-[var(--color-surface)] flex items-center justify-center">
             <Circle size={32} className="text-[var(--color-text-tertiary)]" />
           </div>
-          <p className="text-[var(--color-text-secondary)]">No execution yet</p>
+          <p className="text-[var(--color-text-secondary)]">{t('mobileExecOutput.noExecution')}</p>
           <p className="text-sm text-[var(--color-text-tertiary)]">
-            Run the agent to see output here
+            {t('mobileExecOutput.runAgent')}
           </p>
         </div>
       </div>
@@ -114,17 +116,17 @@ export function MobileExecutionOutput() {
           {runningCount > 0 && (
             <span className="flex items-center gap-1">
               <Loader2 size={12} className="animate-spin text-blue-400" />
-              {runningCount} running
+              {runningCount} {t('mobileExecOutput.running')}
             </span>
           )}
           <span className="flex items-center gap-1">
             <CheckCircle2 size={12} className="text-green-400" />
-            {completedCount}/{totalBlocks} completed
+            {completedCount}/{totalBlocks} {t('mobileExecOutput.completed')}
           </span>
           {failedCount > 0 && (
             <span className="flex items-center gap-1">
               <XCircle size={12} className="text-red-400" />
-              {failedCount} failed
+              {failedCount} {t('mobileExecOutput.failed')}
             </span>
           )}
         </div>
@@ -135,7 +137,7 @@ export function MobileExecutionOutput() {
         <div className="flex-shrink-0 p-4 border-b border-[var(--color-border)]">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-semibold text-[var(--color-text-primary)]">
-              Final Output
+              {t('mobileExecOutput.finalOutput')}
             </span>
             <button
               onClick={() => copyToClipboard(lastExecutionResult.result!, 'final')}
@@ -157,7 +159,7 @@ export function MobileExecutionOutput() {
       <div className="flex-1 overflow-y-auto">
         <div className="p-4 space-y-2">
           <h3 className="text-xs font-semibold text-[var(--color-text-tertiary)] uppercase tracking-wide mb-3">
-            Block Outputs
+            {t('mobileExecOutput.blockOutputs')}
           </h3>
 
           {workflow?.blocks?.map(block => {

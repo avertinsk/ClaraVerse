@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { MessageSquare, Plus, Trash2, Clock, MessageCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAgentBuilderStore } from '@/store/useAgentBuilderStore';
@@ -13,6 +14,7 @@ interface ConversationHistoryProps {
 }
 
 export function ConversationHistory({ className, onNewConversation }: ConversationHistoryProps) {
+  const { t } = useTranslation('agents');
   const {
     selectedAgentId,
     currentConversationId,
@@ -59,7 +61,7 @@ export function ConversationHistory({ className, onNewConversation }: Conversati
     e.stopPropagation();
     if (!selectedAgentId) return;
 
-    if (confirm('Delete this conversation? This cannot be undone.')) {
+    if (confirm(t('agents.deleteConversationConfirm'))) {
       try {
         await deleteBuilderConversation(selectedAgentId, conversationId);
         // Refresh the list
@@ -84,10 +86,10 @@ export function ConversationHistory({ className, onNewConversation }: Conversati
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return 'Just now';
-    if (diffMins < 60) return `${diffMins}m ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    if (diffDays < 7) return `${diffDays}d ago`;
+    if (diffMins < 1) return t('agents.justNow');
+    if (diffMins < 60) return `${diffMins}${t('agents.mAgo')}`;
+    if (diffHours < 24) return `${diffHours}${t('agents.hAgo')}`;
+    if (diffDays < 7) return `${diffDays}${t('agents.dAgo')}`;
 
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
@@ -107,12 +109,12 @@ export function ConversationHistory({ className, onNewConversation }: Conversati
       <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--color-border)]">
         <div className="flex items-center gap-2 text-sm font-medium text-[var(--color-text-primary)]">
           <MessageSquare size={16} className="text-[var(--color-accent)]" />
-          <span>History</span>
+          <span>{t('agents.history')}</span>
         </div>
         <button
           onClick={handleNewConversation}
           className="p-1.5 rounded-lg hover:bg-[var(--color-bg-tertiary)] text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors"
-          title="New conversation"
+          title={t('agents.newConversation')}
         >
           <Plus size={16} />
         </button>
@@ -126,9 +128,9 @@ export function ConversationHistory({ className, onNewConversation }: Conversati
               size={32}
               className="mx-auto mb-2 text-[var(--color-text-tertiary)] opacity-50"
             />
-            <p className="text-xs text-[var(--color-text-tertiary)]">No conversations yet</p>
+            <p className="text-xs text-[var(--color-text-tertiary)]">{t('agents.noConversations')}</p>
             <p className="text-[10px] text-[var(--color-text-tertiary)] mt-1 opacity-75">
-              Start chatting to create one
+              {t('convHistory.startChatting')}
             </p>
           </div>
         ) : (
@@ -161,7 +163,7 @@ export function ConversationHistory({ className, onNewConversation }: Conversati
                     <div className="mt-1 flex items-center gap-1.5">
                       <MessageSquare size={10} className="text-[var(--color-text-tertiary)]" />
                       <span className="text-[10px] text-[var(--color-text-tertiary)]">
-                        {conv.message_count} message{conv.message_count !== 1 ? 's' : ''}
+                        {conv.message_count} {conv.message_count !== 1 ? t('agents.messages') : t('agents.message')}
                       </span>
                     </div>
                   </div>
@@ -171,7 +173,7 @@ export function ConversationHistory({ className, onNewConversation }: Conversati
                       'p-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity',
                       'hover:bg-red-500/20 text-[var(--color-text-tertiary)] hover:text-red-400'
                     )}
-                    title="Delete conversation"
+                    title={t('agents.delete')}
                   >
                     <Trash2 size={12} />
                   </button>
@@ -185,7 +187,7 @@ export function ConversationHistory({ className, onNewConversation }: Conversati
       {/* Footer info */}
       <div className="px-4 py-2 border-t border-[var(--color-border)]">
         <p className="text-[10px] text-[var(--color-text-tertiary)] text-center">
-          Conversations are encrypted
+          {t('convHistory.encrypted')}
         </p>
       </div>
     </div>

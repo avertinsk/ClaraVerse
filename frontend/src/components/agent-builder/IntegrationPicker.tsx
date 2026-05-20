@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Search, KeyRound, ExternalLink, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useCredentialsStore } from '@/store/useCredentialsStore';
@@ -34,6 +35,7 @@ export function IntegrationPicker({
   toolFilter,
   compact = false,
 }: IntegrationPickerProps) {
+  const { t } = useTranslation('agents');
   const {
     credentialReferences,
     integrations,
@@ -162,15 +164,15 @@ export function IntegrationPicker({
         <div className="flex items-center gap-3 text-[var(--color-text-secondary)]">
           <KeyRound size={20} />
           <div>
-            <p className="text-sm font-medium">No credentials configured</p>
+            <p className="text-sm font-medium">{t('integrationPicker.noCredentials')}</p>
             <p className="text-xs mt-0.5">
               <Link
                 to="/credentials"
                 className="text-[var(--color-accent)] hover:underline inline-flex items-center gap-1"
               >
-                Add credentials <ExternalLink size={12} />
+                {t('integrationPicker.addCredentials')} <ExternalLink size={12} />
               </Link>{' '}
-              to enable external integrations
+              {t('integrationPicker.enableIntegrations')}
             </p>
           </div>
         </div>
@@ -184,16 +186,16 @@ export function IntegrationPicker({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <KeyRound size={16} className="text-[var(--color-accent)]" />
-          <span className="text-sm font-medium text-[var(--color-text-primary)]">Credentials</span>
+          <span className="text-sm font-medium text-[var(--color-text-primary)]">{t('integrationPicker.title')}</span>
           <span className="text-xs text-[var(--color-text-tertiary)]">
-            ({selectedCredentials.length} selected)
+            ({selectedCredentials.length} {t('integrationPicker.selected', { count: selectedCredentials.length })})
           </span>
         </div>
         <Link
           to="/credentials"
           className="text-xs text-[var(--color-accent)] hover:underline flex items-center gap-1"
         >
-          Manage <ExternalLink size={10} />
+          {t('integrationPicker.manage')} <ExternalLink size={10} />
         </Link>
       </div>
 
@@ -206,7 +208,7 @@ export function IntegrationPicker({
           />
           <input
             type="text"
-            placeholder="Search integrations..."
+            placeholder={t('integrationPicker.searchPlaceholder')}
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             className="w-full pl-8 pr-3 py-1.5 rounded-md bg-[var(--color-bg-primary)] border border-[var(--color-border)] text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)]"
@@ -219,8 +221,8 @@ export function IntegrationPicker({
         {filteredIntegrationTypes.length === 0 ? (
           <p className="text-sm text-[var(--color-text-tertiary)] text-center py-2">
             {searchQuery
-              ? 'No matching credentials found'
-              : 'No credentials available for selected tools'}
+              ? t('integrationPicker.noMatching')
+              : t('integrationPicker.noAvailable')}
           </p>
         ) : (
           filteredIntegrationTypes.map(integrationType => {
@@ -301,7 +303,7 @@ export function IntegrationPicker({
       {/* Help text */}
       {!compact && (
         <p className="text-xs text-[var(--color-text-tertiary)]">
-          Selected credentials will be available to tools during agent execution
+          {t('integrationPicker.helpText')}
         </p>
       )}
     </div>

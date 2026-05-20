@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Plus, Search, Cloud, Loader2, Trash2, X, CheckSquare, Square } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAgentBuilderStore } from '@/store/useAgentBuilderStore';
@@ -11,6 +12,7 @@ interface AgentListViewProps {
 }
 
 export function AgentListView({ className }: AgentListViewProps) {
+  const { t } = useTranslation('agents');
   const navigate = useNavigate();
   const {
     backendAgents,
@@ -146,14 +148,14 @@ export function AgentListView({ className }: AgentListViewProps) {
     <div className={`flex-1 flex flex-col bg-[var(--color-bg-primary)] ${className || ''}`}>
       {/* Header */}
       <header className="flex items-center justify-between px-8 py-6 border-b border-[var(--color-border)]">
-        <h1 className="text-2xl font-semibold text-[var(--color-text-primary)]">My Agents</h1>
+        <h1 className="text-2xl font-semibold text-[var(--color-text-primary)]">{t('agents.myAgents')}</h1>
         <button
           onClick={handleNewAgent}
           disabled={isCreating}
           className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-primary)] hover:bg-[var(--color-surface-hover)] transition-colors disabled:opacity-50"
         >
           {isCreating ? <Loader2 size={18} className="animate-spin" /> : <Plus size={18} />}
-          <span className="text-sm font-medium">{isCreating ? 'Creating...' : 'New agent'}</span>
+          <span className="text-sm font-medium">{isCreating ? t('agentList.creating') : t('agentList.newAgent')}</span>
         </button>
       </header>
 
@@ -166,7 +168,7 @@ export function AgentListView({ className }: AgentListViewProps) {
           />
           <input
             type="text"
-            placeholder="Search your agents..."
+            placeholder={t('agentList.searchPlaceholder')}
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             className="w-full pl-11 pr-4 py-3 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:ring-opacity-50 focus:border-transparent text-sm transition-all"
@@ -188,10 +190,10 @@ export function AgentListView({ className }: AgentListViewProps) {
                 ) : (
                   <Square size={16} />
                 )}
-                <span>Select all</span>
+                <span>{t('agentList.selectAll')}</span>
               </button>
               <span className="text-sm text-[var(--color-accent)]">
-                {selectedIds.size} selected
+                {selectedIds.size} {t('agentList.selected')}
               </span>
             </div>
             <div className="flex items-center gap-2">
@@ -206,7 +208,7 @@ export function AgentListView({ className }: AgentListViewProps) {
                   ) : (
                     <Trash2 size={14} />
                   )}
-                  <span>{isDeleting ? 'Deleting...' : 'Delete'}</span>
+                  <span>{isDeleting ? t('agentList.deleting') : t('agents.delete')}</span>
                 </button>
               )}
               <button
@@ -214,7 +216,7 @@ export function AgentListView({ className }: AgentListViewProps) {
                 className="flex items-center gap-1.5 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
               >
                 <X size={16} />
-                <span>Cancel</span>
+                <span>{t('agents.cancel')}</span>
               </button>
             </div>
           </>
@@ -224,18 +226,18 @@ export function AgentListView({ className }: AgentListViewProps) {
               {searchQuery ? (
                 // When searching, show filtered count
                 <>
-                  {filteredAgents.length} {filteredAgents.length === 1 ? 'result' : 'results'}
+                  {filteredAgents.length} {filteredAgents.length === 1 ? t('agentList.result') : t('agentList.results')}
                 </>
               ) : (
                 // When not searching, show loaded count / total
                 <>
                   {pagination.total > 0 ? (
                     <>
-                      {backendAgents.length} of {pagination.total} agents
+                      {backendAgents.length} {t('agentList.of')} {pagination.total} {t('agentList.agents')}
                     </>
                   ) : (
                     <>
-                      {filteredAgents.length} {filteredAgents.length === 1 ? 'agent' : 'agents'}
+                      {filteredAgents.length} {filteredAgents.length === 1 ? t('agentList.agent') : t('agentList.agents')}
                     </>
                   )}
                 </>
@@ -252,7 +254,7 @@ export function AgentListView({ className }: AgentListViewProps) {
               className="text-sm text-[var(--color-accent)] hover:underline"
               disabled={filteredAgents.length === 0}
             >
-              Select
+              {t('agentList.select')}
             </button>
           </>
         )}
@@ -266,10 +268,10 @@ export function AgentListView({ className }: AgentListViewProps) {
               <Plus size={24} className="text-[var(--color-text-tertiary)]" />
             </div>
             <h3 className="text-lg font-medium text-[var(--color-text-primary)] mb-2">
-              No agents yet
+              {t('agentList.noAgents')}
             </h3>
             <p className="text-sm text-[var(--color-text-tertiary)] mb-6 max-w-sm">
-              Create your first agent to automate tasks with AI-powered workflows
+              {t('agentList.noAgentsDesc')}
             </p>
             <button
               onClick={handleNewAgent}
@@ -277,9 +279,9 @@ export function AgentListView({ className }: AgentListViewProps) {
               className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-primary)] hover:bg-[var(--color-surface-hover)] transition-colors disabled:opacity-50"
             >
               {isCreating ? <Loader2 size={18} className="animate-spin" /> : <Plus size={18} />}
-              <span className="text-sm font-medium">
-                {isCreating ? 'Creating...' : 'Create an agent'}
-              </span>
+                <span className="text-sm font-medium">
+                  {isCreating ? t('agentList.creating') : t('agentList.createAgent')}
+                </span>
             </button>
           </div>
         ) : (
@@ -333,16 +335,16 @@ export function AgentListView({ className }: AgentListViewProps) {
                     <Cloud
                       size={14}
                       className="text-green-500 flex-shrink-0"
-                      title="Saved to cloud"
+                      title={t('agentList.savedToCloud')}
                     />
                   </div>
                   <div className="flex items-center gap-2 mt-0.5">
                     <span className="text-sm text-[var(--color-text-tertiary)]">
-                      Last modified {formatDistanceToNow(agent.updatedAt)}
+                      {t('agentList.lastModified')} {formatDistanceToNow(agent.updatedAt)}
                     </span>
                     {agent.hasWorkflow && agent.blockCount > 1 && (
                       <span className="text-xs text-[var(--color-text-tertiary)] bg-[var(--color-surface)] px-1.5 py-0.5 rounded">
-                        {agent.blockCount} blocks
+                        {agent.blockCount} {t('agentList.blocks')}
                       </span>
                     )}
                   </div>
@@ -361,13 +363,13 @@ export function AgentListView({ className }: AgentListViewProps) {
                   {pagination.isLoading ? (
                     <>
                       <Loader2 size={14} className="animate-spin" />
-                      <span>Loading...</span>
+                      <span>{t('agentList.loading')}</span>
                     </>
                   ) : (
                     <>
-                      <span>Load more</span>
+                      <span>{t('agentList.loadMore')}</span>
                       <span className="text-[var(--color-text-tertiary)]">
-                        ({pagination.total - backendAgents.length} remaining)
+                        ({pagination.total - backendAgents.length} {t('agentList.remaining')})
                       </span>
                     </>
                   )}

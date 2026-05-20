@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { MessageSquare, Blocks, Play, Settings, Square, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAgentBuilderStore } from '@/store/useAgentBuilderStore';
@@ -20,6 +21,7 @@ interface MobileTabLayoutProps {
  * Provides navigation between Chat, Workflow Blocks, and Execution Output views.
  */
 export function MobileTabLayout({ onOpenSidebar, onCloseSidebar }: MobileTabLayoutProps) {
+  const { t } = useTranslation('agents');
   const {
     workflow,
     blockStates,
@@ -154,18 +156,18 @@ export function MobileTabLayout({ onOpenSidebar, onCloseSidebar }: MobileTabLayo
       {
         id: 'chat',
         icon: <MessageSquare size={20} />,
-        label: 'Chat',
+        label: t('mobileTab.chat'),
       },
       {
         id: 'blocks',
         icon: <Blocks size={20} />,
-        label: 'Workflow',
+        label: t('mobileTab.workflow'),
         badge: workflow?.blocks?.length || 0,
       },
       {
         id: 'output',
         icon: <Play size={20} />,
-        label: 'Output',
+        label: t('mobileTab.output'),
         badge: executionStatus === 'running',
       },
     ];
@@ -208,7 +210,7 @@ export function MobileTabLayout({ onOpenSidebar, onCloseSidebar }: MobileTabLayo
             <button
               onClick={handleStopExecution}
               className="w-14 h-14 rounded-full bg-red-500 text-white shadow-lg flex items-center justify-center active:scale-95 transition-transform"
-              aria-label="Stop execution"
+              aria-label={t('mobileTab.stopExecution')}
             >
               <Square size={22} fill="currentColor" />
             </button>
@@ -222,7 +224,7 @@ export function MobileTabLayout({ onOpenSidebar, onCloseSidebar }: MobileTabLayo
                   ? 'bg-[var(--color-accent)]/70 text-white'
                   : 'bg-[var(--color-accent)] text-white'
               )}
-              aria-label="Run workflow"
+              aria-label={t('mobileTab.runWorkflow')}
             >
               {isRunning ? (
                 <Loader2 size={22} className="animate-spin" />
@@ -311,11 +313,11 @@ function MobileBlockSettingsModal({ onClose }: { onClose: () => void }) {
           >
             <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
-          <span className="text-sm font-medium">Back</span>
+          <span className="text-sm font-medium">{t('mobileTab.back')}</span>
         </button>
         <div className="flex items-center gap-2 text-[var(--color-text-primary)]">
           <Settings size={18} />
-          <span className="text-sm font-semibold">Block Settings</span>
+          <span className="text-sm font-semibold">{t('mobileTab.blockSettings')}</span>
         </div>
         <div className="w-16" /> {/* Spacer for centering */}
       </header>

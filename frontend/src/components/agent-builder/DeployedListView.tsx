@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
   Rocket,
@@ -31,6 +32,7 @@ interface DeployedListViewProps {
 type StatusFilter = 'all' | 'deployed' | 'draft' | 'paused';
 
 export function DeployedListView({ className, initialAgentId }: DeployedListViewProps) {
+  const { t } = useTranslation('agents');
   const [agents, setAgents] = useState<AgentListItem[]>([]);
   const [selectedAgent, setSelectedAgent] = useState<AgentListItem | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -257,7 +259,7 @@ export function DeployedListView({ className, initialAgentId }: DeployedListView
             <div className="flex items-center gap-2">
               <Rocket size={18} className="text-[var(--color-accent)]" />
               <h2 className="text-base font-semibold text-[var(--color-text-primary)]">
-                Deployments
+                {t('deployedListView.title')}
               </h2>
             </div>
             <button
@@ -267,7 +269,7 @@ export function DeployedListView({ className, initialAgentId }: DeployedListView
               }}
               disabled={isLoading}
               className="p-1.5 rounded-lg hover:bg-[var(--color-surface)] text-[var(--color-text-secondary)] transition-colors"
-              title="Refresh"
+              title={t('deployedListView.refresh')}
             >
               <RefreshCw size={14} className={cn(isLoading && 'animate-spin')} />
             </button>
@@ -277,7 +279,7 @@ export function DeployedListView({ className, initialAgentId }: DeployedListView
           {scheduleUsage && (
             <div className="flex items-center gap-2 mb-3 px-2 py-1.5 rounded-lg bg-[var(--color-surface)]">
               <Calendar size={14} className="text-[var(--color-accent)]" />
-              <span className="text-xs text-[var(--color-text-secondary)]">Schedules:</span>
+              <span className="text-xs text-[var(--color-text-secondary)]">{t('deployedListView.schedules')}</span>
               <span
                 className={cn(
                   'text-xs font-medium',
@@ -285,11 +287,11 @@ export function DeployedListView({ className, initialAgentId }: DeployedListView
                 )}
               >
                 {scheduleUsage.active}/{scheduleUsage.limit === -1 ? '∞' : scheduleUsage.limit}{' '}
-                active
+                {t('deployedListView.active')}
               </span>
               {scheduleUsage.paused > 0 && (
                 <span className="text-xs text-[var(--color-text-tertiary)]">
-                  ({scheduleUsage.paused} paused)
+                  ({scheduleUsage.paused} {t('deployedListView.paused')})
                 </span>
               )}
             </div>
@@ -305,7 +307,7 @@ export function DeployedListView({ className, initialAgentId }: DeployedListView
               type="text"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              placeholder="Search agents..."
+              placeholder={t('deployedListView.search')}
               className="w-full pl-9 pr-3 py-2 rounded-lg bg-[var(--color-bg-primary)] border border-[var(--color-border)] text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)]"
             />
           </div>
@@ -313,26 +315,26 @@ export function DeployedListView({ className, initialAgentId }: DeployedListView
           {/* Status Filter Pills - scrollable on mobile */}
           <div className="flex items-center gap-1.5 mt-3 overflow-x-auto pb-1 -mb-1">
             <FilterPill
-              label="All"
+              label={t('deployedListView.filterAll')}
               count={counts.total}
               active={statusFilter === 'all'}
               onClick={() => setStatusFilter('all')}
             />
             <FilterPill
-              label="Live"
+              label={t('deployedListView.filterLive')}
               count={counts.deployed}
               active={statusFilter === 'deployed'}
               onClick={() => setStatusFilter('deployed')}
               color="green"
             />
             <FilterPill
-              label="Draft"
+              label={t('deployedListView.filterDraft')}
               count={counts.draft}
               active={statusFilter === 'draft'}
               onClick={() => setStatusFilter('draft')}
             />
             <FilterPill
-              label="Paused"
+              label={t('deployedListView.filterPaused')}
               count={counts.paused}
               active={statusFilter === 'paused'}
               onClick={() => setStatusFilter('paused')}
@@ -351,7 +353,7 @@ export function DeployedListView({ className, initialAgentId }: DeployedListView
             <div className="flex flex-col items-center justify-center py-12 px-4">
               <FileCode size={32} className="text-[var(--color-text-tertiary)] opacity-50 mb-3" />
               <p className="text-sm text-[var(--color-text-secondary)] text-center">
-                {searchQuery ? 'No agents match your search' : 'No agents found'}
+                {searchQuery ? t('deployedListView.noMatch') : t('deployedListView.noAgents')}
               </p>
             </div>
           ) : (
@@ -361,7 +363,7 @@ export function DeployedListView({ className, initialAgentId }: DeployedListView
                 statusFilter !== 'draft' &&
                 statusFilter !== 'paused' && (
                   <AgentSection
-                    title="Live"
+                    title={t('deployedListView.filterLive')}
                     sectionKey="live"
                     agents={deployedAgents}
                     selectedId={selectedAgent?.id}
@@ -377,7 +379,7 @@ export function DeployedListView({ className, initialAgentId }: DeployedListView
                 statusFilter !== 'draft' &&
                 statusFilter !== 'deployed' && (
                   <AgentSection
-                    title="Paused"
+                    title={t('deployedListView.filterPaused')}
                     sectionKey="paused"
                     agents={pausedAgents}
                     selectedId={selectedAgent?.id}
@@ -393,7 +395,7 @@ export function DeployedListView({ className, initialAgentId }: DeployedListView
                 statusFilter !== 'deployed' &&
                 statusFilter !== 'paused' && (
                   <AgentSection
-                    title="Drafts"
+                    title={t('deployedListView.filterDraft')}
                     sectionKey="drafts"
                     agents={draftAgents}
                     selectedId={selectedAgent?.id}
@@ -423,7 +425,7 @@ export function DeployedListView({ className, initialAgentId }: DeployedListView
             <div className="flex items-center gap-2">
               <Rocket size={18} className="text-[var(--color-accent)]" />
               <h2 className="text-base font-semibold text-[var(--color-text-primary)]">
-                Deployments
+                {t('deployedListView.title')}
               </h2>
             </div>
             <button
@@ -433,7 +435,7 @@ export function DeployedListView({ className, initialAgentId }: DeployedListView
               }}
               disabled={isLoading}
               className="p-1.5 rounded-lg hover:bg-[var(--color-surface)] text-[var(--color-text-secondary)] transition-colors"
-              title="Refresh"
+              title={t('deployedListView.refresh')}
             >
               <RefreshCw size={14} className={cn(isLoading && 'animate-spin')} />
             </button>
@@ -443,7 +445,7 @@ export function DeployedListView({ className, initialAgentId }: DeployedListView
           {scheduleUsage && (
             <div className="flex items-center gap-2 mb-3 px-2 py-1.5 rounded-lg bg-[var(--color-surface)]">
               <Calendar size={14} className="text-[var(--color-accent)]" />
-              <span className="text-xs text-[var(--color-text-secondary)]">Schedules:</span>
+              <span className="text-xs text-[var(--color-text-secondary)]">{t('deployedListView.schedules')}</span>
               <span
                 className={cn(
                   'text-xs font-medium',
@@ -451,11 +453,11 @@ export function DeployedListView({ className, initialAgentId }: DeployedListView
                 )}
               >
                 {scheduleUsage.active}/{scheduleUsage.limit === -1 ? '∞' : scheduleUsage.limit}{' '}
-                active
+                {t('deployedListView.active')}
               </span>
               {scheduleUsage.paused > 0 && (
                 <span className="text-xs text-[var(--color-text-tertiary)]">
-                  ({scheduleUsage.paused} paused)
+                  ({scheduleUsage.paused} {t('deployedListView.paused')})
                 </span>
               )}
             </div>
@@ -471,7 +473,7 @@ export function DeployedListView({ className, initialAgentId }: DeployedListView
               type="text"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              placeholder="Search agents..."
+              placeholder={t('deployedListView.search')}
               className="w-full pl-9 pr-3 py-2 rounded-lg bg-[var(--color-bg-primary)] border border-[var(--color-border)] text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)]"
             />
           </div>
@@ -479,26 +481,26 @@ export function DeployedListView({ className, initialAgentId }: DeployedListView
           {/* Status Filter Pills */}
           <div className="flex items-center gap-1.5 mt-3">
             <FilterPill
-              label="All"
+              label={t('deployedListView.filterAll')}
               count={counts.total}
               active={statusFilter === 'all'}
               onClick={() => setStatusFilter('all')}
             />
             <FilterPill
-              label="Live"
+              label={t('deployedListView.filterLive')}
               count={counts.deployed}
               active={statusFilter === 'deployed'}
               onClick={() => setStatusFilter('deployed')}
               color="green"
             />
             <FilterPill
-              label="Draft"
+              label={t('deployedListView.filterDraft')}
               count={counts.draft}
               active={statusFilter === 'draft'}
               onClick={() => setStatusFilter('draft')}
             />
             <FilterPill
-              label="Paused"
+              label={t('deployedListView.filterPaused')}
               count={counts.paused}
               active={statusFilter === 'paused'}
               onClick={() => setStatusFilter('paused')}
@@ -517,7 +519,7 @@ export function DeployedListView({ className, initialAgentId }: DeployedListView
             <div className="flex flex-col items-center justify-center py-12 px-4">
               <FileCode size={32} className="text-[var(--color-text-tertiary)] opacity-50 mb-3" />
               <p className="text-sm text-[var(--color-text-secondary)] text-center">
-                {searchQuery ? 'No agents match your search' : 'No agents found'}
+                {searchQuery ? t('deployedListView.noMatch') : t('deployedListView.noAgents')}
               </p>
             </div>
           ) : (
@@ -527,7 +529,7 @@ export function DeployedListView({ className, initialAgentId }: DeployedListView
                 statusFilter !== 'draft' &&
                 statusFilter !== 'paused' && (
                   <AgentSection
-                    title="Live"
+                    title={t('deployedListView.filterLive')}
                     sectionKey="live"
                     agents={deployedAgents}
                     selectedId={selectedAgent?.id}
@@ -543,7 +545,7 @@ export function DeployedListView({ className, initialAgentId }: DeployedListView
                 statusFilter !== 'draft' &&
                 statusFilter !== 'deployed' && (
                   <AgentSection
-                    title="Paused"
+                    title={t('deployedListView.filterPaused')}
                     sectionKey="paused"
                     agents={pausedAgents}
                     selectedId={selectedAgent?.id}
@@ -559,7 +561,7 @@ export function DeployedListView({ className, initialAgentId }: DeployedListView
                 statusFilter !== 'deployed' &&
                 statusFilter !== 'paused' && (
                   <AgentSection
-                    title="Drafts"
+                    title={t('deployedListView.filterDraft')}
                     sectionKey="drafts"
                     agents={draftAgents}
                     selectedId={selectedAgent?.id}
@@ -696,9 +698,9 @@ function AgentSection({
               </p>
             )}
             <div className="mt-1 flex items-center gap-2 text-[10px] text-[var(--color-text-tertiary)] pl-5">
-              <span>{agent.block_count} blocks</span>
+              <span>{agent.block_count} {t('deployedListView.blocks')}</span>
               <span>•</span>
-              <span>Updated {formatTimeAgo(agent.updated_at)}</span>
+              <span>Updated {formatTimeAgo(agent.updated_at, t)}</span>
             </div>
           </button>
         ))}
@@ -707,7 +709,7 @@ function AgentSection({
 }
 
 // Helper function
-function formatTimeAgo(dateString: string): string {
+function formatTimeAgo(dateString: string, t: (key: string) => string): string {
   const date = new Date(dateString);
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
@@ -715,10 +717,10 @@ function formatTimeAgo(dateString: string): string {
   const diffHours = Math.floor(diffMs / 3600000);
   const diffDays = Math.floor(diffMs / 86400000);
 
-  if (diffMins < 1) return 'just now';
-  if (diffMins < 60) return `${diffMins}m ago`;
-  if (diffHours < 24) return `${diffHours}h ago`;
-  if (diffDays < 7) return `${diffDays}d ago`;
+  if (diffMins < 1) return t('deployedListView.justNow');
+  if (diffMins < 60) return `${diffMins}${t('agents.mAgo')}`;
+  if (diffHours < 24) return `${diffHours}${t('agents.hAgo')}`;
+  if (diffDays < 7) return `${diffDays}${t('agents.dAgo')}`;
 
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }

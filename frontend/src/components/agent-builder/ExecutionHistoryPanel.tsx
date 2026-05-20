@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   History,
   ChevronDown,
@@ -209,6 +210,7 @@ function ExecutionOutputView({
   artifacts?: Array<{ type: string; format: string; data: string; title?: string }>;
   files?: Array<{ filename: string; download_url: string }>;
 }) {
+  const { t } = useTranslation('agents');
   const [showRawJson, setShowRawJson] = useState(false);
   const [expandedToolCalls, setExpandedToolCalls] = useState(false);
 
@@ -223,7 +225,7 @@ function ExecutionOutputView({
         <div>
           <div className="flex items-center gap-1.5 text-[10px] font-medium text-[var(--color-text-tertiary)] mb-1">
             <MessageSquare size={12} />
-            Response
+            {t('execHistory.response')}
           </div>
           <div className="p-3 rounded-lg bg-[var(--color-surface)] text-xs text-[var(--color-text-secondary)] leading-relaxed">
             {formatResponse(displayResponse.trim())}
@@ -236,7 +238,7 @@ function ExecutionOutputView({
         <div>
           <div className="flex items-center gap-1.5 text-[10px] font-medium text-[var(--color-text-tertiary)] mb-1">
             <FileText size={12} />
-            Generated Charts ({artifacts.length})
+            {t('execHistory.generatedCharts', { count: artifacts.length })}
           </div>
           <div className="flex flex-wrap gap-2">
             {artifacts.map((artifact, idx) => (
@@ -261,7 +263,7 @@ function ExecutionOutputView({
         <div>
           <div className="flex items-center gap-1.5 text-[10px] font-medium text-[var(--color-text-tertiary)] mb-1">
             <FileText size={12} />
-            Generated Files ({files.length})
+            {t('execHistory.generatedFiles', { count: files.length })}
           </div>
           <div className="space-y-1">
             {files.map((file, idx) => (
@@ -288,7 +290,7 @@ function ExecutionOutputView({
             className="flex items-center gap-1.5 text-[10px] font-medium text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] transition-colors"
           >
             <Wrench size={12} />
-            Tool Calls ({extracted.toolCalls.length})
+            {t('execHistory.toolCalls', { count: extracted.toolCalls.length })}
             <ChevronRight
               size={12}
               className={`transition-transform ${expandedToolCalls ? 'rotate-90' : ''}`}
@@ -335,7 +337,7 @@ function ExecutionOutputView({
         {extracted?.tokens && (
           <span className="flex items-center gap-1">
             <Coins size={10} />
-            {extracted.tokens.total.toLocaleString()} tokens
+            {t('execHistory.tokens', { count: extracted.tokens.total.toLocaleString() })}
           </span>
         )}
         {output && (
@@ -344,7 +346,7 @@ function ExecutionOutputView({
             className="flex items-center gap-1 hover:text-[var(--color-text-secondary)] transition-colors"
           >
             <Code size={10} />
-            {showRawJson ? 'Hide' : 'Show'} Raw
+            {showRawJson ? t('execHistory.hideRaw') : t('execHistory.showRaw')}
           </button>
         )}
       </div>
@@ -370,6 +372,7 @@ export function ExecutionHistoryPanel({
   className,
   defaultExpanded = false,
 }: ExecutionHistoryPanelProps) {
+  const { t } = useTranslation('agents');
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -475,7 +478,7 @@ export function ExecutionHistoryPanel({
         <div className="flex items-center gap-2">
           <History size={16} className="text-[var(--color-accent)]" />
           <span className="text-sm font-medium text-[var(--color-text-primary)]">
-            Execution History
+            {t('execHistory.title')}
           </span>
           {data && data.total > 0 && (
             <span className="px-1.5 py-0.5 text-[10px] rounded bg-[var(--color-surface)] text-[var(--color-text-secondary)]">
@@ -501,26 +504,26 @@ export function ExecutionHistoryPanel({
               className="flex-1 px-2 py-1.5 rounded-md bg-[var(--color-bg-primary)] border border-[var(--color-border)] text-xs text-[var(--color-text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)] [color-scheme:dark]"
             >
               <option value="all" className="bg-[#1a1a1a] text-white">
-                All Status
+                {t('execHistory.allStatus')}
               </option>
               <option value="completed" className="bg-[#1a1a1a] text-white">
-                Completed
+                {t('execHistory.completed')}
               </option>
               <option value="failed" className="bg-[#1a1a1a] text-white">
-                Failed
+                {t('execHistory.failed')}
               </option>
               <option value="running" className="bg-[#1a1a1a] text-white">
-                Running
+                {t('execHistory.running')}
               </option>
               <option value="pending" className="bg-[#1a1a1a] text-white">
-                Pending
+                {t('execHistory.pending')}
               </option>
             </select>
             <button
               onClick={handleRefresh}
               disabled={isLoading}
               className="p-1.5 rounded-md hover:bg-[var(--color-surface-hover)] text-[var(--color-text-secondary)] transition-colors"
-              title="Refresh"
+              title={t('execHistory.refresh')}
             >
               {isLoading ? <Loader2 size={14} className="animate-spin" /> : <History size={14} />}
             </button>
@@ -533,7 +536,7 @@ export function ExecutionHistoryPanel({
             </div>
           ) : !data || data.executions.length === 0 ? (
             <div className="text-center py-6 text-xs text-[var(--color-text-tertiary)]">
-              No executions yet
+              {t('execHistory.noExecutions')}
             </div>
           ) : (
             <>
@@ -588,7 +591,7 @@ export function ExecutionHistoryPanel({
                         {/* Error */}
                         {execution.error && (
                           <div className="mt-2 p-2 rounded bg-red-500/10 text-red-400 text-xs">
-                            <strong>Error:</strong> {execution.error}
+                            <strong>{t('execHistory.error')}</strong> {execution.error}
                           </div>
                         )}
 
@@ -596,7 +599,7 @@ export function ExecutionHistoryPanel({
                         {execution.input && Object.keys(execution.input).length > 0 && (
                           <div className="mt-2">
                             <div className="text-[10px] font-medium text-[var(--color-text-tertiary)] mb-1">
-                              Input
+                              {t('execHistory.input')}
                             </div>
                             <pre className="p-2 rounded bg-[var(--color-surface)] text-[10px] text-[var(--color-text-secondary)] font-mono overflow-x-auto">
                               {JSON.stringify(execution.input, null, 2)}
@@ -617,7 +620,7 @@ export function ExecutionHistoryPanel({
 
                         {/* Execution ID */}
                         <div className="text-[10px] text-[var(--color-text-tertiary)]">
-                          ID: {execution.id}
+                          {t('execHistory.id')} {execution.id}
                         </div>
                       </div>
                     )}
@@ -635,10 +638,10 @@ export function ExecutionHistoryPanel({
                   {isLoadingMore ? (
                     <span className="flex items-center justify-center gap-2">
                       <Loader2 size={12} className="animate-spin" />
-                      Loading...
+                      {t('execHistory.loading')}
                     </span>
                   ) : (
-                    'Load more...'
+                    t('execHistory.loadMore')
                   )}
                 </button>
               )}

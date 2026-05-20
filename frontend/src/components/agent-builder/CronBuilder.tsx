@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Clock, Calendar, CalendarDays, Timer, Repeat } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -17,28 +18,28 @@ const FREQUENCY_OPTIONS: {
 }[] = [
   {
     type: 'minutes',
-    label: 'Every X Minutes',
+    label: t('cronBuilder.everyXMinutes'),
     icon: <Timer size={16} />,
-    description: 'Run multiple times per hour',
+    description: t('cronBuilder.runMultiple'),
   },
   {
     type: 'hourly',
-    label: 'Hourly',
+    label: t('agents.freqHourly'),
     icon: <Clock size={16} />,
-    description: 'Run once every hour',
+    description: t('cronBuilder.runOnceHour'),
   },
-  { type: 'daily', label: 'Daily', icon: <Calendar size={16} />, description: 'Run once per day' },
+  { type: 'daily', label: t('agents.freqDaily'), icon: <Calendar size={16} />, description: t('cronBuilder.runOnceDay') },
   {
     type: 'weekly',
-    label: 'Weekly',
+    label: t('agents.freqWeekly'),
     icon: <CalendarDays size={16} />,
-    description: 'Run on specific days',
+    description: t('cronBuilder.runSpecific'),
   },
   {
     type: 'monthly',
-    label: 'Monthly',
+    label: t('agents.freqMonthly'),
     icon: <Repeat size={16} />,
-    description: 'Run once per month',
+    description: t('cronBuilder.runOnceMonth'),
   },
 ];
 
@@ -133,6 +134,7 @@ function parseCronToSettings(cron: string): {
 }
 
 export function CronBuilder({ value, onChange }: CronBuilderProps) {
+  const { t } = useTranslation('agents');
   const parsed = useMemo(() => parseCronToSettings(value), [value]);
 
   const [frequency, setFrequency] = useState<FrequencyType>(parsed.frequency);
@@ -211,7 +213,7 @@ export function CronBuilder({ value, onChange }: CronBuilderProps) {
       {/* Frequency Type Selection */}
       <div className="space-y-1.5">
         <label className="text-xs font-medium text-[var(--color-text-secondary)]">
-          How often should this run?
+          {t('cronBuilder.howOften')}
         </label>
         <div className="flex flex-wrap gap-2">
           {FREQUENCY_OPTIONS.map(opt => (
@@ -254,7 +256,7 @@ export function CronBuilder({ value, onChange }: CronBuilderProps) {
                       : 'bg-[var(--color-surface)] text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-hover)]'
                   )}
                 >
-                  {m === 60 ? '1 hr' : `${m} min`}
+                  {m === 60 ? `1 ${t('cronBuilder.hr')}` : `${m} ${t('cronBuilder.min')}`}
                 </button>
               ))}
             </div>
@@ -265,7 +267,7 @@ export function CronBuilder({ value, onChange }: CronBuilderProps) {
         {frequency === 'hourly' && (
           <div className="space-y-2">
             <label className="text-xs font-medium text-[var(--color-text-secondary)]">
-              At minute
+              {t('cronBuilder.atMinute')}
             </label>
             <div className="flex flex-wrap gap-1.5">
               {[0, 15, 30, 45].map(m => (
@@ -291,7 +293,7 @@ export function CronBuilder({ value, onChange }: CronBuilderProps) {
         {(frequency === 'daily' || frequency === 'weekly' || frequency === 'monthly') && (
           <div className="space-y-2">
             <label className="text-xs font-medium text-[var(--color-text-secondary)]">
-              At time
+              {t('cronBuilder.atTime')}
             </label>
             <div className="flex items-center gap-2">
               <select
@@ -325,7 +327,7 @@ export function CronBuilder({ value, onChange }: CronBuilderProps) {
         {frequency === 'weekly' && (
           <div className="space-y-2">
             <label className="text-xs font-medium text-[var(--color-text-secondary)]">
-              On days
+              {t('cronBuilder.onDays')}
             </label>
             <div className="flex gap-1">
               {DAYS_OF_WEEK.map(day => (
@@ -350,7 +352,7 @@ export function CronBuilder({ value, onChange }: CronBuilderProps) {
         {/* Monthly - day of month selection */}
         {frequency === 'monthly' && (
           <div className="space-y-2">
-            <label className="text-xs font-medium text-[var(--color-text-secondary)]">On day</label>
+            <label className="text-xs font-medium text-[var(--color-text-secondary)]">{t('cronBuilder.onDay')}</label>
             <select
               value={dayOfMonth}
               onChange={e => setDayOfMonth(parseInt(e.target.value))}
@@ -376,7 +378,7 @@ export function CronBuilder({ value, onChange }: CronBuilderProps) {
         <div className="relative">
           <details className="text-[10px]">
             <summary className="text-[var(--color-text-tertiary)] cursor-pointer hover:text-[var(--color-text-secondary)] select-none">
-              cron
+              {t('cronBuilder.cron')}
             </summary>
             <code className="absolute right-0 mt-1 p-1.5 rounded bg-[var(--color-bg-tertiary)] border border-[var(--color-border)] font-mono text-[var(--color-text-secondary)] text-[10px] z-10 whitespace-nowrap">
               {value}

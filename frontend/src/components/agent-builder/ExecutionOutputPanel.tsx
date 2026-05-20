@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   X,
   ChevronDown,
@@ -101,6 +102,7 @@ interface ExecutionOutputPanelProps {
 }
 
 export function ExecutionOutputPanel({ onClose }: ExecutionOutputPanelProps) {
+  const { t } = useTranslation('agents');
   const {
     blockStates,
     blockOutputCache,
@@ -259,11 +261,11 @@ export function ExecutionOutputPanel({ onClose }: ExecutionOutputPanelProps) {
           </div>
           <div>
             <span className="font-semibold text-sm text-[var(--color-text-primary)]">
-              Execution Output
+              {t('execOutput.title')}
             </span>
             <span className="ml-2 text-xs text-[var(--color-text-tertiary)]">
-              {completedBlocksCount} completed
-              {failedBlocksCount > 0 ? ` · ${failedBlocksCount} failed` : ''}
+              {completedBlocksCount} {t('execOutput.completed')}
+              {failedBlocksCount > 0 ? ` · ${failedBlocksCount} ${t('execOutput.failed')}` : ''}
             </span>
           </div>
         </div>
@@ -271,14 +273,14 @@ export function ExecutionOutputPanel({ onClose }: ExecutionOutputPanelProps) {
           <button
             onClick={() => setIsExpanded(!isExpanded)}
             className="p-2 rounded-lg hover:bg-[var(--color-surface-hover)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
-            title={isExpanded ? 'Minimize' : 'Maximize'}
+            title={isExpanded ? t('execOutput.minimize') : t('execOutput.maximize')}
           >
             {isExpanded ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
           </button>
           <button
             onClick={onClose}
             className="p-2 rounded-lg hover:bg-[var(--color-surface-hover)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
-            title="Close"
+            title={t('execOutput.close')}
           >
             <X size={16} />
           </button>
@@ -294,15 +296,15 @@ export function ExecutionOutputPanel({ onClose }: ExecutionOutputPanelProps) {
         {(cleanResult || lastOutput) && (
           <div className="p-5 border-b border-[var(--color-border)]">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">
-                Final Output
-              </h3>
+                <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">
+                  {t('execOutput.finalOutput')}
+                </h3>
               <button
                 onClick={() =>
                   copyToClipboard(cleanResult || formatOutput(lastOutput?.output), 'final')
                 }
                 className="p-1.5 rounded-lg hover:bg-[var(--color-surface-hover)] text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] transition-colors"
-                title="Copy output"
+                title={t('execOutput.copyOutput')}
               >
                 {copiedId === 'final' ? (
                   <Check size={14} className="text-green-400" />
@@ -321,7 +323,7 @@ export function ExecutionOutputPanel({ onClose }: ExecutionOutputPanelProps) {
             {lastExecutionResult?.artifacts && lastExecutionResult.artifacts.length > 0 && (
               <div className="mt-4">
                 <h4 className="text-xs font-medium text-[var(--color-text-tertiary)] mb-2">
-                  Generated Charts ({lastExecutionResult.artifacts.length})
+                  {t('execOutput.generatedCharts', { count: lastExecutionResult.artifacts.length })}
                 </h4>
                 <div className="flex flex-wrap gap-2">
                   {lastExecutionResult.artifacts.map((artifact, idx) => (
@@ -350,7 +352,7 @@ export function ExecutionOutputPanel({ onClose }: ExecutionOutputPanelProps) {
             {lastExecutionResult?.files && lastExecutionResult.files.length > 0 && (
               <div className="mt-4">
                 <h4 className="text-xs font-medium text-[var(--color-text-tertiary)] mb-2">
-                  Generated Files ({lastExecutionResult.files.length})
+                  {t('execOutput.generatedFiles', { count: lastExecutionResult.files.length })}
                 </h4>
                 <div className="space-y-1">
                   {lastExecutionResult.files.map((file, idx) => (
@@ -374,7 +376,7 @@ export function ExecutionOutputPanel({ onClose }: ExecutionOutputPanelProps) {
         {/* Block Outputs */}
         <div className="p-5">
           <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-4">
-            Block Outputs
+            {t('execOutput.blockOutputs')}
           </h3>
           <div className="space-y-2">
             {workflow?.blocks.map(block => {
@@ -410,7 +412,7 @@ export function ExecutionOutputPanel({ onClose }: ExecutionOutputPanelProps) {
                           !state?.status && 'bg-gray-500/15 text-gray-400'
                         )}
                       >
-                        {state?.status || 'pending'}
+                        {state?.status || t('execOutput.pending')}
                       </span>
                       {/* For-each iteration count badge */}
                       {block.type === 'for_each' && forEachStates[block.id] && (
@@ -428,7 +430,7 @@ export function ExecutionOutputPanel({ onClose }: ExecutionOutputPanelProps) {
                           copyToClipboard(formatOutput(output), block.id);
                         }}
                         className="p-1.5 rounded-lg hover:bg-[var(--color-background)] text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] transition-colors"
-                        title="Copy output"
+                        title={t('execOutput.copyOutput')}
                       >
                         {copiedId === block.id ? (
                           <Check size={12} className="text-green-400" />
@@ -453,10 +455,10 @@ export function ExecutionOutputPanel({ onClose }: ExecutionOutputPanelProps) {
                         <div className="space-y-2">
                           <div className="flex items-center gap-2">
                             <h4 className="text-xs font-semibold text-[var(--color-text-tertiary)] uppercase tracking-wide">
-                              Available Inputs
+                            {t('execOutput.availableInputs')}
                             </h4>
                             <span className="text-xs text-[var(--color-text-tertiary)] bg-[var(--color-surface)] px-2 py-0.5 rounded-full">
-                              {Object.keys(state.inputs).length} keys
+                              {Object.keys(state.inputs).length} {t('execOutput.keys')}
                             </span>
                           </div>
                           <div className="bg-[var(--color-surface)] rounded-lg p-3 border border-[var(--color-border)]">
@@ -487,7 +489,7 @@ export function ExecutionOutputPanel({ onClose }: ExecutionOutputPanelProps) {
                       {block.type === 'for_each' && forEachStates[block.id] && (
                         <div className="space-y-2">
                           <h4 className="text-xs font-semibold text-[var(--color-text-tertiary)] uppercase tracking-wide">
-                            Iteration Results
+                            {t('execOutput.iterationResults')}
                           </h4>
                           <ForEachOutputView state={forEachStates[block.id]} />
                         </div>
@@ -496,20 +498,20 @@ export function ExecutionOutputPanel({ onClose }: ExecutionOutputPanelProps) {
                       {/* Output Section */}
                       <div className="space-y-2">
                         <h4 className="text-xs font-semibold text-[var(--color-text-tertiary)] uppercase tracking-wide">
-                          Output
+                          {t('execOutput.output')}
                         </h4>
                         {state?.error ? (
                           <div className="text-sm text-red-400 font-mono p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-                            Error: {state.error}
+                            {t('execOutput.error')} {state.error}
                           </div>
                         ) : output ? (
                           <pre className="text-xs text-[var(--color-text-secondary)] whitespace-pre-wrap break-words font-mono max-h-[200px] overflow-y-auto leading-relaxed bg-[var(--color-surface)] rounded-lg p-3 border border-[var(--color-border)]">
                             {formatOutput(output)}
                           </pre>
                         ) : (
-                          <div className="text-sm text-[var(--color-text-tertiary)] italic p-3">
-                            No output yet
-                          </div>
+                            <div className="text-sm text-[var(--color-text-tertiary)] italic p-3">
+                              {t('execOutput.noOutputYet')}
+                            </div>
                         )}
                       </div>
                     </div>
