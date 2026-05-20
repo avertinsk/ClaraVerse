@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Crown,
   Zap,
@@ -42,6 +43,7 @@ export const BillingSection: React.FC<BillingSectionProps> = ({
   checkoutSuccess,
   onCheckoutSuccessHandled,
 }) => {
+  const { t } = useTranslation('settings');
   const {
     subscription,
     plans,
@@ -101,8 +103,8 @@ export const BillingSection: React.FC<BillingSectionProps> = ({
         const currentSub = useSubscriptionStore.getState().subscription;
         if (currentSub && currentSub.tier !== SubscriptionTier.FREE) {
           toast.success(
-            `Welcome to ${getTierDisplayName(currentSub.tier)}! Your subscription is now active.`
-          );
+          t('billing.welcomeToTier', { tier: getTierDisplayName(currentSub.tier) })
+        );
           break;
         }
 
@@ -114,7 +116,7 @@ export const BillingSection: React.FC<BillingSectionProps> = ({
 
       if (attempts >= maxAttempts) {
         // Subscription might not have been processed yet, but don't show error
-        toast.info('Payment received! Your subscription will be updated shortly.');
+        toast.info(t('billing.paymentReceived'));
       }
 
       setIsSyncing(false);
@@ -135,7 +137,7 @@ export const BillingSection: React.FC<BillingSectionProps> = ({
     }
 
     if (plan.tier === currentTier) {
-      toast.info('You are already on this plan');
+      toast.info(t('billing.alreadyOnPlan'));
       return;
     }
 
@@ -155,7 +157,7 @@ export const BillingSection: React.FC<BillingSectionProps> = ({
     if (checkoutUrl) {
       window.location.href = checkoutUrl;
     } else {
-      toast.error('Failed to create checkout session');
+      toast.error(t('billing.checkoutFailed'));
     }
   };
 
@@ -166,7 +168,7 @@ export const BillingSection: React.FC<BillingSectionProps> = ({
       if (portalUrl) {
         window.open(portalUrl, '_blank');
       } else {
-        toast.error('Failed to open billing portal');
+        toast.error(t('billing.portalFailed'));
       }
     } finally {
       setIsLoadingPortal(false);
@@ -174,18 +176,18 @@ export const BillingSection: React.FC<BillingSectionProps> = ({
   };
 
   const handleCancelSubscription = async () => {
-    if (
-      window.confirm(
-        'Are you sure you want to cancel your subscription? You will retain access until the end of your billing period.'
-      )
-    ) {
+      if (
+        window.confirm(
+          t('billing.cancelConfirm')
+        )
+      ) {
       const success = await cancelSubscription();
       if (success) {
         toast.success(
-          'Subscription cancelled. You will retain access until the end of your billing period.'
+          t('billing.cancelSuccess')
         );
       } else {
-        toast.error('Failed to cancel subscription');
+        toast.error(t('billing.cancelFailed'));
       }
     }
   };
@@ -193,9 +195,9 @@ export const BillingSection: React.FC<BillingSectionProps> = ({
   const handleReactivate = async () => {
     const success = await reactivateSubscription();
     if (success) {
-      toast.success('Subscription reactivated!');
+      toast.success(t('billing.reactivateSuccess'));
     } else {
-      toast.error('Failed to reactivate subscription');
+      toast.error(t('billing.reactivateFailed'));
     }
   };
 
@@ -242,7 +244,7 @@ export const BillingSection: React.FC<BillingSectionProps> = ({
     return (
       <div className="billing-loading">
         <Spinner size="lg" />
-        <p>{isSyncing ? 'Confirming your subscription...' : 'Loading billing information...'}</p>
+        <p>{isSyncing ? t('billing.syncing') : t('billing.loading')}</p>
       </div>
     );
   }
@@ -261,7 +263,7 @@ export const BillingSection: React.FC<BillingSectionProps> = ({
           }}
         >
           <RefreshCw size={16} />
-          Retry
+          {t('billing.retry')}
         </Button>
       </div>
     );
@@ -272,14 +274,14 @@ export const BillingSection: React.FC<BillingSectionProps> = ({
       {/* Header */}
       <header className="billing-header">
         <div className="billing-title-section">
-          <h1 className="billing-main-title">Billing</h1>
-          <p className="billing-subtitle">Manage your subscription and update your plan.</p>
+          <h1 className="billing-main-title">{t('billing.title')}</h1>
+          <p className="billing-subtitle">{t('billing.subtitle')}</p>
         </div>
       </header>
 
       {/* Current Plan Card */}
       <section className="billing-current-plan">
-        <h3 className="billing-section-title">Current Plan</h3>
+        <h3 className="billing-section-title">{t('billing.currentPlan')}</h3>
         <Card variant="glass" className="current-plan-card">
           <div className="current-plan-header">
             <div className="current-plan-info">
@@ -293,7 +295,7 @@ export const BillingSection: React.FC<BillingSectionProps> = ({
             </div>
             <div className="current-plan-price">
               {isLegacyUser ? (
-                <span className="plan-price legacy-price">Free forever</span>
+                <span className="plan-price legacy-price">{t('billing.freeForever')}</span>
               ) : (
                 currentPlan && (
                   <span className="plan-price">
@@ -308,7 +310,7 @@ export const BillingSection: React.FC<BillingSectionProps> = ({
           {isLegacyUser ? (
             <div className="billing-period-info legacy-info">
               <Infinity size={14} />
-              <span>You have Special Lifetime Access - Since you came first</span>
+              <span>{t('billing.lifetimeAccess')}</span>
             </div>
           ) : (
             subscription?.current_period_end &&
@@ -317,8 +319,8 @@ export const BillingSection: React.FC<BillingSectionProps> = ({
                 <Calendar size={14} />
                 <span>
                   {subscription.cancel_at_period_end
-                    ? `Access until ${new Date(subscription.current_period_end).toLocaleDateString()}`
-                    : `Renews on ${new Date(subscription.current_period_end).toLocaleDateString()}`}
+                    ? t('billing.accessUntil', { date: new Date(subscription.current_period_end).toLocaleDateString() })
+                    : t('billing.renewsOn', { date: new Date(subscription.current_period_end).toLocaleDateString() })}
                 </span>
               </div>
             )
@@ -327,13 +329,14 @@ export const BillingSection: React.FC<BillingSectionProps> = ({
           {/* Scheduled change notice */}
           {subscription?.scheduled_tier && (
             <Alert variant="info" className="scheduled-change-alert">
-              <span>
-                Your plan will change to{' '}
-                {getTierDisplayName(subscription.scheduled_tier as SubscriptionTierType)} on{' '}
-                {subscription.scheduled_change_at
-                  ? new Date(subscription.scheduled_change_at).toLocaleDateString()
-                  : 'the end of your billing period'}
-              </span>
+                <span>
+                  {t('billing.scheduledChange', {
+                    tier: getTierDisplayName(subscription.scheduled_tier as SubscriptionTierType),
+                    date: subscription.scheduled_change_at
+                      ? new Date(subscription.scheduled_change_at).toLocaleDateString()
+                      : 'the end of your billing period'
+                  })}
+                </span>
             </Alert>
           )}
 
@@ -352,7 +355,7 @@ export const BillingSection: React.FC<BillingSectionProps> = ({
                   ) : (
                     <ExternalLink size={14} />
                   )}
-                  Manage Billing
+                  {t('billing.manageBilling')}
                 </Button>
                 {subscription?.cancel_at_period_end ? (
                   <Button
@@ -366,7 +369,7 @@ export const BillingSection: React.FC<BillingSectionProps> = ({
                     ) : (
                       <RefreshCw size={14} />
                     )}
-                    Reactivate
+                    {t('billing.reactivate')}
                   </Button>
                 ) : (
                   <Button
@@ -376,7 +379,7 @@ export const BillingSection: React.FC<BillingSectionProps> = ({
                     disabled={isChangingPlan}
                     className="cancel-btn"
                   >
-                    Cancel Subscription
+                    {t('billing.cancelSubscription')}
                   </Button>
                 )}
               </>
@@ -387,7 +390,7 @@ export const BillingSection: React.FC<BillingSectionProps> = ({
 
       {/* Available Plans */}
       <section className="billing-plans">
-        <h3 className="billing-section-title">Available Plans</h3>
+        <h3 className="billing-section-title">{t('billing.availablePlans')}</h3>
         <div className="plans-grid">
           {plans.map(plan => (
             <PlanCard
@@ -433,13 +436,14 @@ const PlanCard: React.FC<PlanCardProps> = ({
   onSelect,
   isLoading,
 }) => {
+  const { t } = useTranslation('settings');
   const isUpgradeAction = isUpgrade(currentTier, plan.tier);
 
   const getButtonText = () => {
-    if (isCurrentPlan) return 'Current Plan';
-    if (plan.contact_sales) return 'Contact Sales';
-    if (isUpgradeAction) return 'Upgrade';
-    return 'Downgrade';
+    if (isCurrentPlan) return t('billing.currentPlanBtn');
+    if (plan.contact_sales) return t('billing.contactSales');
+    if (isUpgradeAction) return t('billing.upgrade');
+    return t('billing.downgrade');
   };
 
   const getButtonVariant = (): 'primary' | 'secondary' | 'outline' => {
@@ -472,15 +476,15 @@ const PlanCard: React.FC<PlanCardProps> = ({
 
       <div className="plan-limits-summary">
         <div className="limit-item">
-          <span className="limit-name">Schedules</span>
+          <span className="limit-name">{t('billing.schedules')}</span>
           <span className="limit-val">{formatLimit(plan.limits.maxSchedules)}</span>
         </div>
         <div className="limit-item">
-          <span className="limit-name">API Keys</span>
+          <span className="limit-name">{t('billing.apiKeys')}</span>
           <span className="limit-val">{formatLimit(plan.limits.maxApiKeys)}</span>
         </div>
         <div className="limit-item">
-          <span className="limit-name">Executions/day</span>
+          <span className="limit-name">{t('billing.executionsPerDay')}</span>
           <span className="limit-val">{formatLimit(plan.limits.maxExecutionsPerDay)}</span>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { MoreVertical, Star, Edit2, Trash2 } from 'lucide-react';
 import styles from './ChatItemMenu.module.css';
 
@@ -17,6 +18,7 @@ export const ChatItemMenu: React.FC<ChatItemMenuProps> = ({
   onRename,
   onDelete,
 }) => {
+  const { t } = useTranslation('common');
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -64,7 +66,7 @@ export const ChatItemMenu: React.FC<ChatItemMenuProps> = ({
       <button
         className={styles.menuButton}
         onClick={handleMenuClick}
-        aria-label="Chat options"
+        aria-label={t('chat.options')}
         type="button"
       >
         <MoreVertical size={16} />
@@ -74,11 +76,11 @@ export const ChatItemMenu: React.FC<ChatItemMenuProps> = ({
         <div className={styles.menu}>
           <button className={styles.menuItem} onClick={handleStar} type="button">
             <Star size={16} className={isStarred ? styles.starFilled : ''} />
-            <span>{isStarred ? 'Unstar' : 'Star'}</span>
+            <span>{isStarred ? t('chat.unstar') : t('chat.star')}</span>
           </button>
           <button className={styles.menuItem} onClick={handleRename} type="button">
             <Edit2 size={16} />
-            <span>Rename</span>
+            <span>{t('chat.rename')}</span>
           </button>
           <button
             className={`${styles.menuItem} ${styles.danger}`}
@@ -86,7 +88,7 @@ export const ChatItemMenu: React.FC<ChatItemMenuProps> = ({
             type="button"
           >
             <Trash2 size={16} />
-            <span>Delete</span>
+            <span>{t('chat.delete')}</span>
           </button>
         </div>
       )}

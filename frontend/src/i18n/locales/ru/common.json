@@ -27,5 +27,22 @@
   "no": "Нет",
   "backToApp": "Вернуться в приложение",
   "navigateHome": "Перейти на главную",
-  "openMenu": "Открыть меню"
+  "openMenu": "Открыть меню",
+  "sidebar.newChat": "Новый чат",
+  "sidebar.recents": "Недавние",
+  "sidebar.expandSidebar": "Развернуть боковую панель",
+  "sidebar.collapseSidebar": "Свернуть боковую панель",
+  "sidebar.closeSidebar": "Закрыть боковую панель",
+  "sidebar.startNewChat": "Начать новый чат",
+  "sidebar.navigation": "Навигация по боковой панели",
+  "sidebar.openChat": "Открыть чат: {{title}}",
+  "chat.options": "Опции чата",
+  "chat.star": "В избранное",
+  "chat.unstar": "Убрать из избранного",
+  "chat.rename": "Переименовать",
+  "chat.delete": "Удалить",
+  "rename.title": "Переименовать чат",
+  "rename.placeholder": "Введите новое название чата",
+  "rename.cancel": "Отмена",
+  "rename.save": "Переименовать"
 }

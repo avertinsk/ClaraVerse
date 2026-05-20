@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { RefreshCw, AlertCircle, Brain, Info, X } from 'lucide-react';
 import { Button, Spinner, Alert } from '@/components/design-system';
 import { useSubscriptionStore } from '@/store/useSubscriptionStore';
@@ -41,7 +42,7 @@ function formatResetTime(resetAt: string): string {
   }
 
   // 7+ days: show day of week and time
-  return `Resets ${date.toLocaleDateString('en-US', { weekday: 'short' })} ${date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
+    return `Resets ${date.toLocaleDateString('en-US', { weekday: 'short' })} ${date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
 }
 
 // Helper to format relative time
@@ -144,6 +145,7 @@ const UsageGroup: React.FC<UsageGroupProps> = ({ title, items }) => {
 };
 
 export const UsageSection: React.FC = () => {
+  const { t } = useTranslation('settings');
   const { usageStats, isLoadingUsage, usageError, fetchUsageStats } = useSubscriptionStore();
   const { memoryEnabled } = useSettingsStore();
 
@@ -166,7 +168,7 @@ export const UsageSection: React.FC = () => {
       setMemoryStats(stats);
     } catch (err) {
       console.error('Failed to fetch memory stats:', err);
-      setMemoryStatsError('Failed to load memory statistics');
+      setMemoryStatsError(t('memory.statsFailed'));
     }
   }, [memoryEnabled]);
 
@@ -254,8 +256,8 @@ export const UsageSection: React.FC = () => {
           {
             label: 'Total memories',
             current: memoryStats.total_memories,
-            max: -1, // No limit
-            showCount: true, // Show raw count
+            max: -1,
+            showCount: true,
           },
           {
             label: 'Active memories',
@@ -276,7 +278,7 @@ export const UsageSection: React.FC = () => {
     return (
       <div className="usage-loading">
         <Spinner size="lg" />
-        <p>Loading usage data...</p>
+        <p>{t('usage.loading')}</p>
       </div>
     );
   }
@@ -290,7 +292,7 @@ export const UsageSection: React.FC = () => {
         </Alert>
         <Button onClick={handleRefresh}>
           <RefreshCw size={16} />
-          Retry
+          {t('usage.retry')}
         </Button>
       </div>
     );
@@ -301,9 +303,9 @@ export const UsageSection: React.FC = () => {
       {/* Header */}
       <header className="usage-header">
         <div className="usage-title-section">
-          <h1 className="usage-main-title">Plan usage limits</h1>
+          <h1 className="usage-main-title">{t('usage.title')}</h1>
           <p className="usage-subtitle">
-            Monitor your current usage across different resource limits.
+            {t('usage.subtitle')}
           </p>
         </div>
       </header>
@@ -311,7 +313,7 @@ export const UsageSection: React.FC = () => {
       {/* Session Usage */}
       {sessionItems.length > 0 && (
         <>
-          <UsageGroup title="Current session" items={sessionItems} />
+          <UsageGroup title={t('usage.currentSession')} items={sessionItems} />
           <div className="usage-divider" />
         </>
       )}
@@ -319,7 +321,7 @@ export const UsageSection: React.FC = () => {
       {/* Daily Limits */}
       {dailyItems.length > 0 && (
         <>
-          <UsageGroup title="Daily limits" items={dailyItems} />
+          <UsageGroup title={t('usage.dailyLimits')} items={dailyItems} />
           <div className="usage-divider" />
         </>
       )}
@@ -327,7 +329,7 @@ export const UsageSection: React.FC = () => {
       {/* Monthly Limits */}
       {monthlyItems.length > 0 && (
         <>
-          <UsageGroup title="Monthly limits" items={monthlyItems} />
+          <UsageGroup title={t('usage.monthlyLimits')} items={monthlyItems} />
           <div className="usage-divider" />
         </>
       )}
@@ -335,7 +337,7 @@ export const UsageSection: React.FC = () => {
       {/* Resource Limits */}
       {resourceItems.length > 0 && (
         <>
-          <UsageGroup title="Resource limits" items={resourceItems} />
+          <UsageGroup title={t('usage.resourceLimits')} items={resourceItems} />
           {memoryItems.length > 0 && <div className="usage-divider" />}
         </>
       )}
@@ -348,7 +350,7 @@ export const UsageSection: React.FC = () => {
             style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
           >
             <Brain size={18} />
-            Memory System
+            {t('usage.memorySystem')}
             <button
               onClick={() => setShowMemoryInfoModal(true)}
               className="text-gray-400 hover:text-gray-200 transition-colors"
@@ -360,7 +362,7 @@ export const UsageSection: React.FC = () => {
                 display: 'flex',
                 alignItems: 'center',
               }}
-              title="Learn how memory works"
+              title={t('usage.memoryInfo')}
             >
               <Info size={16} />
             </button>
@@ -377,8 +379,7 @@ export const UsageSection: React.FC = () => {
             ))}
           </div>
           <p style={{ fontSize: '12px', color: '#9CA3AF', marginTop: '12px' }}>
-            Memory system stores encrypted information from your conversations. Average score:{' '}
-            {memoryStats ? memoryStats.avg_score.toFixed(2) : 'N/A'}
+            {t('usage.memoryDesc', { score: memoryStats ? memoryStats.avg_score.toFixed(2) : 'N/A' })}
           </p>
         </section>
       )}
@@ -386,21 +387,21 @@ export const UsageSection: React.FC = () => {
       {memoryEnabled && !memoryStats && !memoryStatsError && (
         <div style={{ padding: '24px', textAlign: 'center', color: '#9CA3AF' }}>
           <Brain size={24} style={{ margin: '0 auto 8px', opacity: 0.5 }} />
-          <p style={{ fontSize: '14px' }}>No memories stored yet</p>
+          <p style={{ fontSize: '14px' }}>{t('usage.noMemories')}</p>
           <p style={{ fontSize: '12px', marginTop: '4px' }}>
-            Memories will be extracted as you chat with Clara
+            {t('usage.memoriesExtracted')}
           </p>
         </div>
       )}
 
       {/* Footer */}
       <footer className="usage-footer">
-        <span>Last updated: {formatTimeAgo(lastUpdated)}</span>
+        <span>{t('usage.lastUpdated', { time: formatTimeAgo(lastUpdated) })}</span>
         <button
           className={`usage-refresh-btn ${isRefreshing ? 'refreshing' : ''}`}
           onClick={handleRefresh}
           disabled={isRefreshing}
-          aria-label="Refresh usage data"
+          aria-label={t('usage.refreshData')}
         >
           <RefreshCw size={16} />
         </button>
@@ -425,12 +426,12 @@ export const UsageSection: React.FC = () => {
                 <div style={{ backgroundColor: '#0d0d0d' }} className="p-2 rounded-lg">
                   <Brain className="w-4 h-4 text-gray-300" />
                 </div>
-                <h2 className="text-base font-semibold text-gray-100">Memory System</h2>
+                <h2 className="text-base font-semibold text-gray-100">{t('usage.memorySystem')}</h2>
               </div>
               <button
                 onClick={() => setShowMemoryInfoModal(false)}
                 className="p-2 rounded-lg text-gray-400 hover:text-gray-200 hover:bg-gray-800/50 transition-all"
-                aria-label="Close"
+                aria-label={t('usage.close')}
               >
                 <X size={18} />
               </button>
@@ -439,99 +440,95 @@ export const UsageSection: React.FC = () => {
             <div className="p-6 space-y-5 text-sm overflow-y-auto max-h-[calc(85vh-80px)]">
               {/* How it works */}
               <section>
-                <h3 className="text-sm font-semibold mb-2 text-gray-300">How it works</h3>
+                <h3 className="text-sm font-semibold mb-2 text-gray-300">{t('usage.howItWorks')}</h3>
                 <p className="text-gray-400 leading-relaxed text-xs">
-                  Clara automatically extracts and stores key information from your conversations.
-                  Relevant memories are injected into future chats to provide context and
-                  continuity.
+                  {t('usage.howItWorksDesc')}
                 </p>
               </section>
 
               {/* Extraction */}
               <section>
-                <h3 className="text-sm font-semibold mb-2 text-gray-300">Extraction</h3>
+                <h3 className="text-sm font-semibold mb-2 text-gray-300">{t('usage.extraction')}</h3>
                 <div className="space-y-2 text-gray-400">
                   <p className="text-xs">
-                    Memories are extracted after every N messages (configurable: 2-50, default: 20)
+                    {t('usage.extractionDesc')}
                   </p>
                   <p className="text-xs text-gray-500">
-                    Categories: personal info, preferences, context, facts, instructions
+                    {t('usage.categories')}
                   </p>
                 </div>
               </section>
 
               {/* Selection */}
               <section>
-                <h3 className="text-sm font-semibold mb-2 text-gray-300">Selection & Injection</h3>
+                <h3 className="text-sm font-semibold mb-2 text-gray-300">{t('usage.selection')}</h3>
                 <div className="space-y-2 text-gray-400">
                   <p className="text-xs">
-                    Before each chat, the most relevant memories are automatically selected and
-                    injected into the context.
+                    {t('usage.selectionDesc')}
                   </p>
-                  <p className="text-xs text-gray-500">Default: Top 5 most relevant memories</p>
+                  <p className="text-xs text-gray-500">{t('usage.defaultTop5')}</p>
                 </div>
               </section>
 
               {/* Decay */}
               <section>
-                <h3 className="text-sm font-semibold mb-2 text-gray-300">Memory Decay</h3>
+                <h3 className="text-sm font-semibold mb-2 text-gray-300">{t('usage.decay')}</h3>
                 <div className="space-y-3 text-gray-400">
                   <p className="text-xs">
-                    Memories are scored based on recency, frequency of use, and conversation
-                    engagement.
+                    {t('usage.decayDesc')}
                   </p>
                   <div
                     style={{ backgroundColor: '#0d0d0d' }}
                     className="rounded-lg p-3 font-mono text-xs"
                   >
                     <p className="text-gray-300">
-                      Score = (0.4 × Recency) + (0.3 × Frequency) + (0.3 × Engagement)
+                      {t('usage.scoreFormula')}
                     </p>
                   </div>
                   <div className="grid grid-cols-3 gap-2 text-xs">
                     <div style={{ backgroundColor: '#0d0d0d' }} className="rounded-lg p-2.5">
-                      <p className="text-gray-200 font-medium mb-1.5 text-xs">Recency</p>
-                      <p className="text-gray-500 text-xs">Recent: 1.0</p>
-                      <p className="text-gray-500 text-xs">1 week: 0.70</p>
-                      <p className="text-gray-500 text-xs">1 month: 0.22</p>
+                      <p className="text-gray-200 font-medium mb-1.5 text-xs">{t('usage.recency')}</p>
+                      <p className="text-gray-500 text-xs">{t('usage.recent')}</p>
+                      <p className="text-gray-500 text-xs">{t('usage.oneWeek')}</p>
+                      <p className="text-gray-500 text-xs">{t('usage.oneMonth')}</p>
                     </div>
                     <div style={{ backgroundColor: '#0d0d0d' }} className="rounded-lg p-2.5">
-                      <p className="text-gray-200 font-medium mb-1.5 text-xs">Frequency</p>
-                      <p className="text-gray-500 text-xs">0 uses: 0.0</p>
-                      <p className="text-gray-500 text-xs">10 uses: 0.5</p>
-                      <p className="text-gray-500 text-xs">20+ uses: 1.0</p>
+                      <p className="text-gray-200 font-medium mb-1.5 text-xs">{t('usage.frequency')}</p>
+                      <p className="text-gray-500 text-xs">{t('usage.zeroUses')}</p>
+                      <p className="text-gray-500 text-xs">{t('usage.tenUses')}</p>
+                      <p className="text-gray-500 text-xs">{t('usage.twentyPlusUses')}</p>
                     </div>
                     <div style={{ backgroundColor: '#0d0d0d' }} className="rounded-lg p-2.5">
-                      <p className="text-gray-200 font-medium mb-1.5 text-xs">Engagement</p>
-                      <p className="text-gray-500 text-xs">High: 0.8-1.0</p>
-                      <p className="text-gray-500 text-xs">Med: 0.4-0.7</p>
-                      <p className="text-gray-500 text-xs">Low: 0.0-0.3</p>
+                      <p className="text-gray-200 font-medium mb-1.5 text-xs">{t('usage.engagement')}</p>
+                      <p className="text-gray-500 text-xs">{t('usage.high')}</p>
+                      <p className="text-gray-500 text-xs">{t('usage.med')}</p>
+                      <p className="text-gray-500 text-xs">{t('usage.low')}</p>
                     </div>
                   </div>
                   <p className="text-xs text-gray-500">
-                    Memories with score &lt; 0.15 are archived but can be restored
+                    {t('usage.archivedNote')}
                   </p>
                 </div>
               </section>
 
               {/* Privacy */}
               <section>
-                <h3 className="text-sm font-semibold mb-2 text-gray-300">Privacy & Security</h3>
+                <h3 className="text-sm font-semibold mb-2 text-gray-300">{t('usage.privacySecurity')}</h3>
                 <div className="space-y-2 text-gray-400">
                   <ul className="space-y-1.5">
                     <li className="flex items-start gap-2 text-xs">
                       <span className="text-gray-300/50 mt-0.5">•</span>
                       <span>
-                        End-to-end encrypted with AES-256-GCM using your unique encryption key
+                        {t('usage.encrypted')}
                       </span>
                     </li>
                     <li className="flex items-start gap-2 text-xs">
                       <span className="text-gray-300/50 mt-0.5">•</span>
-                      <span>ClaraVerse administrators cannot access your encrypted memories</span>
+                      <span>{t('usage.noAdminAccess')}</span>
                     </li>
                     <li className="flex items-start gap-2 text-xs">
                       <span className="text-gray-300/50 mt-0.5">•</span>
-                      <span>Automatic deduplication prevents storing duplicate information</span>
+                      <span>{t('usage.deduplication')}</span>
                     </li>
                   </ul>
                 </div>
@@ -539,11 +536,9 @@ export const UsageSection: React.FC = () => {
 
               {/* Credit Info */}
               <section style={{ backgroundColor: '#0d0d0d' }} className="rounded-lg p-3">
-                <p className="text-xs text-gray-400">
-                  <span className="text-gray-300 font-medium">Credit Usage:</span> Memory extraction
-                  uses AI credits. The default threshold (20 messages) is optimized to balance
-                  memory quality with credit conservation.
-                </p>
+                  <p className="text-xs text-gray-400">
+                    <span className="text-gray-300 font-medium">{t('usage.creditUsage')}:</span> {t('usage.creditUsageDesc')}
+                  </p>
               </section>
             </div>
           </div>

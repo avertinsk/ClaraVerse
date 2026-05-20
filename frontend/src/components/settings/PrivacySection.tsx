@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import {
   HardDrive,
@@ -21,6 +22,7 @@ export interface PrivacySectionProps {
  * Allows users to choose between local and cloud storage for their chats.
  */
 export const PrivacySection: React.FC<PrivacySectionProps> = ({ onSave }) => {
+  const { t } = useTranslation('settings');
   const { chatPrivacyMode, setChatPrivacyMode } = useSettingsStore();
 
   const handlePrivacyModeChange = (mode: 'local' | 'cloud') => {
@@ -32,17 +34,17 @@ export const PrivacySection: React.FC<PrivacySectionProps> = ({ onSave }) => {
     <section className="settings-section privacy-section">
       <header className="privacy-header">
         <div className="privacy-title-section">
-          <h1 className="privacy-main-title">Privacy</h1>
+          <h1 className="privacy-main-title">{t('privacy.title')}</h1>
           <p className="privacy-subtitle">
-            Control how your data is stored and manage your privacy preferences.
+            {t('privacy.subtitle')}
           </p>
         </div>
       </header>
 
       {/* Chat Storage Section */}
-      <h2 className="privacy-subsection-title">Where are your chats saved?</h2>
+      <h2 className="privacy-subsection-title">{t('privacy.whereSaved')}</h2>
       <p className="privacy-subsection-description">
-        Choose how you'd like to store your conversations.
+        {t('privacy.chooseStorage')}
       </p>
 
       <div className="privacy-options-container">
@@ -55,13 +57,13 @@ export const PrivacySection: React.FC<PrivacySectionProps> = ({ onSave }) => {
             <HardDrive size={24} />
           </div>
           <div className="privacy-option-content">
-            <h3 className="privacy-option-title">This device only</h3>
-            <p className="privacy-option-description">Your chats stay private on this device.</p>
+            <h3 className="privacy-option-title">{t('privacy.thisDevice')}</h3>
+            <p className="privacy-option-description">{t('privacy.thisDeviceDesc')}</p>
             {chatPrivacyMode === 'local' && (
               <p className="privacy-option-warning">
                 <AlertTriangle size={12} />
                 <span>
-                  Stored in browser. Others with device access can view. Clara has no access.
+                  {t('privacy.deviceWarning')}
                 </span>
               </p>
             )}
@@ -82,8 +84,8 @@ export const PrivacySection: React.FC<PrivacySectionProps> = ({ onSave }) => {
             <Cloud size={24} />
           </div>
           <div className="privacy-option-content">
-            <h3 className="privacy-option-title">Sync across devices</h3>
-            <p className="privacy-option-description">Access your chats from any device.</p>
+            <h3 className="privacy-option-title">{t('privacy.syncDevices')}</h3>
+            <p className="privacy-option-description">{t('privacy.syncDevicesDesc')}</p>
           </div>
           {chatPrivacyMode === 'cloud' && (
             <div className="privacy-checkmark">
@@ -95,13 +97,13 @@ export const PrivacySection: React.FC<PrivacySectionProps> = ({ onSave }) => {
 
       <p className="privacy-note">
         <Lock size={14} />
-        AES-256 encrypted in the cloud.
+        {t('privacy.encrypted')}
       </p>
 
       <div className="mobile-privacy-policy-link">
         <Link to="/privacy" className="account-link-btn">
           <Shield size={16} />
-          View Privacy Policy
+          {t('privacy.viewPolicy')}
           <ExternalLink size={14} />
         </Link>
       </div>

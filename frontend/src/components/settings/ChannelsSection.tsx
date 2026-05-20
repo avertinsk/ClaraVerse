@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Send,
   Loader2,
@@ -73,6 +74,7 @@ const CHANNEL_CONFIGS: ChannelConfig[] = [
 ];
 
 export const ChannelsSection = () => {
+  const { t } = useTranslation('settings');
   // Local state
   const [channels, setChannels] = useState<Channel[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -100,7 +102,7 @@ export const ChannelsSection = () => {
       setChannels(data);
     } catch (err) {
       console.error('Failed to fetch channels:', err);
-      setError(err instanceof Error ? err.message : 'Failed to load channels');
+      setError(err instanceof Error ? err.message : t('channels.loadFailed'));
     } finally {
       setIsLoading(false);
     }
@@ -164,14 +166,14 @@ export const ChannelsSection = () => {
   const handleConnect = async (channelConfig: ChannelConfig) => {
     const channelFormData = formData[channelConfig.id];
     if (!channelFormData) {
-      setError('Please fill in all required fields');
+      setError(t('channels.fillRequired'));
       return;
     }
 
     // Validate required fields
     for (const field of channelConfig.fields) {
       if (!channelFormData[field.key]?.trim()) {
-        setError(`${field.label} is required`);
+        setError(t('channels.fieldRequired', { field: field.label }));
         return;
       }
     }
@@ -196,7 +198,7 @@ export const ChannelsSection = () => {
       await fetchChannels();
     } catch (err) {
       console.error('Failed to connect:', err);
-      setError(err instanceof Error ? err.message : 'Failed to connect channel');
+      setError(err instanceof Error ? err.message : t('channels.connectFailed'));
     } finally {
       setIsConnecting(null);
     }
@@ -218,7 +220,7 @@ export const ChannelsSection = () => {
       await fetchChannels();
     } catch (err) {
       console.error('Failed to disconnect:', err);
-      setError(err instanceof Error ? err.message : 'Failed to disconnect channel');
+      setError(err instanceof Error ? err.message : t('channels.disconnectFailed'));
     } finally {
       setIsDeleting(null);
     }
@@ -308,7 +310,7 @@ export const ChannelsSection = () => {
       await fetchChannels();
     } catch (err) {
       console.error('Failed to update allowlist:', err);
-      setError(err instanceof Error ? err.message : 'Failed to update access list');
+      setError(err instanceof Error ? err.message : t('channels.updateAllowlistFailed'));
     } finally {
       setIsSavingAllowlist(null);
     }
@@ -327,7 +329,7 @@ export const ChannelsSection = () => {
     return (
       <div className="channels-loading">
         <Loader2 className="animate-spin" size={24} />
-        <span>Loading channels...</span>
+        <span>{t('channels.loading')}</span>
       </div>
     );
   }
@@ -335,10 +337,9 @@ export const ChannelsSection = () => {
   return (
     <div className="channels-section">
       <div className="channels-header">
-        <h2 className="channels-title">Communication Channels</h2>
+        <h2 className="channels-title">{t('channels.title')}</h2>
         <p className="channels-description">
-          Connect external messaging platforms to chat with ClaraVerse AI. Each channel creates a
-          secure webhook endpoint for real-time communication.
+          {t('channels.description')}
         </p>
       </div>
 
@@ -346,21 +347,12 @@ export const ChannelsSection = () => {
       <div className="channels-security-warning">
         <Shield size={18} />
         <div className="channels-security-warning-content">
-          <strong>⚠️ Important Security Notice</strong>
+          <strong>{t('channels.securityNotice')}</strong>
           <p>
-            When you connect a bot,{' '}
-            <strong>
-              anyone who messages it will use your API credits, tools, and integrations
-            </strong>
-            . To protect your account, add your Telegram username or user ID to the{' '}
-            <strong>Access Control</strong> list after connecting.
+            {t('channels.securityDesc')}
           </p>
           <p className="channels-security-warning-tip">
-            💡 <strong>Tip:</strong> To find your Telegram user ID, message{' '}
-            <a href="https://t.me/userinfobot" target="_blank" rel="noopener noreferrer">
-              @userinfobot
-            </a>{' '}
-            on Telegram.
+            💡 <strong>{t('channels.securityTip')}:</strong> {t('channels.securityTipDesc')}
           </p>
         </div>
       </div>
@@ -400,12 +392,12 @@ export const ChannelsSection = () => {
                     {isConnected ? (
                       <>
                         <CheckCircle size={12} />
-                        Connected{channel.botUsername ? ` (@${channel.botUsername})` : ''}
+                        {t('channels.connected')}{channel.botUsername ? ` (@${channel.botUsername})` : ''}
                       </>
                     ) : (
                       <>
                         <XCircle size={12} />
-                        Not connected
+                        {t('channels.notConnected')}
                       </>
                     )}
                   </span>
@@ -415,7 +407,7 @@ export const ChannelsSection = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="channel-card-docs"
-                  title="View documentation"
+                  title={t('channels.viewDocs')}
                 >
                   <ExternalLink size={16} />
                 </a>
@@ -432,8 +424,7 @@ export const ChannelsSection = () => {
                     <div className="channel-polling-notice">
                       <AlertCircle size={14} />
                       <span>
-                        <strong>Long polling mode:</strong> Messages are fetched automatically
-                        (localhost detected). For production, use a public URL.
+                      <strong>{t('channels.pollingMode')}:</strong> {t('channels.pollingDesc')}
                       </span>
                     </div>
                   )}
@@ -441,16 +432,16 @@ export const ChannelsSection = () => {
                   {/* Webhook URL */}
                   <div className="channel-webhook">
                     <label className="channel-webhook-label">
-                      {channel.webhookUrl?.includes('localhost')
-                        ? 'Webhook URL (not used in polling mode)'
-                        : 'Webhook URL'}
+                        {channel.webhookUrl?.includes('localhost')
+                          ? t('channels.webhookUrlNotUsed')
+                          : t('channels.webhookUrl')}
                     </label>
                     <div className="channel-webhook-row">
                       <code className="channel-webhook-url">{getWebhookUrl(channel)}</code>
                       <button
                         onClick={() => handleCopyWebhook(channelConfig.id, channel)}
                         className="channel-webhook-copy"
-                        title="Copy webhook URL"
+                        title={t('channels.copyWebhook')}
                       >
                         {copiedWebhook === channelConfig.id ? (
                           <Check size={14} />
@@ -461,7 +452,7 @@ export const ChannelsSection = () => {
                     </div>
                     {!channel.webhookUrl?.includes('localhost') && (
                       <p className="channel-webhook-help">
-                        Set this URL as your bot's webhook in BotFather using /setwebhook
+                        {t('channels.webhookHelp')}
                       </p>
                     )}
                   </div>
@@ -480,12 +471,12 @@ export const ChannelsSection = () => {
                   <div className="channel-allowlist">
                     <div className="channel-allowlist-header">
                       <Shield size={16} />
-                      <label className="channel-allowlist-label">Access Control</label>
+                      <label className="channel-allowlist-label">{t('channels.accessControl')}</label>
                     </div>
                     <p className="channel-allowlist-help">
                       {(channel.allowedUsers?.length || 0) === 0
-                        ? 'Anyone can message this bot. Add Telegram usernames or user IDs to restrict access.'
-                        : `Only ${channel.allowedUsers?.length} user(s) can access this bot.`}
+                        ? t('channels.accessControlEmpty')
+                        : t('channels.accessControlCount', { count: channel.allowedUsers?.length || 0 })}
                     </p>
 
                     {/* Initialize editing state if needed */}
@@ -497,7 +488,7 @@ export const ChannelsSection = () => {
                         className="channel-allowlist-edit-btn"
                       >
                         <Users size={14} />
-                        Manage Access
+                        {t('channels.manageAccess')}
                       </Button>
                     )}
 
@@ -512,7 +503,7 @@ export const ChannelsSection = () => {
                               <button
                                 onClick={() => handleRemoveFromAllowlist(channel.id, user)}
                                 className="channel-allowlist-user-remove"
-                                title="Remove user"
+                                title={t('channels.removeUser')}
                               >
                                 <X size={12} />
                               </button>
@@ -520,7 +511,7 @@ export const ChannelsSection = () => {
                           ))}
                           {(editingAllowlist[channel.id] || []).length === 0 && (
                             <span className="channel-allowlist-empty">
-                              No restrictions - anyone can use this bot
+                              {t('channels.noRestrictions')}
                             </span>
                           )}
                         </div>
@@ -530,7 +521,7 @@ export const ChannelsSection = () => {
                           <input
                             type="text"
                             className="channel-allowlist-input"
-                            placeholder="Username or user ID"
+                            placeholder={t('channels.usernamePlaceholder')}
                             value={allowlistInput[channel.id] || ''}
                             onChange={e =>
                               setAllowlistInput(prev => ({
@@ -551,7 +542,7 @@ export const ChannelsSection = () => {
                             disabled={!allowlistInput[channel.id]?.trim()}
                           >
                             <Plus size={14} />
-                            Add
+                            {t('channels.addUser')}
                           </Button>
                         </div>
 
@@ -568,12 +559,12 @@ export const ChannelsSection = () => {
                             {isSavingAllowlist === channel.id ? (
                               <>
                                 <Loader2 size={14} className="animate-spin" />
-                                Saving...
+                                {t('channels.saving')}
                               </>
                             ) : (
                               <>
                                 <Check size={14} />
-                                Save Access List
+                                {t('channels.saveAccessList')}
                               </>
                             )}
                           </Button>
@@ -588,7 +579,7 @@ export const ChannelsSection = () => {
                               });
                             }}
                           >
-                            Cancel
+                            {t('channels.cancel')}
                           </Button>
                         </div>
                       </div>
@@ -606,12 +597,12 @@ export const ChannelsSection = () => {
                       {isTesting === channel.id ? (
                         <>
                           <Loader2 size={14} className="animate-spin" />
-                          Testing...
+                          {t('channels.testing')}
                         </>
                       ) : (
                         <>
                           <RefreshCw size={14} />
-                          Test Connection
+                          {t('channels.testConnection')}
                         </>
                       )}
                     </Button>
@@ -625,12 +616,12 @@ export const ChannelsSection = () => {
                       {isDeleting === channel.id ? (
                         <>
                           <Loader2 size={14} className="animate-spin" />
-                          Disconnecting...
+                          {t('channels.disconnecting')}
                         </>
                       ) : (
                         <>
                           <Trash2 size={14} />
-                          Disconnect
+                          {t('channels.disconnect')}
                         </>
                       )}
                     </Button>
@@ -682,13 +673,13 @@ export const ChannelsSection = () => {
                   >
                     {isConnecting === channelConfig.id ? (
                       <>
-                        <Loader2 size={16} className="animate-spin" />
-                        Connecting...
+                          <Loader2 size={16} className="animate-spin" />
+                          {t('channels.connecting')}
                       </>
                     ) : (
                       <>
                         <Send size={16} />
-                        Connect {channelConfig.name}
+                          {t('channels.connect', { name: channelConfig.name })}
                       </>
                     )}
                   </Button>
@@ -701,10 +692,9 @@ export const ChannelsSection = () => {
 
       {/* Coming Soon Placeholder */}
       <div className="channels-coming-soon">
-        <h4>More Channels Coming Soon</h4>
+        <h4>{t('channels.comingSoon')}</h4>
         <p>
-          Discord, Slack, WhatsApp, and more messaging platforms will be available in future
-          updates.
+          {t('channels.comingSoonDesc')}
         </p>
       </div>
     </div>

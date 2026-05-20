@@ -27,5 +27,22 @@
   "no": "No",
   "backToApp": "Back to App",
   "navigateHome": "Navigate to home",
-  "openMenu": "Open menu"
+  "openMenu": "Open menu",
+  "sidebar.newChat": "New chat",
+  "sidebar.recents": "Recents",
+  "sidebar.expandSidebar": "Expand sidebar",
+  "sidebar.collapseSidebar": "Collapse sidebar",
+  "sidebar.closeSidebar": "Close sidebar",
+  "sidebar.startNewChat": "Start new chat",
+  "sidebar.navigation": "Sidebar navigation",
+  "sidebar.openChat": "Open chat: {{title}}",
+  "chat.options": "Chat options",
+  "chat.star": "Star",
+  "chat.unstar": "Unstar",
+  "chat.rename": "Rename",
+  "chat.delete": "Delete",
+  "rename.title": "Rename Chat",
+  "rename.placeholder": "Enter new chat title",
+  "rename.cancel": "Cancel",
+  "rename.save": "Rename"
 }

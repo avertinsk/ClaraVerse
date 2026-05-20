@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import {
   Plus,
@@ -23,6 +24,7 @@ import { IntegrationIcon } from '@/components/credentials/IntegrationIcon';
 import '@/pages/Credentials.css';
 
 export const CredentialsSection = () => {
+  const { t } = useTranslation('settings');
   // URL params for OAuth callback handling
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -177,11 +179,11 @@ export const CredentialsSection = () => {
               >
                 <span>
                   {selectedCategory === null
-                    ? 'All Integrations'
+                    ? t('credentials.allIntegrations')
                     : selectedCategory === 'your-integrations'
-                      ? `Your Integrations (${credentials.length})`
+                      ? t('credentials.yourIntegrations', { count: credentials.length })
                       : integrations.find(cat => cat.id === selectedCategory)?.name ||
-                        'Select Category'}
+                        t('credentials.selectCategory')}
                 </span>
                 <ChevronDown
                   size={16}
@@ -207,7 +209,7 @@ export const CredentialsSection = () => {
                           : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-hover)]'
                       }`}
                     >
-                      All Integrations
+                      {t('credentials.allIntegrations')}
                     </button>
                     {credentials.length > 0 && (
                       <button
@@ -221,7 +223,7 @@ export const CredentialsSection = () => {
                             : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-hover)]'
                         }`}
                       >
-                        Your Integrations ({credentials.length})
+                        {t('credentials.yourIntegrations', { count: credentials.length })}
                       </button>
                     )}
                     {integrations.map(category => (
@@ -259,7 +261,7 @@ export const CredentialsSection = () => {
                     : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-hover)]'
                 }`}
               >
-                All Integrations
+              {t('credentials.allIntegrations')}
               </button>
 
               {/* Your Integrations Tab - Only show if there are integrations with credentials */}
@@ -272,7 +274,7 @@ export const CredentialsSection = () => {
                       : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-hover)]'
                   }`}
                 >
-                  Your Integrations ({credentials.length})
+                  {t('credentials.yourIntegrations', { count: credentials.length })}
                 </button>
               )}
             </div>
@@ -299,7 +301,7 @@ export const CredentialsSection = () => {
           {/* Search Bar */}
           <div className="mb-6 max-w-md">
             <SearchInput
-              placeholder="Search credentials or integrations..."
+              placeholder={t('credentials.searchPlaceholder')}
               value={searchQuery}
               onChange={setSearchQuery}
               onClear={() => setSearchQuery('')}
@@ -317,7 +319,7 @@ export const CredentialsSection = () => {
               {filteredCredentials.length > 0 && (
                 <section className="mb-8">
                   <h2 className="text-lg font-semibold text-[var(--color-text-primary)] mb-4">
-                    Your Credentials ({filteredCredentials.length})
+                    {t('credentials.yourCredentials', { count: filteredCredentials.length })}
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                     {filteredCredentials.map(credential => {
@@ -351,21 +353,21 @@ export const CredentialsSection = () => {
                                   return (
                                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-green-500/20 text-green-400 border border-green-500/30 whitespace-nowrap">
                                       <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
-                                      Active
+                                      {t('credentials.active')}
                                     </span>
                                   );
                                 } else if (credential.metadata.testStatus === 'failed') {
                                   return (
                                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-red-500/20 text-red-400 border border-red-500/30 whitespace-nowrap">
                                       <AlertCircle size={14} />
-                                      Error
+                                      {t('credentials.error')}
                                     </span>
                                   );
                                 } else {
                                   return (
                                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[var(--color-border)] text-[var(--color-text-tertiary)] border border-[var(--color-border)] whitespace-nowrap">
                                       <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-text-tertiary)]"></span>
-                                      Not tested
+                                      {t('credentials.notTested')}
                                     </span>
                                   );
                                 }
@@ -376,7 +378,7 @@ export const CredentialsSection = () => {
                           <div className="space-y-3 mb-4">
                             <div className="bg-[var(--color-bg-primary)] rounded-lg p-2.5 border border-dashed border-[var(--color-border)]">
                               <p className="text-[10px] uppercase tracking-wider font-bold text-[var(--color-text-tertiary)] mb-1">
-                                API Key
+                                {t('credentials.apiKey')}
                               </p>
                               <div
                                 className="font-mono text-xs text-[var(--color-text-secondary)] truncate select-all"
@@ -390,8 +392,8 @@ export const CredentialsSection = () => {
                           <div className="flex items-center justify-between pt-3 border-t border-[var(--color-border)] mt-auto gap-2">
                             <div className="text-xs text-[var(--color-text-tertiary)] truncate min-w-0">
                               {credential.metadata.lastUsedAt
-                                ? `Last used ${formatLastUsed(credential.metadata.lastUsedAt)}`
-                                : 'Never used'}
+                                ? t('credentials.lastUsed', { time: formatLastUsed(credential.metadata.lastUsedAt) })
+                                : t('credentials.neverUsed')}
                             </div>
                             <div className="flex items-center gap-1 flex-shrink-0">
                               {credential.metadata.testStatus === 'failed' ? (
@@ -399,7 +401,7 @@ export const CredentialsSection = () => {
                                   onClick={() => handleTestCredential(credential.id)}
                                   disabled={isTesting === credential.id}
                                   className="p-1.5 rounded-md text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all"
-                                  title="Retry Connection"
+                                  title={t('credentials.retryConnection')}
                                 >
                                   {isTesting === credential.id ? (
                                     <Loader2 size={18} className="animate-spin" />
@@ -412,7 +414,7 @@ export const CredentialsSection = () => {
                                   onClick={() => handleTestCredential(credential.id)}
                                   disabled={isTesting === credential.id}
                                   className="p-1.5 rounded-md text-[var(--color-text-tertiary)] hover:text-[var(--color-accent)] hover:bg-[var(--color-accent)]/10 transition-all"
-                                  title="Test Connection"
+                                  title={t('credentials.testConnection')}
                                 >
                                   {isTesting === credential.id ? (
                                     <Loader2 size={18} className="animate-spin" />
@@ -424,7 +426,7 @@ export const CredentialsSection = () => {
                               <button
                                 onClick={() => handleEditCredential(credential)}
                                 className="p-1.5 rounded-md text-[var(--color-text-tertiary)] hover:text-[var(--color-accent)] hover:bg-[var(--color-accent)]/10 transition-all"
-                                title="Edit"
+                                title={t('credentials.edit')}
                               >
                                 <Edit size={18} />
                               </button>
@@ -433,14 +435,14 @@ export const CredentialsSection = () => {
                                   <button
                                     onClick={() => handleDeleteCredential(credential.id)}
                                     className="p-1.5 rounded-md text-green-400 hover:text-green-300 hover:bg-green-500/10 transition-all"
-                                    title="Confirm Delete"
+                                    title={t('credentials.confirmDelete')}
                                   >
                                     <CheckCircle size={18} />
                                   </button>
                                   <button
                                     onClick={() => setDeleteConfirmId(null)}
                                     className="p-1.5 rounded-md text-[var(--color-text-tertiary)] hover:bg-[var(--color-bg-primary)] transition-all"
-                                    title="Cancel"
+                                    title={t('credentials.cancelDelete')}
                                   >
                                     <XCircle size={18} />
                                   </button>
@@ -449,7 +451,7 @@ export const CredentialsSection = () => {
                                 <button
                                   onClick={() => setDeleteConfirmId(credential.id)}
                                   className="p-1.5 rounded-md text-[var(--color-text-tertiary)] hover:text-red-400 hover:bg-red-500/10 transition-all"
-                                  title="Delete"
+                                  title={t('credentials.delete')}
                                 >
                                   <Trash2 size={18} />
                                 </button>
@@ -484,7 +486,7 @@ export const CredentialsSection = () => {
                   return (
                     <section className="mb-8">
                       <h2 className="text-lg font-semibold text-[var(--color-text-primary)] mb-4">
-                        Available Integrations
+                        {t('credentials.availableIntegrations')}
                       </h2>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {availableIntegrations.map(integration => {
@@ -510,7 +512,7 @@ export const CredentialsSection = () => {
                                     </h3>
                                     {count > 0 && (
                                       <span className="px-2 py-0.5 text-xs rounded-full bg-[var(--color-accent)]/20 text-[var(--color-accent)]">
-                                        {count} configured
+                                        {t('credentials.configured', { count })}
                                       </span>
                                     )}
                                   </div>
@@ -606,11 +608,11 @@ export const CredentialsSection = () => {
                                     </h3>
                                     {isComingSoon ? (
                                       <span className="px-2 py-0.5 text-xs rounded-full bg-yellow-500/20 text-yellow-400">
-                                        Coming Soon
+                                        {t('credentials.comingSoon')}
                                       </span>
                                     ) : count > 0 ? (
                                       <span className="px-2 py-0.5 text-xs rounded-full bg-[var(--color-accent)]/20 text-[var(--color-accent)]">
-                                        {count} configured
+                                        {t('credentials.configured', { count })}
                                       </span>
                                     ) : null}
                                   </div>
@@ -629,7 +631,7 @@ export const CredentialsSection = () => {
                                           style={{ marginTop: 'var(--space-4)' }}
                                         >
                                           <ExternalLink size={14} />
-                                          Docs
+                                        {t('credentials.docs')}
                                         </a>
                                       )}
                                       <Button
@@ -638,7 +640,7 @@ export const CredentialsSection = () => {
                                         className="text-xs hover:bg-[var(--color-accent)]/10 hover:text-[var(--color-accent)] active:bg-[var(--color-accent)]/20 active:scale-95 transition-all duration-150"
                                       >
                                         <Plus size={14} />
-                                        <span className="ml-1">Add</span>
+                                      <span className="ml-1">{t('credentials.add')}</span>
                                       </Button>
                                     </div>
                                   )}
@@ -657,10 +659,10 @@ export const CredentialsSection = () => {
                 <div className="flex flex-col items-center justify-center h-64 text-center">
                   <Search size={48} className="text-[var(--color-text-tertiary)] mb-4" />
                   <h3 className="text-lg font-medium text-[var(--color-text-primary)]">
-                    No results found
+                    {t('credentials.noResults')}
                   </h3>
                   <p className="text-sm text-[var(--color-text-tertiary)] mt-1">
-                    Try a different search term
+                    {t('credentials.noResultsDesc')}
                   </p>
                 </div>
               )}

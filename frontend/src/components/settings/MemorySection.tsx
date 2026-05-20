@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Brain, Info, AlertCircle, Loader2, Clock, TrendingUp, Trash2 } from 'lucide-react';
 import { useSettingsStore } from '@/store/useSettingsStore';
 import memoryService from '@/services/memoryService';
@@ -14,6 +15,7 @@ export interface MemorySectionProps {
  * Manages memory system settings and displays statistics.
  */
 export const MemorySection: React.FC<MemorySectionProps> = ({ onSave }) => {
+  const { t } = useTranslation('settings');
   const {
     memoryEnabled,
     memoryExtractionThreshold,
@@ -50,7 +52,7 @@ export const MemorySection: React.FC<MemorySectionProps> = ({ onSave }) => {
       setStats(data);
     } catch (err) {
       console.error('Failed to load memory stats:', err);
-      setError('Failed to load memory statistics');
+      setError(t('memory.statsFailed'));
     } finally {
       setLoadingStats(false);
     }
@@ -96,7 +98,7 @@ export const MemorySection: React.FC<MemorySectionProps> = ({ onSave }) => {
       setShowClearConfirm(false);
     } catch (err) {
       console.error('Failed to clear memories:', err);
-      setError('Failed to clear all memories. Please try again.');
+      setError(t('memory.clearFailed'));
     } finally {
       setIsClearing(false);
     }
@@ -108,10 +110,10 @@ export const MemorySection: React.FC<MemorySectionProps> = ({ onSave }) => {
       <div>
         <h2 className="text-2xl font-bold flex items-center gap-2">
           <Brain className="w-6 h-6" />
-          Memory System
+          {t('memory.title')}
         </h2>
         <p className="text-sm text-gray-400 mt-1">
-          Configure how Clara remembers and recalls information from your conversations
+          {t('memory.subtitle')}
         </p>
       </div>
 
@@ -121,10 +123,10 @@ export const MemorySection: React.FC<MemorySectionProps> = ({ onSave }) => {
           <div className="flex-1">
             <h3 className="text-lg font-semibold flex items-center gap-2">
               <Brain className="w-5 h-5" />
-              Enable Memory System
+              {t('memory.enableTitle')}
             </h3>
             <p className="text-sm text-gray-400 mt-1">
-              Allow Clara to remember information from your conversations and use it in future chats
+              {t('memory.enableDesc')}
             </p>
 
             {/* Privacy Notice */}
@@ -134,8 +136,7 @@ export const MemorySection: React.FC<MemorySectionProps> = ({ onSave }) => {
             >
               <Info className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
               <p className="text-xs text-gray-300">
-                All memories are encrypted with your user-specific key. Not even ClaraVerse
-                administrators can access your memories.
+                {t('memory.privacyNotice')}
               </p>
             </div>
           </div>
@@ -171,10 +172,10 @@ export const MemorySection: React.FC<MemorySectionProps> = ({ onSave }) => {
               <div>
                 <h3 className="text-lg font-semibold flex items-center gap-2">
                   <Clock className="w-5 h-5" />
-                  Extraction Frequency
+                  {t('memory.extractionFreq')}
                 </h3>
                 <p className="text-sm text-gray-400 mt-1">
-                  How many messages before extracting new memories
+                  {t('memory.extractionFreqDesc')}
                 </p>
               </div>
             </div>
@@ -191,12 +192,11 @@ export const MemorySection: React.FC<MemorySectionProps> = ({ onSave }) => {
                   className="flex-1 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-gray-400"
                 />
                 <span className="text-sm font-semibold min-w-[4rem] text-right">
-                  {memoryExtractionThreshold} messages
+                  {t('memory.messages', { count: memoryExtractionThreshold })}
                 </span>
               </div>
               <p className="text-xs text-gray-500">
-                Default: 20 messages (conservative to save credits). Lower values extract more
-                frequently but use more credits. Range: 2-50 messages.
+                {t('memory.extractionFreqDefault')}
               </p>
             </div>
           </div>
@@ -210,10 +210,10 @@ export const MemorySection: React.FC<MemorySectionProps> = ({ onSave }) => {
               <div>
                 <h3 className="text-lg font-semibold flex items-center gap-2">
                   <TrendingUp className="w-5 h-5" />
-                  Context Limit
+                  {t('memory.contextLimit')}
                 </h3>
                 <p className="text-sm text-gray-400 mt-1">
-                  Maximum memories to inject into each conversation
+                  {t('memory.contextLimitDesc')}
                 </p>
               </div>
             </div>
@@ -230,12 +230,11 @@ export const MemorySection: React.FC<MemorySectionProps> = ({ onSave }) => {
                   className="flex-1 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-gray-400"
                 />
                 <span className="text-sm font-semibold min-w-[3rem] text-right">
-                  {memoryMaxInjection} max
+                  {t('memory.max', { count: memoryMaxInjection })}
                 </span>
               </div>
               <p className="text-xs text-gray-500">
-                Recommended: 5 memories. Only the most relevant memories based on your current
-                conversation are selected.
+                {t('memory.recommended')}
               </p>
             </div>
           </div>
@@ -247,15 +246,15 @@ export const MemorySection: React.FC<MemorySectionProps> = ({ onSave }) => {
           >
             <div className="flex items-start justify-between mb-4">
               <div>
-                <h3 className="text-lg font-semibold">Memory Statistics</h3>
-                <p className="text-sm text-gray-400 mt-1">Overview of your stored memories</p>
+                <h3 className="text-lg font-semibold">{t('memory.stats')}</h3>
+                <p className="text-sm text-gray-400 mt-1">{t('memory.statsDesc')}</p>
               </div>
               <div className="flex items-center gap-2">
                 <button
                   onClick={loadStats}
                   disabled={loadingStats}
                   className="text-gray-400 hover:text-gray-200 transition-colors disabled:opacity-50"
-                  title="Refresh statistics"
+                  title={t('memory.refreshStats')}
                 >
                   {loadingStats ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
@@ -275,7 +274,7 @@ export const MemorySection: React.FC<MemorySectionProps> = ({ onSave }) => {
                     onClick={() => setShowClearConfirm(true)}
                     disabled={isClearing}
                     className="text-red-400 hover:text-red-300 transition-colors disabled:opacity-50"
-                    title="Clear all memories"
+                    title={t('memory.clearAll')}
                   >
                     <Trash2 className="w-5 h-5" />
                   </button>
@@ -296,35 +295,35 @@ export const MemorySection: React.FC<MemorySectionProps> = ({ onSave }) => {
                   style={{ backgroundColor: '#0d0d0d' }}
                   className="rounded-lg p-4 border border-gray-800"
                 >
-                  <p className="text-sm text-gray-400">Total Memories</p>
+                  <p className="text-sm text-gray-400">{t('memory.totalMemories')}</p>
                   <p className="text-2xl font-bold mt-1">{stats.total_memories}</p>
                 </div>
                 <div
                   style={{ backgroundColor: '#0d0d0d' }}
                   className="rounded-lg p-4 border border-gray-800"
                 >
-                  <p className="text-sm text-gray-400">Active</p>
+                  <p className="text-sm text-gray-400">{t('memory.active')}</p>
                   <p className="text-2xl font-bold mt-1 text-green-400">{stats.active_memories}</p>
                 </div>
                 <div
                   style={{ backgroundColor: '#0d0d0d' }}
                   className="rounded-lg p-4 border border-gray-800"
                 >
-                  <p className="text-sm text-gray-400">Archived</p>
+                  <p className="text-sm text-gray-400">{t('memory.archived')}</p>
                   <p className="text-2xl font-bold mt-1 text-gray-500">{stats.archived_memories}</p>
                 </div>
                 <div
                   style={{ backgroundColor: '#0d0d0d' }}
                   className="rounded-lg p-4 border border-gray-800"
                 >
-                  <p className="text-sm text-gray-400">Avg Score</p>
+                  <p className="text-sm text-gray-400">{t('memory.avgScore')}</p>
                   <p className="text-2xl font-bold mt-1">{stats.avg_score.toFixed(2)}</p>
                 </div>
               </div>
             ) : (
               <div className="text-center py-8 text-gray-500">
                 <Brain className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                <p className="text-sm">Click refresh to load statistics</p>
+                <p className="text-sm">{t('memory.clickRefresh')}</p>
               </div>
             )}
           </div>
@@ -336,35 +335,31 @@ export const MemorySection: React.FC<MemorySectionProps> = ({ onSave }) => {
           >
             <h3 className="text-lg font-semibold flex items-center gap-2 mb-3">
               <Info className="w-5 h-5 text-gray-400" />
-              How Memory Works
+              {t('memory.howItWorks')}
             </h3>
             <ul className="space-y-2 text-sm text-gray-300">
               <li className="flex items-start gap-2">
                 <span className="text-gray-400 mt-0.5">•</span>
                 <span>
-                  <strong>Extraction:</strong> After every {memoryExtractionThreshold} messages,
-                  Clara automatically extracts important information (preferences, facts, context).
+                  <strong>{t('memory.extraction')}:</strong> {t('memory.extractionDetail', { count: memoryExtractionThreshold })}
                 </span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-gray-400 mt-0.5">•</span>
                 <span>
-                  <strong>Selection:</strong> Relevant memories are automatically selected and
-                  injected into your conversation context.
+                  <strong>{t('memory.selection')}:</strong> {t('memory.selectionDetail')}
                 </span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-gray-400 mt-0.5">•</span>
                 <span>
-                  <strong>Decay:</strong> Memories are scored based on recency, frequency, and
-                  importance. Stale memories are automatically archived.
+                  <strong>{t('memory.decay')}:</strong> {t('memory.decayDetail')}
                 </span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-gray-400 mt-0.5">•</span>
                 <span>
-                  <strong>Privacy:</strong> All memories are encrypted with AES-256-GCM using your
-                  unique key. Only you can decrypt them.
+                  <strong>{t('privacy.title')}:</strong> {t('memory.privacyDetail')}
                 </span>
               </li>
             </ul>
@@ -379,9 +374,9 @@ export const MemorySection: React.FC<MemorySectionProps> = ({ onSave }) => {
           className="border border-gray-700/50 rounded-lg p-6 text-center"
         >
           <Brain className="w-12 h-12 mx-auto mb-3 text-gray-600" />
-          <p className="text-gray-400 mb-2">Memory system is currently disabled</p>
+          <p className="text-gray-400 mb-2">{t('memory.disabledTitle')}</p>
           <p className="text-sm text-gray-500">
-            Enable it above to let Clara remember and learn from your conversations
+            {t('memory.disabledDesc')}
           </p>
         </div>
       )}
@@ -399,15 +394,13 @@ export const MemorySection: React.FC<MemorySectionProps> = ({ onSave }) => {
                   <Trash2 className="w-6 h-6 text-red-400" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold mb-2">Clear All Memories?</h3>
+                  <h3 className="text-lg font-semibold mb-2">{t('memory.clearConfirmTitle')}</h3>
                   <p className="text-sm text-gray-400 mb-4">
-                    This will permanently delete all {stats?.total_memories || 0} memories
-                    (including archived ones). This action cannot be undone.
+                    {t('memory.clearConfirmDesc', { count: stats?.total_memories || 0 })}
                   </p>
                   <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 mb-4">
                     <p className="text-xs text-yellow-300">
-                      <strong>Warning:</strong> Clara will lose all learned information about your
-                      preferences, projects, and context. You'll start fresh.
+                      <strong>{t('memory.clearWarning')}</strong>
                     </p>
                   </div>
                 </div>
@@ -419,7 +412,7 @@ export const MemorySection: React.FC<MemorySectionProps> = ({ onSave }) => {
                   disabled={isClearing}
                   className="px-4 py-2 text-gray-300 hover:text-white transition-colors disabled:opacity-50"
                 >
-                  Cancel
+                  {t('memory.cancel')}
                 </button>
                 <button
                   onClick={handleClearAllMemories}
@@ -429,12 +422,12 @@ export const MemorySection: React.FC<MemorySectionProps> = ({ onSave }) => {
                   {isClearing ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      Clearing...
+                      {t('memory.clearing')}
                     </>
                   ) : (
                     <>
                       <Trash2 className="w-4 h-4" />
-                      Clear All Memories
+                      {t('memory.clearAllBtn')}
                     </>
                   )}
                 </button>

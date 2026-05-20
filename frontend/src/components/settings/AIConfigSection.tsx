@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Bot,
   MessageSquare,
@@ -57,6 +58,7 @@ export interface AIConfigSectionProps {
  * Manages model selection, system instructions, and custom providers.
  */
 export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
+  const { t } = useTranslation('settings');
   // Provider tabs state
   const [providerTab, setProviderTab] = useState<'new' | 'list'>('new');
   const [providerSearchTerm, setProviderSearchTerm] = useState('');
@@ -220,7 +222,7 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
   // Fetch models for new provider
   const handleFetchModels = async () => {
     if (!newProviderForm.baseUrl) {
-      setFetchError('Base URL is required');
+      setFetchError(t('aiConfig.validation.baseUrlRequired'));
       return;
     }
 
@@ -250,7 +252,7 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
         updateNewProviderForm('currentModelSelection', fetchedModelsList[0].id);
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to fetch models';
+      const errorMessage = error instanceof Error ? error.message : t('aiConfig.validation.selectModel');
       setFetchError(errorMessage);
     } finally {
       setFetchingModels(false);
@@ -306,7 +308,7 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
   // Save provider as card
   const handleSaveProvider = () => {
     if (!newProviderForm.name || !newProviderForm.baseUrl || !newProviderForm.apiKey) {
-      setFetchError('Please fill in Provider Name, Base URL, and API Key');
+      setFetchError(t('aiConfig.validation.fillRequired'));
       return;
     }
 
@@ -315,7 +317,7 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
       : newProviderForm.selectedModels;
 
     if (modelsToSave.length === 0) {
-      setFetchError('Please select at least one model');
+      setFetchError(t('aiConfig.validation.selectModel'));
       return;
     }
 
@@ -344,7 +346,7 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
 
   // Delete a saved provider
   const handleDeleteProvider = (id: string) => {
-    if (window.confirm('Are you sure you want to delete this provider?')) {
+    if (window.confirm(t('aiConfig.confirmDeleteProvider'))) {
       removeCustomProvider(id);
       onSave?.();
     }
@@ -358,7 +360,7 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
 
   // Handle reset
   const handleReset = () => {
-    if (window.confirm('Are you sure you want to reset all settings to defaults?')) {
+    if (window.confirm(t('aiConfig.confirmReset'))) {
       resetSettings();
       setNewProviderForm(defaultNewProviderForm);
       setFetchedModels([]);
@@ -388,15 +390,14 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
           <div className="ai-config-title-section">
             <div className="ai-config-title-row">
               <div>
-                <h1 className="ai-config-main-title">AI Configuration</h1>
+                <h1 className="ai-config-main-title">{t('aiConfig.title')}</h1>
                 <p className="ai-config-subtitle">
-                  Manage global preferences, system instructions, and third-party provider
-                  credentials.
+                  {t('aiConfig.subtitle')}
                 </p>
               </div>
               <button className="ai-config-reset-btn" onClick={handleReset}>
                 <span className="material-symbols-outlined ai-config-reset-icon">restart_alt</span>
-                <span className="font-medium">Reset to Default</span>
+                <span className="font-medium">{t('aiConfig.resetToDefault')}</span>
               </button>
             </div>
           </div>
@@ -408,17 +409,17 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
           <div className="ai-config-global-prefs">
             <section className="ai-config-section">
               <div className="ai-config-section-header">
-                <h2 className="ai-config-section-title">
-                  <span className="material-symbols-outlined ai-config-section-icon">tune</span>
-                  Global Preferences
-                </h2>
+                  <h2 className="ai-config-section-title">
+                    <span className="material-symbols-outlined ai-config-section-icon">tune</span>
+                    {t('aiConfig.globalPrefs')}
+                  </h2>
               </div>
               <div className="ai-config-section-body">
                 {/* Model Selector */}
                 <div className="ai-config-model-selector">
                   <div className="ai-config-model-selector-header">
-                    <label className="ai-config-model-label">Default Model</label>
-                    <span className="ai-config-active-badge">Active</span>
+                    <label className="ai-config-model-label">{t('aiConfig.defaultModel')}</label>
+                    <span className="ai-config-active-badge">{t('aiConfig.active')}</span>
                   </div>
                   <div className="ai-config-model-dropdown-wrapper">
                     <button
@@ -431,7 +432,7 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                           !modelImageErrors[selectedModel.id || ''] ? (
                             <img
                               src={selectedModel.provider_favicon}
-                              alt={selectedModel.provider_name || 'Model provider'}
+                              alt={selectedModel.provider_name || t('aiConfig.modelProvider')}
                               className="ai-config-model-icon-img"
                               onError={() => selectedModel.id && handleImageError(selectedModel.id)}
                             />
@@ -441,10 +442,10 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                         </div>
                         <div className="ai-config-model-info">
                           <span className="ai-config-model-name">
-                            {selectedModel?.display_name || selectedModel?.name || 'Select a model'}
+                            {selectedModel?.display_name || selectedModel?.name || t('aiConfig.selectModel')}
                           </span>
                           <span className="ai-config-model-id">
-                            {selectedModel?.id || 'No model selected'}
+                            {selectedModel?.id || t('aiConfig.noModelSelected')}
                           </span>
                         </div>
                       </div>
@@ -470,7 +471,7 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                             <input
                               type="text"
                               className="ai-config-search-input"
-                              placeholder="Search models..."
+                              placeholder={t('aiConfig.searchModels')}
                               value={searchTerm}
                               autoFocus
                               onChange={e => setSearchTerm(e.target.value.toLowerCase())}
@@ -479,7 +480,7 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                         </div>
                         <div className="ai-config-models-list">
                           <div className="ai-config-models-category">
-                            <h4 className="ai-config-models-category-title">Available Models</h4>
+                            <h4 className="ai-config-models-category-title">{t('aiConfig.availableModels')}</h4>
                           </div>
                           {models
                             .filter(model => {
@@ -506,7 +507,7 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                                     {model.provider_favicon && !modelImageErrors[model.id] ? (
                                       <img
                                         src={model.provider_favicon}
-                                        alt={model.provider_name || 'Model provider'}
+                                        alt={model.provider_name || t('aiConfig.modelProvider')}
                                         className="ai-config-model-option-icon-img"
                                         onError={() => handleImageError(model.id)}
                                       />
@@ -540,12 +541,12 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                 {/* Tool Predictor Model Selector */}
                 <div className="ai-config-model-selector">
                   <div className="ai-config-model-selector-header">
-                    <label className="ai-config-model-label">Tool Predictor Model</label>
+                    <label className="ai-config-model-label">{t('aiConfig.toolPredictor')}</label>
                     <span
                       className="ai-config-active-badge"
                       style={{ opacity: selectedToolPredictorModel ? 1 : 0.5 }}
                     >
-                      {selectedToolPredictorModel ? 'Active' : 'Optional'}
+                      {selectedToolPredictorModel ? t('aiConfig.active') : t('aiConfig.optional')}
                     </span>
                   </div>
                   <p
@@ -556,8 +557,7 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                       lineHeight: '1.5',
                     }}
                   >
-                    Select a lightweight model to predict which tools are needed for each chat
-                    request. This reduces context size and improves response quality.
+                    {t('aiConfig.toolPredictorDesc')}
                   </p>
                   <div className="ai-config-tool-predictor-dropdown-wrapper">
                     <button
@@ -570,7 +570,7 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                           !modelImageErrors[selectedToolPredictorModel.id || ''] ? (
                             <img
                               src={selectedToolPredictorModel.provider_favicon}
-                              alt={selectedToolPredictorModel.provider_name || 'Model provider'}
+                              alt={selectedToolPredictorModel.provider_name || t('aiConfig.modelProvider')}
                               className="ai-config-model-icon-img"
                               onError={() =>
                                 selectedToolPredictorModel.id &&
@@ -583,12 +583,12 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                         </div>
                         <div className="ai-config-model-info">
                           <span className="ai-config-model-name">
-                            {selectedToolPredictorModel?.display_name ||
-                              selectedToolPredictorModel?.name ||
-                              'Auto (default)'}
+                              {selectedToolPredictorModel?.display_name ||
+                                selectedToolPredictorModel?.name ||
+                                t('aiConfig.autoDefault')}
                           </span>
                           <span className="ai-config-model-id">
-                            {selectedToolPredictorModel?.id || 'Uses system default'}
+                            {selectedToolPredictorModel?.id || t('aiConfig.usesSystemDefault')}
                           </span>
                         </div>
                       </div>
@@ -614,7 +614,7 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                             <input
                               type="text"
                               className="ai-config-search-input"
-                              placeholder="Search tool predictor models..."
+                              placeholder={t('aiConfig.searchPredictorModels')}
                               value={toolPredictorSearchTerm}
                               autoFocus
                               onChange={e =>
@@ -625,7 +625,7 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                         </div>
                         <div className="ai-config-models-list">
                           <div className="ai-config-models-category">
-                            <h4 className="ai-config-models-category-title">Smart Tool Routers</h4>
+                            <h4 className="ai-config-models-category-title">{t('aiConfig.smartToolRouters')}</h4>
                           </div>
                           {/* Auto/Default option */}
                           <button
@@ -640,9 +640,9 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                                 <Bot size={16} className="ai-config-model-icon-fallback" />
                               </div>
                               <div className="ai-config-model-option-info">
-                                <span className="ai-config-model-option-name">Auto (default)</span>
+                                <span className="ai-config-model-option-name">{t('aiConfig.autoDefault')}</span>
                                 <span className="ai-config-model-option-id">
-                                  Uses system default
+                                  {t('aiConfig.usesSystemDefault')}
                                 </span>
                               </div>
                             </div>
@@ -681,7 +681,7 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                                     {model.provider_favicon && !modelImageErrors[model.id] ? (
                                       <img
                                         src={model.provider_favicon}
-                                        alt={model.provider_name || 'Model provider'}
+                                        alt={model.provider_name || t('aiConfig.modelProvider')}
                                         className="ai-config-model-option-icon-img"
                                         onError={() => handleImageError(model.id)}
                                       />
@@ -721,7 +721,7 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                                 fontSize: '0.875rem',
                               }}
                             >
-                              No smart tool router models found
+                              {t('aiConfig.noRouterFound')}
                             </div>
                           )}
                         </div>
@@ -736,12 +736,12 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                 {/* System Instructions */}
                 <div className="ai-config-system-instructions">
                   <div className="ai-config-instructions-header">
-                    <label className="ai-config-model-label">System Instructions</label>
-                    <div className="ai-config-saved-indicator" title="Changes saved automatically">
+                    <label className="ai-config-model-label">{t('aiConfig.systemInstructions')}</label>
+                    <div className="ai-config-saved-indicator" title={t('aiConfig.instructionsSavedTitle')}>
                       <span className="material-symbols-outlined ai-config-saved-icon">
                         check_circle
                       </span>
-                      <span className="ai-config-saved-text">Saved</span>
+                      <span className="ai-config-saved-text">{t('aiConfig.instructionsSaved')}</span>
                     </div>
                   </div>
                   <div className="ai-config-textarea-wrapper">
@@ -750,15 +750,14 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                       className="ai-config-textarea"
                       value={defaultSystemInstructions}
                       onChange={e => handleSystemInstructionsChange(e.target.value)}
-                      placeholder="You are a helpful AI assistant designed to assist developers..."
+                      placeholder={t('aiConfig.instructionsPlaceholder')}
                     />
                     <span className="material-symbols-outlined ai-config-drag-handle">
                       drag_handle
                     </span>
                   </div>
                   <p className="ai-config-instructions-hint">
-                    These instructions are injected into the context window for every new session.
-                    Individual agents may override this behavior.
+                    {t('aiConfig.instructionsHint')}
                   </p>
                 </div>
 
@@ -798,7 +797,7 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                   className={`ai-config-tab-label ${providerTab === 'new' ? 'active' : ''}`}
                 >
                   <span className="material-symbols-outlined ai-config-tab-icon">add_circle</span>
-                  Add New Provider
+                  {t('aiConfig.addProvider')}
                 </label>
 
                 <div className="ai-config-tab-divider"></div>
@@ -808,7 +807,7 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                   className={`ai-config-tab-label ${providerTab === 'list' ? 'active' : ''}`}
                 >
                   <span className="material-symbols-outlined ai-config-tab-icon">view_list</span>
-                  Manage Providers
+                  {t('aiConfig.manageProviders')}
                   <span className="ai-config-provider-count">{customProviders.length}</span>
                 </label>
               </nav>
@@ -819,9 +818,9 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                   <div className="ai-config-provider-header">
                     <div className="ai-config-provider-title-wrapper">
                       <div>
-                        <h2 className="ai-config-section-title">Configure Provider</h2>
+                        <h2 className="ai-config-section-title">{t('aiConfig.configureProvider')}</h2>
                         <p className="ai-config-provider-subtitle">
-                          Connect a new AI model provider to your workspace.
+                          {t('aiConfig.providerSubtitle')}
                         </p>
                       </div>
                       <div className="ai-config-provider-icon-wrapper">
@@ -835,18 +834,18 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                     {/* Provider Form */}
                     <div className="ai-config-form-grid">
                       <div className="ai-config-form-group">
-                        <label className="ai-config-form-label">Provider Name</label>
+                        <label className="ai-config-form-label">{t('aiConfig.providerName')}</label>
                         <input
                           type="text"
                           className="ai-config-form-input"
-                          placeholder="e.g. Anthropic"
+                          placeholder={t('aiConfig.providerNamePlaceholder')}
                           value={newProviderForm.name}
                           onChange={e => updateNewProviderForm('name', e.target.value)}
                         />
                       </div>
                       <div className="ai-config-form-group">
                         <label className="ai-config-form-label">
-                          API Base URL
+                          {t('aiConfig.baseUrl')}
                           <span
                             style={{
                               fontSize: '0.75rem',
@@ -864,7 +863,7 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                           <input
                             type="text"
                             className="ai-config-form-input"
-                            placeholder="https://api.example.com/v1"
+                            placeholder={t('aiConfig.baseUrlPlaceholder')}
                             value={newProviderForm.baseUrl}
                             onChange={e => updateNewProviderForm('baseUrl', e.target.value)}
                             style={{
@@ -880,12 +879,12 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
 
                     {/* API Key */}
                     <div className="ai-config-api-key-group">
-                      <label className="ai-config-form-label">API Key</label>
+                      <label className="ai-config-form-label">{t('aiConfig.apiKey')}</label>
                       <div className="ai-config-api-key-wrapper">
                         <input
                           type="text"
                           className="ai-config-form-input ai-config-api-key-input"
-                          placeholder="sk-..."
+                          placeholder={t('aiConfig.apiKeyPlaceholder')}
                           value={newProviderForm.apiKey}
                           onChange={e => updateNewProviderForm('apiKey', e.target.value)}
                         />
@@ -898,8 +897,8 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                             }
                             title={
                               newProviderForm.baseUrl
-                                ? 'Test API connection and fetch models'
-                                : 'API Base URL is required to test'
+                                ? t('aiConfig.testConnection')
+                                : t('aiConfig.testConnectionNoUrl')
                             }
                           >
                             {fetchingModels ? (
@@ -921,7 +920,7 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                           <span className="ai-config-checkbox-slider"></span>
                         </label>
                         <span className="ai-config-checkbox-label">
-                          Store safely in local keychain
+                          {t('aiConfig.storeKeychain')}
                         </span>
                       </div>
                     </div>
@@ -933,10 +932,10 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                         <div className="ai-config-model-availability-title-row">
                           <div>
                             <h4 className="ai-config-model-availability-title">
-                              Model Availability
+                              {t('aiConfig.modelAvailability')}
                             </h4>
                             <p className="ai-config-model-availability-subtitle">
-                              Fetch and whitelist models for this provider.
+                              {t('aiConfig.modelAvailabilitySubtitle')}
                             </p>
                           </div>
                           <button
@@ -956,7 +955,7 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                                 sync
                               </span>
                             )}
-                            {fetchingModels ? 'Fetching...' : 'Fetch Models'}
+                            {fetchingModels ? t('aiConfig.fetching') : t('aiConfig.fetchModels')}
                           </button>
                         </div>
                       </div>
@@ -965,20 +964,7 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                       <div className="ai-config-model-selection-controls">
                         <label className="ai-config-use-all-checkbox-wrapper">
                           <span className="ai-config-checkbox-label">
-                            Enable all{' '}
-                            <span
-                              style={{
-                                fontFamily: 'ui-monospace',
-                                color: '#e91e63',
-                                background: 'rgba(233, 30, 99, 0.1)',
-                                padding: '0.125rem 0.375rem',
-                                borderRadius: '0.25rem',
-                                fontSize: '0.75rem',
-                              }}
-                            >
-                              {fetchedModels.length}
-                            </span>{' '}
-                            detected models
+                            {t('aiConfig.enableAll', { count: fetchedModels.length })}
                             {newProviderForm.selectedModels.length > 0 && (
                               <span
                                 style={{
@@ -987,7 +973,7 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                                   color: '#a1a1aa',
                                 }}
                               >
-                                ({newProviderForm.selectedModels.length} selected)
+                                {t('aiConfig.selectedCount', { count: newProviderForm.selectedModels.length })}
                               </span>
                             )}
                           </span>
@@ -1015,7 +1001,7 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                               <span className="ai-config-select-text">
                                 {newProviderForm.currentModelSelection
                                   ? newProviderForm.currentModelSelection
-                                  : 'Select a specific model...'}
+                                  : t('aiConfig.selectSpecificModel')}
                               </span>
                               <span
                                 className="material-symbols-outlined ai-config-select-arrow"
@@ -1041,9 +1027,9 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                                 }}
                               >
                                 <div className="ai-config-models-list-header">
-                                  <span className="ai-config-models-list-title">
-                                    Available Models
-                                  </span>
+                                    <span className="ai-config-models-list-title">
+                                      {t('aiConfig.availableModels')}
+                                    </span>
                                 </div>
                                 <div className="ai-config-models-list-content">
                                   {fetchedModels.map(model => (
@@ -1090,7 +1076,7 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                               >
                                 add
                               </span>
-                              Add
+                              {t('aiConfig.addModel')}
                             </button>
                           )}
                         </div>
@@ -1104,7 +1090,7 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                                 <button
                                   onClick={() => handleRemoveModelFromList(modelId)}
                                   className="ai-config-model-tag-remove"
-                                  title="Remove model"
+                                  title={t('aiConfig.removeModel')}
                                 >
                                   <span
                                     className="material-symbols-outlined"
@@ -1127,7 +1113,7 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                                   <input
                                     type="text"
                                     className="ai-config-form-input ai-config-custom-input"
-                                    placeholder="Enter model ID manually (e.g., gpt-4-turbo, claude-3-sonnet)"
+                                    placeholder={t('aiConfig.manualModelPlaceholder')}
                                     value={customModelInput}
                                     onChange={e => setCustomModelInput(e.target.value)}
                                     onKeyDown={e => e.key === 'Enter' && handleAddCustomModel()}
@@ -1137,7 +1123,7 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                                       <button
                                         className="ai-config-input-icon-btn ai-config-check-btn"
                                         onClick={handleAddCustomModel}
-                                        title="Add model"
+                                        title={t('aiConfig.addModelTitle')}
                                       >
                                         <span className="material-symbols-outlined">check</span>
                                       </button>
@@ -1148,7 +1134,7 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                                         setShowAddModelInput(false);
                                         setCustomModelInput('');
                                       }}
-                                      title="Cancel"
+                                      title={t('aiConfig.cancelTitle')}
                                     >
                                       <span className="material-symbols-outlined">close</span>
                                     </button>
@@ -1166,7 +1152,7 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                                 >
                                   add_circle
                                 </span>
-                                Add model manually
+                                {t('aiConfig.addModelManually')}
                               </button>
                             )}
                           </div>
@@ -1202,7 +1188,7 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                         <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>
                           save
                         </span>
-                        Save Provider
+                        {t('aiConfig.saveProvider')}
                       </button>
                     </div>
                   </div>
@@ -1214,12 +1200,12 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                 <div className="ai-config-tab-content ai-config-manage-providers">
                   <div className="ai-config-manage-header">
                     <div className="ai-config-manage-title-wrapper">
-                      <h3 className="ai-config-manage-title">
-                        <span className="material-symbols-outlined ai-config-manage-icon">
-                          verified_user
-                        </span>
-                        Configured Services
-                      </h3>
+                        <h3 className="ai-config-manage-title">
+                          <span className="material-symbols-outlined ai-config-manage-icon">
+                            verified_user
+                          </span>
+                          {t('aiConfig.configuredServices')}
+                        </h3>
                       <div className="ai-config-manage-search-wrapper">
                         <span className="material-symbols-outlined ai-config-manage-search-icon">
                           search
@@ -1227,7 +1213,7 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                         <input
                           type="text"
                           className="ai-config-manage-search"
-                          placeholder="Filter providers..."
+                          placeholder={t('aiConfig.filterProviders')}
                           value={providerSearchTerm}
                           onChange={e => setProviderSearchTerm(e.target.value.toLowerCase())}
                         />
@@ -1239,9 +1225,9 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                     {customProviders.length === 0 ? (
                       <div className="ai-config-empty-state">
                         <Server size={32} />
-                        <p>No providers configured yet</p>
+                        <p>{t('aiConfig.noProvidersConfigured')}</p>
                         <button onClick={() => setProviderTab('new')}>
-                          Add your first provider
+                          {t('aiConfig.addFirstProvider')}
                         </button>
                       </div>
                     ) : (
@@ -1263,10 +1249,10 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                                   <span className="ai-config-provider-key">
                                     {provider.apiKey
                                       ? `sk-...${provider.apiKey.slice(-4)}`
-                                      : 'Session key'}
+                                      : t('aiConfig.sessionKey')}
                                   </span>
                                   <span className="ai-config-provider-status connected">
-                                    Connected
+                                    {t('aiConfig.connected')}
                                   </span>
                                 </div>
                               </div>
@@ -1274,7 +1260,7 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
 
                             <div className="ai-config-provider-actions">
                               <div className="ai-config-provider-toggle">
-                                <span className="ai-config-toggle-label">Enabled</span>
+                                <span className="ai-config-toggle-label">{t('aiConfig.enabled')}</span>
                                 <label className="ai-config-toggle-switch">
                                   <input
                                     type="checkbox"
@@ -1295,7 +1281,7 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                                 <span className="material-symbols-outlined ai-config-delete-icon">
                                   delete
                                 </span>
-                                <span>Remove</span>
+                                <span>{t('aiConfig.remove')}</span>
                               </button>
                             </div>
                           </div>
@@ -1304,7 +1290,7 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
                   </div>
 
                   <div className="ai-config-manage-footer">
-                    <p>Changes to provider configurations apply immediately to new sessions.</p>
+                    <p>{t('aiConfig.providerChangesNote')}</p>
                   </div>
                 </div>
               )}

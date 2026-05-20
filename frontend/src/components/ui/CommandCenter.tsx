@@ -7,6 +7,8 @@ import React, {
   forwardRef,
 } from 'react';
 import type { KeyboardEvent } from 'react';
+import { useTranslation } from 'react-i18next';
+import i18n from 'i18next';
 import {
   Plus,
   ArrowUp,
@@ -115,10 +117,10 @@ export const CommandCenter = forwardRef<CommandCenterHandle, CommandCenterProps>
   (
     {
       mode = 'centered',
-      greeting = 'Howdy, How can I help you?',
+      greeting,
       onSendMessage,
       className = '',
-      placeholder = 'How can I help you today?',
+      placeholder,
       suggestions = [],
       isLoading = false,
       onStopGeneration,
@@ -138,6 +140,7 @@ export const CommandCenter = forwardRef<CommandCenterHandle, CommandCenterProps>
     },
     ref
   ) => {
+    const { t } = useTranslation('chat');
     const [message, setMessage] = useState('');
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -155,6 +158,9 @@ export const CommandCenter = forwardRef<CommandCenterHandle, CommandCenterProps>
     const fileInputRef = useRef<HTMLInputElement>(null);
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const audioChunksRef = useRef<Blob[]>([]);
+
+    const defaultGreeting = greeting || t('command.greeting');
+    const defaultPlaceholder = placeholder || (mode === 'centered' ? t('command.placeholder') : t('command.placeholderChat'));
 
     // Expose focus method to parent components
     useImperativeHandle(ref, () => ({
@@ -536,8 +542,8 @@ export const CommandCenter = forwardRef<CommandCenterHandle, CommandCenterProps>
           });
 
           if (!response.ok) {
-            const error = await response.json().catch(() => ({ error: 'Transcription failed' }));
-            throw new Error(error.error || 'Transcription failed');
+            const error = await response.json().catch(() => ({ error: i18n.t('chat:command.transcriptionFailed') }));
+            throw new Error(error.error || i18n.t('chat:command.transcriptionFailed'));
           }
 
           const result = await response.json();
@@ -559,7 +565,7 @@ export const CommandCenter = forwardRef<CommandCenterHandle, CommandCenterProps>
           }
         } catch (error) {
           console.error('Transcription error:', error);
-          alert(error instanceof Error ? error.message : 'Failed to transcribe audio');
+          alert(error instanceof Error ? error.message : i18n.t('chat:command.transcriptionFailed'));
         } finally {
           setIsTranscribing(false);
         }
@@ -600,9 +606,9 @@ export const CommandCenter = forwardRef<CommandCenterHandle, CommandCenterProps>
       } catch (error) {
         console.error('Failed to start recording:', error);
         if (error instanceof Error && error.name === 'NotAllowedError') {
-          alert('Microphone access denied. Please allow microphone access to use voice input.');
+          alert(i18n.t('chat:command.microphoneAccessDenied'));
         } else {
-          alert('Failed to start recording. Please check your microphone.');
+          alert(i18n.t('chat:command.microphoneFailed'));
         }
       }
     }, [transcribeAudio]);
@@ -636,10 +642,9 @@ export const CommandCenter = forwardRef<CommandCenterHandle, CommandCenterProps>
         className={cn(styles.container, isCentered ? styles.centered : styles.bottom, className)}
       >
         {/* Greeting - Only shown in centered mode */}
-        {isCentered && greeting && (
+        {isCentered && defaultGreeting && (
           <div className={styles.greeting}>
-            <span style={{ marginRight: 'var(--space-3)' }}>🌸</span>
-            {greeting}
+            {defaultGreeting}
           </div>
         )}
 
@@ -665,7 +670,7 @@ export const CommandCenter = forwardRef<CommandCenterHandle, CommandCenterProps>
                 <div className={styles.connectionBanner}>
                   <WifiOff size={14} />
                   <span>
-                    {hasEverConnected ? 'Reconnecting to server...' : 'Connecting to server...'}
+                    {hasEverConnected ? t('command.reconnecting') : t('command.connecting')}
                   </span>
                 </div>
               )}
@@ -713,11 +718,11 @@ export const CommandCenter = forwardRef<CommandCenterHandle, CommandCenterProps>
                     };
 
                     const getDataFileLabel = () => {
-                      if (isJSON) return 'JSON';
-                      if (isCSV) return 'CSV';
-                      if (isExcel) return 'Excel';
-                      if (isText) return 'TXT';
-                      return 'Data';
+                      if (isJSON) return t('command.fileTypes.json');
+                      if (isCSV) return t('command.fileTypes.csv');
+                      if (isExcel) return t('command.fileTypes.excel');
+                      if (isText) return t('command.fileTypes.txt');
+                      return t('command.fileTypes.data');
                     };
 
                     // Get appropriate icon and label for document files
@@ -728,10 +733,10 @@ export const CommandCenter = forwardRef<CommandCenterHandle, CommandCenterProps>
                     };
 
                     const getDocumentLabel = () => {
-                      if (isPDF) return 'PDF';
-                      if (isDOCX) return 'DOCX';
-                      if (isPPTX) return 'PPTX';
-                      return 'Doc';
+                      if (isPDF) return t('command.fileTypes.pdf');
+                      if (isDOCX) return t('command.fileTypes.docx');
+                      if (isPPTX) return t('command.fileTypes.pptx');
+                      return t('command.fileTypes.doc');
                     };
 
                     return (
@@ -841,7 +846,7 @@ export const CommandCenter = forwardRef<CommandCenterHandle, CommandCenterProps>
                   }}
                 >
                   <LogIn size={18} />
-                  {disabledMessage ?? 'Sign in to continue'}
+                  {disabledMessage ?? t('command.signInContinue')}
                 </button>
               ) : (
                 <textarea
@@ -856,7 +861,7 @@ export const CommandCenter = forwardRef<CommandCenterHandle, CommandCenterProps>
                   }}
                   onKeyDown={handleKeyDown}
                   onPaste={handlePaste}
-                  placeholder={placeholder}
+                  placeholder={defaultPlaceholder}
                   rows={1}
                   className={cn(styles.textarea, 'hide-scrollbar')}
                   style={{
@@ -873,7 +878,7 @@ export const CommandCenter = forwardRef<CommandCenterHandle, CommandCenterProps>
                   <div className={styles.leftControls}>
                     {/* Add Documents Button */}
                     {allowFileUpload && (
-                      <Tooltip content="Add files (images, PDF, DOCX, PPTX, etc.)" position="top">
+                      <Tooltip content={t('command.fileUpload')} position="top">
                         <button
                           onClick={() => fileInputRef.current?.click()}
                           className={styles.iconButton}
@@ -887,10 +892,10 @@ export const CommandCenter = forwardRef<CommandCenterHandle, CommandCenterProps>
                     <Tooltip
                       content={
                         isTranscribing
-                          ? 'Transcribing...'
+                          ? t('command.voiceTranscribing')
                           : isRecording
-                            ? 'Click to stop recording'
-                            : 'Voice input'
+                            ? t('command.voiceStopRecording')
+                            : t('command.voiceInput')
                       }
                       position="top"
                     >
@@ -919,7 +924,7 @@ export const CommandCenter = forwardRef<CommandCenterHandle, CommandCenterProps>
                     {/* Model Selector - Custom Dropdown (desktop) or direct Modal (mobile) */}
                     <div ref={dropdownRef} className={styles.modelSelector}>
                       <button onClick={handleModelButtonClick} className={styles.modelButton}>
-                        <span>{modelDisplayName || 'Select Model'}</span>
+                        <span>{modelDisplayName || t('command.selectModel')}</span>
                         <ChevronDown
                           size={14}
                           style={{
@@ -1090,7 +1095,7 @@ export const CommandCenter = forwardRef<CommandCenterHandle, CommandCenterProps>
 
                     {/* Send Button / Loading Spinner with Stop Button */}
                     {isLoading ? (
-                      <Tooltip content="Stop generation" position="top">
+                      <Tooltip content={t('command.stopGeneration')} position="top">
                         <button
                           onClick={onStopGeneration}
                           className={styles.sendButton}
@@ -1126,7 +1131,7 @@ export const CommandCenter = forwardRef<CommandCenterHandle, CommandCenterProps>
                       // WebSocket not connected - show connecting/reconnecting state
                       <Tooltip
                         content={
-                          hasEverConnected ? 'Reconnecting to server...' : 'Connecting to server...'
+                          hasEverConnected ? t('command.reconnecting') : t('command.connecting')
                         }
                         position="top"
                       >
@@ -1139,7 +1144,7 @@ export const CommandCenter = forwardRef<CommandCenterHandle, CommandCenterProps>
                       </Tooltip>
                     ) : isLoadingModels && !selectedModelId ? (
                       // Models loading - show loading state
-                      <Tooltip content="Loading models..." position="top">
+                      <Tooltip content={t('command.loadingModels')} position="top">
                         <button
                           disabled
                           className={cn(styles.sendButton, styles.sendButtonLoading)}
@@ -1149,7 +1154,7 @@ export const CommandCenter = forwardRef<CommandCenterHandle, CommandCenterProps>
                       </Tooltip>
                     ) : !selectedModelId ? (
                       // No model selected - show warning
-                      <Tooltip content="Select a model to send" position="top">
+                      <Tooltip content={t('command.selectModelToSend')} position="top">
                         <button
                           onClick={handleSend}
                           disabled={!message.trim()}
@@ -1160,7 +1165,7 @@ export const CommandCenter = forwardRef<CommandCenterHandle, CommandCenterProps>
                       </Tooltip>
                     ) : (
                       // Ready to send
-                      <Tooltip content="Send message" position="top">
+                      <Tooltip content={t('command.sendMessage')} position="top">
                         <button
                           onClick={handleSend}
                           disabled={!message.trim() && selectedFiles.length === 0}

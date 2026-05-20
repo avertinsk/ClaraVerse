@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Plus,
   Home,
@@ -172,6 +173,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   isLoadingChats = false,
   statusSlot,
 }) => {
+  const { t } = useTranslation('common');
+
   // Internal state for when not externally controlled
   const [internalIsCollapsed, setInternalIsCollapsed] = useState(() => isMobileDevice());
   const [isMobile, setIsMobile] = useState(() => isMobileDevice());
@@ -288,7 +291,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         className={`${styles.sidebar} ${isCollapsed ? styles.collapsed : ''} ${className}`}
         style={width && !isCollapsed ? { width } : undefined}
         role="complementary"
-        aria-label="Sidebar navigation"
+        aria-label={t('sidebar.navigation')}
       >
         {/* Header - Brand and Toggle */}
         <header className={styles.header}>
@@ -302,7 +305,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
             className={styles.toggleButton}
-            aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            aria-label={isCollapsed ? t('sidebar.expandSidebar') : t('sidebar.collapseSidebar')}
             type="button"
           >
             {isCollapsed ? <PanelLeft size={20} /> : <PanelLeftClose size={20} />}
@@ -312,7 +315,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <button
               onClick={() => setIsCollapsed(true)}
               className={styles.mobileCloseButton}
-              aria-label="Close sidebar"
+              aria-label={t('sidebar.closeSidebar')}
               type="button"
             >
               <X size={20} />
@@ -325,18 +328,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <div className={styles.newChatSection}>
             <NavItemWithTooltip
               className={styles.navItemWrapper}
-              tooltipLabel="New chat"
+              tooltipLabel={t('sidebar.newChat')}
               showTooltip={isCollapsed && !isMobile}
             >
               <button
                 onClick={handleNewChat}
                 onKeyDown={e => handleKeyDown(e, handleNewChat)}
                 className={styles.newChatButton}
-                aria-label="Start new chat"
+                aria-label={t('sidebar.startNewChat')}
                 type="button"
               >
                 <Plus size={20} strokeWidth={2} />
-                {!isCollapsed && <span className={styles.newChatLabel}>New chat</span>}
+                {!isCollapsed && <span className={styles.newChatLabel}>{t('sidebar.newChat')}</span>}
               </button>
             </NavItemWithTooltip>
           </div>
@@ -397,8 +400,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Recents Section */}
         {!isCollapsed && (showSkeleton || recentChats.length > 0) && (
-          <section className={styles.recentsSection} aria-label="Recent chats">
-            <h2 className={styles.recentsHeader}>Recents</h2>
+          <section className={styles.recentsSection} aria-label={t('sidebar.recents')}>
+            <h2 className={styles.recentsHeader}>{t('sidebar.recents')}</h2>
             <div className={styles.recentsList} role="list">
               {showSkeleton ? (
                 // Show skeleton loaders (minimum 1 second display)
@@ -417,7 +420,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       onClick={() => handleRecentChatClick(chat.id, chat.onClick)}
                       onKeyDown={e => handleKeyDown(e, chat.onClick)}
                       className={styles.recentChatButton}
-                      aria-label={`Open chat: ${chat.title}`}
+                      aria-label={t('sidebar.openChat', { title: chat.title })}
                       type="button"
                     >
                       {chat.isStarred && (

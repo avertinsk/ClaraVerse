@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Smartphone, MoreVertical, Edit2, Trash2, RefreshCw, ExternalLink } from 'lucide-react';
 import {
   listDevices,
@@ -13,6 +14,7 @@ import { toast } from '@/store/useToastStore';
 import styles from './DevicesSection.module.css';
 
 export const DevicesSection = () => {
+  const { t } = useTranslation('settings');
   const [devices, setDevices] = useState<DeviceInfo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -27,7 +29,7 @@ export const DevicesSection = () => {
       const data = await listDevices();
       setDevices(data);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to load devices';
+      const message = err instanceof Error ? err.message : t('devices.loadFailed');
       setError(message);
     } finally {
       setLoading(false);
@@ -43,11 +45,11 @@ export const DevicesSection = () => {
 
     try {
       await renameDevice(renaming.id, renaming.name);
-      toast.success('Device renamed successfully');
+      toast.success(t('devices.renamedSuccess'));
       setRenaming(null);
       fetchDevices();
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to rename device';
+      const message = err instanceof Error ? err.message : t('devices.renamedFailed');
       toast.error(message);
     }
   };
@@ -56,10 +58,10 @@ export const DevicesSection = () => {
     setRevoking(deviceId);
     try {
       await revokeDevice(deviceId);
-      toast.success('Device revoked successfully');
+      toast.success(t('devices.revokedSuccess'));
       fetchDevices();
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to revoke device';
+      const message = err instanceof Error ? err.message : t('devices.revokedFailed');
       toast.error(message);
     } finally {
       setRevoking(null);
@@ -73,15 +75,15 @@ export const DevicesSection = () => {
 
   const confirmRevoke = (device: DeviceInfo) => {
     setActiveMenu(null);
-    if (device.is_current) {
-      if (confirm('This will log you out of this device. Are you sure?')) {
-        handleRevoke(device.device_id);
+      if (device.is_current) {
+        if (confirm(t('devices.confirmRevokeCurrent'))) {
+          handleRevoke(device.device_id);
+        }
+      } else {
+        if (confirm(t('devices.confirmRevoke', { name: device.name }))) {
+          handleRevoke(device.device_id);
+        }
       }
-    } else {
-      if (confirm(`Revoke access for "${device.name}"?`)) {
-        handleRevoke(device.device_id);
-      }
-    }
   };
 
   if (loading) {
@@ -90,12 +92,12 @@ export const DevicesSection = () => {
         <div className={styles.header}>
           <h2 className={styles.title}>
             <Smartphone className={styles.titleIcon} />
-            Connected Devices
+            {t('devices.title')}
           </h2>
         </div>
         <div className={styles.loading}>
           <RefreshCw className={styles.spinner} />
-          <span>Loading devices...</span>
+          <span>{t('devices.loading')}</span>
         </div>
       </div>
     );
@@ -107,14 +109,14 @@ export const DevicesSection = () => {
         <div className={styles.header}>
           <h2 className={styles.title}>
             <Smartphone className={styles.titleIcon} />
-            Connected Devices
+            {t('devices.title')}
           </h2>
         </div>
         <div className={styles.error}>
           <p>{error}</p>
           <button onClick={fetchDevices} className={styles.retryButton}>
             <RefreshCw size={16} />
-            Retry
+            {t('devices.retry')}
           </button>
         </div>
       </div>
@@ -127,13 +129,13 @@ export const DevicesSection = () => {
         <div>
           <h2 className={styles.title}>
             <Smartphone className={styles.titleIcon} />
-            Connected Devices
+            {t('devices.title')}
           </h2>
           <p className={styles.description}>
-            Manage CLI and API devices connected to your account.
+            {t('devices.description')}
           </p>
         </div>
-        <button onClick={fetchDevices} className={styles.refreshButton} title="Refresh">
+        <button onClick={fetchDevices} className={styles.refreshButton} title={t('devices.refresh')}>
           <RefreshCw size={16} />
         </button>
       </div>
@@ -141,8 +143,8 @@ export const DevicesSection = () => {
       {devices.length === 0 ? (
         <div className={styles.empty}>
           <Smartphone className={styles.emptyIcon} />
-          <h3>No devices connected</h3>
-          <p>Use the MCP CLI to connect a device to your account.</p>
+          <h3>{t('devices.noDevices')}</h3>
+          <p>{t('devices.noDevicesDesc')}</p>
           <a
             href="https://docs.claraverse.ai/cli"
             target="_blank"
@@ -150,7 +152,7 @@ export const DevicesSection = () => {
             className={styles.docsLink}
           >
             <ExternalLink size={14} />
-            View documentation
+            {t('devices.viewDocs')}
           </a>
         </div>
       ) : (
@@ -165,8 +167,8 @@ export const DevicesSection = () => {
                 <div className={styles.deviceInfo}>
                   <div className={styles.deviceName}>
                     {device.name}
-                    {device.is_current && <span className={styles.currentBadge}>This Device</span>}
-                    {!device.is_active && <span className={styles.inactiveBadge}>Revoked</span>}
+                    {device.is_current && <span className={styles.currentBadge}>{t('devices.thisDevice')}</span>}
+                    {!device.is_active && <span className={styles.inactiveBadge}>{t('devices.revoked')}</span>}
                   </div>
                   <div className={styles.deviceMeta}>
                     <span>{getPlatformName(device.platform)}</span>
@@ -174,7 +176,7 @@ export const DevicesSection = () => {
                     <span>v{device.client_version}</span>
                   </div>
                   <div className={styles.deviceActivity}>
-                    <span>Last active: {formatRelativeTime(device.last_active_at)}</span>
+                    <span>{t('devices.lastActive', { time: formatRelativeTime(device.last_active_at) })}</span>
                     {device.last_location && (
                       <>
                         <span className={styles.separator}>&bull;</span>
@@ -191,7 +193,7 @@ export const DevicesSection = () => {
                   onClick={() =>
                     setActiveMenu(activeMenu === device.device_id ? null : device.device_id)
                   }
-                  aria-label="Device options"
+                  aria-label={t('devices.options')}
                 >
                   <MoreVertical size={18} />
                 </button>
@@ -200,7 +202,7 @@ export const DevicesSection = () => {
                   <div className={styles.dropdown}>
                     <button className={styles.dropdownItem} onClick={() => openRenameModal(device)}>
                       <Edit2 size={14} />
-                      Rename
+                      {t('devices.rename')}
                     </button>
                     <button
                       className={`${styles.dropdownItem} ${styles.danger}`}
@@ -208,7 +210,7 @@ export const DevicesSection = () => {
                       disabled={revoking === device.device_id}
                     >
                       <Trash2 size={14} />
-                      {revoking === device.device_id ? 'Revoking...' : 'Revoke'}
+                      {revoking === device.device_id ? t('devices.revoking') : t('devices.revoke')}
                     </button>
                   </div>
                 )}
@@ -222,7 +224,7 @@ export const DevicesSection = () => {
       {renaming && (
         <div className={styles.modalBackdrop} onClick={() => setRenaming(null)}>
           <div className={styles.modal} onClick={e => e.stopPropagation()}>
-            <h3>Rename Device</h3>
+            <h3>{t('devices.renameTitle')}</h3>
             <input
               type="text"
               value={renaming.name}
@@ -233,14 +235,14 @@ export const DevicesSection = () => {
             />
             <div className={styles.modalActions}>
               <button className={styles.cancelButton} onClick={() => setRenaming(null)}>
-                Cancel
+                {t('devices.cancel')}
               </button>
               <button
                 className={styles.saveButton}
                 onClick={handleRename}
                 disabled={!renaming.name.trim()}
               >
-                Save
+                {t('devices.save')}
               </button>
             </div>
           </div>
@@ -249,7 +251,7 @@ export const DevicesSection = () => {
 
       <div className={styles.footer}>
         <p className={styles.footerNote}>
-          Revoking a device will immediately disconnect it and require re-authentication.
+          {t('devices.footerNote')}
         </p>
       </div>
     </div>

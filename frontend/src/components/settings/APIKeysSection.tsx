@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Key,
   KeyRound,
@@ -30,6 +31,7 @@ interface APIKeysSectionProps {
 }
 
 export function APIKeysSection({ className }: APIKeysSectionProps) {
+  const { t } = useTranslation('settings');
   const isMobile = useIsMobile();
   const [keys, setKeys] = useState<APIKey[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -59,7 +61,7 @@ export function APIKeysSection({ className }: APIKeysSectionProps) {
       setKeys(data);
     } catch (err) {
       console.error('Failed to load API keys:', err);
-      setError('Failed to load API keys');
+      setError(t('apiKeys.loadFailed'));
     } finally {
       setIsLoading(false);
     }
@@ -67,11 +69,11 @@ export function APIKeysSection({ className }: APIKeysSectionProps) {
 
   const handleCreate = async () => {
     if (!newKeyName.trim()) {
-      setError('Key name is required');
+      setError(t('apiKeys.keyNameRequired'));
       return;
     }
     if (selectedScopes.length === 0) {
-      setError('Select at least one scope');
+      setError(t('apiKeys.selectScope'));
       return;
     }
 
@@ -99,7 +101,7 @@ export function APIKeysSection({ className }: APIKeysSectionProps) {
       // Reload keys list
       await loadKeys();
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to create API key';
+      const errorMessage = err instanceof Error ? err.message : t('apiKeys.createFailed');
       setError(errorMessage);
     } finally {
       setIsCreating(false);
@@ -107,7 +109,7 @@ export function APIKeysSection({ className }: APIKeysSectionProps) {
   };
 
   const handleRevoke = async (keyId: string) => {
-    if (!confirm('Are you sure you want to revoke this API key? This cannot be undone.')) {
+    if (!confirm(t('apiKeys.confirmRevoke'))) {
       return;
     }
 
@@ -116,7 +118,7 @@ export function APIKeysSection({ className }: APIKeysSectionProps) {
       await revokeAPIKey(keyId);
       await loadKeys();
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to revoke API key';
+      const errorMessage = err instanceof Error ? err.message : t('apiKeys.revokeFailed');
       setError(errorMessage);
     } finally {
       setRevokingId(null);
@@ -167,7 +169,7 @@ export function APIKeysSection({ className }: APIKeysSectionProps) {
   const formatLastUsedStatus = (lastUsedAt: string | null) => {
     if (!lastUsedAt) {
       return {
-        text: 'Never',
+        text: t('apiKeys.never'),
         className:
           'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-zinc-800 text-zinc-400 border border-zinc-700',
       };
@@ -179,14 +181,14 @@ export function APIKeysSection({ className }: APIKeysSectionProps) {
 
     if (diffInHours < 24) {
       return {
-        text: `${diffInHours} hour${diffInHours !== 1 ? 's' : ''} ago`,
+        text: t('apiKeys.hoursAgo', { count: diffInHours }),
         className:
           'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500/10 text-green-400 border border-green-500/20',
         hasDot: true,
       };
     } else if (diffInHours < 48) {
       return {
-        text: 'Yesterday',
+        text: t('apiKeys.yesterday'),
         className:
           'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-zinc-800 text-zinc-400 border border-zinc-700',
       };
@@ -208,10 +210,10 @@ export function APIKeysSection({ className }: APIKeysSectionProps) {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div className="flex flex-col gap-1">
           <h1 className="text-2xl font-semibold leading-tight tracking-tight text-white">
-            API Keys
+            {t('apiKeys.title')}
           </h1>
           <p className="text-[0.9375rem] font-normal text-[#a1a1aa] leading-relaxed">
-            Manage your secret keys for authentication and integration.
+            {t('apiKeys.subtitle')}
           </p>
         </div>
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
@@ -220,7 +222,7 @@ export function APIKeysSection({ className }: APIKeysSectionProps) {
             className="flex items-center justify-center gap-2 bg-[#e91e63] hover:bg-[#d81b60] text-white font-medium text-sm px-5 py-2.5 rounded-[0.5rem] transition-colors shadow-lg shadow-[#e91e63]/20"
           >
             <Plus size={20} />
-            <span>Create New Secret Key</span>
+            <span>{t('apiKeys.createKey')}</span>
           </button>
         </div>
       </div>
@@ -243,10 +245,10 @@ export function APIKeysSection({ className }: APIKeysSectionProps) {
       <div className="bg-[#161616] rounded-[0.5rem] border border-[#27272a] shadow-sm mb-8 overflow-hidden min-h-[350px] flex flex-col">
         {/* Table Header */}
         <div className="px-6 py-4 border-b border-[#27272a] flex justify-between items-center bg-[#161616]">
-          <h3 className="text-base font-semibold text-white">Active Keys</h3>
+          <h3 className="text-base font-semibold text-white">{t('apiKeys.activeKeys')}</h3>
           <div className="flex gap-2">
             <span className="text-xs px-2 py-1 rounded bg-green-500/10 text-green-400 border border-green-500/20 font-medium">
-              {activeKeys.length} Active
+              {activeKeys.length} {t('apiKeys.active', { count: activeKeys.length })}
             </span>
           </div>
         </div>
@@ -265,8 +267,8 @@ export function APIKeysSection({ className }: APIKeysSectionProps) {
                   <div className="bg-[#e91e63]/20 w-16 h-16 rounded-[0.5rem] flex items-center justify-center text-[#e91e63] mb-4">
                     <Key size={32} />
                   </div>
-                  <p className="text-[#a1a1aa] text-base">No API keys yet.</p>
-                  <p className="text-[#a1a1aa] text-sm mt-1">Create one to get started.</p>
+                  <p className="text-[#a1a1aa] text-base">{t('apiKeys.noKeys')}</p>
+                  <p className="text-[#a1a1aa] text-sm mt-1">{t('apiKeys.getStarted')}</p>
                 </div>
               ) : isMobile ? (
                 /* Mobile Card Layout */
@@ -298,7 +300,7 @@ export function APIKeysSection({ className }: APIKeysSectionProps) {
                         </div>
                         <div className="api-keys-mobile-card-meta">
                           <span>
-                            Created:{' '}
+                            {t('apiKeys.created')}:{' '}
                             {new Date(key.createdAt).toLocaleDateString('en-US', {
                               month: 'short',
                               day: 'numeric',
@@ -315,7 +317,7 @@ export function APIKeysSection({ className }: APIKeysSectionProps) {
                             {revokingId === key.id ? (
                               <Loader2 size={14} className="animate-spin" />
                             ) : null}
-                            Revoke Key
+                            {t('apiKeys.revoke')} Key
                           </button>
                         </div>
                       </div>
@@ -329,19 +331,19 @@ export function APIKeysSection({ className }: APIKeysSectionProps) {
                     <thead>
                       <tr className="border-b border-[#27272a] bg-[#252525]/30">
                         <th className="px-6 py-3 text-xs font-semibold text-[#a1a1aa] uppercase tracking-wider">
-                          Name
+                          {t('apiKeys.name')}
                         </th>
                         <th className="px-6 py-3 text-xs font-semibold text-[#a1a1aa] uppercase tracking-wider">
-                          Secret Key
+                          {t('apiKeys.secretKey')}
                         </th>
                         <th className="px-6 py-3 text-xs font-semibold text-[#a1a1aa] uppercase tracking-wider">
-                          Created
+                          {t('apiKeys.created')}
                         </th>
                         <th className="px-6 py-3 text-xs font-semibold text-[#a1a1aa] uppercase tracking-wider">
-                          Last Used
+                          {t('apiKeys.lastUsed')}
                         </th>
                         <th className="px-6 py-3 text-xs font-semibold text-[#a1a1aa] uppercase tracking-wider text-right">
-                          Actions
+                          {t('apiKeys.actions')}
                         </th>
                       </tr>
                     </thead>
@@ -413,7 +415,7 @@ export function APIKeysSection({ className }: APIKeysSectionProps) {
         {/* Table Footer - now will always be at bottom */}
         <div className="px-6 py-3 border-t border-[#27272a] flex items-center justify-between bg-[#161616]">
           <span className="text-xs text-[#a1a1aa]">
-            Showing {activeKeys.length} of {activeKeys.length} keys
+            {t('apiKeys.showing', { current: activeKeys.length, total: activeKeys.length })}
           </span>
         </div>
       </div>
@@ -422,7 +424,7 @@ export function APIKeysSection({ className }: APIKeysSectionProps) {
       {revokedKeys.length > 0 && (
         <details className="mt-6">
           <summary className="text-sm text-[#a1a1aa] cursor-pointer hover:text-[#ededed]">
-            {revokedKeys.length} revoked key{revokedKeys.length !== 1 ? 's' : ''}
+            {revokedKeys.length} {t('apiKeys.revokedKeys', { count: revokedKeys.length })}
           </summary>
           <div className="mt-3 space-y-2 opacity-60">
             {revokedKeys.map(key => (
@@ -433,9 +435,9 @@ export function APIKeysSection({ className }: APIKeysSectionProps) {
                 <div className="flex items-center gap-2">
                   <Key size={14} className="text-[#a1a1aa]" />
                   <span className="text-sm text-[#a1a1aa] line-through">{key.name}</span>
-                  <span className="px-1.5 py-0.5 text-[10px] rounded bg-red-500/20 text-red-400">
-                    Revoked
-                  </span>
+                    <span className="px-1.5 py-0.5 text-[10px] rounded bg-red-500/20 text-red-400">
+                      {t('apiKeys.revoked')}
+                    </span>
                 </div>
               </div>
             ))}
@@ -445,7 +447,7 @@ export function APIKeysSection({ className }: APIKeysSectionProps) {
 
       {/* How to use section */}
       <div className="flex flex-col gap-4">
-        <h2 className="text-xl font-bold text-white px-1">How to use your API Key</h2>
+        <h2 className="text-xl font-bold text-white px-1">{t('apiKeys.howToUse')}</h2>
         <div className="bg-[#161616] rounded-[0.5rem] border border-[#27272a] shadow-sm p-6 md:p-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="flex flex-col gap-4">
@@ -454,13 +456,13 @@ export function APIKeysSection({ className }: APIKeysSectionProps) {
                   <Terminal size={24} />
                 </div>
                 <span className="text-xs font-bold uppercase tracking-wider text-[#a1a1aa] bg-[#252525] px-2 py-1 rounded border border-[#27272a]">
-                  Step 1
+                  {t('apiKeys.step1')}
                 </span>
               </div>
               <div>
-                <h3 className="text-lg font-bold text-white mb-2">Create Agent</h3>
+                <h3 className="text-lg font-bold text-white mb-2">{t('apiKeys.createAgent')}</h3>
                 <p className="text-[#a1a1aa] text-sm leading-relaxed">
-                  Navigate to the Agents section to create an agent for your specific workflow.
+                  {t('apiKeys.createAgentDesc')}
                 </p>
               </div>
             </div>
@@ -471,13 +473,13 @@ export function APIKeysSection({ className }: APIKeysSectionProps) {
                   <Zap size={24} />
                 </div>
                 <span className="text-xs font-bold uppercase tracking-wider text-[#a1a1aa] bg-[#252525] px-2 py-1 rounded border border-[#27272a]">
-                  Step 2
+                  {t('apiKeys.step2')}
                 </span>
               </div>
               <div>
-                <h3 className="text-lg font-bold text-white mb-2">Deploy Agent</h3>
+                <h3 className="text-lg font-bold text-white mb-2">{t('apiKeys.deployAgent')}</h3>
                 <p className="text-[#a1a1aa] text-sm leading-relaxed">
-                  Deploy the created agent to make it accessible and ready for requests.
+                  {t('apiKeys.deployAgentDesc')}
                 </p>
               </div>
             </div>
@@ -488,14 +490,13 @@ export function APIKeysSection({ className }: APIKeysSectionProps) {
                   <Key size={24} />
                 </div>
                 <span className="text-xs font-bold uppercase tracking-wider text-[#a1a1aa] bg-[#252525] px-2 py-1 rounded border border-[#27272a]">
-                  Step 3
+                  {t('apiKeys.step3')}
                 </span>
               </div>
               <div>
-                <h3 className="text-lg font-bold text-white mb-2">Access Documentation</h3>
+                <h3 className="text-lg font-bold text-white mb-2">{t('apiKeys.accessDocs')}</h3>
                 <p className="text-[#a1a1aa] text-sm leading-relaxed">
-                  Access the API documentation for that deployed agent, where you will find the
-                  necessary{' '}
+                  {t('apiKeys.accessDocsDesc')}
                   <code className="bg-[#252525] border border-[#27272a] px-1.5 py-0.5 rounded text-xs font-mono text-white">
                     curl
                   </code>{' '}
@@ -509,7 +510,7 @@ export function APIKeysSection({ className }: APIKeysSectionProps) {
               href="/agents"
               className="text-[#e91e63] hover:text-[#d81b60] text-sm font-medium flex items-center gap-2 transition-colors group"
             >
-              <span>Go to Agents</span>
+              <span>{t('apiKeys.goToAgents')}</span>
               <ChevronRight
                 size={16}
                 className="group-hover:translate-x-0.5 transition-transform"
@@ -526,14 +527,14 @@ export function APIKeysSection({ className }: APIKeysSectionProps) {
         title={
           <span className="flex items-center gap-2">
             <KeyRound size={20} className="text-[#e91e63]" />
-            Create API Key
+            {t('apiKeys.createModalTitle')}
           </span>
         }
         size="md"
         footer={
           <div className="flex items-center justify-end gap-3">
             <Button variant="secondary" onClick={() => setShowCreateForm(false)}>
-              Cancel
+              {t('apiKeys.cancel')}
             </Button>
             <Button
               variant="primary"
@@ -543,12 +544,12 @@ export function APIKeysSection({ className }: APIKeysSectionProps) {
               {isCreating ? (
                 <>
                   <Loader2 size={16} className="animate-spin" />
-                  Creating...
+                  {t('apiKeys.creating')}
                 </>
               ) : (
                 <>
                   <Key size={16} />
-                  Create Key
+                  {t('apiKeys.createBtn')}
                 </>
               )}
             </Button>
@@ -559,24 +560,24 @@ export function APIKeysSection({ className }: APIKeysSectionProps) {
           {/* Name */}
           <div className="credential-form-field">
             <label className="field-label">
-              Key Name <span className="required-mark">*</span>
+              {t('apiKeys.keyName')} <span className="required-mark">*</span>
             </label>
             <input
               type="text"
               value={newKeyName}
               onChange={e => setNewKeyName(e.target.value)}
-              placeholder="e.g. My Production Key"
+              placeholder={t('apiKeys.keyNamePlaceholder')}
               className="field-input"
             />
           </div>
 
           {/* Description */}
           <div className="credential-form-field">
-            <label className="field-label">Description</label>
+            <label className="field-label">{t('apiKeys.description')}</label>
             <textarea
               value={newKeyDescription}
               onChange={e => setNewKeyDescription(e.target.value)}
-              placeholder="Optional description of this key's usage..."
+              placeholder={t('apiKeys.descriptionPlaceholder')}
               rows={3}
               className="field-textarea"
             />
@@ -584,8 +585,8 @@ export function APIKeysSection({ className }: APIKeysSectionProps) {
 
           {/* Permissions */}
           <div className="credential-form-field">
-            <label className="field-label">Permissions</label>
-            <p className="field-hint">Select at least one permission scope.</p>
+            <label className="field-label">{t('apiKeys.permissions')}</label>
+            <p className="field-hint">{t('apiKeys.permissionsHint')}</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
               {AVAILABLE_SCOPES.map(scope => (
                 <label
@@ -613,19 +614,19 @@ export function APIKeysSection({ className }: APIKeysSectionProps) {
 
           {/* Expiration */}
           <div className="credential-form-field">
-            <label className="field-label">Expiration (Optional)</label>
+            <label className="field-label">{t('apiKeys.expiration')}</label>
             <div className="relative">
               <select
                 value={expiresIn || ''}
                 onChange={e => setExpiresIn(e.target.value ? parseInt(e.target.value) : undefined)}
                 className="field-select"
               >
-                <option value="">Never expires</option>
-                <option value="30">30 days</option>
-                <option value="60">60 days</option>
-                <option value="90">90 days</option>
-                <option value="180">6 months</option>
-                <option value="365">1 year</option>
+                <option value="">{t('apiKeys.neverExpires')}</option>
+                <option value="30">{t('apiKeys.days30')}</option>
+                <option value="60">{t('apiKeys.days60')}</option>
+                <option value="90">{t('apiKeys.days90')}</option>
+                <option value="180">{t('apiKeys.months6')}</option>
+                <option value="365">{t('apiKeys.year1')}</option>
               </select>
             </div>
           </div>
@@ -639,14 +640,14 @@ export function APIKeysSection({ className }: APIKeysSectionProps) {
         title={
           <span className="flex items-center gap-2">
             <Check size={20} className="text-green-500" />
-            API Key Created
+            {t('apiKeys.keyCreated')}
           </span>
         }
         size="md"
         footer={
           <div className="flex items-center justify-end">
             <Button variant="primary" onClick={closeNewKeyModal}>
-              I've Saved This Key
+              {t('apiKeys.savedKey')}
             </Button>
           </div>
         }
@@ -657,15 +658,14 @@ export function APIKeysSection({ className }: APIKeysSectionProps) {
             <div className="flex items-start gap-3">
               <AlertCircle size={18} className="text-yellow-500 flex-shrink-0 mt-0.5" />
               <div className="text-sm text-[var(--color-text-secondary)]">
-                <strong className="text-[var(--color-text-primary)]">Important:</strong> Copy this
-                key now. You won't be able to see it again!
+                <strong className="text-[var(--color-text-primary)]">{t('apiKeys.important')}:</strong> {t('apiKeys.copyWarning')}
               </div>
             </div>
           </div>
 
           {/* API Key Display */}
           <div className="credential-form-field">
-            <label className="field-label">API Key</label>
+            <label className="field-label">{t('apiKeys.apiKeyLabel')}</label>
             <div className="flex items-center gap-2">
               <code className="flex-1 p-4 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] text-sm font-mono text-[var(--color-text-primary)] break-all">
                 {newKeyResult?.key}
@@ -673,7 +673,7 @@ export function APIKeysSection({ className }: APIKeysSectionProps) {
               <button
                 onClick={() => newKeyResult && handleCopyKey(newKeyResult.key)}
                 className="p-2.5 rounded-lg bg-[var(--color-surface)] hover:bg-[var(--color-surface-hover)] text-[var(--color-text-secondary)] transition-colors"
-                title={copiedKey ? 'Copied!' : 'Copy to clipboard'}
+                title={copiedKey ? t('apiKeys.copied') : t('apiKeys.copyToClipboard')}
               >
                 {copiedKey ? <Check size={18} className="text-green-500" /> : <Copy size={18} />}
               </button>
