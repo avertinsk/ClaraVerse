@@ -7,6 +7,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   X,
@@ -58,6 +59,7 @@ interface DeployPanelProps {
 }
 
 export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
+  const { t } = useTranslation('agents');
   const { currentAgent } = useAgentBuilderStore();
   const [showApiKey, setShowApiKey] = useState(false);
   const [copiedEndpoint, setCopiedEndpoint] = useState(false);
@@ -455,13 +457,13 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                   )}
                 </div>
                 <div>
-                  <h2 className="text-lg font-semibold text-white">Deploy & Trigger</h2>
+                  <h2 className="text-lg font-semibold text-white">{t('agents.deployTitle')}</h2>
                   <p className="text-sm text-white/50">
                     {deploymentStatus === 'active'
-                      ? 'Active'
+                      ? t('agents.deployStatusActive')
                       : deploymentStatus === 'deploying'
-                        ? 'Deploying...'
-                        : 'Ready to deploy'}
+                        ? t('agents.deployStatusDeploying')
+                        : t('agents.deployStatusReady')}
                   </p>
                 </div>
               </div>
@@ -482,10 +484,11 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                     <div className="flex items-start gap-3">
                       <Rocket size={18} className="text-purple-400 mt-0.5 flex-shrink-0" />
                       <div>
-                        <p className="text-sm font-medium text-purple-300">Ready to Deploy?</p>
+                        <p className="text-sm font-medium text-purple-300">
+                          {t('agents.deployReadyTitle')}
+                        </p>
                         <p className="text-xs text-purple-300/60 mt-1">
-                          Deploy your workflow to get an API endpoint and start triggering it from
-                          anywhere.
+                          {t('agents.deployReadyDesc')}
                         </p>
                       </div>
                     </div>
@@ -496,7 +499,7 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                       <div className="flex items-center gap-3 mb-2">
                         <CheckCircle2 size={16} className="text-green-400" />
                         <p className="text-sm font-medium text-white">
-                          Secure API endpoint is created
+                          {t('agents.deployFeatureEndpoint')}
                         </p>
                       </div>
                     </div>
@@ -504,7 +507,7 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                       <div className="flex items-center gap-3 mb-2">
                         <CheckCircle2 size={16} className="text-green-400" />
                         <p className="text-sm font-medium text-white">
-                          API key is auto-generated for authentication
+                          {t('agents.deployFeatureApiKey')}
                         </p>
                       </div>
                     </div>
@@ -512,7 +515,7 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                       <div className="flex items-center gap-3 mb-2">
                         <CheckCircle2 size={16} className="text-green-400" />
                         <p className="text-sm font-medium text-white">
-                          Workflow becomes accessible via REST API
+                          {t('agents.deployFeatureRestApi')}
                         </p>
                       </div>
                     </div>
@@ -526,12 +529,12 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                     {isDeploying ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        Deploying...
+                        {t('agents.deploying')}
                       </>
                     ) : (
                       <>
                         <Rocket size={18} />
-                        Deploy Workflow
+                        {t('agents.deployWorkflow')}
                       </>
                     )}
                   </button>
@@ -550,10 +553,10 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                         <CheckCircle2 size={18} className="text-green-400 mt-0.5 flex-shrink-0" />
                         <div>
                           <p className="text-sm font-medium text-green-300">
-                            Your workflow is live!
+                            {t('agents.deployLiveTitle')}
                           </p>
                           <p className="text-xs text-green-300/60 mt-1">
-                            Everything you need to trigger it is below
+                            {t('agents.deployLiveDesc')}
                           </p>
                         </div>
                       </div>
@@ -566,7 +569,7 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                       {/* Webhook Endpoint */}
                       <div>
                         <label className="block text-xs font-medium text-white/60 mb-2">
-                          Webhook URL
+                          {t('agents.webhookUrl')}
                         </label>
                         {webhookEndpoint ? (
                           <div className="flex gap-2">
@@ -591,8 +594,7 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                         ) : (
                           <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
                             <p className="text-xs text-amber-300/80">
-                              Deploy this agent to generate a unique webhook URL. Each agent gets
-                              its own unique endpoint.
+                              {t('agents.webhookDeployHint')}
                             </p>
                           </div>
                         )}
@@ -601,11 +603,11 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                       {/* Webhook Info */}
                       <div className="p-3 rounded-xl bg-white/5 space-y-2">
                         <div className="flex items-center justify-between text-xs">
-                          <span className="text-white/40">Method</span>
+                          <span className="text-white/40">{t('agents.method')}</span>
                           <span className="text-white/80 font-mono">{webhookMethod}</span>
                         </div>
                         <div className="flex items-center justify-between text-xs">
-                          <span className="text-white/40">Response Mode</span>
+                          <span className="text-white/40">{t('agents.responseMode')}</span>
                           <span
                             className={cn(
                               'px-2 py-0.5 rounded text-xs',
@@ -615,8 +617,8 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                             )}
                           >
                             {webhookResponseMode === 'respond_with_result'
-                              ? 'Synchronous'
-                              : 'Fire & Forget'}
+                              ? t('agents.modeSynchronous')
+                              : t('agents.modeFireForget')}
                           </span>
                         </div>
                       </div>
@@ -625,8 +627,8 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                       <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20">
                         <p className="text-xs text-blue-300/80">
                           {webhookResponseMode === 'respond_with_result'
-                            ? 'This webhook waits for the workflow to complete and returns the result directly in the HTTP response.'
-                            : 'This webhook returns immediately with an execution ID. Poll the status URL to get results.'}
+                            ? t('agents.modeSyncDesc')
+                            : t('agents.modeAsyncDesc')}
                         </p>
                       </div>
 
@@ -635,7 +637,7 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                         <div>
                           <div className="flex items-center justify-between mb-2">
                             <label className="block text-xs font-medium text-white/60">
-                              Integration Code
+                              {t('agents.integrationCode')}
                             </label>
                             <select
                               value={selectedLanguage}
@@ -661,12 +663,12 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                               {copiedCurl ? (
                                 <>
                                   <CheckCircle2 size={12} className="text-green-400" />
-                                  <span className="text-green-400">Copied!</span>
+                                  <span className="text-green-400">{t('agents.copied')}</span>
                                 </>
                               ) : (
                                 <>
                                   <Copy size={12} className="text-white/60" />
-                                  <span className="text-white/60">Copy</span>
+                                  <span className="text-white/60">{t('agents.copy')}</span>
                                 </>
                               )}
                             </button>
@@ -686,12 +688,12 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                             <p className="text-sm font-medium text-white">Schedule</p>
                             {schedule && schedule.enabled && (
                               <span className="px-2 py-0.5 bg-green-500/20 text-green-300 text-xs rounded">
-                                Active
+                                {t('agents.statusActive')}
                               </span>
                             )}
                             {schedule && !schedule.enabled && (
                               <span className="px-2 py-0.5 bg-amber-500/20 text-amber-300 text-xs rounded">
-                                Paused
+                                {t('agents.statusPaused')}
                               </span>
                             )}
                           </div>
@@ -714,11 +716,10 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                           <Webhook size={16} className="text-purple-400 mt-0.5 flex-shrink-0" />
                           <div>
                             <p className="text-sm font-medium text-purple-300">
-                              Add a trigger block
+                              {t('agents.addTriggerBlock')}
                             </p>
                             <p className="text-xs text-purple-300/60 mt-1">
-                              Add a Webhook Trigger or Schedule Trigger block to your workflow for
-                              dedicated endpoints and automatic scheduling.
+                              {t('agents.addTriggerBlockDesc')}
                             </p>
                           </div>
                         </div>
@@ -736,7 +737,9 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                         <div className="flex items-center gap-3">
                           <Globe size={18} className="text-blue-400" />
                           <div className="text-left">
-                            <p className="text-sm font-medium text-white">API Endpoint</p>
+                            <p className="text-sm font-medium text-white">
+                              {t('agents.apiEndpoint')}
+                            </p>
                             <p className="text-xs text-white/40">Trigger via HTTP POST request</p>
                           </div>
                         </div>
@@ -761,7 +764,7 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                               {/* Endpoint */}
                               <div>
                                 <label className="block text-xs font-medium text-white/60 mb-2">
-                                  Endpoint URL
+                                  {t('agents.endpointUrl')}
                                 </label>
                                 <div className="flex gap-2">
                                   <input
@@ -787,14 +790,14 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                               {/* API Key */}
                               <div>
                                 <label className="block text-xs font-medium text-white/60 mb-2">
-                                  API Key
+                                  {t('agents.apiKey')}
                                 </label>
 
                                 {/* Success message for newly created key */}
                                 {apiKeyData && (
                                   <div className="p-3 rounded-xl bg-green-500/10 border border-green-500/20 mb-2">
                                     <p className="text-xs text-green-300/80 font-medium">
-                                      ✅ New API key created! Copy it now - it won't be shown again.
+                                      {t('agents.apiKeyCreated')}
                                     </p>
                                   </div>
                                 )}
@@ -866,12 +869,12 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                                     {loadingApiKey ? (
                                       <>
                                         <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                        Generating...
+                                        {t('agents.generating')}
                                       </>
                                     ) : (
                                       <>
                                         <Key size={16} />
-                                        Generate API Key
+                                        {t('agents.generateApiKey')}
                                       </>
                                     )}
                                   </button>
@@ -954,15 +957,17 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                           <Clock size={18} className="text-amber-400" />
                           <div className="text-left flex-1">
                             <div className="flex items-center gap-2">
-                              <p className="text-sm font-medium text-white">Schedule</p>
+                              <p className="text-sm font-medium text-white">
+                                {t('agents.schedule')}
+                              </p>
                               {schedule && schedule.enabled && (
                                 <span className="px-2 py-0.5 bg-green-500/20 text-green-300 text-xs rounded">
-                                  Active
+                                  {t('agents.statusActive')}
                                 </span>
                               )}
                               {schedule && !schedule.enabled && (
                                 <span className="px-2 py-0.5 bg-amber-500/20 text-amber-300 text-xs rounded">
-                                  Paused
+                                  {t('agents.statusPaused')}
                                 </span>
                               )}
                             </div>
@@ -994,7 +999,9 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                               {loadingSchedule ? (
                                 <div className="p-4 rounded-xl bg-white/5 text-center">
                                   <div className="w-8 h-8 border-2 border-white/20 border-t-white/60 rounded-full animate-spin mx-auto mb-2" />
-                                  <p className="text-xs text-white/40">Loading schedule...</p>
+                                  <p className="text-xs text-white/40">
+                                    {t('agents.loadingSchedule')}
+                                  </p>
                                 </div>
                               ) : (
                                 <>
@@ -1005,7 +1012,7 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                                         <CheckCircle2 size={16} className="text-green-400 mt-0.5" />
                                         <div className="flex-1">
                                           <p className="text-sm font-medium text-green-300">
-                                            Schedule Active
+                                            {t('agents.scheduleActive')}
                                           </p>
                                           <p className="text-xs text-green-300/60 mt-1">
                                             {parseCronToHuman(schedule.cronExpression)} •{' '}
@@ -1014,18 +1021,22 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                                         </div>
                                         {!schedule.enabled && (
                                           <span className="px-2 py-1 bg-amber-500/20 text-amber-300 text-xs rounded-lg">
-                                            Paused
+                                            {t('agents.statusPaused')}
                                           </span>
                                         )}
                                       </div>
                                       <div className="flex items-center justify-between text-xs">
-                                        <span className="text-white/40">Next run:</span>
+                                        <span className="text-white/40">
+                                          {t('agents.nextRun')}:
+                                        </span>
                                         <span className="text-white/80">
                                           {formatNextRun(schedule.nextRunAt)}
                                         </span>
                                       </div>
                                       <div className="flex items-center justify-between text-xs mt-1">
-                                        <span className="text-white/40">Total runs:</span>
+                                        <span className="text-white/40">
+                                          {t('agents.totalRuns')}:
+                                        </span>
                                         <span className="text-white/80">{schedule.totalRuns}</span>
                                       </div>
                                     </div>
@@ -1034,7 +1045,7 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                                   {/* Schedule Type */}
                                   <div>
                                     <label className="block text-xs font-medium text-white/60 mb-2">
-                                      Frequency
+                                      {t('agents.frequency')}
                                     </label>
                                     <select
                                       value={scheduleType}
@@ -1050,11 +1061,11 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                                       }
                                       className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-xl text-sm text-white/90 focus:outline-none focus:border-[var(--color-accent)]/50"
                                     >
-                                      <option value="hourly">Hourly</option>
-                                      <option value="daily">Daily</option>
-                                      <option value="weekly">Weekly</option>
-                                      <option value="monthly">Monthly</option>
-                                      <option value="custom">Custom (Cron)</option>
+                                      <option value="hourly">{t('agents.freqHourly')}</option>
+                                      <option value="daily">{t('agents.freqDaily')}</option>
+                                      <option value="weekly">{t('agents.freqWeekly')}</option>
+                                      <option value="monthly">{t('agents.freqMonthly')}</option>
+                                      <option value="custom">{t('agents.freqCustom')}</option>
                                     </select>
                                   </div>
 
@@ -1062,7 +1073,7 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                                   {scheduleType === 'hourly' && (
                                     <div>
                                       <label className="block text-xs font-medium text-white/60 mb-2">
-                                        Run every
+                                        {t('agents.runEvery')}
                                       </label>
                                       <div className="flex items-center gap-2">
                                         <select
@@ -1072,7 +1083,7 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                                         >
                                           {[1, 2, 3, 4, 6, 8, 12].map(h => (
                                             <option key={h} value={h}>
-                                              {h} {h === 1 ? 'hour' : 'hours'}
+                                              {h} {h === 1 ? t('agents.hour') : t('agents.hours')}
                                             </option>
                                           ))}
                                         </select>
@@ -1086,7 +1097,7 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                                     scheduleType === 'monthly') && (
                                     <div>
                                       <label className="block text-xs font-medium text-white/60 mb-2">
-                                        Time
+                                        {t('agents.time')}
                                       </label>
                                       <div className="grid grid-cols-2 gap-2">
                                         <select
@@ -1121,7 +1132,7 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                                   {scheduleType === 'weekly' && (
                                     <div>
                                       <label className="block text-xs font-medium text-white/60 mb-2">
-                                        Day of week
+                                        {t('agents.dayOfWeek')}
                                       </label>
                                       <select
                                         value={selectedDayOfWeek}
@@ -1130,13 +1141,13 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                                         }
                                         className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-xl text-sm text-white/90 focus:outline-none focus:border-[var(--color-accent)]/50"
                                       >
-                                        <option value={0}>Sunday</option>
-                                        <option value={1}>Monday</option>
-                                        <option value={2}>Tuesday</option>
-                                        <option value={3}>Wednesday</option>
-                                        <option value={4}>Thursday</option>
-                                        <option value={5}>Friday</option>
-                                        <option value={6}>Saturday</option>
+                                        <option value={0}>{t('agents.daySunday')}</option>
+                                        <option value={1}>{t('agents.dayMonday')}</option>
+                                        <option value={2}>{t('agents.dayTuesday')}</option>
+                                        <option value={3}>{t('agents.dayWednesday')}</option>
+                                        <option value={4}>{t('agents.dayThursday')}</option>
+                                        <option value={5}>{t('agents.dayFriday')}</option>
+                                        <option value={6}>{t('agents.daySaturday')}</option>
                                       </select>
                                     </div>
                                   )}
@@ -1145,7 +1156,7 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                                   {scheduleType === 'monthly' && (
                                     <div>
                                       <label className="block text-xs font-medium text-white/60 mb-2">
-                                        Day of month
+                                        {t('agents.dayOfMonth')}
                                       </label>
                                       <select
                                         value={selectedDayOfMonth}
@@ -1175,7 +1186,7 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                                   {scheduleType === 'custom' && (
                                     <div>
                                       <label className="block text-xs font-medium text-white/60 mb-2">
-                                        Custom Cron Expression
+                                        {t('agents.customCron')}
                                       </label>
                                       <input
                                         type="text"
@@ -1185,7 +1196,7 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                                         className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-xl text-sm font-mono text-white/90 focus:outline-none focus:border-[var(--color-accent)]/50"
                                       />
                                       <p className="text-xs text-white/40 mt-1">
-                                        Format: minute hour day month weekday
+                                        {t('agents.cronFormat')}
                                       </p>
                                     </div>
                                   )}
@@ -1193,7 +1204,7 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                                   {/* Timezone */}
                                   <div>
                                     <label className="block text-xs font-medium text-white/60 mb-2">
-                                      Timezone
+                                      {t('agents.timezone')}
                                     </label>
                                     <select
                                       value={selectedTimezone}
@@ -1213,12 +1224,12 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                                   <div className="flex items-center justify-between p-3 rounded-xl bg-white/5">
                                     <div>
                                       <p className="text-sm font-medium text-white">
-                                        Enable Schedule
+                                        {t('agents.enableSchedule')}
                                       </p>
                                       <p className="text-xs text-white/40">
                                         {scheduleEnabled
-                                          ? 'Workflow will run automatically'
-                                          : 'Workflow is paused'}
+                                          ? t('agents.scheduleEnabledDesc')
+                                          : t('agents.scheduleDisabledDesc')}
                                       </p>
                                     </div>
                                     <button
@@ -1249,17 +1260,17 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                                       {savingSchedule ? (
                                         <>
                                           <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                          Saving...
+                                          {t('agents.saving')}
                                         </>
                                       ) : schedule ? (
                                         <>
                                           <CheckCircle2 size={16} />
-                                          Update Schedule
+                                          {t('agents.updateSchedule')}
                                         </>
                                       ) : (
                                         <>
                                           <Clock size={16} />
-                                          Create Schedule
+                                          {t('agents.createSchedule')}
                                         </>
                                       )}
                                     </button>
@@ -1278,8 +1289,7 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                                   {/* Helper Text */}
                                   <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20">
                                     <p className="text-xs text-blue-300/80">
-                                      The workflow will run automatically according to this schedule
-                                      using the input defined in the Start block.
+                                      {t('agents.scheduleHelper')}
                                     </p>
                                   </div>
                                 </>
@@ -1300,7 +1310,7 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                 onClick={onClose}
                 className="w-full px-4 py-3 rounded-lg text-sm text-white/60 hover:text-white hover:bg-white/5 transition-colors"
               >
-                Close
+                {t('agents.close')}
               </button>
             </div>
           </motion.div>
@@ -1333,9 +1343,11 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                           <Key size={16} className="text-[var(--color-accent)]" />
                         </div>
                         <div className="flex-1">
-                          <h3 className="text-sm font-semibold text-white">Generate API Key</h3>
+                          <h3 className="text-sm font-semibold text-white">
+                            {t('agents.generateApiKeyModal')}
+                          </h3>
                           <p className="text-[11px] text-white/50 mt-0.5">
-                            Create universal access key
+                            {t('agents.generateApiKeySubtitle')}
                           </p>
                         </div>
                       </div>
@@ -1345,8 +1357,7 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                     <div className="px-4 py-3 space-y-3">
                       {/* Explanation */}
                       <p className="text-xs text-white/70 leading-relaxed">
-                        Create an API key to trigger and interact with your agent from external
-                        applications.
+                        {t('agents.apiKeyExplanation')}
                       </p>
 
                       {/* Permissions Box */}
@@ -1354,21 +1365,21 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                         <div className="flex items-center gap-1.5 mb-2">
                           <Settings size={12} className="text-blue-400" />
                           <p className="text-[10px] font-semibold text-blue-300 uppercase tracking-wider">
-                            Permissions
+                            {t('agents.permissions')}
                           </p>
                         </div>
                         <ul className="space-y-1.5">
                           <li className="flex items-center gap-1.5 text-[11px] text-white/70">
                             <Zap size={10} className="text-blue-400" />
-                            Execute workflows
+                            {t('agents.permExecute')}
                           </li>
                           <li className="flex items-center gap-1.5 text-[11px] text-white/70">
                             <Eye size={10} className="text-blue-400" />
-                            Read execution results
+                            {t('agents.permRead')}
                           </li>
                           <li className="flex items-center gap-1.5 text-[11px] text-white/70">
                             <Code size={10} className="text-blue-400" />
-                            Upload files
+                            {t('agents.permUpload')}
                           </li>
                         </ul>
                       </div>
@@ -1376,8 +1387,8 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                       {/* Warning */}
                       <div className="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/20">
                         <p className="text-[11px] text-amber-200/90 leading-relaxed">
-                          <strong className="font-semibold">Important:</strong> Keep this key
-                          secure. Anyone with this key can execute your agent.
+                          <strong className="font-semibold">{t('agents.important')}:</strong>{' '}
+                          {t('agents.apiKeyWarning')}
                         </p>
                       </div>
                     </div>
@@ -1388,7 +1399,7 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                         onClick={() => setShowApiKeyModal(false)}
                         className="flex-1 px-3 py-2 rounded-lg text-xs font-medium text-white/60 hover:text-white hover:bg-white/5 transition-colors"
                       >
-                        Cancel
+                        {t('agents.cancel')}
                       </button>
                       <button
                         onClick={async () => {
@@ -1401,12 +1412,12 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
                         {loadingApiKey ? (
                           <>
                             <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                            Generating...
+                            {t('agents.generating')}
                           </>
                         ) : (
                           <>
                             <Key size={14} />
-                            Generate Key
+                            {t('agents.generateKey')}
                           </>
                         )}
                       </button>

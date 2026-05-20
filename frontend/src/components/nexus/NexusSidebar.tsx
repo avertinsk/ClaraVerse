@@ -141,7 +141,12 @@ export function NexusSidebar({
   const nexusFooterLinks: FooterLink[] = useMemo(
     () => [
       { href: '/', label: t('nexus.home'), icon: Home, ariaLabel: t('nexus.home') },
-      { href: '/chat', label: t('nexus.chat'), icon: MessageSquare, ariaLabel: t('nexus.navigateChat') },
+      {
+        href: '/chat',
+        label: t('nexus.chat'),
+        icon: MessageSquare,
+        ariaLabel: t('nexus.navigateChat'),
+      },
     ],
     [t]
   );
@@ -270,7 +275,9 @@ export function NexusSidebar({
             />
             <span className={styles.bridgeStatusLabel}>{t('nexus.companionLabel')}</span>
             <span className={styles.bridgeStatusValue}>
-              {bridgeConnected ? t('nexus.companionStatusConnected') : t('nexus.companionStatusOffline')}
+              {bridgeConnected
+                ? t('nexus.companionStatusConnected')
+                : t('nexus.companionStatusOffline')}
             </span>
           </div>
           {!bridgeConnected && (

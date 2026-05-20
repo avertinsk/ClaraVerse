@@ -17,5 +17,10 @@
   "skills.cat.code": "Code",
   "skills.cat.database": "Database",
   "skills.cat.ecommerce": "E-Commerce",
-  "skills.cat.writing": "Writing"
+  "skills.cat.writing": "Writing",
+  "skills.auto": "Auto",
+  "skills.manual": "Manual",
+  "skills.tool": "tool",
+  "skills.tools": "tools",
+  "skills.exportTooltip": "Export as SKILL.md"
 }

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Search,
   Mail,
@@ -73,6 +74,7 @@ interface SkillCardProps {
 }
 
 export const SkillCard = ({ skill, enabled, onToggle, onExport, onClick }: SkillCardProps) => {
+  const { t } = useTranslation('skills');
   const [toggling, setToggling] = useState(false);
   const Icon = getIcon(skill.icon);
   const accentColor = categoryColors[skill.category] || 'var(--color-primary)';
@@ -119,16 +121,17 @@ export const SkillCard = ({ skill, enabled, onToggle, onExport, onClick }: Skill
 
       <div className="skill-card__footer">
         <Badge variant={skill.mode === 'auto' ? 'accent' : 'default'}>
-          {skill.mode === 'auto' ? 'Auto' : 'Manual'}
+          {skill.mode === 'auto' ? t('skills.auto') : t('skills.manual')}
         </Badge>
         {skill.required_tools?.length > 0 && (
           <span className="skill-card__tool-count">
             <Wrench size={12} />
-            {skill.required_tools.length} tool{skill.required_tools.length !== 1 ? 's' : ''}
+            {skill.required_tools.length}{' '}
+            {skill.required_tools.length !== 1 ? t('skills.tools') : t('skills.tool')}
           </span>
         )}
         {onExport && (
-          <Tooltip content="Export as SKILL.md">
+          <Tooltip content={t('skills.exportTooltip')}>
             <button
               className="skill-card__export-btn"
               onClick={() => onExport(skill.id)}

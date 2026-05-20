@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
   Send,
@@ -267,6 +268,7 @@ interface AgentChatProps {
 }
 
 export function AgentChat({ className, onOpenSidebar, onCloseSidebar }: AgentChatProps) {
+  const { t } = useTranslation('agents');
   const navigate = useNavigate();
   const {
     currentAgent,
@@ -452,10 +454,10 @@ export function AgentChat({ className, onOpenSidebar, onCloseSidebar }: AgentCha
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return 'Just now';
-    if (diffMins < 60) return `${diffMins}m ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    if (diffDays < 7) return `${diffDays}d ago`;
+    if (diffMins < 1) return t('agents.justNow');
+    if (diffMins < 60) return `${diffMins}${t('agents.mAgo')}`;
+    if (diffHours < 24) return `${diffHours}${t('agents.hAgo')}`;
+    if (diffDays < 7) return `${diffDays}${t('agents.dAgo')}`;
 
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
@@ -489,7 +491,7 @@ export function AgentChat({ className, onOpenSidebar, onCloseSidebar }: AgentCha
     e.stopPropagation();
     if (!selectedAgentId) return;
 
-    if (confirm('Delete this conversation? This cannot be undone.')) {
+    if (confirm(t('agents.deleteConversationConfirm'))) {
       try {
         await deleteBuilderConversation(selectedAgentId, conversationId);
         await fetchConversationList(selectedAgentId);
@@ -1063,10 +1065,10 @@ export function AgentChat({ className, onOpenSidebar, onCloseSidebar }: AgentCha
           <Bot size={32} className="text-white" />
         </div>
         <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-2">
-          No Agent Selected
+          {t('agents.noAgentSelected')}
         </h3>
         <p className="text-sm text-[var(--color-text-secondary)] max-w-[280px]">
-          Select an agent from the sidebar or create a new one to start building your workflow.
+          {t('agents.noAgentDesc')}
         </p>
       </div>
     );
@@ -1139,7 +1141,7 @@ export function AgentChat({ className, onOpenSidebar, onCloseSidebar }: AgentCha
                     onCloseSidebar?.();
                     const agent = useAgentBuilderStore.getState().currentAgent;
                     if (agent) {
-                      const newName = prompt('Rename agent:', agent.name);
+                      const newName = prompt(t('agents.renameAgentPrompt'), agent.name);
                       if (newName?.trim()) {
                         useAgentBuilderStore
                           .getState()
@@ -1176,7 +1178,7 @@ export function AgentChat({ className, onOpenSidebar, onCloseSidebar }: AgentCha
                         type="text"
                         value={modelSearchQuery}
                         onChange={e => setModelSearchQuery(e.target.value)}
-                        placeholder="Search models..."
+                        placeholder={t('agents.searchModels')}
                         className="w-full pl-10 pr-3 py-2.5 text-sm bg-[var(--color-bg-tertiary)] border border-[var(--color-border)] rounded-xl text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] focus:outline-none focus:border-[var(--color-accent)]"
                         autoFocus
                       />
@@ -1187,8 +1189,8 @@ export function AgentChat({ className, onOpenSidebar, onCloseSidebar }: AgentCha
                     {filteredModels.length === 0 ? (
                       <div className="px-4 py-6 text-center text-sm text-[var(--color-text-tertiary)]">
                         {models.length === 0
-                          ? 'No models available'
-                          : 'No models match your search'}
+                          ? t('agents.noModelsAvailable')
+                          : t('agents.noModelsMatch')}
                       </div>
                     ) : (
                       filteredModels.map(model => (
@@ -1251,12 +1253,12 @@ export function AgentChat({ className, onOpenSidebar, onCloseSidebar }: AgentCha
                   {/* Header */}
                   <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--color-border)]">
                     <span className="text-sm font-semibold text-[var(--color-text-primary)]">
-                      Conversation History
+                      {t('agents.conversationHistory')}
                     </span>
                     <button
                       onClick={handleNewConversation}
                       className="p-2 rounded-xl bg-[var(--color-bg-tertiary)] text-[var(--color-text-secondary)] active:bg-[var(--color-accent)]/20 transition-colors"
-                      title="New conversation"
+                      title={t('agents.newConversation')}
                     >
                       <Plus size={18} />
                     </button>
@@ -1271,7 +1273,7 @@ export function AgentChat({ className, onOpenSidebar, onCloseSidebar }: AgentCha
                           className="mx-auto mb-3 text-[var(--color-text-tertiary)] opacity-50"
                         />
                         <p className="text-sm text-[var(--color-text-tertiary)]">
-                          No conversations yet
+                          {t('agents.noConversations')}
                         </p>
                       </div>
                     ) : (
@@ -1299,14 +1301,17 @@ export function AgentChat({ className, onOpenSidebar, onCloseSidebar }: AgentCha
                                 className="text-[var(--color-text-tertiary)]"
                               />
                               <span className="text-xs text-[var(--color-text-tertiary)]">
-                                {conv.message_count} message{conv.message_count !== 1 ? 's' : ''}
+                                {conv.message_count}{' '}
+                                {conv.message_count !== 1
+                                  ? t('agents.messages')
+                                  : t('agents.message')}
                               </span>
                             </div>
                           </div>
                           <button
                             onClick={e => handleDeleteConversation(conv.id, e)}
                             className="p-2 rounded-xl text-[var(--color-text-tertiary)] active:bg-red-500/20 active:text-red-400 transition-all"
-                            title="Delete"
+                            title={t('agents.delete')}
                           >
                             <Trash2 size={16} />
                           </button>
@@ -1318,7 +1323,7 @@ export function AgentChat({ className, onOpenSidebar, onCloseSidebar }: AgentCha
                   {/* Footer */}
                   <div className="px-4 py-2 border-t border-[var(--color-border)]">
                     <p className="text-xs text-[var(--color-text-tertiary)] text-center">
-                      Encrypted with AES-256
+                      {t('agents.encrypted')}
                     </p>
                   </div>
                 </div>
@@ -1344,7 +1349,7 @@ export function AgentChat({ className, onOpenSidebar, onCloseSidebar }: AgentCha
                     ? 'bg-[var(--color-accent)]/10 text-[var(--color-accent)]'
                     : 'hover:bg-[var(--color-bg-primary)] hover:bg-opacity-60 text-[var(--color-text-secondary)] hover:text-[var(--color-accent)]'
                 )}
-                title="Conversation history"
+                title={t('agents.conversationHistoryTooltip')}
               >
                 <History size={16} />
               </button>
@@ -1358,12 +1363,12 @@ export function AgentChat({ className, onOpenSidebar, onCloseSidebar }: AgentCha
                     {/* Header */}
                     <div className="flex items-center justify-between px-3 py-2 border-b border-[var(--color-border)]">
                       <span className="text-xs font-medium text-[var(--color-text-primary)]">
-                        History
+                        {t('agents.history')}
                       </span>
                       <button
                         onClick={handleNewConversation}
                         className="p-1 rounded-md hover:bg-[var(--color-bg-tertiary)] text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors"
-                        title="New conversation"
+                        title={t('agents.newConversation')}
                       >
                         <Plus size={14} />
                       </button>
@@ -1378,7 +1383,7 @@ export function AgentChat({ className, onOpenSidebar, onCloseSidebar }: AgentCha
                             className="mx-auto mb-2 text-[var(--color-text-tertiary)] opacity-50"
                           />
                           <p className="text-xs text-[var(--color-text-tertiary)]">
-                            No conversations yet
+                            {t('agents.noConversations')}
                           </p>
                         </div>
                       ) : (
@@ -1411,15 +1416,17 @@ export function AgentChat({ className, onOpenSidebar, onCloseSidebar }: AgentCha
                                     className="text-[var(--color-text-tertiary)]"
                                   />
                                   <span className="text-[10px] text-[var(--color-text-tertiary)]">
-                                    {conv.message_count} message
-                                    {conv.message_count !== 1 ? 's' : ''}
+                                    {conv.message_count}{' '}
+                                    {conv.message_count !== 1
+                                      ? t('agents.messages')
+                                      : t('agents.message')}
                                   </span>
                                 </div>
                               </div>
                               <button
                                 onClick={e => handleDeleteConversation(conv.id, e)}
                                 className="p-1 rounded-md opacity-0 group-hover:opacity-100 hover:bg-red-500/20 text-[var(--color-text-tertiary)] hover:text-red-400 transition-all"
-                                title="Delete"
+                                title={t('agents.delete')}
                               >
                                 <Trash2 size={11} />
                               </button>
@@ -1432,7 +1439,7 @@ export function AgentChat({ className, onOpenSidebar, onCloseSidebar }: AgentCha
                     {/* Footer */}
                     <div className="px-3 py-1.5 border-t border-[var(--color-border)]">
                       <p className="text-[9px] text-[var(--color-text-tertiary)] text-center">
-                        Encrypted with AES-256
+                        {t('agents.encrypted')}
                       </p>
                     </div>
                   </div>
@@ -1444,14 +1451,14 @@ export function AgentChat({ className, onOpenSidebar, onCloseSidebar }: AgentCha
               onClick={() => {
                 const agent = useAgentBuilderStore.getState().currentAgent;
                 if (agent) {
-                  const newName = prompt('Rename agent:', agent.name);
+                  const newName = prompt(t('agents.renameAgentPrompt'), agent.name);
                   if (newName && newName.trim()) {
                     useAgentBuilderStore.getState().updateAgent(agent.id, { name: newName.trim() });
                   }
                 }
               }}
               className="flex-shrink-0 p-2 rounded-xl hover:bg-[var(--color-bg-primary)] hover:bg-opacity-60 text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-all"
-              title="Rename agent"
+              title={t('agents.renameAgent')}
             >
               <Edit2 size={16} />
             </button>
@@ -1474,7 +1481,7 @@ export function AgentChat({ className, onOpenSidebar, onCloseSidebar }: AgentCha
               <div className="flex items-center justify-center py-8">
                 <Loader2 size={24} className="animate-spin text-[var(--color-accent)]" />
                 <span className="ml-2 text-sm text-[var(--color-text-tertiary)]">
-                  Loading conversation...
+                  {t('agents.loadingConversation')}
                 </span>
               </div>
             )}
@@ -1500,7 +1507,7 @@ export function AgentChat({ className, onOpenSidebar, onCloseSidebar }: AgentCha
                 <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-[var(--color-bg-tertiary)] bg-opacity-60 backdrop-blur-sm border border-[var(--color-border)] border-opacity-30 text-[var(--color-text-secondary)] shadow-md">
                   <Loader2 size={16} className="animate-spin text-[var(--color-accent)]" />
                   <span className="text-sm font-medium">
-                    {chatMode === 'ask' ? 'Thinking...' : 'Generating workflow...'}
+                    {chatMode === 'ask' ? t('agents.thinking') : t('agents.generatingWorkflow')}
                   </span>
                 </div>
               </div>
@@ -1543,12 +1550,12 @@ export function AgentChat({ className, onOpenSidebar, onCloseSidebar }: AgentCha
                 onKeyDown={handleKeyDown}
                 placeholder={
                   highlightChatInput
-                    ? 'Describe the issue and let the agent handle the rest...'
+                    ? t('agents.placeholderHighlight')
                     : isLoadingConversation
-                      ? 'Loading conversation...'
+                      ? t('agents.loadingConversation')
                       : chatMode === 'ask'
-                        ? 'Ask about your workflow, tools, or deployment...'
-                        : 'Describe your agent workflow...'
+                        ? t('agents.placeholderAsk')
+                        : t('agents.placeholderBuilder')
                 }
                 disabled={isInteractionDisabled}
                 rows={1}
@@ -1569,10 +1576,10 @@ export function AgentChat({ className, onOpenSidebar, onCloseSidebar }: AgentCha
                   )}
                   title={
                     isTranscribing
-                      ? 'Transcribing...'
+                      ? t('agents.transcribing')
                       : isRecording
-                        ? 'Click to stop recording'
-                        : 'Voice input'
+                        ? t('agents.stopRecording')
+                        : t('agents.voiceInput')
                   }
                 >
                   {isTranscribing ? (
@@ -1596,10 +1603,10 @@ export function AgentChat({ className, onOpenSidebar, onCloseSidebar }: AgentCha
                           ? 'bg-[var(--color-accent)] text-white'
                           : 'text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)]'
                       )}
-                      title="Builder mode - modify workflow"
+                      title={t('agents.builderModeTooltip')}
                     >
                       <Hammer size={10} />
-                      Builder
+                      {t('agents.builderMode')}
                     </button>
                     <button
                       onClick={() => setChatMode('ask')}
@@ -1609,10 +1616,10 @@ export function AgentChat({ className, onOpenSidebar, onCloseSidebar }: AgentCha
                           ? 'bg-[var(--color-accent)] text-white'
                           : 'text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)]'
                       )}
-                      title="Ask mode - get help about workflow"
+                      title={t('agents.askModeTooltip')}
                     >
                       <HelpCircle size={10} />
-                      Ask
+                      {t('agents.askMode')}
                     </button>
                   </div>
 
@@ -1623,8 +1630,8 @@ export function AgentChat({ className, onOpenSidebar, onCloseSidebar }: AgentCha
                       className="flex items-center gap-1.5 px-2 py-1 rounded bg-[var(--color-bg-primary)] bg-opacity-50 hover:bg-opacity-80 text-xs text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-all"
                       title={
                         chatMode === 'ask'
-                          ? 'Select model for Ask mode'
-                          : 'Select model for Builder mode'
+                          ? t('agents.selectModelAsk')
+                          : t('agents.selectModelBuilder')
                       }
                     >
                       {currentBuilderModel?.provider_favicon && (
@@ -1640,7 +1647,7 @@ export function AgentChat({ className, onOpenSidebar, onCloseSidebar }: AgentCha
                       <span className="truncate max-w-[120px]">
                         {currentBuilderModel?.display_name ||
                           currentBuilderModel?.name ||
-                          'Select Model'}
+                          t('agents.selectModel')}
                       </span>
                       <ChevronDown
                         size={12}
@@ -1671,7 +1678,7 @@ export function AgentChat({ className, onOpenSidebar, onCloseSidebar }: AgentCha
                                 type="text"
                                 value={modelSearchQuery}
                                 onChange={e => setModelSearchQuery(e.target.value)}
-                                placeholder="Search models..."
+                                placeholder={t('agents.searchModels')}
                                 className="w-full pl-6 pr-2 py-1.5 text-xs bg-[var(--color-bg-tertiary)] border border-[var(--color-border)] rounded-md text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] focus:outline-none focus:border-[var(--color-accent)]"
                                 autoFocus
                               />
@@ -1682,8 +1689,8 @@ export function AgentChat({ className, onOpenSidebar, onCloseSidebar }: AgentCha
                             {filteredModels.length === 0 ? (
                               <div className="px-3 py-2 text-xs text-[var(--color-text-tertiary)]">
                                 {models.length === 0
-                                  ? 'No models available'
-                                  : 'No models match your search'}
+                                  ? t('agents.noModelsAvailable')
+                                  : t('agents.noModelsMatch')}
                               </div>
                             ) : (
                               filteredModels.map(model => (
@@ -1742,7 +1749,7 @@ export function AgentChat({ className, onOpenSidebar, onCloseSidebar }: AgentCha
                     <button
                       onClick={() => setShowOutputView(true)}
                       className="p-1.5 rounded transition-all flex items-center justify-center bg-white/5 hover:bg-white/10 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
-                      title="View execution output"
+                      title={t('agents.viewOutput')}
                     >
                       <Play size={16} />
                     </button>
@@ -1757,7 +1764,7 @@ export function AgentChat({ className, onOpenSidebar, onCloseSidebar }: AgentCha
                         ? 'bg-[var(--color-accent)] text-white hover:bg-[var(--color-accent-hover)]'
                         : 'bg-[var(--color-bg-tertiary)] text-[var(--color-text-tertiary)] cursor-not-allowed opacity-50'
                     )}
-                    title="Send message"
+                    title={t('agents.sendMessage')}
                   >
                     <Send size={16} />
                   </button>
@@ -1800,10 +1807,10 @@ function WelcomeMessage({ agentName, onSuggestionSelect, isDisabled }: WelcomeMe
         <Bot size={28} className="text-white" />
       </div>
       <h3 className="text-base font-semibold text-[var(--color-text-primary)] mb-2">
-        Build "{agentName}"
+        {t('agents.buildAgent', { agentName })}
       </h3>
       <p className="text-sm text-[var(--color-text-secondary)] max-w-[260px] mb-5 leading-relaxed">
-        Describe what you want this agent to do, and I'll create a workflow for you.
+        {t('agents.buildAgentDesc')}
       </p>
       <div className="w-full space-y-2.5">
         {suggestions.map((suggestion, index) => (
@@ -1913,14 +1920,14 @@ function MessageBubble({ message, onDeploy }: MessageBubbleProps) {
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white transition-all"
               >
                 <Rocket size={12} />
-                Deploy Agent
+                {t('agents.deployAgent')}
               </button>
               <button
                 onClick={() => setHighlightChatInput(true)}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-[var(--color-surface-elevated)] hover:bg-[var(--color-surface)] text-[var(--color-text-primary)] border border-[var(--color-border)] transition-all"
               >
                 <MessageSquare size={12} />
-                Refine
+                {t('agents.refine')}
               </button>
             </div>
           )}
@@ -1966,7 +1973,7 @@ function MessageBubble({ message, onDeploy }: MessageBubbleProps) {
         {message.workflowUpdate && (
           <div className="mt-2.5 pt-2.5 border-t border-[var(--color-border)]">
             <span className="text-xs opacity-80 font-medium text-[var(--color-text-secondary)]">
-              Workflow {message.workflowUpdate.action === 'create' ? 'created' : 'updated'}
+              {t('agents.workflowCreated')}
             </span>
           </div>
         )}

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   X,
   Clock,
@@ -108,6 +109,7 @@ interface BlockSettingsPanelProps {
 }
 
 export function BlockSettingsPanel({ className }: BlockSettingsPanelProps) {
+  const { t } = useTranslation('agents');
   const { workflow, selectedBlockId, selectBlock, updateBlock } = useAgentBuilderStore();
 
   const block = workflow?.blocks.find(b => b.id === selectedBlockId);
@@ -147,7 +149,9 @@ export function BlockSettingsPanel({ className }: BlockSettingsPanelProps) {
     <div className={`h-full flex flex-col bg-[var(--color-bg-secondary)] ${className || ''}`}>
       {/* Header */}
       <header className="flex items-center justify-between px-4 py-3 bg-white/5">
-        <h2 className="text-sm font-semibold text-[var(--color-text-primary)]">Block Settings</h2>
+        <h2 className="text-sm font-semibold text-[var(--color-text-primary)]">
+          {t('agents.blockSettings')}
+        </h2>
         <button
           onClick={handleClose}
           className="p-1.5 rounded-md text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-white/10 transition-colors"
@@ -161,7 +165,7 @@ export function BlockSettingsPanel({ className }: BlockSettingsPanelProps) {
         {/* Name */}
         <div className="space-y-1.5">
           <label className="text-xs font-medium text-[var(--color-text-secondary)]">
-            Block Name
+            {t('agents.blockName')}
           </label>
           <input
             type="text"
@@ -174,7 +178,7 @@ export function BlockSettingsPanel({ className }: BlockSettingsPanelProps) {
         {/* Description */}
         <div className="space-y-1.5">
           <label className="text-xs font-medium text-[var(--color-text-secondary)]">
-            Description
+            {t('agents.description')}
           </label>
           <textarea
             value={localBlock.description}
@@ -188,20 +192,18 @@ export function BlockSettingsPanel({ className }: BlockSettingsPanelProps) {
         <div className="space-y-1.5">
           <label className="text-xs font-medium text-[var(--color-text-secondary)] flex items-center gap-1.5">
             <Clock size={14} />
-            Execution Timeout
+            {t('agents.executionTimeout')}
           </label>
           <select
             value={localBlock.timeout}
             onChange={e => updateLocalBlock({ timeout: Number(e.target.value) })}
             className="w-full px-3 py-2 rounded-lg bg-white/5 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]/50"
           >
-            <option value={30}>30 seconds (default)</option>
-            <option value={45}>45 seconds</option>
-            <option value={60}>60 seconds (max)</option>
+            <option value={30}>{t('agents.timeout30s')}</option>
+            <option value={45}>{t('agents.timeout45s')}</option>
+            <option value={60}>{t('agents.timeout60s')}</option>
           </select>
-          <p className="text-xs text-[var(--color-text-tertiary)]">
-            Maximum time this block can run before timing out
-          </p>
+          <p className="text-xs text-[var(--color-text-tertiary)]">{t('agents.timeoutDesc')}</p>
         </div>
 
         {/* Available Input Data from upstream blocks */}
@@ -239,7 +241,7 @@ export function BlockSettingsPanel({ className }: BlockSettingsPanelProps) {
             onClick={handleSave}
             className="w-full py-2 rounded-lg bg-[var(--color-accent)] text-white font-medium text-sm hover:bg-[var(--color-accent-hover)] transition-colors"
           >
-            Save Changes
+            {t('agents.saveChanges')}
           </button>
         )}
         {localBlock.type !== 'variable' && <TestBlockButton block={localBlock} />}
@@ -400,7 +402,9 @@ function AutoFillButton({
         <Sparkles size={15} />
         AI Auto-Fill
         {!hasUpstreamData && (
-          <span className="text-[10px] font-normal opacity-70 ml-1">(run workflow first)</span>
+          <span className="text-[10px] font-normal opacity-70 ml-1">
+            ({t('agents.runWorkflowFirst')})
+          </span>
         )}
       </button>
     );
@@ -424,7 +428,7 @@ function AutoFillButton({
       <textarea
         value={userContext}
         onChange={e => setUserContext(e.target.value)}
-        placeholder="Add context to help AI fill accurately (optional)&#10;e.g. Sheet ID is 1BxiM..., columns are Name, Email, Score&#10;e.g. Post to #alerts channel, include timestamp"
+        placeholder={t('agents.autoFillPlaceholder')}
         rows={3}
         className="w-full px-2.5 py-2 rounded-md bg-white/5 text-xs text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] resize-none focus:outline-none focus:ring-1 focus:ring-purple-500/30"
       />
@@ -438,7 +442,7 @@ function AutoFillButton({
         }`}
       >
         {isLoading ? <Loader2 size={13} className="animate-spin" /> : <Sparkles size={13} />}
-        {isLoading ? 'Auto-filling...' : 'Fill Configuration'}
+        {isLoading ? t('agents.autoFilling') : t('agents.fillConfiguration')}
       </button>
     </div>
   );
@@ -487,7 +491,9 @@ function TestBlockButton({ block }: { block: Block }) {
     // For trigger blocks, use the saved testData from block config as the test payload
     let parsedPayload: Record<string, unknown> | undefined;
     if (isTriggerBlock) {
-      const savedTestData = (block.config as Record<string, unknown>).testData as string | undefined;
+      const savedTestData = (block.config as Record<string, unknown>).testData as
+        | string
+        | undefined;
       const raw = savedTestData?.trim() || '{}';
       try {
         parsedPayload = JSON.parse(raw);
@@ -579,9 +585,11 @@ function TestBlockButton({ block }: { block: Block }) {
         }`}
       >
         {isTesting ? <Loader2 size={15} className="animate-spin" /> : <Play size={15} />}
-        {isTesting ? 'Testing...' : 'Test Block'}
+        {isTesting ? t('agents.testing') : t('agents.testBlock')}
         {!hasUpstreamData && (
-          <span className="text-[10px] font-normal opacity-70 ml-1">(run workflow first)</span>
+          <span className="text-[10px] font-normal opacity-70 ml-1">
+            ({t('agents.runWorkflowFirst')})
+          </span>
         )}
       </button>
 
@@ -606,7 +614,7 @@ function TestBlockButton({ block }: { block: Block }) {
                   testResult.status === 'completed' ? 'text-emerald-400' : 'text-red-400'
                 }`}
               >
-                {testResult.status === 'completed' ? 'Success' : 'Failed'}
+                {testResult.status === 'completed' ? t('agents.success') : t('agents.failed')}
               </span>
               <span className="text-[10px] text-[var(--color-text-tertiary)]">
                 {testResult.duration_ms}ms
@@ -670,10 +678,10 @@ function IterationBrowser({ state }: { state: ForEachIterationState | undefined 
     return (
       <div className="mt-4 pt-4 border-t border-[var(--color-border)]">
         <h3 className="text-xs font-semibold text-[var(--color-text-primary)] uppercase tracking-wide mb-2">
-          Iteration Results
+          {t('agents.iterationResults')}
         </h3>
         <p className="text-xs text-[var(--color-text-tertiary)] italic py-4 text-center">
-          Run the workflow to see iteration results.
+          {t('agents.runWorkflowSeeResults')}
         </p>
       </div>
     );
@@ -691,17 +699,17 @@ function IterationBrowser({ state }: { state: ForEachIterationState | undefined 
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-xs font-semibold text-[var(--color-text-primary)] uppercase tracking-wide flex items-center gap-1.5">
           <Repeat size={12} />
-          Iteration Results
+          {t('agents.iterationResults')}
         </h3>
         <div className="flex items-center gap-1.5 text-[10px]">
           {passedCount > 0 && (
             <span className="px-1.5 py-0.5 rounded bg-green-500/15 text-green-400 font-medium">
-              {passedCount} passed
+              {passedCount} {t('agents.passed')}
             </span>
           )}
           {failedCount > 0 && (
             <span className="px-1.5 py-0.5 rounded bg-red-500/15 text-red-400 font-medium">
-              {failedCount} failed
+              {failedCount} {t('agents.failed')}
             </span>
           )}
         </div>

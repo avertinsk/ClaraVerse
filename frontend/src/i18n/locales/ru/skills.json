@@ -17,5 +17,10 @@
   "skills.cat.code": "Код",
   "skills.cat.database": "Базы данных",
   "skills.cat.ecommerce": "Электронная коммерция",
-  "skills.cat.writing": "Письмо"
+  "skills.cat.writing": "Письмо",
+  "skills.auto": "Авто",
+  "skills.manual": "Ручной",
+  "skills.tool": "инструмент",
+  "skills.tools": "инструменты",
+  "skills.exportTooltip": "Экспорт как SKILL.md"
 }
