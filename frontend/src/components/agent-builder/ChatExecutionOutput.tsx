@@ -159,7 +159,7 @@ export function ChatExecutionOutput({ onBackToChat, onDeploy }: ChatExecutionOut
         {lastExecutionResult?.result && !isRunning && (
           <div className="p-4 border-b border-white/5">
             <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-semibold text-[var(--color-text-primary)]">
+              <span className="text-sm font-semibold text-[var(--color-text-primary)]">
                 {t('chatOutput.finalOutput')}
               </span>
               <button
@@ -258,7 +258,9 @@ export function ChatExecutionOutput({ onBackToChat, onDeploy }: ChatExecutionOut
                       {block.name}
                     </span>
                     {state?.status === 'running' && (
-                      <span className="text-xs text-blue-400 mt-0.5 block">{t('chatOutput.processing')}</span>
+                      <span className="text-xs text-blue-400 mt-0.5 block">
+                        {t('chatOutput.processing')}
+                      </span>
                     )}
                   </div>
 
@@ -318,7 +320,7 @@ export function ChatExecutionOutput({ onBackToChat, onDeploy }: ChatExecutionOut
 
                     {hasError && (
                       <div className="p-3 rounded-lg bg-red-500/10 text-xs text-red-400">
-                          <div className="flex items-center gap-1.5 mb-1 font-medium">
+                        <div className="flex items-center gap-1.5 mb-1 font-medium">
                           <AlertCircle size={12} />
                           {t('chatOutput.error')}
                         </div>

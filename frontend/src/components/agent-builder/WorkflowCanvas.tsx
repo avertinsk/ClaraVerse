@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
   ReactFlow,
@@ -88,6 +89,7 @@ const edgeTypes = {
 };
 
 export function WorkflowCanvas({ className }: WorkflowCanvasProps) {
+  const { t } = useTranslation('agents');
   const navigate = useNavigate();
   const {
     currentAgent,
@@ -482,13 +484,13 @@ export function WorkflowCanvas({ className }: WorkflowCanvasProps) {
 
     if (!isWorkflowValid) {
       const missing = workflowValidation.missingItems[0];
-      let message = 'Add blocks to your workflow to get started.';
+      let message = t('workflowCanvas.addBlocks');
 
       if (missing === 'model selection') {
-        message = 'Select a model in the toolbar to run LLM blocks.';
+        message = t('workflowCanvas.selectModelRun');
       }
 
-      toast.warning(message, 'Cannot Run Workflow');
+      toast.warning(message, t('workflowCanvas.cannotRun'));
       return;
     }
 
@@ -797,10 +799,10 @@ export function WorkflowCanvas({ className }: WorkflowCanvasProps) {
             </svg>
           </div>
           <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-2">
-            No Workflow
+            {t('workflowCanvas.noWorkflow')}
           </h3>
           <p className="text-sm text-[var(--color-text-secondary)] max-w-[300px] leading-relaxed">
-            Select an agent to view and edit its workflow, or create a new agent to get started.
+            {t('workflowCanvas.noWorkflowDesc')}
           </p>
         </div>
       </div>
@@ -830,7 +832,7 @@ export function WorkflowCanvas({ className }: WorkflowCanvasProps) {
                 )}
               >
                 <Pencil size={12} />
-                Editor
+                {t('workflowCanvas.editor')}
               </button>
               <button
                 onClick={() => setExecutionViewerMode('executions')}
@@ -842,7 +844,7 @@ export function WorkflowCanvas({ className }: WorkflowCanvasProps) {
                 )}
               >
                 <History size={12} />
-                Executions
+                {t('workflowCanvas.executions')}
               </button>
             </div>
           </div>
@@ -923,8 +925,8 @@ export function WorkflowCanvas({ className }: WorkflowCanvasProps) {
             <Panel position="top-left">
               <ToolbarButton
                 icon={<PanelLeftOpen size={16} />}
-                tooltip="Show Block Palette"
-                label="Blocks"
+                tooltip={t('workflowCanvas.showBlocks')}
+                label={t('workflowCanvas.blocks')}
                 onClick={() => setShowBlockPalette(true)}
               />
             </Panel>
@@ -936,13 +938,13 @@ export function WorkflowCanvas({ className }: WorkflowCanvasProps) {
             <div className="flex items-center gap-1 rounded-xl bg-black/20 backdrop-blur-sm px-1.5 py-1 border border-white/[0.06]">
               <ToolbarButton
                 icon={<Undo size={16} />}
-                tooltip="Undo (Ctrl+Z)"
+                tooltip={t('workflowCanvas.undo')}
                 onClick={undo}
                 disabled={workflowHistory.length === 0}
               />
               <ToolbarButton
                 icon={<Redo size={16} />}
-                tooltip="Redo (Ctrl+Y)"
+                tooltip={t('workflowCanvas.redo')}
                 onClick={redo}
                 disabled={workflowFuture.length === 0}
               />
@@ -956,7 +958,7 @@ export function WorkflowCanvas({ className }: WorkflowCanvasProps) {
                         ? 'bg-[var(--color-accent)]/15 text-[var(--color-accent)]'
                         : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-white/5'
                     )}
-                    title="Workflow versions"
+                    title={t('workflowCanvas.versionHistory')}
                   >
                     <History size={13} />
                     <span>{workflowVersions.length}</span>
@@ -977,10 +979,10 @@ export function WorkflowCanvas({ className }: WorkflowCanvasProps) {
                       >
                         <div className="px-3 py-2 border-b border-[var(--color-border)]">
                           <span className="text-xs font-medium text-[var(--color-text-primary)]">
-                            Version History
+                            {t('workflowCanvas.versionHistory')}
                           </span>
                           <p className="text-[10px] text-[var(--color-text-tertiary)] mt-0.5">
-                            Click to restore a previous version
+                            {t('workflowCanvas.restoreVersion')}
                           </p>
                         </div>
                         <div className="py-1">
@@ -1021,14 +1023,14 @@ export function WorkflowCanvas({ className }: WorkflowCanvasProps) {
             <div className="flex items-center gap-1 rounded-xl bg-black/20 backdrop-blur-sm px-1.5 py-1 border border-white/[0.06]">
               <ToolbarButton
                 icon={<LayoutGrid size={16} />}
-                tooltip="Auto-arrange blocks"
+                tooltip={t('workflowCanvas.autoArrange')}
                 onClick={handleAutoLayout}
                 disabled={!workflow || workflow.blocks.length === 0}
               />
               <div className="relative">
                 <ToolbarButton
                   icon={<Save size={16} />}
-                  tooltip={isDirty ? 'Save (Ctrl+S) — Unsaved changes' : 'Save (Ctrl+S)'}
+                  tooltip={isDirty ? t('workflowCanvas.saveUnsaved') : t('workflowCanvas.save')}
                   onClick={handleSave}
                   disabled={isSaving}
                   className={isDirty ? 'text-amber-400' : ''}
@@ -1047,7 +1049,7 @@ export function WorkflowCanvas({ className }: WorkflowCanvasProps) {
               )}
               <ToolbarButton
                 icon={<Bug size={16} />}
-                tooltip={debugMode ? 'Debug Mode ON - Block validation enabled' : 'Debug Mode OFF'}
+                tooltip={debugMode ? t('workflowCanvas.debugOn') : t('workflowCanvas.debugOff')}
                 onClick={toggleDebugMode}
                 className={debugMode ? 'text-yellow-500 bg-yellow-500/10' : ''}
               />
@@ -1066,9 +1068,9 @@ export function WorkflowCanvas({ className }: WorkflowCanvasProps) {
                   onChange={e => setWorkflowModelId(e.target.value)}
                   disabled={modelsLoading || !workflow}
                   className="pl-7 pr-5 py-1.5 rounded-lg text-xs bg-white/5 text-[var(--color-text-primary)] border-none hover:bg-white/10 focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)]/50 appearance-none cursor-pointer max-w-[160px] truncate"
-                  title="Workflow model — used by all LLM blocks"
+                  title={t('workflowCanvas.modelTooltip')}
                 >
-                  <option value="">Select model</option>
+                  <option value="">{t('workflowCanvas.selectModel')}</option>
                   {agentModels.map(model => (
                     <option key={model.id} value={model.id}>
                       {model.name || model.id}
@@ -1088,8 +1090,8 @@ export function WorkflowCanvas({ className }: WorkflowCanvasProps) {
                     onClick={() => setShowCredentialsDropdown(!showCredentialsDropdown)}
                     title={
                       workflowCredentialInfo.unconfiguredTools.length > 0
-                        ? 'Some integrations need credentials'
-                        : 'Manage credentials'
+                        ? t('workflowCanvas.missingCreds')
+                        : t('workflowCanvas.manageCreds')
                     }
                     className={cn(
                       'rounded-lg transition-all flex items-center gap-1.5 px-2 py-1.5',
@@ -1104,7 +1106,7 @@ export function WorkflowCanvas({ className }: WorkflowCanvasProps) {
                       <KeyRound size={14} />
                     )}
                     {workflowCredentialInfo.unconfiguredTools.length > 0 && (
-                      <span className="text-[11px] font-medium">Setup</span>
+                      <span className="text-[11px] font-medium">{t('workflowCanvas.setup')}</span>
                     )}
                   </button>
 
@@ -1120,19 +1122,21 @@ export function WorkflowCanvas({ className }: WorkflowCanvasProps) {
                       >
                         <div className="px-3 py-2 border-b border-[var(--color-border)]">
                           <span className="text-xs font-medium text-[var(--color-text-primary)]">
-                            Workflow Integrations
+                            {t('workflowCanvas.integrations')}
                           </span>
                           <p className="text-[10px] text-[var(--color-text-tertiary)] mt-0.5">
                             {workflowCredentialInfo.unconfiguredTools.length > 0
-                              ? 'Some integrations need credentials to work'
-                              : 'All integrations are configured'}
+                              ? t('workflowCanvas.missingCredsDesc')
+                              : t('workflowCanvas.allConfigured')}
                           </p>
                         </div>
                         {workflowCredentialInfo.unconfiguredTools.length > 0 && (
                           <div className="px-3 py-2 bg-amber-500/5 border-b border-[var(--color-border)]">
                             <div className="flex items-center gap-2 text-amber-400 mb-2">
                               <AlertTriangle size={12} />
-                              <span className="text-xs font-medium">Missing Credentials</span>
+                              <span className="text-xs font-medium">
+                                {t('workflowCanvas.missingCredsTitle')}
+                              </span>
                             </div>
                             <div className="space-y-1">
                               {workflowCredentialInfo.unconfiguredTools.map(
@@ -1153,7 +1157,9 @@ export function WorkflowCanvas({ className }: WorkflowCanvasProps) {
                           <div className="px-3 py-2 border-b border-[var(--color-border)]">
                             <div className="flex items-center gap-2 text-green-400 mb-2">
                               <KeyRound size={12} />
-                              <span className="text-xs font-medium">Configured</span>
+                              <span className="text-xs font-medium">
+                                {t('workflowCanvas.configured')}
+                              </span>
                             </div>
                             <div className="space-y-1">
                               {workflowCredentialInfo.configuredTools.map(
@@ -1177,7 +1183,7 @@ export function WorkflowCanvas({ className }: WorkflowCanvasProps) {
                             className="flex items-center justify-center gap-2 w-full px-3 py-2 text-xs font-medium text-[var(--color-accent)] bg-[var(--color-accent)]/10 hover:bg-[var(--color-accent)]/20 rounded-lg transition-colors"
                           >
                             <ExternalLink size={12} />
-                            <span>Manage All Credentials</span>
+                            <span>{t('workflowCanvas.manageAllCreds')}</span>
                           </Link>
                         </div>
                       </div>
@@ -1193,10 +1199,10 @@ export function WorkflowCanvas({ className }: WorkflowCanvasProps) {
                 <button
                   onClick={handleStopExecution}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/90 text-white text-xs font-medium hover:bg-red-500 transition-all"
-                  title="Stop Execution"
+                  title={t('workflowCanvas.stopExecution')}
                 >
                   <Square size={13} />
-                  <span>Stop</span>
+                  <span>{t('workflowCanvas.stop')}</span>
                 </button>
               ) : (
                 <button
@@ -1208,10 +1214,14 @@ export function WorkflowCanvas({ className }: WorkflowCanvasProps) {
                       ? 'bg-[var(--color-accent)] text-white hover:opacity-90'
                       : 'bg-[var(--color-accent)]/40 text-white/60 cursor-not-allowed'
                   )}
-                  title={!isWorkflowValid ? 'Add blocks and select a model to run' : 'Run Workflow'}
+                  title={
+                    !isWorkflowValid
+                      ? t('workflowCanvas.addBlocksModel')
+                      : t('workflowCanvas.runTooltip')
+                  }
                 >
                   <Play size={13} />
-                  <span>Run</span>
+                  <span>{t('workflowCanvas.run')}</span>
                 </button>
               )}
 
@@ -1222,7 +1232,9 @@ export function WorkflowCanvas({ className }: WorkflowCanvasProps) {
                 onClick={handleDeployToggle}
                 disabled={!workflow || workflow.blocks.length === 0 || isTogglingDeploy}
                 title={
-                  currentAgent?.status === 'deployed' ? 'Click to deactivate' : 'Click to deploy'
+                  currentAgent?.status === 'deployed'
+                    ? t('workflowCanvas.deactivate')
+                    : t('workflowCanvas.deployTooltip')
                 }
                 className={cn(
                   'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all',
@@ -1243,17 +1255,17 @@ export function WorkflowCanvas({ className }: WorkflowCanvasProps) {
                   )}
                 />
                 {currentAgent?.status === 'deployed'
-                  ? 'Active'
+                  ? t('workflowCanvas.active')
                   : currentAgent?.status === 'paused'
-                    ? 'Paused'
-                    : 'Deploy'}
+                    ? t('workflowCanvas.paused')
+                    : t('workflowCanvas.deployLabel')}
               </button>
 
               {/* Deploy settings gear — only when deployed */}
               {currentAgent?.status === 'deployed' && (
                 <ToolbarButton
                   icon={<Settings size={14} />}
-                  tooltip="Deploy Settings (API, webhooks, schedules)"
+                  tooltip={t('workflowCanvas.deploySettings')}
                   onClick={() => setShowDeployPanel(true)}
                 />
               )}
@@ -1263,7 +1275,7 @@ export function WorkflowCanvas({ className }: WorkflowCanvasProps) {
                 <div className="absolute top-full right-0 mt-2 w-80 bg-[var(--color-bg-secondary)] border border-[var(--color-border)] rounded-xl shadow-2xl p-4 z-50">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs font-semibold text-[var(--color-text-primary)]">
-                      Test Input
+                      {t('workflowCanvas.testInputTitle')}
                     </span>
                     <button
                       onClick={() => setShowTestInputDialog(false)}
@@ -1275,7 +1287,7 @@ export function WorkflowCanvas({ className }: WorkflowCanvasProps) {
                   <textarea
                     value={testInput}
                     onChange={e => setTestInput(e.target.value)}
-                    placeholder="Enter test input (text or JSON)..."
+                    placeholder={t('workflowCanvas.enterTestInput')}
                     className="w-full h-24 px-3 py-2 rounded-lg bg-white/5 text-sm text-[var(--color-text-primary)] border border-[var(--color-border)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]/50 resize-none font-mono"
                     autoFocus
                     onKeyDown={e => {
@@ -1286,7 +1298,7 @@ export function WorkflowCanvas({ className }: WorkflowCanvasProps) {
                   />
                   <div className="flex items-center justify-between mt-2">
                     <span className="text-[10px] text-[var(--color-text-tertiary)]">
-                      Ctrl+Enter to run
+                      {t('workflowCanvas.ctrlEnter')}
                     </span>
                     <button
                       onClick={() => handleRunWithTestInput(testInput)}
@@ -1294,7 +1306,7 @@ export function WorkflowCanvas({ className }: WorkflowCanvasProps) {
                       className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--color-accent)] text-white text-xs font-medium hover:opacity-90 disabled:opacity-50 transition-all"
                     >
                       <Play size={12} />
-                      Run
+                      {t('workflowCanvas.run')}
                     </button>
                   </div>
                 </div>
@@ -1304,7 +1316,7 @@ export function WorkflowCanvas({ className }: WorkflowCanvasProps) {
             {/* ── Group 5: Output ── */}
             <ToolbarButton
               icon={<FileOutput size={16} />}
-              tooltip="View Output"
+              tooltip={t('workflowCanvas.viewOutput')}
               onClick={() => setShowOutputPanel(!showOutputPanel)}
               disabled={!executionStatus || executionStatus === 'running'}
             />
@@ -1329,12 +1341,16 @@ export function WorkflowCanvas({ className }: WorkflowCanvasProps) {
                 {executionStatus === 'running' && (
                   <>
                     <div className="w-2 h-2 rounded-full bg-white animate-pulse shadow-md" />
-                    <span>Running...</span>
+                    <span>{t('blockNode.running')}</span>
                   </>
                 )}
-                {executionStatus === 'completed' && <span>✓ Execution completed</span>}
-                {executionStatus === 'failed' && <span>✗ Execution failed</span>}
-                {executionStatus === 'partial_failure' && <span>⚠ Partial failure</span>}
+                {executionStatus === 'completed' && (
+                  <span>{t('workflowCanvas.executionCompleted')}</span>
+                )}
+                {executionStatus === 'failed' && <span>{t('workflowCanvas.executionFailed')}</span>}
+                {executionStatus === 'partial_failure' && (
+                  <span>{t('workflowCanvas.partialFailure')}</span>
+                )}
               </div>
             </Panel>
           )}
@@ -1344,10 +1360,10 @@ export function WorkflowCanvas({ className }: WorkflowCanvasProps) {
             <Panel position="top-center" className="mt-20">
               <div className="text-center p-6 rounded-xl bg-[var(--color-bg-secondary)] border border-[var(--color-border)] shadow-lg">
                 <p className="text-sm text-[var(--color-text-secondary)] mb-2">
-                  Describe your agent in the chat to generate a workflow
+                  {t('workflowCanvas.emptyDesc')}
                 </p>
                 <p className="text-xs text-[var(--color-text-tertiary)]">
-                  Or manually add blocks using the sidebar
+                  {t('workflowCanvas.emptyDesc2')}
                 </p>
               </div>
             </Panel>

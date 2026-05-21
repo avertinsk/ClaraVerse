@@ -106,9 +106,7 @@ export const CortexConversation = memo(function CortexConversation({
               <Brain size={56} strokeWidth={1} />
             </div>
             <h3 className={styles.emptyStateTitle}>{t('cortexConversation.whatCanIHelp')}</h3>
-            <p className={styles.emptyStateDescription}>
-              {t('cortexConversation.giveClaraTask')}
-            </p>
+            <p className={styles.emptyStateDescription}>{t('cortexConversation.giveClaraTask')}</p>
             <div className={styles.suggestionPills}>
               {SUGGESTIONS.map(s => (
                 <button key={s} className={styles.suggestionPill} tabIndex={-1}>

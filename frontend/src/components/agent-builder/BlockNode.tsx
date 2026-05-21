@@ -1,4 +1,5 @@
 import React, { memo, useEffect, useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Handle, Position } from '@xyflow/react';
 import {
   Brain,
@@ -306,6 +307,7 @@ function ToolsBadge({ tools }: { tools: string[] }) {
 
 // Credential Warning Badge - shows when block tools need credentials
 function CredentialWarningBadge({ block }: { block: Block }) {
+  const { t } = useTranslation('agents');
   // Get globally configured credentials from the store
   const { credentialReferences } = useCredentialsStore();
 
@@ -350,9 +352,7 @@ function CredentialWarningBadge({ block }: { block: Block }) {
       title={`Missing credentials: ${integrationNames.join(', ')}`}
     >
       <AlertCircle size={10} />
-      <span>
-        {integrationNames.length} credential{integrationNames.length > 1 ? 's' : ''} needed
-      </span>
+      <span>{t('blockNode.credentialsNeeded', { count: integrationNames.length })}</span>
     </div>
   );
 }
@@ -371,12 +371,13 @@ const STATUS_CONFIG: Record<
 
 // Execution Status Icon Component with optional error tooltip
 function ExecutionStatusIcon({ status, error }: { status: BlockExecutionStatus; error?: string }) {
+  const { t } = useTranslation('agents');
   const config = STATUS_CONFIG[status];
   const Icon = config.icon;
   return (
     <div
       className={cn(config.color, error && 'cursor-help')}
-      title={error ? `Error: ${error}` : undefined}
+      title={error ? `${t('blockNode.error')}: ${error}` : undefined}
     >
       <Icon size={16} className={config.animate ? 'animate-spin' : ''} />
     </div>
@@ -385,6 +386,7 @@ function ExecutionStatusIcon({ status, error }: { status: BlockExecutionStatus; 
 
 // Error Display Component with Copy and Fix buttons
 function ErrorDisplay({ error, blockName }: { error: string; blockName: string }) {
+  const { t } = useTranslation('agents');
   const [copied, setCopied] = useState(false);
   const { setPendingChatMessage } = useAgentBuilderStore();
 
@@ -406,7 +408,9 @@ function ErrorDisplay({ error, blockName }: { error: string; blockName: string }
       <div className="flex items-start gap-2">
         <XCircle size={14} className="text-red-500 mt-0.5 flex-shrink-0" />
         <div className="flex-1 min-w-0">
-          <p className="text-xs font-medium text-red-400 mb-0.5">Execution Failed</p>
+          <p className="text-xs font-medium text-red-400 mb-0.5">
+            {t('blockNode.executionFailed')}
+          </p>
           <p className="text-xs text-red-300/80 break-words line-clamp-3">{error}</p>
         </div>
       </div>
@@ -417,19 +421,19 @@ function ErrorDisplay({ error, blockName }: { error: string; blockName: string }
           onClick={handleCopy}
           onMouseDown={e => e.stopPropagation()}
           className="flex items-center gap-1 px-2 py-1 rounded text-[10px] font-medium bg-red-500/20 hover:bg-red-500/30 text-red-300 transition-colors"
-          title="Copy error message"
+          title={t('blockNode.copyError')}
         >
           <Copy size={10} />
-          {copied ? 'Copied!' : 'Copy'}
+          {copied ? t('agents.copied') : t('agents.copy')}
         </button>
         <button
           onClick={handleFixWithAgent}
           onMouseDown={e => e.stopPropagation()}
           className="flex items-center gap-1 px-2 py-1 rounded text-[10px] font-medium bg-[var(--color-accent)]/20 hover:bg-[var(--color-accent)]/30 text-[var(--color-accent)] transition-colors"
-          title="Ask agent to fix this error"
+          title={t('blockNode.askAgentFix')}
         >
           <Sparkles size={10} />
-          Fix with Agent
+          {t('blockNode.fixWithAgent')}
         </button>
       </div>
     </div>
@@ -438,6 +442,7 @@ function ErrorDisplay({ error, blockName }: { error: string; blockName: string }
 
 // Iteration Progress Badge for for-each blocks
 function IterationBadge({ state }: { state: ForEachIterationState | undefined }) {
+  const { t } = useTranslation('agents');
   if (!state) return null;
 
   const { currentIteration, totalItems, iterations } = state;
@@ -460,8 +465,12 @@ function IterationBadge({ state }: { state: ForEachIterationState | undefined })
       )}
       title={
         failedCount > 0
-          ? `${completedCount} passed, ${failedCount} failed of ${totalItems}`
-          : `${currentIteration} of ${totalItems} iterations`
+          ? t('blockNode.passedFailedOf', {
+              passed: completedCount,
+              failed: failedCount,
+              total: totalItems,
+            })
+          : t('blockNode.iterationOf', { current: currentIteration, total: totalItems })
       }
     >
       <Repeat size={10} />
@@ -469,7 +478,9 @@ function IterationBadge({ state }: { state: ForEachIterationState | undefined })
         {currentIteration}/{totalItems}
       </span>
       {failedCount > 0 && isDone && (
-        <span className="text-red-400 ml-0.5">({failedCount} err)</span>
+        <span className="text-red-400 ml-0.5">
+          ({failedCount} {t('blockNode.err')})
+        </span>
       )}
     </div>
   );
@@ -486,6 +497,7 @@ interface BlockNodeProps {
 }
 
 function BlockNodeComponent({ data, selected }: BlockNodeProps) {
+  const { t } = useTranslation('agents');
   const { block, executionState } = data;
 
   const {
@@ -1052,7 +1064,9 @@ function BlockNodeComponent({ data, selected }: BlockNodeProps) {
             title="This block feeds data to the selected block"
           >
             <GitBranch size={11} className="text-emerald-400" />
-            <span className="text-[10px] font-medium text-emerald-400">Upstream</span>
+            <span className="text-[10px] font-medium text-emerald-400">
+              {t('blockNode.upstream')}
+            </span>
           </div>
         )}
 
@@ -1063,7 +1077,9 @@ function BlockNodeComponent({ data, selected }: BlockNodeProps) {
             title="This block receives data from the selected block"
           >
             <GitBranch size={11} className="text-sky-400 rotate-180" />
-            <span className="text-[10px] font-medium text-sky-400">Downstream</span>
+            <span className="text-[10px] font-medium text-sky-400">
+              {t('blockNode.downstream')}
+            </span>
           </div>
         )}
 
@@ -1077,7 +1093,9 @@ function BlockNodeComponent({ data, selected }: BlockNodeProps) {
               title="Structured JSON output"
             >
               <Code size={11} className="text-blue-400" />
-              <span className="text-[10px] font-medium text-blue-400">Structured</span>
+              <span className="text-[10px] font-medium text-blue-400">
+                {t('blockNode.structured')}
+              </span>
             </div>
           )}
 
@@ -1085,7 +1103,7 @@ function BlockNodeComponent({ data, selected }: BlockNodeProps) {
         {needsAttention && (
           <div className="flex items-center gap-1 text-amber-500" title="Configure to run workflow">
             <AlertCircle size={14} />
-            <span className="text-[10px] font-medium">Input needed</span>
+            <span className="text-[10px] font-medium">{t('blockNode.inputNeeded')}</span>
           </div>
         )}
 
@@ -1102,7 +1120,7 @@ function BlockNodeComponent({ data, selected }: BlockNodeProps) {
       <div className="px-3 py-2 space-y-3">
         {/* Description */}
         <p className="text-xs text-[var(--color-text-tertiary)] line-clamp-2">
-          {block.description || 'No description'}
+          {block.description || t('blockNode.noDescription')}
         </p>
 
         {/* Tools Badge - show what tools this LLM block uses */}
@@ -1139,7 +1157,7 @@ function BlockNodeComponent({ data, selected }: BlockNodeProps) {
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-[var(--color-text-secondary)] flex items-center gap-1.5">
                 <Cpu size={12} />
-                Workflow Model
+                {t('blockNode.workflowModel')}
               </label>
               <div className="relative">
                 {/* Custom dropdown trigger */}
@@ -1179,7 +1197,9 @@ function BlockNodeComponent({ data, selected }: BlockNodeProps) {
                         : 'text-[var(--color-text-tertiary)]'
                     )}
                   >
-                    {selectedModel?.display_name || selectedModel?.name || 'Select a model...'}
+                    {selectedModel?.display_name ||
+                      selectedModel?.name ||
+                      t('blockNode.selectModel')}
                   </span>
                   <ChevronDown
                     size={14}
@@ -1220,7 +1240,7 @@ function BlockNodeComponent({ data, selected }: BlockNodeProps) {
                             onChange={e => setModelSearchQuery(e.target.value)}
                             onMouseDown={e => e.stopPropagation()}
                             onClick={e => e.stopPropagation()}
-                            placeholder="Search models..."
+                            placeholder={t('agents.searchModels')}
                             className="nodrag nowheel w-full pl-6 pr-2 py-1.5 text-xs bg-[var(--color-bg-tertiary)] border border-[var(--color-border)] rounded-md text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] focus:outline-none focus:border-[var(--color-accent)]"
                             autoFocus
                           />
@@ -1234,13 +1254,13 @@ function BlockNodeComponent({ data, selected }: BlockNodeProps) {
                         {modelsLoading ? (
                           <div className="px-3 py-2 text-xs text-[var(--color-text-tertiary)] flex items-center gap-2">
                             <Loader2 size={12} className="animate-spin" />
-                            Loading models...
+                            {t('blockNode.loadingModels')}
                           </div>
                         ) : filteredModels.length === 0 ? (
                           <div className="px-3 py-2 text-xs text-[var(--color-text-tertiary)]">
                             {models.length === 0
-                              ? 'No models available'
-                              : 'No models match your search'}
+                              ? t('blockNode.noModels')
+                              : t('blockNode.noModelsMatch')}
                           </div>
                         ) : (
                           filteredModels.map(model => (
@@ -1312,7 +1332,9 @@ function BlockNodeComponent({ data, selected }: BlockNodeProps) {
 
             {/* Requires Input Toggle */}
             <div className="flex items-center justify-between">
-              <label className="text-xs text-[var(--color-text-secondary)]">Requires Input</label>
+              <label className="text-xs text-[var(--color-text-secondary)]">
+                {t('blockNode.requiresInput')}
+              </label>
               <button
                 onClick={e => {
                   e.stopPropagation();
@@ -1349,7 +1371,7 @@ function BlockNodeComponent({ data, selected }: BlockNodeProps) {
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-medium text-[var(--color-text-secondary)]">
-                    Test Input
+                    {t('blockNode.testInput')}
                   </label>
                   {/* Input Type Dropdown */}
                   <div className="relative">
@@ -1369,17 +1391,17 @@ function BlockNodeComponent({ data, selected }: BlockNodeProps) {
                       {inputType === 'text' ? (
                         <>
                           <Type size={10} />
-                          Text
+                          {t('blockNode.typeText')}
                         </>
                       ) : inputType === 'file' ? (
                         <>
                           <Upload size={10} />
-                          File
+                          {t('blockNode.typeFile')}
                         </>
                       ) : (
                         <>
                           <Braces size={10} />
-                          JSON
+                          {t('blockNode.typeJson')}
                         </>
                       )}
                       <ChevronDown
@@ -1421,7 +1443,7 @@ function BlockNodeComponent({ data, selected }: BlockNodeProps) {
                             )}
                           >
                             <Type size={10} />
-                            Text
+                            {t('blockNode.typeText')}
                           </button>
                           <button
                             onClick={e => {
@@ -1438,7 +1460,7 @@ function BlockNodeComponent({ data, selected }: BlockNodeProps) {
                             )}
                           >
                             <Upload size={10} />
-                            File
+                            {t('blockNode.typeFile')}
                           </button>
                           <button
                             onClick={e => {
@@ -1455,7 +1477,7 @@ function BlockNodeComponent({ data, selected }: BlockNodeProps) {
                             )}
                           >
                             <Braces size={10} />
-                            JSON
+                            {t('blockNode.typeJson')}
                           </button>
                         </div>
                       </>
@@ -1479,7 +1501,7 @@ function BlockNodeComponent({ data, selected }: BlockNodeProps) {
                       onClick={e => e.stopPropagation()}
                       onMouseDown={e => e.stopPropagation()}
                       onKeyDown={e => e.stopPropagation()}
-                      placeholder="Enter test input..."
+                      placeholder={t('blockNode.enterTestInput')}
                       rows={2}
                       className={cn(
                         'nodrag nowheel nopan',
@@ -1579,7 +1601,7 @@ function BlockNodeComponent({ data, selected }: BlockNodeProps) {
                             )}
                           >
                             {isFileExpired
-                              ? 'File expired - please re-upload'
+                              ? t('blockNode.fileExpiredReupload')
                               : `${formatFileSize(fileValue.size)} • ${fileValue.type}`}
                           </p>
                         </div>
@@ -1589,7 +1611,7 @@ function BlockNodeComponent({ data, selected }: BlockNodeProps) {
                           onClick={handleRemoveFile}
                           onMouseDown={e => e.stopPropagation()}
                           className="p-1 rounded hover:bg-red-500/20 text-[var(--color-text-tertiary)] hover:text-red-400 transition-colors"
-                          title="Remove file"
+                          title={t('blockNode.removeFile')}
                         >
                           <X size={14} />
                         </button>
@@ -1619,17 +1641,17 @@ function BlockNodeComponent({ data, selected }: BlockNodeProps) {
                               className="text-[var(--color-accent)] animate-spin"
                             />
                             <span className="text-[10px] text-[var(--color-text-tertiary)]">
-                              Uploading...
+                              {t('blockNode.uploading')}
                             </span>
                           </>
                         ) : (
                           <>
                             <Upload size={20} className="text-[var(--color-text-tertiary)]" />
                             <span className="text-[10px] text-[var(--color-text-tertiary)]">
-                              Click to upload file
+                              {t('blockNode.clickToUpload')}
                             </span>
                             <span className="text-[9px] text-[var(--color-text-tertiary)] opacity-70">
-                              Images, PDFs, Audio, Data files
+                              {t('blockNode.supportedFileTypes')}
                             </span>
                           </>
                         )}
@@ -1700,7 +1722,7 @@ function BlockNodeComponent({ data, selected }: BlockNodeProps) {
                     {!jsonParseError && hasJsonInput && (
                       <p className="text-[10px] text-green-400 flex items-center gap-1">
                         <CheckCircle size={10} />
-                        Valid JSON
+                        {t('blockNode.validJson')}
                       </p>
                     )}
                   </div>
@@ -1728,13 +1750,13 @@ function BlockNodeComponent({ data, selected }: BlockNodeProps) {
               {executionStatus === 'running' ? (
                 <>
                   <Loader2 size={14} className="animate-spin" />
-                  <span>Running...</span>
+                  <span>{t('blockNode.running')}</span>
                 </>
               ) : (
                 <>
                   <Save size={14} />
                   <Play size={14} />
-                  Save & Run
+                  {t('blockNode.saveAndRun')}
                 </>
               )}
             </button>

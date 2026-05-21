@@ -48,7 +48,11 @@ function UserMessageComponent({
         <button
           onClick={() => onCopy(message.content, message.id)}
           className={styles.userCopyButton}
-          aria-label={copiedMessageId === message.id ? t('artifactCard.copied') : t('artifactCard.copyMessage')}
+          aria-label={
+            copiedMessageId === message.id
+              ? t('artifactCard.copied')
+              : t('artifactCard.copyMessage')
+          }
         >
           {copiedMessageId === message.id ? (
             <Check size={14} aria-hidden="true" />

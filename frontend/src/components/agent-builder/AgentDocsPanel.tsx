@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
   Copy,
@@ -87,6 +88,7 @@ export function AgentDocsPanel({
   agentDescription = '',
   hasFileInput = false,
 }: AgentDocsPanelProps) {
+  const { t } = useTranslation('agents');
   const navigate = useNavigate();
   const [copiedSection, setCopiedSection] = useState<string | null>(null);
   const [selectedPlatform, setSelectedPlatform] = useState<PlatformId | null>(null);
@@ -763,18 +765,15 @@ for (const [blockName, blockData] of Object.entries(output)) {
       {/* Header */}
       <div>
         <h2 className="text-lg font-semibold text-[var(--color-text-primary)] mb-1">
-          API Documentation
+          {t('docsPanel.title')}
         </h2>
-        <p className="text-sm text-[var(--color-text-secondary)]">
-          Integrate this agent into your applications using the REST API.
-        </p>
+        <p className="text-sm text-[var(--color-text-secondary)]">{t('docsPanel.subtitle')}</p>
       </div>
 
       {/* AI Prompt Generator */}
-      <Section title="Build UI with AI" icon={<Sparkles size={16} />}>
+      <Section title={t('docsPanel.buildUI')} icon={<Sparkles size={16} />}>
         <p className="text-xs text-[var(--color-text-secondary)] mb-4">
-          Generate ready-to-use prompts for popular AI coding platforms to build a frontend for this
-          agent.
+          {t('docsPanel.buildUIDesc')}
         </p>
 
         {/* Platform Icon Buttons - click to copy prompt */}
@@ -829,11 +828,11 @@ for (const [blockName, blockData] of Object.entries(output)) {
                         : 'text-[var(--color-text-secondary)]'
                   )}
                 >
-                  {isCopied ? 'Copied!' : platform.name}
+                  {isCopied ? t('agents.copied') : platform.name}
                 </span>
                 {platform.featured && !isCopied && (
                   <span className="ml-1 px-1.5 py-0.5 text-[10px] font-semibold bg-purple-500/30 text-purple-300 rounded">
-                    Recommended
+                    {t('docsPanel.recommended')}
                   </span>
                 )}
               </button>
@@ -846,13 +845,13 @@ for (const [blockName, blockData] of Object.entries(output)) {
           <div className="flex items-center gap-2 p-3 bg-green-500/10 border border-green-500/30 rounded-lg">
             <Check size={16} className="text-green-400 flex-shrink-0" />
             <p className="text-xs text-green-400">
-              Prompt copied! Paste it into{' '}
-              <strong>{AI_PLATFORMS.find(p => p.id === selectedPlatform)?.name}</strong> to generate
-              a frontend for this agent.
+              {t('docsPanel.promptCopied', {
+                platform: AI_PLATFORMS.find(p => p.id === selectedPlatform)?.name,
+              })}
               {selectedPlatform !== 'claraverse' && (
                 <span className="text-[var(--color-text-tertiary)]">
                   {' '}
-                  Don't forget to add your API key from the <strong>API Keys</strong> tab.
+                  {t('docsPanel.dontForgetApiKey')}
                 </span>
               )}
             </p>
@@ -870,24 +869,24 @@ for (const [blockName, blockData] of Object.entries(output)) {
               className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-lg text-sm font-medium transition-all bg-purple-500/20 text-purple-300 hover:bg-purple-500/30 border border-purple-500/50"
             >
               <ExternalLink size={16} />
-              Or Generate with ClaraVerse Chat
+              {t('docsPanel.generateWithChat')}
             </button>
           </div>
         )}
       </Section>
 
       {/* Quick Start */}
-      <Section title="Quick Start" icon={<Terminal size={16} />}>
+      <Section title={t('docsPanel.quickStart')} icon={<Terminal size={16} />}>
         <div className="space-y-4">
           <div>
-            <StepLabel step={1} label="Create an API Key" />
+            <StepLabel step={1} label={t('docsPanel.stepCreateKey')} />
             <p className="text-xs text-[var(--color-text-secondary)] mb-2">
-              Go to the <strong>API Keys</strong> tab and create a key with "execute" scope.
+              {t('docsPanel.stepCreateKeyDesc')}
             </p>
           </div>
 
           <div>
-            <StepLabel step={2} label="Trigger the Agent" />
+            <StepLabel step={2} label={t('docsPanel.stepTrigger')} />
             <CodeBlock
               code={triggerCmd}
               onCopy={() => handleCopy(triggerCmd, 'trigger')}
@@ -896,13 +895,9 @@ for (const [blockName, blockData] of Object.entries(output)) {
           </div>
 
           <div>
-            <StepLabel step={3} label="Check Execution Status" />
+            <StepLabel step={3} label={t('docsPanel.stepStatus')} />
             <p className="text-xs text-[var(--color-text-secondary)] mb-2">
-              Use the{' '}
-              <code className="px-1 py-0.5 bg-[var(--color-surface)] rounded text-[10px]">
-                executionId
-              </code>{' '}
-              from the trigger response:
+              {t('docsPanel.stepStatusDesc')}
             </p>
             <CodeBlock
               code={statusCmd}
@@ -915,16 +910,16 @@ for (const [blockName, blockData] of Object.entries(output)) {
 
       {/* File Upload (if agent uses files) */}
       {hasFileInput && (
-        <Section title="File Upload" icon={<Upload size={16} />}>
+        <Section title={t('docsPanel.fileUpload')} icon={<Upload size={16} />}>
           <p className="text-xs text-[var(--color-text-secondary)] mb-3">
-            This agent accepts file inputs. Upload files first, then trigger with the file_id.
+            {t('docsPanel.fileUploadDesc')}
           </p>
 
           <div className="space-y-4">
             <div>
-              <StepLabel step={1} label="Upload File" />
+              <StepLabel step={1} label={t('docsPanel.stepUploadFile')} />
               <p className="text-xs text-[var(--color-text-tertiary)] mb-2">
-                Requires API key with "upload" scope.
+                {t('docsPanel.stepUploadFileDesc')}
               </p>
               <CodeBlock
                 code={uploadCmd}
@@ -934,7 +929,7 @@ for (const [blockName, blockData] of Object.entries(output)) {
             </div>
 
             <div>
-              <StepLabel step={2} label="Trigger with File" />
+              <StepLabel step={2} label={t('docsPanel.stepTriggerWithFile')} />
               <CodeBlock
                 code={triggerWithFileCmd}
                 onCopy={() => handleCopy(triggerWithFileCmd, 'trigger-file')}
@@ -946,9 +941,9 @@ for (const [blockName, blockData] of Object.entries(output)) {
       )}
 
       {/* Response Format */}
-      <Section title="Response Format" icon={<FileJson size={16} />}>
+      <Section title={t('docsPanel.responseFormat')} icon={<FileJson size={16} />}>
         <p className="text-xs text-[var(--color-text-secondary)] mb-3">
-          Successful executions return a structured response with block outputs keyed by block name.
+          {t('docsPanel.responseFormatDesc')}
         </p>
         <CodeBlock
           code={responseExample}
@@ -963,26 +958,18 @@ for (const [blockName, blockData] of Object.entries(output)) {
             type="string"
             description="completed | failed | running | partial"
           />
-          <ResponseField
-            name="output"
-            type="object"
-            description="Block outputs keyed by block name (e.g., 'Content Generator')"
-          />
+          <ResponseField name="output" type="object" description={t('docsPanel.fieldOutputDesc')} />
           <ResponseField
             name="output.[block].output.response"
             type="string"
-            description="The text response from each block"
+            description={t('docsPanel.fieldOutputResponseDesc')}
           />
-          <ResponseField
-            name="error"
-            type="string"
-            description="Error message if status is 'failed'"
-          />
+          <ResponseField name="error" type="string" description={t('docsPanel.fieldErrorDesc')} />
         </div>
       </Section>
 
       {/* Code Examples */}
-      <Section title="Code Examples" icon={<Code2 size={16} />}>
+      <Section title={t('docsPanel.codeExamples')} icon={<Code2 size={16} />}>
         <div className="space-y-4">
           <div>
             <p className="text-xs font-medium text-[var(--color-text-secondary)] mb-2">Python</p>
@@ -1009,38 +996,32 @@ for (const [blockName, blockData] of Object.entries(output)) {
       </Section>
 
       {/* API Key Scopes */}
-      <Section title="API Key Scopes" icon={<Key size={16} />}>
+      <Section title={t('docsPanel.apiKeyScopes')} icon={<Key size={16} />}>
         <div className="space-y-2">
-          <ScopeItem
-            scope="execute"
-            description="Required to trigger agent executions and check status"
-          />
-          <ScopeItem scope="upload" description="Required to upload files for file-based agents" />
-          <ScopeItem
-            scope="read"
-            description="Required to read execution history and agent details"
-          />
+          <ScopeItem scope="execute" description={t('docsPanel.scopeExecute')} />
+          <ScopeItem scope="upload" description={t('docsPanel.scopeUpload')} />
+          <ScopeItem scope="read" description={t('docsPanel.scopeRead')} />
         </div>
       </Section>
 
       {/* Rate Limits */}
-      <Section title="Rate Limits & Best Practices" icon={<RefreshCw size={16} />}>
+      <Section title={t('docsPanel.rateLimits')} icon={<RefreshCw size={16} />}>
         <ul className="space-y-2 text-xs text-[var(--color-text-secondary)]">
           <li className="flex items-start gap-2">
             <span className="text-[var(--color-accent)]">•</span>
-            <span>Poll status endpoint every 1-2 seconds, not more frequently</span>
+            <span>{t('docsPanel.pollInterval')}</span>
           </li>
           <li className="flex items-start gap-2">
             <span className="text-[var(--color-accent)]">•</span>
-            <span>Set reasonable timeouts (agents may take 30s+ for complex tasks)</span>
+            <span>{t('docsPanel.setTimeouts')}</span>
           </li>
           <li className="flex items-start gap-2">
             <span className="text-[var(--color-accent)]">•</span>
-            <span>Store API keys securely, never expose in client-side code</span>
+            <span>{t('docsPanel.storeKeysSecurely')}</span>
           </li>
           <li className="flex items-start gap-2">
             <span className="text-[var(--color-accent)]">•</span>
-            <span>Use webhook outputs for real-time notifications instead of polling</span>
+            <span>{t('docsPanel.useWebhooks')}</span>
           </li>
         </ul>
       </Section>
@@ -1091,6 +1072,7 @@ function CodeBlock({
   onCopy: () => void;
   copied: boolean;
 }) {
+  const { t } = useTranslation('agents');
   return (
     <div className="relative group">
       <pre
@@ -1108,7 +1090,7 @@ function CodeBlock({
           'bg-[var(--color-surface)] hover:bg-[var(--color-surface-hover)]',
           'opacity-0 group-hover:opacity-100'
         )}
-        title="Copy to clipboard"
+        title={t('docsPanel.copyToClipboard')}
       >
         {copied ? (
           <Check size={12} className="text-[var(--color-accent)]" />

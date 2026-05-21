@@ -115,7 +115,9 @@ export function ToolSelector({
     return (
       <div className="flex items-center justify-center py-8">
         <Loader2 className="animate-spin text-[var(--color-text-secondary)]" size={24} />
-        <span className="ml-2 text-[var(--color-text-secondary)]">{t('toolSelector.loadingTools')}</span>
+        <span className="ml-2 text-[var(--color-text-secondary)]">
+          {t('toolSelector.loadingTools')}
+        </span>
       </div>
     );
   }
@@ -190,7 +192,9 @@ export function ToolSelector({
       {/* Selection Summary */}
       <div className="pt-3 border-t border-[var(--color-border)]">
         <div className="flex items-center justify-between text-sm">
-          <span className="text-[var(--color-text-secondary)]">{t('toolSelector.selectedTools')}:</span>
+          <span className="text-[var(--color-text-secondary)]">
+            {t('toolSelector.selectedTools')}:
+          </span>
           <span className="font-medium text-[var(--color-text-primary)]">
             {selectedTools.length} / {categories.reduce((sum, cat) => sum + cat.count, 0)}
           </span>
