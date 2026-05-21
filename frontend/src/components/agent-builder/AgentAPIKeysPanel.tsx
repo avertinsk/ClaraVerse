@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Key, Plus, Copy, Check, Trash2, Loader2, AlertCircle, Clock, Shield } from 'lucide-react';
 import {
   createAPIKey,
@@ -17,6 +18,7 @@ interface AgentAPIKeysPanelProps {
 }
 
 export function AgentAPIKeysPanel({ agentId, className }: AgentAPIKeysPanelProps) {
+  const { t } = useTranslation('agents');
   const [keys, setKeys] = useState<APIKey[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
@@ -43,7 +45,7 @@ export function AgentAPIKeysPanel({ agentId, className }: AgentAPIKeysPanelProps
       );
       setKeys(agentKeys);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load API keys');
+      setError(err instanceof Error ? err.message : t('apiKeys.failedLoad'));
     } finally {
       setIsLoading(false);
     }
@@ -55,7 +57,7 @@ export function AgentAPIKeysPanel({ agentId, className }: AgentAPIKeysPanelProps
 
   const handleCreateKey = async () => {
     if (!keyName.trim()) {
-      setError('Please enter a key name');
+      setError(t('apiKeys.enterKeyName'));
       return;
     }
 
@@ -76,20 +78,20 @@ export function AgentAPIKeysPanel({ agentId, className }: AgentAPIKeysPanelProps
       setSelectedScopes([`execute:${agentId}`]);
       await loadKeys();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create API key');
+      setError(err instanceof Error ? err.message : t('apiKeys.failedCreate'));
     } finally {
       setIsCreating(false);
     }
   };
 
   const handleRevokeKey = async (keyId: string) => {
-    if (!confirm('Revoke this API key? This cannot be undone.')) return;
+    if (!confirm(t('apiKeys.revokeConfirm'))) return;
 
     try {
       await revokeAPIKey(keyId);
       await loadKeys();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to revoke key');
+      setError(err instanceof Error ? err.message : t('apiKeys.failedRevoke'));
     }
   };
 
@@ -126,9 +128,9 @@ export function AgentAPIKeysPanel({ agentId, className }: AgentAPIKeysPanelProps
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-sm font-medium text-[var(--color-text-primary)]">API Keys</h3>
+          <h3 className="text-sm font-medium text-[var(--color-text-primary)]">{t('apiKeys.title')}</h3>
           <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">
-            Create API keys to trigger this agent programmatically
+            {t('apiKeys.subtitle')}
           </p>
         </div>
         <button
@@ -136,7 +138,7 @@ export function AgentAPIKeysPanel({ agentId, className }: AgentAPIKeysPanelProps
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--color-accent)] text-white text-xs font-medium hover:bg-[var(--color-accent-hover)] transition-colors"
         >
           <Plus size={14} />
-          Create Key
+          {t('apiKeys.createKey')}
         </button>
       </div>
 
@@ -158,10 +160,10 @@ export function AgentAPIKeysPanel({ agentId, className }: AgentAPIKeysPanelProps
             <Key size={16} className="text-[var(--color-accent)] mt-0.5" />
             <div className="flex-1">
               <p className="text-sm font-medium text-[var(--color-text-primary)] mb-1">
-                API Key Created
+                {t('apiKeys.created')}
               </p>
               <p className="text-xs text-[var(--color-text-secondary)] mb-3">
-                Copy this key now. You won't be able to see it again!
+                {t('apiKeys.copyWarning')}
               </p>
               <div className="flex items-center gap-2 p-2 rounded-lg bg-[var(--color-bg-primary)] font-mono text-xs">
                 <code className="flex-1 text-[var(--color-text-primary)] break-all">
@@ -183,7 +185,7 @@ export function AgentAPIKeysPanel({ agentId, className }: AgentAPIKeysPanelProps
                 onClick={handleDismissNewKey}
                 className="mt-3 text-xs text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
               >
-                I've saved my key
+                {t('apiKeys.savedKey')}
               </button>
             </div>
           </div>
@@ -194,39 +196,39 @@ export function AgentAPIKeysPanel({ agentId, className }: AgentAPIKeysPanelProps
       {showCreateForm && (
         <div className="mb-4 p-4 rounded-lg bg-[var(--color-bg-primary)] border border-[var(--color-border)]">
           <h4 className="text-sm font-medium text-[var(--color-text-primary)] mb-3">
-            Create New API Key
+            {t('apiKeys.createNew')}
           </h4>
 
           <div className="space-y-3">
             <div>
               <label className="block text-xs text-[var(--color-text-secondary)] mb-1">
-                Key Name *
+                {t('apiKeys.keyName')}
               </label>
               <input
                 type="text"
                 value={keyName}
                 onChange={e => setKeyName(e.target.value)}
-                placeholder="e.g., Production API"
+                placeholder={t('apiKeys.keyNamePlaceholder')}
                 className="w-full px-3 py-2 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)]"
               />
             </div>
 
             <div>
               <label className="block text-xs text-[var(--color-text-secondary)] mb-1">
-                Description
+                {t('apiKeys.descriptionLabel')}
               </label>
               <input
                 type="text"
                 value={keyDescription}
                 onChange={e => setKeyDescription(e.target.value)}
-                placeholder="Optional description"
+                placeholder={t('apiKeys.descriptionPlaceholder')}
                 className="w-full px-3 py-2 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)]"
               />
             </div>
 
             <div>
               <label className="block text-xs text-[var(--color-text-secondary)] mb-2">
-                Permissions
+                {t('apiKeys.permissions')}
               </label>
               <div className="space-y-2">
                 {/* Agent-specific execute scope */}
@@ -239,10 +241,10 @@ export function AgentAPIKeysPanel({ agentId, className }: AgentAPIKeysPanelProps
                   />
                   <div>
                     <span className="text-xs font-medium text-[var(--color-text-primary)]">
-                      Execute This Agent
+                      {t('apiKeys.executeThisAgent')}
                     </span>
                     <p className="text-[10px] text-[var(--color-text-tertiary)]">
-                      Can trigger executions for this specific agent
+                      {t('apiKeys.executeDesc')}
                     </p>
                   </div>
                 </label>
@@ -257,10 +259,10 @@ export function AgentAPIKeysPanel({ agentId, className }: AgentAPIKeysPanelProps
                   />
                   <div>
                     <span className="text-xs font-medium text-[var(--color-text-primary)]">
-                      Read Executions
+                      {t('apiKeys.readExecutions')}
                     </span>
                     <p className="text-[10px] text-[var(--color-text-tertiary)]">
-                      View execution history and results
+                      {t('apiKeys.readExecutionsDesc')}
                     </p>
                   </div>
                 </label>
@@ -275,10 +277,10 @@ export function AgentAPIKeysPanel({ agentId, className }: AgentAPIKeysPanelProps
                   />
                   <div>
                     <span className="text-xs font-medium text-[var(--color-text-primary)]">
-                      Upload Files
+                      {t('apiKeys.uploadFiles')}
                     </span>
                     <p className="text-[10px] text-[var(--color-text-tertiary)]">
-                      Upload files for workflows with file inputs
+                      {t('apiKeys.uploadFilesDesc')}
                     </p>
                   </div>
                 </label>
@@ -293,7 +295,7 @@ export function AgentAPIKeysPanel({ agentId, className }: AgentAPIKeysPanelProps
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--color-accent)] text-white text-sm font-medium hover:bg-[var(--color-accent-hover)] disabled:opacity-50 transition-colors"
             >
               {isCreating && <Loader2 size={14} className="animate-spin" />}
-              Create Key
+              {t('apiKeys.createKey')}
             </button>
             <button
               onClick={() => {
@@ -304,7 +306,7 @@ export function AgentAPIKeysPanel({ agentId, className }: AgentAPIKeysPanelProps
               }}
               className="px-4 py-2 rounded-lg text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
             >
-              Cancel
+              {t('agents.cancel')}
             </button>
           </div>
         </div>
