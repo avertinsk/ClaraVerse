@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { createPortal } from 'react-dom';
 import { Maximize2, Minimize2, Download, ChevronDown, ChevronUp } from 'lucide-react';
 import { useIsMobile } from '@/hooks/useIsMobile';
@@ -22,6 +23,7 @@ export function ArtifactContainer({
   defaultExpanded = true,
   error = null,
 }: ArtifactContainerProps) {
+  const { t } = useTranslation('artifacts');
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const isMobile = useIsMobile();
@@ -63,7 +65,7 @@ export function ArtifactContainer({
               {title}
             </p>
             <p className="text-xs truncate" style={{ color: 'var(--color-text-secondary)' }}>
-              {filename || 'Download file'}
+              {filename || t('artifacts.downloadFile')}
             </p>
           </div>
         </div>
@@ -76,7 +78,7 @@ export function ArtifactContainer({
               borderRadius: 'var(--radius-md)',
             }}
           >
-            Link expired
+            {t('artifacts.linkExpired')}
           </div>
         ) : (
           <a
@@ -98,7 +100,7 @@ export function ArtifactContainer({
             }}
           >
             <Download className="w-4 h-4" />
-            Download
+            {t('artifacts.download')}
           </a>
         )}
       </div>
@@ -137,7 +139,7 @@ export function ArtifactContainer({
             }}
             onMouseEnter={e => (e.currentTarget.style.background = 'var(--color-surface-hover)')}
             onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-            aria-label={isExpanded ? 'Collapse' : 'Expand'}
+            aria-label={isExpanded ? t('artifacts.collapse') : t('artifacts.expand')}
           >
             {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
           </button>
@@ -162,8 +164,8 @@ export function ArtifactContainer({
             }}
             onMouseEnter={e => (e.currentTarget.style.background = 'var(--color-surface-hover)')}
             onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-            aria-label={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
-            title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+            aria-label={isFullscreen ? t('artifacts.exitFullscreen') : t('artifacts.fullscreen')}
+            title={isFullscreen ? t('artifacts.exitFullscreen') : t('artifacts.fullscreen')}
           >
             {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
           </button>
@@ -189,7 +191,7 @@ export function ArtifactContainer({
               }}
             >
               <Download className="w-3.5 h-3.5" />
-              Download
+              {t('artifacts.download')}
             </a>
           )}
         </div>

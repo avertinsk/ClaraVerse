@@ -32,11 +32,9 @@ export async function fetchSystemModelAssignments(): Promise<SystemModelAssignme
 export async function updateSystemModelAssignments(
   assignments: SystemModelAssignments
 ): Promise<void> {
-  const response = await apiClient.put(
-    `${API_BASE_URL}/api/admin/system-models`,
-    assignments,
-    { requiresAuth: true }
-  );
+  const response = await apiClient.put(`${API_BASE_URL}/api/admin/system-models`, assignments, {
+    requiresAuth: true,
+  });
 
   if (!response.ok) {
     throw new Error(`Failed to update system model assignments: ${response.statusText}`);

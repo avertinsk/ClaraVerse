@@ -296,9 +296,9 @@ export function ExecutionOutputPanel({ onClose }: ExecutionOutputPanelProps) {
         {(cleanResult || lastOutput) && (
           <div className="p-5 border-b border-[var(--color-border)]">
             <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">
-                  {t('execOutput.finalOutput')}
-                </h3>
+              <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">
+                {t('execOutput.finalOutput')}
+              </h3>
               <button
                 onClick={() =>
                   copyToClipboard(cleanResult || formatOutput(lastOutput?.output), 'final')
@@ -455,7 +455,7 @@ export function ExecutionOutputPanel({ onClose }: ExecutionOutputPanelProps) {
                         <div className="space-y-2">
                           <div className="flex items-center gap-2">
                             <h4 className="text-xs font-semibold text-[var(--color-text-tertiary)] uppercase tracking-wide">
-                            {t('execOutput.availableInputs')}
+                              {t('execOutput.availableInputs')}
                             </h4>
                             <span className="text-xs text-[var(--color-text-tertiary)] bg-[var(--color-surface)] px-2 py-0.5 rounded-full">
                               {Object.keys(state.inputs).length} {t('execOutput.keys')}
@@ -509,9 +509,9 @@ export function ExecutionOutputPanel({ onClose }: ExecutionOutputPanelProps) {
                             {formatOutput(output)}
                           </pre>
                         ) : (
-                            <div className="text-sm text-[var(--color-text-tertiary)] italic p-3">
-                              {t('execOutput.noOutputYet')}
-                            </div>
+                          <div className="text-sm text-[var(--color-text-tertiary)] italic p-3">
+                            {t('execOutput.noOutputYet')}
+                          </div>
                         )}
                       </div>
                     </div>

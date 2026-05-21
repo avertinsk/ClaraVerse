@@ -738,7 +738,11 @@ export function generateWebhookCode(options: WebhookCodeGenOptions): string {
   return generateWebhookAsyncCode(language, webhookUrl, statusUrl, payloadJson);
 }
 
-function generateWebhookSyncCode(language: Language, webhookUrl: string, payloadJson: string): string {
+function generateWebhookSyncCode(
+  language: Language,
+  webhookUrl: string,
+  payloadJson: string
+): string {
   // Pretty-print for multi-line display in non-curl languages
   let prettyPayload: string;
   try {

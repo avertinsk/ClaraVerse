@@ -133,7 +133,8 @@ export async function triggerAgent(
 ): Promise<TriggerAgentResponse> {
   // This is a special endpoint that uses API key auth
   // We need to bypass the normal auth and use X-API-Key header
-  const apiBase = (window.__CLARA_CONFIG__?.API_BASE_URL ?? import.meta.env.VITE_API_BASE_URL) || '';
+  const apiBase =
+    (window.__CLARA_CONFIG__?.API_BASE_URL ?? import.meta.env.VITE_API_BASE_URL) || '';
   const response = await fetch(`${apiBase}/api/trigger/${agentId}`, {
     method: 'POST',
     headers: {

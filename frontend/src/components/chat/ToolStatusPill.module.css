@@ -123,7 +123,9 @@
   background-size: 250% 100%;
   background-clip: text;
   -webkit-background-clip: text;
-  animation: silverSweep 2.2s ease-in-out infinite, glitchFlicker 4s step-end infinite;
+  animation:
+    silverSweep 2.2s ease-in-out infinite,
+    glitchFlicker 4s step-end infinite;
 }
 
 @keyframes silverSweep {

@@ -41,7 +41,13 @@ interface ToolResultData {
   size?: number;
   message?: string;
   success?: boolean;
-  files?: { filename: string; data: string; size: number; download_url?: string; expires_in?: string }[];
+  files?: {
+    filename: string;
+    data: string;
+    size: number;
+    download_url?: string;
+    expires_in?: string;
+  }[];
   stdout?: string;
   images?: Array<{
     title: string;
@@ -250,7 +256,8 @@ function AssistantMessageComponent({
   onVersionNavigate,
   onOpenArtifacts,
 }: AssistantMessageProps) {
-  const backendUrl = (window.__CLARA_CONFIG__?.API_BASE_URL ?? import.meta.env.VITE_API_BASE_URL) || '';
+  const backendUrl =
+    (window.__CLARA_CONFIG__?.API_BASE_URL ?? import.meta.env.VITE_API_BASE_URL) || '';
 
   // Sources modal state
   const [showSources, setShowSources] = useState(false);

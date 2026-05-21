@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Loader2,
   Eye,
@@ -26,6 +27,7 @@ export const CredentialFormModal = ({
   credential,
   onClose,
 }: CredentialFormModalProps) => {
+  const { t } = useTranslation('credentials');
   const { createCredential, updateCredential } = useCredentialsStore();
 
   const [name, setName] = useState(credential?.name || `My ${integration.name}`);
@@ -50,13 +52,13 @@ export const CredentialFormModal = ({
     const newErrors: Record<string, string> = {};
 
     if (!name.trim()) {
-      newErrors.name = 'Name is required';
+      newErrors.name = t('credentials.nameRequired');
     }
 
     integration.fields.forEach(field => {
       const value = formData[field.key];
       if (field.required && !value?.trim()) {
-        newErrors[field.key] = `${field.label} is required`;
+        newErrors[field.key] = t('credentials.fieldRequired', { label: field.label });
       }
 
       // URL validation for webhook fields
@@ -64,7 +66,7 @@ export const CredentialFormModal = ({
         try {
           new URL(value);
         } catch {
-          newErrors[field.key] = 'Please enter a valid URL';
+          newErrors[field.key] = t('credentials.validUrl');
         }
       }
     });
@@ -116,7 +118,7 @@ export const CredentialFormModal = ({
       }
       onClose();
     } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : 'Failed to save credential');
+      setSubmitError(err instanceof Error ? err.message : t('credentials.saveFailed'));
     } finally {
       setIsSubmitting(false);
     }
@@ -160,7 +162,7 @@ export const CredentialFormModal = ({
         }
       }, 500);
     } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : 'Failed to initiate OAuth');
+      setSubmitError(err instanceof Error ? err.message : t('credentials.oauthFailed'));
       setIsConnecting(false);
     }
   };
@@ -174,7 +176,7 @@ export const CredentialFormModal = ({
       });
       onClose();
     } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : 'Failed to complete setup');
+      setSubmitError(err instanceof Error ? err.message : t('credentials.setupFailed'));
     }
   };
 
@@ -202,7 +204,9 @@ export const CredentialFormModal = ({
               onChange={e => handleFieldChange(field.key, e.target.value)}
               className={`field-select ${error ? 'has-error' : ''}`}
             >
-              <option value="">Select {field.label.toLowerCase()}...</option>
+              <option value="">
+                {t('credentials.selectLabel', { label: field.label.toLowerCase() })}
+              </option>
               {field.options?.map(opt => (
                 <option key={opt} value={opt}>
                   {opt}
@@ -253,7 +257,8 @@ export const CredentialFormModal = ({
         <div className="credential-modal-title">
           <IntegrationIcon integrationId={integration.id} size={24} forceColor="white" />
           <span>
-            {credential ? 'Edit' : 'Add'} {integration.name} Credential
+            {credential ? t('credentials.edit') : t('credentials.add')} {integration.name}{' '}
+            {t('credentials.credential')}
           </span>
         </div>
       }
@@ -274,24 +279,21 @@ export const CredentialFormModal = ({
               <div className="info-box">
                 <AlertCircle size={20} />
                 <div>
-                  <p className="info-title">Connect via OAuth</p>
-                  <p className="info-text">
-                    Click the button below to securely connect your account. No manual credentials
-                    needed!
-                  </p>
+                  <p className="info-title">{t('credentials.connectViaOAuth')}</p>
+                  <p className="info-text">{t('credentials.connectViaOAuthDesc')}</p>
                 </div>
               </div>
             </div>
 
             {/* Credential Name */}
             <div className="credential-form-field">
-              <label className="field-label">Credential Name (Optional)</label>
+              <label className="field-label">{t('credentials.credentialNameOptional')}</label>
               <Input
                 value={name}
                 onChange={e => setName(e.target.value)}
-                placeholder={`My ${integration.name}`}
+                placeholder={t('credentials.credentialNamePlaceholder', { name: integration.name })}
               />
-              <span className="field-help">A friendly name to identify this credential</span>
+              <span className="field-help">{t('credentials.credentialNameHelp')}</span>
             </div>
 
             {/* Connect Button */}
@@ -304,12 +306,12 @@ export const CredentialFormModal = ({
               {isConnecting ? (
                 <>
                   <Loader2 size={16} className="animate-spin mr-2" />
-                  Opening login...
+                  {t('credentials.openingLogin')}
                 </>
               ) : (
                 <>
                   <LinkIcon size={16} className="mr-2" />
-                  Connect Account
+                  {t('credentials.connectAccount')}
                 </>
               )}
             </Button>
@@ -320,7 +322,7 @@ export const CredentialFormModal = ({
             {/* Credential Name */}
             <div className="credential-form-field">
               <label className="field-label">
-                Credential Name
+                {t('credentials.credentialName')}
                 <span className="required-mark">*</span>
               </label>
               <Input
@@ -335,11 +337,11 @@ export const CredentialFormModal = ({
                     });
                   }
                 }}
-                placeholder={`My ${integration.name}`}
+                placeholder={t('credentials.credentialNamePlaceholder', { name: integration.name })}
                 className={errors.name ? 'input-error' : ''}
               />
               {errors.name && <span className="field-error">{errors.name}</span>}
-              <span className="field-help">A friendly name to identify this credential</span>
+              <span className="field-help">{t('credentials.credentialNameHelp')}</span>
             </div>
 
             {/* Integration Fields */}
@@ -350,7 +352,9 @@ export const CredentialFormModal = ({
         {/* Capabilities - Show for Composio integrations */}
         {isComposioIntegration && integration.tools && integration.tools.length > 0 && (
           <div className="capabilities-section">
-            <h4 className="capabilities-title">🚀 What you can do with {integration.name}</h4>
+            <h4 className="capabilities-title">
+              {t('credentials.whatYouCanDo', { name: integration.name })}
+            </h4>
             <div className="capabilities-grid">
               {integration.tools.slice(0, 6).map((tool, index) => {
                 // Convert snake_case to Title Case and remove prefix
@@ -368,7 +372,9 @@ export const CredentialFormModal = ({
               })}
               {integration.tools.length > 6 && (
                 <div className="capability-item capability-more">
-                  <span>+ {integration.tools.length - 6} more actions</span>
+                  <span>
+                    {t('credentials.moreActions', { count: integration.tools.length - 6 })}
+                  </span>
                 </div>
               )}
             </div>
@@ -384,19 +390,19 @@ export const CredentialFormModal = ({
             className="docs-link"
           >
             <ExternalLink size={14} />
-            View {integration.name} documentation
+            {t('credentials.viewDocs', { name: integration.name })}
           </a>
         )}
 
         {/* Actions */}
         <div className="form-actions">
           <Button variant="ghost" type="button" onClick={onClose}>
-            Cancel
+            {t('common.actions.cancel')}
           </Button>
           {!isComposioIntegration && (
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting && <Loader2 size={16} className="animate-spin mr-2" />}
-              {credential ? 'Update' : 'Save'} Credential
+              {credential ? t('credentials.updateCredential') : t('credentials.saveCredential')}
             </Button>
           )}
         </div>

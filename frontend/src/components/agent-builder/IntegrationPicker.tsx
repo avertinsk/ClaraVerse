@@ -186,9 +186,12 @@ export function IntegrationPicker({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <KeyRound size={16} className="text-[var(--color-accent)]" />
-          <span className="text-sm font-medium text-[var(--color-text-primary)]">{t('integrationPicker.title')}</span>
+          <span className="text-sm font-medium text-[var(--color-text-primary)]">
+            {t('integrationPicker.title')}
+          </span>
           <span className="text-xs text-[var(--color-text-tertiary)]">
-            ({selectedCredentials.length} {t('integrationPicker.selected', { count: selectedCredentials.length })})
+            ({selectedCredentials.length}{' '}
+            {t('integrationPicker.selected', { count: selectedCredentials.length })})
           </span>
         </div>
         <Link
@@ -220,9 +223,7 @@ export function IntegrationPicker({
       <div className="space-y-2 max-h-64 overflow-y-auto">
         {filteredIntegrationTypes.length === 0 ? (
           <p className="text-sm text-[var(--color-text-tertiary)] text-center py-2">
-            {searchQuery
-              ? t('integrationPicker.noMatching')
-              : t('integrationPicker.noAvailable')}
+            {searchQuery ? t('integrationPicker.noMatching') : t('integrationPicker.noAvailable')}
           </p>
         ) : (
           filteredIntegrationTypes.map(integrationType => {

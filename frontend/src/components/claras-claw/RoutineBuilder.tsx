@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   X,
   Sunrise,
@@ -33,6 +34,7 @@ interface RoutineBuilderProps {
 }
 
 export const RoutineBuilder = ({ editingId, onClose }: RoutineBuilderProps) => {
+  const { t } = useTranslation('common');
   const { routines, createRoutine, updateRoutine, telegramConnected, toolCategories, fetchTools } =
     useClawStore();
   const { models, fetchModels, selectedModelId } = useModelStore();
@@ -149,7 +151,7 @@ export const RoutineBuilder = ({ editingId, onClose }: RoutineBuilderProps) => {
 
   const handleTest = async () => {
     if (!prompt.trim()) {
-      setError('Write instructions before testing');
+      setError(t('routineBuilder.writeInstructions'));
       return;
     }
 
@@ -167,7 +169,7 @@ export const RoutineBuilder = ({ editingId, onClose }: RoutineBuilderProps) => {
       });
       setTestResult(result);
     } catch (err) {
-      setTestError(err instanceof Error ? err.message : 'Test failed');
+      setTestError(err instanceof Error ? err.message : t('routineBuilder.testFailed'));
     } finally {
       setTesting(false);
     }
@@ -222,15 +224,15 @@ export const RoutineBuilder = ({ editingId, onClose }: RoutineBuilderProps) => {
 
   const handleSave = async () => {
     if (!name.trim()) {
-      setError('Name is required');
+      setError(t('routineBuilder.nameRequired'));
       return;
     }
     if (!prompt.trim()) {
-      setError('Prompt/instructions are required');
+      setError(t('routineBuilder.promptRequired'));
       return;
     }
     if (frequency === 'custom' && !customCron.trim()) {
-      setError('Cron expression is required');
+      setError(t('routineBuilder.cronRequired'));
       return;
     }
 
@@ -266,7 +268,7 @@ export const RoutineBuilder = ({ editingId, onClose }: RoutineBuilderProps) => {
       }
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save routine');
+      setError(err instanceof Error ? err.message : t('routineBuilder.saveFailed'));
     } finally {
       setSaving(false);
     }
@@ -276,7 +278,9 @@ export const RoutineBuilder = ({ editingId, onClose }: RoutineBuilderProps) => {
     <div className="claw-modal-overlay" onClick={onClose}>
       <div className="claw-modal" onClick={e => e.stopPropagation()}>
         <div className="claw-modal-header">
-          <h3 className="claw-modal-title">{editingId ? 'Edit Routine' : 'New Routine'}</h3>
+          <h3 className="claw-modal-title">
+            {editingId ? t('routineBuilder.editRoutine') : t('routineBuilder.newRoutine')}
+          </h3>
           <button className="claw-modal-close" onClick={onClose}>
             <X size={18} />
           </button>
@@ -289,13 +293,13 @@ export const RoutineBuilder = ({ editingId, onClose }: RoutineBuilderProps) => {
               className={`claw-tab ${tab === 'templates' ? 'active' : ''}`}
               onClick={() => setTab('templates')}
             >
-              Templates
+              {t('routineBuilder.templates')}
             </button>
             <button
               className={`claw-tab ${tab === 'custom' ? 'active' : ''}`}
               onClick={() => setTab('custom')}
             >
-              Custom
+              {t('routineBuilder.custom')}
             </button>
           </div>
         )}
@@ -325,7 +329,7 @@ export const RoutineBuilder = ({ editingId, onClose }: RoutineBuilderProps) => {
         {(tab === 'custom' || editingId) && (
           <>
             <div className="claw-form-group">
-              <label className="claw-form-label">Name</label>
+              <label className="claw-form-label">{t('routineBuilder.name')}</label>
               <input
                 className="claw-input"
                 value={name}
@@ -333,12 +337,12 @@ export const RoutineBuilder = ({ editingId, onClose }: RoutineBuilderProps) => {
                   setName(e.target.value);
                   setError(null);
                 }}
-                placeholder="Morning Briefing"
+                placeholder={t('routineBuilder.namePlaceholder')}
               />
             </div>
 
             <div className="claw-form-group">
-              <label className="claw-form-label">Instructions</label>
+              <label className="claw-form-label">{t('routineBuilder.instructions')}</label>
               <textarea
                 className="claw-textarea"
                 value={prompt}
@@ -346,15 +350,13 @@ export const RoutineBuilder = ({ editingId, onClose }: RoutineBuilderProps) => {
                   setPrompt(e.target.value);
                   setError(null);
                 }}
-                placeholder="Tell Clara what to do when this routine runs..."
+                placeholder={t('routineBuilder.instructionsPlaceholder')}
               />
-              <p className="claw-form-help">
-                Clara will execute these instructions with access to your enabled tools.
-              </p>
+              <p className="claw-form-help">{t('routineBuilder.instructionsHelp')}</p>
             </div>
 
             <div className="claw-form-group">
-              <label className="claw-form-label">Schedule</label>
+              <label className="claw-form-label">{t('routineBuilder.schedule')}</label>
               <div className="claw-schedule-row">
                 <div>
                   <select
@@ -362,11 +364,11 @@ export const RoutineBuilder = ({ editingId, onClose }: RoutineBuilderProps) => {
                     value={frequency}
                     onChange={e => setFrequency(e.target.value)}
                   >
-                    <option value="hourly">Every hour</option>
-                    <option value="daily">Daily</option>
-                    <option value="weekdays">Weekdays</option>
-                    <option value="weekly">Weekly (Monday)</option>
-                    <option value="custom">Custom cron</option>
+                    <option value="hourly">{t('routineBuilder.everyHour')}</option>
+                    <option value="daily">{t('routineBuilder.daily')}</option>
+                    <option value="weekdays">{t('routineBuilder.weekdays')}</option>
+                    <option value="weekly">{t('routineBuilder.weekly')}</option>
+                    <option value="custom">{t('routineBuilder.customCron')}</option>
                   </select>
                 </div>
                 {frequency !== 'hourly' && frequency !== 'custom' && (
@@ -391,35 +393,33 @@ export const RoutineBuilder = ({ editingId, onClose }: RoutineBuilderProps) => {
                     }}
                     placeholder="0 9 * * 1-5"
                   />
-                  <p className="claw-form-help">
-                    Standard cron format: minute hour day month weekday
-                  </p>
+                  <p className="claw-form-help">{t('routineBuilder.cronHelp')}</p>
                 </div>
               )}
             </div>
 
             <div className="claw-form-group">
-              <label className="claw-form-label">Deliver results via</label>
+              <label className="claw-form-label">{t('routineBuilder.deliverVia')}</label>
               <select
                 className="claw-select"
                 value={deliveryMethod}
                 onChange={e => setDeliveryMethod(e.target.value as 'telegram' | 'store')}
               >
                 <option value="telegram" disabled={!telegramConnected}>
-                  Telegram{!telegramConnected ? ' (not connected)' : ''}
+                  Telegram{!telegramConnected ? ` (${t('routineBuilder.notConnected')})` : ''}
                 </option>
-                <option value="store">In-app (view in history)</option>
+                <option value="store">{t('routineBuilder.inApp')}</option>
               </select>
             </div>
 
             <div className="claw-form-group">
-              <label className="claw-form-label">Model</label>
+              <label className="claw-form-label">{t('routineBuilder.model')}</label>
               <select
                 className="claw-select"
                 value={modelId}
                 onChange={e => setModelId(e.target.value)}
               >
-                <option value="">Default</option>
+                <option value="">{t('routineBuilder.default')}</option>
                 {models.map(m => (
                   <option key={m.id} value={m.id}>
                     {m.display_name || m.name}
@@ -427,9 +427,7 @@ export const RoutineBuilder = ({ editingId, onClose }: RoutineBuilderProps) => {
                   </option>
                 ))}
               </select>
-              <p className="claw-form-help">
-                Which model to use for this routine. Leave as Default to use your primary model.
-              </p>
+              <p className="claw-form-help">{t('routineBuilder.modelHelp')}</p>
             </div>
 
             {/* Tool Picker */}
@@ -438,11 +436,13 @@ export const RoutineBuilder = ({ editingId, onClose }: RoutineBuilderProps) => {
                 <Wrench size={14} style={{ marginRight: '0.375rem', verticalAlign: '-2px' }} />
                 Tools
                 {selectedTools.size > 0 && (
-                  <span className="routine-tool-count">{selectedTools.size} selected</span>
+                  <span className="routine-tool-count">
+                    {t('routineBuilder.selectedCount', { count: selectedTools.size })}
+                  </span>
                 )}
               </label>
               <p className="claw-form-help" style={{ marginTop: 0, marginBottom: '0.5rem' }}>
-                Choose which tools this routine can use. Leave empty for no tool access.
+                {t('routineBuilder.toolsHelp')}
               </p>
 
               {/* Selected tool chips */}
@@ -462,7 +462,7 @@ export const RoutineBuilder = ({ editingId, onClose }: RoutineBuilderProps) => {
                     className="routine-clear-tools"
                     onClick={() => setSelectedTools(new Set())}
                   >
-                    Clear all
+                    {t('routineBuilder.clearAll')}
                   </button>
                 </div>
               )}
@@ -473,7 +473,7 @@ export const RoutineBuilder = ({ editingId, onClose }: RoutineBuilderProps) => {
                 <input
                   value={toolSearch}
                   onChange={e => setToolSearch(e.target.value)}
-                  placeholder="Search tools..."
+                  placeholder={t('routineBuilder.searchTools')}
                 />
               </div>
 
@@ -482,8 +482,8 @@ export const RoutineBuilder = ({ editingId, onClose }: RoutineBuilderProps) => {
                 {filteredCategories.length === 0 && (
                   <div className="routine-tool-empty">
                     {toolCategories.length === 0
-                      ? 'No tools available. Connect MCP or integrations first.'
-                      : 'No tools match your search.'}
+                      ? t('routineBuilder.noToolsAvailable')
+                      : t('routineBuilder.noToolsMatch')}
                   </div>
                 )}
                 {filteredCategories.map(cat => {
@@ -516,7 +516,9 @@ export const RoutineBuilder = ({ editingId, onClose }: RoutineBuilderProps) => {
                             toggleCategory(cat.name);
                           }}
                         >
-                          {allSelected ? 'Deselect all' : 'Select all'}
+                          {allSelected
+                            ? t('routineBuilder.deselectAll')
+                            : t('routineBuilder.selectAll')}
                         </span>
                       </button>
                       {isExpanded && (
@@ -553,7 +555,7 @@ export const RoutineBuilder = ({ editingId, onClose }: RoutineBuilderProps) => {
             {(testResult || testError || testing) && (
               <div className="routine-test-result">
                 <div className="routine-test-result-header">
-                  Test Result
+                  {t('routineBuilder.testResult')}
                   {testResult && (
                     <button
                       className="routine-test-dismiss"
@@ -570,7 +572,7 @@ export const RoutineBuilder = ({ editingId, onClose }: RoutineBuilderProps) => {
                   {testing && (
                     <div className="routine-test-loading">
                       <Loader2 size={16} className="routine-spin" />
-                      Running routine...
+                      {t('routineBuilder.runningRoutine')}
                     </div>
                   )}
                   {testError && <div className="routine-test-error">{testError}</div>}
@@ -597,7 +599,7 @@ export const RoutineBuilder = ({ editingId, onClose }: RoutineBuilderProps) => {
 
             <div className="claw-wizard-actions">
               <button className="claw-btn claw-btn-secondary" onClick={onClose}>
-                Cancel
+                {t('common.actions.cancel')}
               </button>
               <button
                 className="claw-btn claw-btn-ghost"
@@ -607,17 +609,21 @@ export const RoutineBuilder = ({ editingId, onClose }: RoutineBuilderProps) => {
                 {testing ? (
                   <>
                     <Loader2 size={14} className="routine-spin" />
-                    Testing...
+                    {t('routineBuilder.testing')}
                   </>
                 ) : (
                   <>
                     <Play size={14} />
-                    Test Run
+                    {t('routineBuilder.testRun')}
                   </>
                 )}
               </button>
               <button className="claw-btn claw-btn-primary" onClick={handleSave} disabled={saving}>
-                {saving ? 'Saving...' : editingId ? 'Save Changes' : 'Create Routine'}
+                {saving
+                  ? t('routineBuilder.saving')
+                  : editingId
+                    ? t('routineBuilder.saveChanges')
+                    : t('routineBuilder.createRoutine')}
               </button>
             </div>
           </>

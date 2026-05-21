@@ -1,9 +1,10 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
+import { withTranslation, type WithTranslation } from 'react-i18next';
 import { Copy, RefreshCw, ChevronDown, ChevronUp, Check } from 'lucide-react';
 import ErrorClara from '@/assets/mascot/Error_Clara.png';
 import styles from './ErrorBoundary.module.css';
 
-interface Props {
+interface Props extends WithTranslation {
   children: ReactNode;
 }
 
@@ -191,13 +192,11 @@ ${errorInfo?.componentStack || 'No component stack available'}
       <div className={styles.container}>
         <div className={styles.content}>
           {/* Mascot */}
-          <img src={ErrorClara} alt="Clara looking apologetic" className={styles.mascot} />
+          <img src={ErrorClara} alt={t('errorBoundary.mascotAlt')} className={styles.mascot} />
 
           {/* Error Message */}
-          <h1 className={styles.title}>Oops! Something went wrong</h1>
-          <p className={styles.subtitle}>
-            Clara ran into an unexpected error. You can help us fix this by sending an error report.
-          </p>
+          <h1 className={styles.title}>{t('errorBoundary.title')}</h1>
+          <p className={styles.subtitle}>{t('errorBoundary.subtitle')}</p>
 
           {/* Diagnostics Checkbox */}
           <label className={styles.checkboxLabel}>
@@ -207,14 +206,11 @@ ${errorInfo?.componentStack || 'No component stack available'}
               onChange={this.toggleSendDiagnostics}
               className={styles.checkbox}
             />
-            <span>Send anonymous diagnostics to help improve Clara</span>
+            <span>{t('errorBoundary.sendDiagnostics')}</span>
           </label>
 
           {/* Privacy Note */}
-          <p className={styles.privacyNote}>
-            Error reports are sent to ClaraVerse's Discord and contain only technical error
-            information (error message, stack trace). No personal data or chat content is included.
-          </p>
+          <p className={styles.privacyNote}>{t('errorBoundary.privacyNote')}</p>
 
           {/* Primary Action - Restart & Send */}
           <button
@@ -225,12 +221,12 @@ ${errorInfo?.componentStack || 'No component stack available'}
             {sendingReport ? (
               <>
                 <span className={styles.spinner} />
-                Restarting...
+                {t('errorBoundary.restarting')}
               </>
             ) : (
               <>
                 <RefreshCw size={18} />
-                {sendDiagnostics ? 'Restart & Send Diagnostics' : 'Restart Clara'}
+                {sendDiagnostics ? t('errorBoundary.restartSend') : t('errorBoundary.restart')}
               </>
             )}
           </button>
@@ -244,12 +240,12 @@ ${errorInfo?.componentStack || 'No component stack available'}
             {copySuccess ? (
               <>
                 <Check size={18} />
-                Copied!
+                {t('common.actions.copied')}
               </>
             ) : (
               <>
                 <Copy size={18} />
-                Copy Error Report
+                {t('errorBoundary.copyReport')}
               </>
             )}
           </button>
@@ -257,23 +253,23 @@ ${errorInfo?.componentStack || 'No component stack available'}
           {/* Technical Details Toggle */}
           <button onClick={this.toggleDetails} className={styles.detailsToggle}>
             {showDetails ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-            {showDetails ? 'Hide' : 'Show'} Technical Details
+            {showDetails ? t('errorBoundary.hideDetails') : t('errorBoundary.showDetails')}
           </button>
 
           {/* Technical Details */}
           {showDetails && (
             <div className={styles.details}>
               <div className={styles.detailSection}>
-                <h3>Error Message</h3>
-                <pre>{error?.message || 'Unknown error'}</pre>
+                <h3>{t('errorBoundary.errorMessage')}</h3>
+                <pre>{error?.message || t('errorBoundary.unknownError')}</pre>
               </div>
               <div className={styles.detailSection}>
-                <h3>Stack Trace</h3>
-                <pre>{error?.stack || 'No stack trace available'}</pre>
+                <h3>{t('errorBoundary.stackTrace')}</h3>
+                <pre>{error?.stack || t('errorBoundary.noStackTrace')}</pre>
               </div>
               {errorInfo?.componentStack && (
                 <div className={styles.detailSection}>
-                  <h3>Component Stack</h3>
+                  <h3>{t('errorBoundary.componentStack')}</h3>
                   <pre>{errorInfo.componentStack}</pre>
                 </div>
               )}
@@ -285,4 +281,4 @@ ${errorInfo?.componentStack || 'No component stack available'}
   }
 }
 
-export default ErrorBoundary;
+export default withTranslation('common')(ErrorBoundary);

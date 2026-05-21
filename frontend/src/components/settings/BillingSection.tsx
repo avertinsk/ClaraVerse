@@ -102,9 +102,7 @@ export const BillingSection: React.FC<BillingSectionProps> = ({
         // Check if subscription was updated from free tier
         const currentSub = useSubscriptionStore.getState().subscription;
         if (currentSub && currentSub.tier !== SubscriptionTier.FREE) {
-          toast.success(
-          t('billing.welcomeToTier', { tier: getTierDisplayName(currentSub.tier) })
-        );
+          toast.success(t('billing.welcomeToTier', { tier: getTierDisplayName(currentSub.tier) }));
           break;
         }
 
@@ -176,16 +174,10 @@ export const BillingSection: React.FC<BillingSectionProps> = ({
   };
 
   const handleCancelSubscription = async () => {
-      if (
-        window.confirm(
-          t('billing.cancelConfirm')
-        )
-      ) {
+    if (window.confirm(t('billing.cancelConfirm'))) {
       const success = await cancelSubscription();
       if (success) {
-        toast.success(
-          t('billing.cancelSuccess')
-        );
+        toast.success(t('billing.cancelSuccess'));
       } else {
         toast.error(t('billing.cancelFailed'));
       }
@@ -319,8 +311,12 @@ export const BillingSection: React.FC<BillingSectionProps> = ({
                 <Calendar size={14} />
                 <span>
                   {subscription.cancel_at_period_end
-                    ? t('billing.accessUntil', { date: new Date(subscription.current_period_end).toLocaleDateString() })
-                    : t('billing.renewsOn', { date: new Date(subscription.current_period_end).toLocaleDateString() })}
+                    ? t('billing.accessUntil', {
+                        date: new Date(subscription.current_period_end).toLocaleDateString(),
+                      })
+                    : t('billing.renewsOn', {
+                        date: new Date(subscription.current_period_end).toLocaleDateString(),
+                      })}
                 </span>
               </div>
             )
@@ -329,14 +325,14 @@ export const BillingSection: React.FC<BillingSectionProps> = ({
           {/* Scheduled change notice */}
           {subscription?.scheduled_tier && (
             <Alert variant="info" className="scheduled-change-alert">
-                <span>
-                  {t('billing.scheduledChange', {
-                    tier: getTierDisplayName(subscription.scheduled_tier as SubscriptionTierType),
-                    date: subscription.scheduled_change_at
-                      ? new Date(subscription.scheduled_change_at).toLocaleDateString()
-                      : 'the end of your billing period'
-                  })}
-                </span>
+              <span>
+                {t('billing.scheduledChange', {
+                  tier: getTierDisplayName(subscription.scheduled_tier as SubscriptionTierType),
+                  date: subscription.scheduled_change_at
+                    ? new Date(subscription.scheduled_change_at).toLocaleDateString()
+                    : 'the end of your billing period',
+                })}
+              </span>
             </Alert>
           )}
 

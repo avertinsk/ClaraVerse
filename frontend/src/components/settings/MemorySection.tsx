@@ -112,9 +112,7 @@ export const MemorySection: React.FC<MemorySectionProps> = ({ onSave }) => {
           <Brain className="w-6 h-6" />
           {t('memory.title')}
         </h2>
-        <p className="text-sm text-gray-400 mt-1">
-          {t('memory.subtitle')}
-        </p>
+        <p className="text-sm text-gray-400 mt-1">{t('memory.subtitle')}</p>
       </div>
 
       {/* Enable/Disable Toggle */}
@@ -125,9 +123,7 @@ export const MemorySection: React.FC<MemorySectionProps> = ({ onSave }) => {
               <Brain className="w-5 h-5" />
               {t('memory.enableTitle')}
             </h3>
-            <p className="text-sm text-gray-400 mt-1">
-              {t('memory.enableDesc')}
-            </p>
+            <p className="text-sm text-gray-400 mt-1">{t('memory.enableDesc')}</p>
 
             {/* Privacy Notice */}
             <div
@@ -135,9 +131,7 @@ export const MemorySection: React.FC<MemorySectionProps> = ({ onSave }) => {
               className="mt-3 flex items-start gap-2 p-3 border border-gray-700 rounded-lg"
             >
               <Info className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
-              <p className="text-xs text-gray-300">
-                {t('memory.privacyNotice')}
-              </p>
+              <p className="text-xs text-gray-300">{t('memory.privacyNotice')}</p>
             </div>
           </div>
 
@@ -174,9 +168,7 @@ export const MemorySection: React.FC<MemorySectionProps> = ({ onSave }) => {
                   <Clock className="w-5 h-5" />
                   {t('memory.extractionFreq')}
                 </h3>
-                <p className="text-sm text-gray-400 mt-1">
-                  {t('memory.extractionFreqDesc')}
-                </p>
+                <p className="text-sm text-gray-400 mt-1">{t('memory.extractionFreqDesc')}</p>
               </div>
             </div>
 
@@ -195,9 +187,7 @@ export const MemorySection: React.FC<MemorySectionProps> = ({ onSave }) => {
                   {t('memory.messages', { count: memoryExtractionThreshold })}
                 </span>
               </div>
-              <p className="text-xs text-gray-500">
-                {t('memory.extractionFreqDefault')}
-              </p>
+              <p className="text-xs text-gray-500">{t('memory.extractionFreqDefault')}</p>
             </div>
           </div>
 
@@ -212,9 +202,7 @@ export const MemorySection: React.FC<MemorySectionProps> = ({ onSave }) => {
                   <TrendingUp className="w-5 h-5" />
                   {t('memory.contextLimit')}
                 </h3>
-                <p className="text-sm text-gray-400 mt-1">
-                  {t('memory.contextLimitDesc')}
-                </p>
+                <p className="text-sm text-gray-400 mt-1">{t('memory.contextLimitDesc')}</p>
               </div>
             </div>
 
@@ -233,9 +221,7 @@ export const MemorySection: React.FC<MemorySectionProps> = ({ onSave }) => {
                   {t('memory.max', { count: memoryMaxInjection })}
                 </span>
               </div>
-              <p className="text-xs text-gray-500">
-                {t('memory.recommended')}
-              </p>
+              <p className="text-xs text-gray-500">{t('memory.recommended')}</p>
             </div>
           </div>
 
@@ -341,7 +327,8 @@ export const MemorySection: React.FC<MemorySectionProps> = ({ onSave }) => {
               <li className="flex items-start gap-2">
                 <span className="text-gray-400 mt-0.5">•</span>
                 <span>
-                  <strong>{t('memory.extraction')}:</strong> {t('memory.extractionDetail', { count: memoryExtractionThreshold })}
+                  <strong>{t('memory.extraction')}:</strong>{' '}
+                  {t('memory.extractionDetail', { count: memoryExtractionThreshold })}
                 </span>
               </li>
               <li className="flex items-start gap-2">
@@ -375,9 +362,7 @@ export const MemorySection: React.FC<MemorySectionProps> = ({ onSave }) => {
         >
           <Brain className="w-12 h-12 mx-auto mb-3 text-gray-600" />
           <p className="text-gray-400 mb-2">{t('memory.disabledTitle')}</p>
-          <p className="text-sm text-gray-500">
-            {t('memory.disabledDesc')}
-          </p>
+          <p className="text-sm text-gray-500">{t('memory.disabledDesc')}</p>
         </div>
       )}
 

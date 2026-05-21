@@ -20,11 +20,7 @@ declare global {
  * In dev mode, uses VITE_API_BASE_URL from .env.
  */
 export function getApiBaseUrl(): string {
-  return (
-    window.__CLARA_CONFIG__?.API_BASE_URL ??
-    import.meta.env.VITE_API_BASE_URL ??
-    ''
-  );
+  return window.__CLARA_CONFIG__?.API_BASE_URL ?? import.meta.env.VITE_API_BASE_URL ?? '';
 }
 
 /**
@@ -33,8 +29,7 @@ export function getApiBaseUrl(): string {
  * In dev mode, uses VITE_WS_URL from .env.
  */
 export function getWsUrl(): string {
-  const configured =
-    window.__CLARA_CONFIG__?.WS_URL ?? import.meta.env.VITE_WS_URL ?? '';
+  const configured = window.__CLARA_CONFIG__?.WS_URL ?? import.meta.env.VITE_WS_URL ?? '';
 
   if (configured) return configured;
 

@@ -1,15 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import {
-  HardDrive,
-  Cloud,
-  Lock,
-  Shield,
-  Check,
-  ExternalLink,
-  AlertTriangle,
-} from 'lucide-react';
+import { HardDrive, Cloud, Lock, Shield, Check, ExternalLink, AlertTriangle } from 'lucide-react';
 import { useSettingsStore } from '@/store/useSettingsStore';
 
 export interface PrivacySectionProps {
@@ -35,17 +27,13 @@ export const PrivacySection: React.FC<PrivacySectionProps> = ({ onSave }) => {
       <header className="privacy-header">
         <div className="privacy-title-section">
           <h1 className="privacy-main-title">{t('privacy.title')}</h1>
-          <p className="privacy-subtitle">
-            {t('privacy.subtitle')}
-          </p>
+          <p className="privacy-subtitle">{t('privacy.subtitle')}</p>
         </div>
       </header>
 
       {/* Chat Storage Section */}
       <h2 className="privacy-subsection-title">{t('privacy.whereSaved')}</h2>
-      <p className="privacy-subsection-description">
-        {t('privacy.chooseStorage')}
-      </p>
+      <p className="privacy-subsection-description">{t('privacy.chooseStorage')}</p>
 
       <div className="privacy-options-container">
         <button
@@ -62,9 +50,7 @@ export const PrivacySection: React.FC<PrivacySectionProps> = ({ onSave }) => {
             {chatPrivacyMode === 'local' && (
               <p className="privacy-option-warning">
                 <AlertTriangle size={12} />
-                <span>
-                  {t('privacy.deviceWarning')}
-                </span>
+                <span>{t('privacy.deviceWarning')}</span>
               </p>
             )}
           </div>

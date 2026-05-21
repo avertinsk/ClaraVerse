@@ -37,12 +37,7 @@ export function DeletableEdge({
 
   return (
     <>
-      <BaseEdge
-        path={edgePath}
-        markerEnd={markerEnd}
-        style={style}
-        className={className}
-      />
+      <BaseEdge path={edgePath} markerEnd={markerEnd} style={style} className={className} />
       <EdgeLabelRenderer>
         <button
           className="edge-delete-btn"

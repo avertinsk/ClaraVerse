@@ -261,7 +261,7 @@ export const CredentialsSection = () => {
                     : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-hover)]'
                 }`}
               >
-              {t('credentials.allIntegrations')}
+                {t('credentials.allIntegrations')}
               </button>
 
               {/* Your Integrations Tab - Only show if there are integrations with credentials */}
@@ -392,7 +392,9 @@ export const CredentialsSection = () => {
                           <div className="flex items-center justify-between pt-3 border-t border-[var(--color-border)] mt-auto gap-2">
                             <div className="text-xs text-[var(--color-text-tertiary)] truncate min-w-0">
                               {credential.metadata.lastUsedAt
-                                ? t('credentials.lastUsed', { time: formatLastUsed(credential.metadata.lastUsedAt) })
+                                ? t('credentials.lastUsed', {
+                                    time: formatLastUsed(credential.metadata.lastUsedAt),
+                                  })
                                 : t('credentials.neverUsed')}
                             </div>
                             <div className="flex items-center gap-1 flex-shrink-0">
@@ -631,7 +633,7 @@ export const CredentialsSection = () => {
                                           style={{ marginTop: 'var(--space-4)' }}
                                         >
                                           <ExternalLink size={14} />
-                                        {t('credentials.docs')}
+                                          {t('credentials.docs')}
                                         </a>
                                       )}
                                       <Button
@@ -640,7 +642,7 @@ export const CredentialsSection = () => {
                                         className="text-xs hover:bg-[var(--color-accent)]/10 hover:text-[var(--color-accent)] active:bg-[var(--color-accent)]/20 active:scale-95 transition-all duration-150"
                                       >
                                         <Plus size={14} />
-                                      <span className="ml-1">{t('credentials.add')}</span>
+                                        <span className="ml-1">{t('credentials.add')}</span>
                                       </Button>
                                     </div>
                                   )}

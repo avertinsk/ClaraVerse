@@ -279,7 +279,9 @@ export function DeployedListView({ className, initialAgentId }: DeployedListView
           {scheduleUsage && (
             <div className="flex items-center gap-2 mb-3 px-2 py-1.5 rounded-lg bg-[var(--color-surface)]">
               <Calendar size={14} className="text-[var(--color-accent)]" />
-              <span className="text-xs text-[var(--color-text-secondary)]">{t('deployedListView.schedules')}</span>
+              <span className="text-xs text-[var(--color-text-secondary)]">
+                {t('deployedListView.schedules')}
+              </span>
               <span
                 className={cn(
                   'text-xs font-medium',
@@ -445,7 +447,9 @@ export function DeployedListView({ className, initialAgentId }: DeployedListView
           {scheduleUsage && (
             <div className="flex items-center gap-2 mb-3 px-2 py-1.5 rounded-lg bg-[var(--color-surface)]">
               <Calendar size={14} className="text-[var(--color-accent)]" />
-              <span className="text-xs text-[var(--color-text-secondary)]">{t('deployedListView.schedules')}</span>
+              <span className="text-xs text-[var(--color-text-secondary)]">
+                {t('deployedListView.schedules')}
+              </span>
               <span
                 className={cn(
                   'text-xs font-medium',
@@ -698,7 +702,9 @@ function AgentSection({
               </p>
             )}
             <div className="mt-1 flex items-center gap-2 text-[10px] text-[var(--color-text-tertiary)] pl-5">
-              <span>{agent.block_count} {t('deployedListView.blocks')}</span>
+              <span>
+                {agent.block_count} {t('deployedListView.blocks')}
+              </span>
               <span>•</span>
               <span>Updated {formatTimeAgo(agent.updated_at, t)}</span>
             </div>

@@ -28,7 +28,12 @@ const FREQUENCY_OPTIONS: {
     icon: <Clock size={16} />,
     description: t('cronBuilder.runOnceHour'),
   },
-  { type: 'daily', label: t('agents.freqDaily'), icon: <Calendar size={16} />, description: t('cronBuilder.runOnceDay') },
+  {
+    type: 'daily',
+    label: t('agents.freqDaily'),
+    icon: <Calendar size={16} />,
+    description: t('cronBuilder.runOnceDay'),
+  },
   {
     type: 'weekly',
     label: t('agents.freqWeekly'),
@@ -352,7 +357,9 @@ export function CronBuilder({ value, onChange }: CronBuilderProps) {
         {/* Monthly - day of month selection */}
         {frequency === 'monthly' && (
           <div className="space-y-2">
-            <label className="text-xs font-medium text-[var(--color-text-secondary)]">{t('cronBuilder.onDay')}</label>
+            <label className="text-xs font-medium text-[var(--color-text-secondary)]">
+              {t('cronBuilder.onDay')}
+            </label>
             <select
               value={dayOfMonth}
               onChange={e => setDayOfMonth(parseInt(e.target.value))}

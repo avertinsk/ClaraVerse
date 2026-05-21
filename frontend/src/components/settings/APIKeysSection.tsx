@@ -435,9 +435,9 @@ export function APIKeysSection({ className }: APIKeysSectionProps) {
                 <div className="flex items-center gap-2">
                   <Key size={14} className="text-[#a1a1aa]" />
                   <span className="text-sm text-[#a1a1aa] line-through">{key.name}</span>
-                    <span className="px-1.5 py-0.5 text-[10px] rounded bg-red-500/20 text-red-400">
-                      {t('apiKeys.revoked')}
-                    </span>
+                  <span className="px-1.5 py-0.5 text-[10px] rounded bg-red-500/20 text-red-400">
+                    {t('apiKeys.revoked')}
+                  </span>
                 </div>
               </div>
             ))}
@@ -658,7 +658,10 @@ export function APIKeysSection({ className }: APIKeysSectionProps) {
             <div className="flex items-start gap-3">
               <AlertCircle size={18} className="text-yellow-500 flex-shrink-0 mt-0.5" />
               <div className="text-sm text-[var(--color-text-secondary)]">
-                <strong className="text-[var(--color-text-primary)]">{t('apiKeys.important')}:</strong> {t('apiKeys.copyWarning')}
+                <strong className="text-[var(--color-text-primary)]">
+                  {t('apiKeys.important')}:
+                </strong>{' '}
+                {t('apiKeys.copyWarning')}
               </div>
             </div>
           </div>

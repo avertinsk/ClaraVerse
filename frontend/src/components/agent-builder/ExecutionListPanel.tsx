@@ -206,7 +206,9 @@ export function ExecutionListPanel() {
       <div className="flex-shrink-0 flex items-center justify-between px-4 py-3 border-b border-[var(--color-border)]">
         <div className="flex items-center gap-2">
           <History size={16} className="text-[var(--color-accent)]" />
-          <span className="text-sm font-semibold text-[var(--color-text-primary)]">{t('execList.title')}</span>
+          <span className="text-sm font-semibold text-[var(--color-text-primary)]">
+            {t('execList.title')}
+          </span>
           {data && data.total > 0 && (
             <span className="px-1.5 py-0.5 text-[10px] rounded-full bg-[var(--color-surface)] text-[var(--color-text-secondary)]">
               {data.total}
@@ -254,7 +256,9 @@ export function ExecutionListPanel() {
         ) : !data || data.executions.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
             <History size={32} className="text-[var(--color-text-tertiary)] mb-3 opacity-40" />
-            <p className="text-sm text-[var(--color-text-secondary)]">{t('execList.noExecutions')}</p>
+            <p className="text-sm text-[var(--color-text-secondary)]">
+              {t('execList.noExecutions')}
+            </p>
             <p className="text-xs text-[var(--color-text-tertiary)] mt-1">
               {t('execList.runWorkflow')}
             </p>

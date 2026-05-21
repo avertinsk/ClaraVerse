@@ -9,6 +9,7 @@
  */
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { PanInfo } from 'framer-motion';
@@ -37,6 +38,7 @@ export function ImageGalleryModal({
   isOpen,
   onClose,
 }: ImageGalleryModalProps) {
+  const { t } = useTranslation('chat');
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -188,7 +190,7 @@ export function ImageGalleryModal({
               className={styles.headerButton}
               onClick={handleZoomOut}
               disabled={scale <= 1}
-              aria-label="Zoom out"
+              aria-label={t('chat.imageGallery.zoomOut')}
             >
               <ZoomOut size={20} />
             </button>
@@ -196,18 +198,22 @@ export function ImageGalleryModal({
               className={styles.headerButton}
               onClick={handleZoomIn}
               disabled={scale >= 3}
-              aria-label="Zoom in"
+              aria-label={t('chat.imageGallery.zoomIn')}
             >
               <ZoomIn size={20} />
             </button>
             <button
               className={styles.headerButton}
               onClick={handleDownload}
-              aria-label="Download image"
+              aria-label={t('chat.imageGallery.downloadImage')}
             >
               <Download size={20} />
             </button>
-            <button className={styles.closeButton} onClick={onClose} aria-label="Close gallery">
+            <button
+              className={styles.closeButton}
+              onClick={onClose}
+              aria-label={t('chat.imageGallery.closeGallery')}
+            >
               <X size={24} />
             </button>
           </div>
@@ -241,7 +247,9 @@ export function ImageGalleryModal({
               ref={imageRef}
               key={currentIndex}
               src={currentImage.src}
-              alt={currentImage.title || `Image ${currentIndex + 1}`}
+              alt={
+                currentImage.title || t('chat.imageGallery.imageLabel', { index: currentIndex + 1 })
+              }
               className={styles.image}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -261,7 +269,7 @@ export function ImageGalleryModal({
                 e.stopPropagation();
                 goToPrevious();
               }}
-              aria-label="Previous image"
+              aria-label={t('chat.imageGallery.prevImage')}
             >
               <ChevronLeft size={32} />
             </button>
@@ -271,7 +279,7 @@ export function ImageGalleryModal({
                 e.stopPropagation();
                 goToNext();
               }}
-              aria-label="Next image"
+              aria-label={t('chat.imageGallery.nextImage')}
             >
               <ChevronRight size={32} />
             </button>
@@ -291,7 +299,7 @@ export function ImageGalleryModal({
                   setScale(1);
                   setPosition({ x: 0, y: 0 });
                 }}
-                aria-label={`Go to image ${index + 1}`}
+                aria-label={t('chat.imageGallery.goToImage', { index: index + 1 })}
               />
             ))}
           </div>

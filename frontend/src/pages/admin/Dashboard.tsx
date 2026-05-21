@@ -14,7 +14,9 @@ export const Dashboard = () => {
   if (isLoadingStats) {
     return (
       <div className="space-y-6">
-        <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">{t('dashboard.title')}</h1>
+        <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">
+          {t('dashboard.title')}
+        </h1>
         <p className="text-[var(--color-text-secondary)]">{t('dashboard.loading')}</p>
       </div>
     );
@@ -23,10 +25,10 @@ export const Dashboard = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">{t('dashboard.title')}</h1>
-        <p className="text-[var(--color-text-secondary)] mt-2">
-          {t('dashboard.subtitle')}
-        </p>
+        <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">
+          {t('dashboard.title')}
+        </h1>
+        <p className="text-[var(--color-text-secondary)] mt-2">{t('dashboard.subtitle')}</p>
       </div>
 
       {/* Stats Cards */}
@@ -94,7 +96,9 @@ export const Dashboard = () => {
               href="/admin/analytics"
               className="block p-3 rounded-lg bg-[var(--color-surface-hover)] hover:bg-[var(--color-accent-light)] transition-colors"
             >
-              <p className="text-sm font-medium text-[var(--color-text-primary)]">{t('dashboard.viewAnalytics')}</p>
+              <p className="text-sm font-medium text-[var(--color-text-primary)]">
+                {t('dashboard.viewAnalytics')}
+              </p>
               <p className="text-xs text-[var(--color-text-tertiary)] mt-1">
                 {t('dashboard.viewAnalyticsDesc')}
               </p>
@@ -122,19 +126,25 @@ export const Dashboard = () => {
           </h2>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-[var(--color-text-secondary)]">{t('dashboard.providersActive')}</span>
+              <span className="text-sm text-[var(--color-text-secondary)]">
+                {t('dashboard.providersActive')}
+              </span>
               <span className="text-sm font-bold text-[var(--color-success)]">
                 {overviewStats?.active_providers ?? 0}
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-[var(--color-text-secondary)]">{t('dashboard.modelsAvailable')}</span>
+              <span className="text-sm text-[var(--color-text-secondary)]">
+                {t('dashboard.modelsAvailable')}
+              </span>
               <span className="text-sm font-bold text-[var(--color-text-primary)]">
                 {overviewStats?.total_models ?? 0}
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-[var(--color-text-secondary)]">{t('dashboard.usersRegistered')}</span>
+              <span className="text-sm text-[var(--color-text-secondary)]">
+                {t('dashboard.usersRegistered')}
+              </span>
               <span className="text-sm font-bold text-[var(--color-text-primary)]">
                 {overviewStats?.total_users ?? 0}
               </span>

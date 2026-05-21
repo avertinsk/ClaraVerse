@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { adminService } from '@/services/adminService';
 import type { TierAssignment, AdminModelView } from '@/types/admin';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
@@ -56,7 +57,24 @@ const TIER_CONFIGS: TierConfig[] = [
   },
 ];
 
+const TIER_LABEL_KEYS: Record<string, string> = {
+  tier1: 'admin.tierManagement.elite',
+  tier2: 'admin.tierManagement.premium',
+  tier3: 'admin.tierManagement.standard',
+  tier4: 'admin.tierManagement.fast',
+  tier5: 'admin.tierManagement.new',
+};
+
+const TIER_DESC_KEYS: Record<string, string> = {
+  tier1: 'admin.tierManagement.eliteDesc',
+  tier2: 'admin.tierManagement.premiumDesc',
+  tier3: 'admin.tierManagement.standardDesc',
+  tier4: 'admin.tierManagement.fastDesc',
+  tier5: 'admin.tierManagement.newDesc',
+};
+
 export const TierManagement: React.FC = () => {
+  const { t } = useTranslation('admin');
   const [tiers, setTiers] = useState<Record<string, TierAssignment>>({});
   const [models, setModels] = useState<AdminModelView[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -89,7 +107,7 @@ export const TierManagement: React.FC = () => {
       setTiers(tierData || {});
     } catch (err) {
       console.error('Failed to load tiers:', err);
-      setError('Failed to load global tiers');
+      setError(t('admin.tierManagement.loadFailed'));
     } finally {
       setIsLoading(false);
     }
@@ -111,7 +129,7 @@ export const TierManagement: React.FC = () => {
       setSearchQuery('');
     } catch (err) {
       console.error('Failed to assign model to tier:', err);
-      setError('Failed to assign model to tier. It may already be assigned to another tier.');
+      setError(t('admin.tierManagement.assignFailed'));
     }
   };
 
@@ -141,7 +159,7 @@ export const TierManagement: React.FC = () => {
       setTierToClear(null);
     } catch (err) {
       console.error('Failed to clear tier:', err);
-      setError('Failed to clear tier assignment');
+      setError(t('admin.tierManagement.clearFailed'));
     }
   };
 
@@ -152,9 +170,9 @@ export const TierManagement: React.FC = () => {
         style={{ backdropFilter: 'blur(20px)' }}
       >
         <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-4">
-          Global Model Recommendation Tiers
+          {t('admin.tierManagement.title')}
         </h3>
-        <p className="text-[var(--color-text-secondary)]">Loading tiers...</p>
+        <p className="text-[var(--color-text-secondary)]">{t('admin.tierManagement.loading')}</p>
       </div>
     );
   }
@@ -166,10 +184,10 @@ export const TierManagement: React.FC = () => {
     >
       <div className="mb-6">
         <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">
-          Global Model Recommendation Tiers
+          {t('admin.tierManagement.title')}
         </h3>
         <p className="text-sm text-[var(--color-text-secondary)] mt-1">
-          Only 5 models (one per tier) can be recommended across all providers
+          {t('admin.tierManagement.subtitle')}
         </p>
       </div>
 
@@ -177,7 +195,7 @@ export const TierManagement: React.FC = () => {
         <div className="mb-4 bg-[var(--color-error-light)] text-[var(--color-error)] px-4 py-3 rounded-lg text-sm">
           {error}
           <button onClick={() => setError(null)} className="ml-2 underline hover:no-underline">
-            Dismiss
+            {t('admin.tierManagement.dismiss')}
           </button>
         </div>
       )}
@@ -203,14 +221,14 @@ export const TierManagement: React.FC = () => {
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     <h4 className="text-sm font-semibold text-[var(--color-text-primary)]">
-                      {tierConfig.label}
+                      {t(TIER_LABEL_KEYS[tierConfig.key])}
                     </h4>
                     <span className="text-xs text-[var(--color-text-tertiary)]">
                       ({tierConfig.key})
                     </span>
                   </div>
                   <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">
-                    {tierConfig.description}
+                    {t(TIER_DESC_KEYS[tierConfig.key])}
                   </p>
 
                   {/* Assigned Model */}
@@ -227,7 +245,7 @@ export const TierManagement: React.FC = () => {
                     </div>
                   ) : (
                     <div className="mt-2 text-sm text-[var(--color-text-tertiary)] italic">
-                      No model assigned
+                      {t('admin.tierManagement.noModelAssigned')}
                     </div>
                   )}
                 </div>
@@ -240,18 +258,20 @@ export const TierManagement: React.FC = () => {
                     <button
                       onClick={() => handleAssignModel(tierConfig.key)}
                       className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] bg-[var(--color-surface)] hover:bg-[var(--color-accent-light)] rounded-lg transition-colors"
-                      title="Change assigned model"
+                      title={t('admin.tierManagement.changeAssigned')}
                     >
                       <Edit2 size={14} />
-                      Change
+                      {t('admin.tierManagement.change')}
                     </button>
                     <button
-                      onClick={() => handleClearClick(tierConfig.key, tierConfig.label)}
+                      onClick={() =>
+                        handleClearClick(tierConfig.key, t(TIER_LABEL_KEYS[tierConfig.key]))
+                      }
                       className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-error)] bg-[var(--color-surface)] hover:bg-[var(--color-error-light)] rounded-lg transition-colors"
-                      title="Remove model from tier"
+                      title={t('admin.tierManagement.removeFromTier')}
                     >
                       <X size={14} />
-                      Clear
+                      {t('admin.tierManagement.clear')}
                     </button>
                   </>
                 ) : (
@@ -259,7 +279,7 @@ export const TierManagement: React.FC = () => {
                     onClick={() => handleAssignModel(tierConfig.key)}
                     className="px-4 py-1.5 text-sm font-medium text-white bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] rounded-lg transition-colors"
                   >
-                    Assign Model
+                    {t('admin.tierManagement.assignModel')}
                   </button>
                 )}
               </div>
@@ -286,8 +306,9 @@ export const TierManagement: React.FC = () => {
             {/* Header */}
             <div className="p-6 border-b border-[var(--color-surface-hover)]">
               <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">
-                Select a model for {TIER_CONFIGS.find(t => t.key === selectedTierForEdit)?.label}{' '}
-                tier
+                {t('admin.tierManagement.selectModelFor', {
+                  tier: t(TIER_LABEL_KEYS[selectedTierForEdit] || ''),
+                })}
               </h3>
             </div>
 
@@ -302,7 +323,7 @@ export const TierManagement: React.FC = () => {
                   type="text"
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  placeholder="Search models by name, ID, or provider..."
+                  placeholder={t('admin.tierManagement.searchModels')}
                   className="w-full pl-10 pr-4 py-2 bg-[var(--color-background)] rounded-lg text-[var(--color-text-primary)] placeholder-[var(--color-text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
                   autoFocus
                 />
@@ -315,8 +336,8 @@ export const TierManagement: React.FC = () => {
                 <div className="text-center py-12">
                   <p className="text-[var(--color-text-tertiary)]">
                     {searchQuery
-                      ? `No models found matching "${searchQuery}"`
-                      : 'No visible models available'}
+                      ? t('admin.tierManagement.noModelsFound', { query: searchQuery })
+                      : t('admin.tierManagement.noModelsAvailable')}
                   </p>
                 </div>
               ) : (
@@ -358,7 +379,7 @@ export const TierManagement: React.FC = () => {
                 }}
                 className="px-4 py-2 text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] bg-[var(--color-surface)] hover:bg-[var(--color-surface-hover)] rounded-lg transition-colors"
               >
-                Cancel
+                {t('common.actions.cancel')}
               </button>
             </div>
           </div>
@@ -373,10 +394,10 @@ export const TierManagement: React.FC = () => {
           setTierToClear(null);
         }}
         onConfirm={handleClearConfirm}
-        title="Clear Tier Assignment"
-        message={`Are you sure you want to remove the model from ${tierToClear?.label} tier?`}
-        confirmText="Clear"
-        cancelText="Cancel"
+        title={t('admin.tierManagement.clearTitle')}
+        message={t('admin.tierManagement.clearMessage', { tier: tierToClear?.label })}
+        confirmText={t('admin.tierManagement.clearConfirm')}
+        cancelText={t('common.actions.cancel')}
         variant="warning"
       />
     </div>

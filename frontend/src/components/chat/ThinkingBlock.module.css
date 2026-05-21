@@ -132,7 +132,9 @@
 .chevron {
   color: var(--color-text-tertiary);
   flex-shrink: 0;
-  transition: color 0.15s ease, transform 0.2s ease;
+  transition:
+    color 0.15s ease,
+    transform 0.2s ease;
   opacity: 0.5;
 }
 

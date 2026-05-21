@@ -286,12 +286,14 @@ export function SchedulePanel({
       >
         <div className="flex items-center gap-2">
           <Clock size={16} className="text-[var(--color-accent)]" />
-          <span className="text-sm font-medium text-[var(--color-text-primary)]">{t('schedulePanel.title')}</span>
+          <span className="text-sm font-medium text-[var(--color-text-primary)]">
+            {t('schedulePanel.title')}
+          </span>
           {!isLoading && schedule !== null && schedule.enabled && (
             <>
-                <span className="px-1.5 py-0.5 text-[10px] rounded bg-[var(--color-accent)]/20 text-[var(--color-accent)]">
-                  {t('schedulePanel.active')}
-                </span>
+              <span className="px-1.5 py-0.5 text-[10px] rounded bg-[var(--color-accent)]/20 text-[var(--color-accent)]">
+                {t('schedulePanel.active')}
+              </span>
               {countdown && (
                 <span className="text-[10px] text-[var(--color-text-secondary)] font-mono">
                   {countdown}
@@ -316,7 +318,9 @@ export function SchedulePanel({
               <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30">
                 <div className="flex items-center gap-2 text-amber-500 mb-2">
                   <FileWarning size={16} />
-                  <span className="text-sm font-medium">{t('schedulePanel.schedulingNotAvailable')}</span>
+                  <span className="text-sm font-medium">
+                    {t('schedulePanel.schedulingNotAvailable')}
+                  </span>
                 </div>
                 <p className="text-xs text-[var(--color-text-secondary)]">
                   {t('schedulePanel.fileInputWarning')}
@@ -480,7 +484,8 @@ export function SchedulePanel({
                   className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg bg-[var(--color-accent)] text-white text-sm font-medium hover:bg-[var(--color-accent-hover)] disabled:opacity-50 transition-colors"
                 >
                   {isSaving ? <Loader2 size={14} className="animate-spin" /> : null}
-                  {schedule ? t('schedulePanel.update') : t('schedulePanel.create')} {t('schedulePanel.schedule')}
+                  {schedule ? t('schedulePanel.update') : t('schedulePanel.create')}{' '}
+                  {t('schedulePanel.schedule')}
                 </button>
 
                 {schedule && (

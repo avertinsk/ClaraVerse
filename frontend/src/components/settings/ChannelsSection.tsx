@@ -338,9 +338,7 @@ export const ChannelsSection = () => {
     <div className="channels-section">
       <div className="channels-header">
         <h2 className="channels-title">{t('channels.title')}</h2>
-        <p className="channels-description">
-          {t('channels.description')}
-        </p>
+        <p className="channels-description">{t('channels.description')}</p>
       </div>
 
       {/* Security Warning */}
@@ -348,9 +346,7 @@ export const ChannelsSection = () => {
         <Shield size={18} />
         <div className="channels-security-warning-content">
           <strong>{t('channels.securityNotice')}</strong>
-          <p>
-            {t('channels.securityDesc')}
-          </p>
+          <p>{t('channels.securityDesc')}</p>
           <p className="channels-security-warning-tip">
             💡 <strong>{t('channels.securityTip')}:</strong> {t('channels.securityTipDesc')}
           </p>
@@ -392,7 +388,8 @@ export const ChannelsSection = () => {
                     {isConnected ? (
                       <>
                         <CheckCircle size={12} />
-                        {t('channels.connected')}{channel.botUsername ? ` (@${channel.botUsername})` : ''}
+                        {t('channels.connected')}
+                        {channel.botUsername ? ` (@${channel.botUsername})` : ''}
                       </>
                     ) : (
                       <>
@@ -424,7 +421,7 @@ export const ChannelsSection = () => {
                     <div className="channel-polling-notice">
                       <AlertCircle size={14} />
                       <span>
-                      <strong>{t('channels.pollingMode')}:</strong> {t('channels.pollingDesc')}
+                        <strong>{t('channels.pollingMode')}:</strong> {t('channels.pollingDesc')}
                       </span>
                     </div>
                   )}
@@ -432,9 +429,9 @@ export const ChannelsSection = () => {
                   {/* Webhook URL */}
                   <div className="channel-webhook">
                     <label className="channel-webhook-label">
-                        {channel.webhookUrl?.includes('localhost')
-                          ? t('channels.webhookUrlNotUsed')
-                          : t('channels.webhookUrl')}
+                      {channel.webhookUrl?.includes('localhost')
+                        ? t('channels.webhookUrlNotUsed')
+                        : t('channels.webhookUrl')}
                     </label>
                     <div className="channel-webhook-row">
                       <code className="channel-webhook-url">{getWebhookUrl(channel)}</code>
@@ -451,9 +448,7 @@ export const ChannelsSection = () => {
                       </button>
                     </div>
                     {!channel.webhookUrl?.includes('localhost') && (
-                      <p className="channel-webhook-help">
-                        {t('channels.webhookHelp')}
-                      </p>
+                      <p className="channel-webhook-help">{t('channels.webhookHelp')}</p>
                     )}
                   </div>
 
@@ -471,12 +466,16 @@ export const ChannelsSection = () => {
                   <div className="channel-allowlist">
                     <div className="channel-allowlist-header">
                       <Shield size={16} />
-                      <label className="channel-allowlist-label">{t('channels.accessControl')}</label>
+                      <label className="channel-allowlist-label">
+                        {t('channels.accessControl')}
+                      </label>
                     </div>
                     <p className="channel-allowlist-help">
                       {(channel.allowedUsers?.length || 0) === 0
                         ? t('channels.accessControlEmpty')
-                        : t('channels.accessControlCount', { count: channel.allowedUsers?.length || 0 })}
+                        : t('channels.accessControlCount', {
+                            count: channel.allowedUsers?.length || 0,
+                          })}
                     </p>
 
                     {/* Initialize editing state if needed */}
@@ -673,13 +672,13 @@ export const ChannelsSection = () => {
                   >
                     {isConnecting === channelConfig.id ? (
                       <>
-                          <Loader2 size={16} className="animate-spin" />
-                          {t('channels.connecting')}
+                        <Loader2 size={16} className="animate-spin" />
+                        {t('channels.connecting')}
                       </>
                     ) : (
                       <>
                         <Send size={16} />
-                          {t('channels.connect', { name: channelConfig.name })}
+                        {t('channels.connect', { name: channelConfig.name })}
                       </>
                     )}
                   </Button>
@@ -693,9 +692,7 @@ export const ChannelsSection = () => {
       {/* Coming Soon Placeholder */}
       <div className="channels-coming-soon">
         <h4>{t('channels.comingSoon')}</h4>
-        <p>
-          {t('channels.comingSoonDesc')}
-        </p>
+        <p>{t('channels.comingSoonDesc')}</p>
       </div>
     </div>
   );

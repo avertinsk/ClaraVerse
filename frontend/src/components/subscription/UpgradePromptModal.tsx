@@ -18,7 +18,11 @@ export function UpgradePromptModal() {
   const limitTypeDisplayMap: Record<string, { label: string; icon: string; unit: string }> = {
     messages: { label: t('upgrade.messagesLabel'), icon: '💬', unit: t('upgrade.perMonth') },
     file_uploads: { label: t('upgrade.fileUploadsLabel'), icon: '📎', unit: t('upgrade.perDay') },
-    image_generations: { label: t('upgrade.imageGensLabel'), icon: '🎨', unit: t('upgrade.perDay') },
+    image_generations: {
+      label: t('upgrade.imageGensLabel'),
+      icon: '🎨',
+      unit: t('upgrade.perDay'),
+    },
   };
   const limitTypeDisplay = limitTypeDisplayMap[limitExceeded.type];
 
@@ -100,8 +104,8 @@ export function UpgradePromptModal() {
 
           <div className="grid grid-cols-2 gap-6 mb-6">
             <div className="text-center">
-                <div className="text-gray-600 dark:text-gray-400 text-sm mb-2">
-                  {t('upgrade.currentPlan', { plan: currentPlan?.name || 'Current' })}
+              <div className="text-gray-600 dark:text-gray-400 text-sm mb-2">
+                {t('upgrade.currentPlan', { plan: currentPlan?.name || 'Current' })}
               </div>
               <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                 {limitExceeded.limit}
@@ -132,7 +136,9 @@ export function UpgradePromptModal() {
           {/* Additional Benefits */}
           {suggestedPlan?.features && suggestedPlan.features.length > 0 && (
             <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-              <p className="text-sm font-medium mb-2 text-gray-900 dark:text-gray-100">{t('upgrade.plusGet')}</p>
+              <p className="text-sm font-medium mb-2 text-gray-900 dark:text-gray-100">
+                {t('upgrade.plusGet')}
+              </p>
               <ul className="text-sm space-y-1 text-gray-700 dark:text-gray-300">
                 {suggestedPlan.features.slice(0, 3).map((feature, idx) => (
                   <li key={idx} className="flex items-center gap-2">

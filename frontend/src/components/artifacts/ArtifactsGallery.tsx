@@ -8,6 +8,7 @@
  */
 
 import { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   FileCode,
   Image as ImageIcon,
@@ -39,6 +40,14 @@ const FILTER_TABS: TabConfig[] = [
   { id: 'svg', label: 'SVG', icon: ImageIcon },
   { id: 'mermaid', label: 'Diagrams', icon: GitBranch },
 ];
+
+const TAB_LABEL_KEYS: Record<FilterTab, string> = {
+  all: 'artifacts.tabs.all',
+  image: 'artifacts.tabs.images',
+  html: 'artifacts.tabs.html',
+  svg: 'artifacts.tabs.svg',
+  mermaid: 'artifacts.tabs.diagrams',
+};
 
 interface ArtifactWithContext extends Artifact {
   chatId: string;
@@ -73,13 +82,16 @@ interface ArtifactGroup {
 /**
  * Formats a date as relative time (e.g., "12 days ago", "1 month ago")
  */
-function formatRelativeDate(date: Date | undefined | null): string {
-  if (!date) return 'Unknown';
+function formatRelativeDate(
+  date: Date | undefined | null,
+  t: (key: string, params?: Record<string, unknown>) => string
+): string {
+  if (!date) return t('artifacts.time.unknown');
 
   try {
     const now = new Date();
     const dateObj = date instanceof Date ? date : new Date(date);
-    if (isNaN(dateObj.getTime())) return 'Unknown';
+    if (isNaN(dateObj.getTime())) return t('artifacts.time.unknown');
 
     const diffMs = now.getTime() - dateObj.getTime();
     const diffSeconds = Math.floor(diffMs / 1000);
@@ -91,22 +103,22 @@ function formatRelativeDate(date: Date | undefined | null): string {
     const diffYears = Math.floor(diffDays / 365);
 
     if (diffSeconds < 60) {
-      return 'Just now';
+      return t('artifacts.time.justNow');
     } else if (diffMinutes < 60) {
-      return `${diffMinutes} minute${diffMinutes === 1 ? '' : 's'} ago`;
+      return t('artifacts.time.minutesAgo', { count: diffMinutes });
     } else if (diffHours < 24) {
-      return `${diffHours} hour${diffHours === 1 ? '' : 's'} ago`;
+      return t('artifacts.time.hoursAgo', { count: diffHours });
     } else if (diffDays < 7) {
-      return `${diffDays} day${diffDays === 1 ? '' : 's'} ago`;
+      return t('artifacts.time.daysAgo', { count: diffDays });
     } else if (diffWeeks < 4) {
-      return `${diffWeeks} week${diffWeeks === 1 ? '' : 's'} ago`;
+      return t('artifacts.time.weeksAgo', { count: diffWeeks });
     } else if (diffMonths < 12) {
-      return `${diffMonths} month${diffMonths === 1 ? '' : 's'} ago`;
+      return t('artifacts.time.monthsAgo', { count: diffMonths });
     } else {
-      return `${diffYears} year${diffYears === 1 ? '' : 's'} ago`;
+      return t('artifacts.time.yearsAgo', { count: diffYears });
     }
   } catch {
-    return 'Unknown';
+    return t('artifacts.time.unknown');
   }
 }
 
@@ -192,6 +204,7 @@ export function ArtifactsGallery({
   onNewArtifact,
   onNavigateToChat,
 }: ArtifactsGalleryProps) {
+  const { t } = useTranslation('artifacts');
   const allArtifactsRaw = getAllArtifacts(chats);
   const [thumbnails, setThumbnails] = useState<Map<string, string>>(new Map());
   const [failedArtifacts, setFailedArtifacts] = useState<Set<string>>(new Set());
@@ -315,10 +328,10 @@ export function ArtifactsGallery({
     <div className={styles.container}>
       {/* Header */}
       <div className={styles.header}>
-        <h1 className={styles.title}>Artifacts</h1>
+        <h1 className={styles.title}>{t('artifacts.title')}</h1>
         <button className={styles.newButton} onClick={onNewArtifact}>
           <Plus size={18} />
-          <span>New artifact</span>
+          <span>{t('artifacts.newArtifact')}</span>
         </button>
       </div>
 
@@ -339,7 +352,7 @@ export function ArtifactsGallery({
               onClick={() => setActiveTab(tab.id)}
             >
               <TabIcon size={16} className={styles.tabIcon} />
-              <span>{tab.label}</span>
+              <span>{t(TAB_LABEL_KEYS[tab.id])}</span>
               {count > 0 && <span className={styles.tabCount}>{count}</span>}
             </button>
           );
@@ -352,13 +365,11 @@ export function ArtifactsGallery({
           {allArtifacts.length === 0 ? (
             <>
               <FileCode size={48} className={styles.emptyIcon} />
-              <h2 className={styles.emptyTitle}>No artifacts yet</h2>
-              <p className={styles.emptyText}>
-                Create HTML pages, SVG graphics, and Mermaid diagrams in your chats
-              </p>
+              <h2 className={styles.emptyTitle}>{t('artifacts.empty.title')}</h2>
+              <p className={styles.emptyText}>{t('artifacts.empty.description')}</p>
               <button className={styles.emptyButton} onClick={onNewArtifact}>
                 <Plus size={18} />
-                <span>Start a new chat</span>
+                <span>{t('artifacts.empty.startChat')}</span>
               </button>
             </>
           ) : (
@@ -368,16 +379,18 @@ export function ArtifactsGallery({
                 return <ActiveTabIcon size={48} className={styles.emptyIcon} />;
               })()}
               <h2 className={styles.emptyTitle}>
-                No {FILTER_TABS.find(t => t.id === activeTab)?.label.toLowerCase() || 'artifacts'}
+                {t('artifacts.empty.noFiltered', {
+                  type: t(TAB_LABEL_KEYS[activeTab]).toLowerCase(),
+                })}
               </h2>
               <p className={styles.emptyText}>
-                You don't have any{' '}
-                {activeTab === 'image' ? 'generated images' : `${activeTab} artifacts`} yet. Try
-                creating one in your chats!
+                {activeTab === 'image'
+                  ? t('artifacts.empty.noImages')
+                  : t('artifacts.empty.noType', { type: activeTab })}
               </p>
               <button className={styles.emptyButton} onClick={() => setActiveTab('all')}>
                 <LayoutGrid size={18} />
-                <span>View all artifacts</span>
+                <span>{t('artifacts.empty.viewAll')}</span>
               </button>
             </>
           )}
@@ -420,7 +433,7 @@ export function ArtifactsGallery({
                         <div className={styles.cardContent}>
                           <h3 className={styles.cardTitle}>{artifact.title}</h3>
                           <p className={styles.cardDate}>
-                            Last edited {formatRelativeDate(artifact.createdAt)}
+                            {t('artifacts.lastEdited')} {formatRelativeDate(artifact.createdAt, t)}
                           </p>
                         </div>
                       </button>
@@ -461,7 +474,7 @@ export function ArtifactsGallery({
                   <div className={styles.cardContent}>
                     <h3 className={styles.cardTitle}>{group.chatTitle}</h3>
                     <p className={styles.cardDate}>
-                      Last edited {formatRelativeDate(group.latestDate)}
+                      {t('artifacts.lastEdited')} {formatRelativeDate(group.latestDate, t)}
                     </p>
                   </div>
                 </button>

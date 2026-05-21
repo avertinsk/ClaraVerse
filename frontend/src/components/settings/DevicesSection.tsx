@@ -75,15 +75,15 @@ export const DevicesSection = () => {
 
   const confirmRevoke = (device: DeviceInfo) => {
     setActiveMenu(null);
-      if (device.is_current) {
-        if (confirm(t('devices.confirmRevokeCurrent'))) {
-          handleRevoke(device.device_id);
-        }
-      } else {
-        if (confirm(t('devices.confirmRevoke', { name: device.name }))) {
-          handleRevoke(device.device_id);
-        }
+    if (device.is_current) {
+      if (confirm(t('devices.confirmRevokeCurrent'))) {
+        handleRevoke(device.device_id);
       }
+    } else {
+      if (confirm(t('devices.confirmRevoke', { name: device.name }))) {
+        handleRevoke(device.device_id);
+      }
+    }
   };
 
   if (loading) {
@@ -131,11 +131,13 @@ export const DevicesSection = () => {
             <Smartphone className={styles.titleIcon} />
             {t('devices.title')}
           </h2>
-          <p className={styles.description}>
-            {t('devices.description')}
-          </p>
+          <p className={styles.description}>{t('devices.description')}</p>
         </div>
-        <button onClick={fetchDevices} className={styles.refreshButton} title={t('devices.refresh')}>
+        <button
+          onClick={fetchDevices}
+          className={styles.refreshButton}
+          title={t('devices.refresh')}
+        >
           <RefreshCw size={16} />
         </button>
       </div>
@@ -167,8 +169,12 @@ export const DevicesSection = () => {
                 <div className={styles.deviceInfo}>
                   <div className={styles.deviceName}>
                     {device.name}
-                    {device.is_current && <span className={styles.currentBadge}>{t('devices.thisDevice')}</span>}
-                    {!device.is_active && <span className={styles.inactiveBadge}>{t('devices.revoked')}</span>}
+                    {device.is_current && (
+                      <span className={styles.currentBadge}>{t('devices.thisDevice')}</span>
+                    )}
+                    {!device.is_active && (
+                      <span className={styles.inactiveBadge}>{t('devices.revoked')}</span>
+                    )}
                   </div>
                   <div className={styles.deviceMeta}>
                     <span>{getPlatformName(device.platform)}</span>
@@ -176,7 +182,9 @@ export const DevicesSection = () => {
                     <span>v{device.client_version}</span>
                   </div>
                   <div className={styles.deviceActivity}>
-                    <span>{t('devices.lastActive', { time: formatRelativeTime(device.last_active_at) })}</span>
+                    <span>
+                      {t('devices.lastActive', { time: formatRelativeTime(device.last_active_at) })}
+                    </span>
                     {device.last_location && (
                       <>
                         <span className={styles.separator}>&bull;</span>
@@ -250,9 +258,7 @@ export const DevicesSection = () => {
       )}
 
       <div className={styles.footer}>
-        <p className={styles.footerNote}>
-          {t('devices.footerNote')}
-        </p>
+        <p className={styles.footerNote}>{t('devices.footerNote')}</p>
       </div>
     </div>
   );

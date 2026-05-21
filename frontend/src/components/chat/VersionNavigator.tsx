@@ -6,6 +6,7 @@
  * Only renders when there are multiple versions (totalVersions > 1).
  */
 
+import { useTranslation } from 'react-i18next';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface VersionNavigatorProps {
@@ -19,6 +20,8 @@ export function VersionNavigator({
   totalVersions,
   onNavigate,
 }: VersionNavigatorProps) {
+  const { t } = useTranslation('chat');
+
   // Don't render if only one version
   if (totalVersions <= 1) return null;
 
@@ -38,7 +41,7 @@ export function VersionNavigator({
       <button
         onClick={() => onNavigate('prev')}
         disabled={!canGoPrev}
-        aria-label="Previous version"
+        aria-label={t('chat.versionNavigator.prevVersion')}
         style={{
           display: 'flex',
           alignItems: 'center',
@@ -86,7 +89,7 @@ export function VersionNavigator({
       <button
         onClick={() => onNavigate('next')}
         disabled={!canGoNext}
-        aria-label="Next version"
+        aria-label={t('chat.versionNavigator.nextVersion')}
         style={{
           display: 'flex',
           alignItems: 'center',

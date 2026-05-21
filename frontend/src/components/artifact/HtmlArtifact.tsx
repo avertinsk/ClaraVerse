@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ArtifactContainer } from './ArtifactContainer';
 
 interface HtmlArtifactProps {
@@ -9,6 +10,7 @@ interface HtmlArtifactProps {
 }
 
 export function HtmlArtifact({ content, url, title, filename }: HtmlArtifactProps) {
+  const { t } = useTranslation('artifacts');
   const [htmlContent, setHtmlContent] = useState<string>(content || '');
   const [loading, setLoading] = useState(!!url && !content);
   const [error, setError] = useState<string | null>(null);
@@ -37,7 +39,7 @@ export function HtmlArtifact({ content, url, title, filename }: HtmlArtifactProp
 
   return (
     <ArtifactContainer
-      title={title || filename || 'HTML Preview'}
+      title={title || filename || t('artifacts.htmlPreview')}
       downloadUrl={url}
       filename={filename}
       error={error}
@@ -58,7 +60,7 @@ export function HtmlArtifact({ content, url, title, filename }: HtmlArtifactProp
                 borderRightColor: 'var(--color-accent)',
               }}
             ></div>
-            <span className="text-sm">Loading HTML...</span>
+            <span className="text-sm">{t('artifacts.loadingHtml')}</span>
           </div>
         )}
 
@@ -73,7 +75,7 @@ export function HtmlArtifact({ content, url, title, filename }: HtmlArtifactProp
                 borderRadius: 'var(--radius-md)',
               }}
             >
-              Download link expired
+              {t('artifacts.downloadLinkExpired')}
             </div>
           ) : (
             // Full error message for other errors
@@ -85,7 +87,7 @@ export function HtmlArtifact({ content, url, title, filename }: HtmlArtifactProp
                 borderRadius: 'var(--radius-lg)',
               }}
             >
-              <p className="font-medium">Failed to load HTML</p>
+              <p className="font-medium">{t('artifacts.failedToLoadHtml')}</p>
               <p className="text-sm mt-1">{error}</p>
             </div>
           ))}
@@ -100,7 +102,7 @@ export function HtmlArtifact({ content, url, title, filename }: HtmlArtifactProp
               boxShadow: 'var(--shadow-sm)',
               background: 'white',
             }}
-            title={title || 'HTML Preview'}
+            title={title || t('artifacts.htmlPreview')}
           />
         )}
       </div>

@@ -160,7 +160,9 @@ export const CommandCenter = forwardRef<CommandCenterHandle, CommandCenterProps>
     const audioChunksRef = useRef<Blob[]>([]);
 
     const defaultGreeting = greeting || t('command.greeting');
-    const defaultPlaceholder = placeholder || (mode === 'centered' ? t('command.placeholder') : t('command.placeholderChat'));
+    const defaultPlaceholder =
+      placeholder ||
+      (mode === 'centered' ? t('command.placeholder') : t('command.placeholderChat'));
 
     // Expose focus method to parent components
     useImperativeHandle(ref, () => ({
@@ -542,7 +544,9 @@ export const CommandCenter = forwardRef<CommandCenterHandle, CommandCenterProps>
           });
 
           if (!response.ok) {
-            const error = await response.json().catch(() => ({ error: i18n.t('chat:command.transcriptionFailed') }));
+            const error = await response
+              .json()
+              .catch(() => ({ error: i18n.t('chat:command.transcriptionFailed') }));
             throw new Error(error.error || i18n.t('chat:command.transcriptionFailed'));
           }
 
@@ -565,7 +569,9 @@ export const CommandCenter = forwardRef<CommandCenterHandle, CommandCenterProps>
           }
         } catch (error) {
           console.error('Transcription error:', error);
-          alert(error instanceof Error ? error.message : i18n.t('chat:command.transcriptionFailed'));
+          alert(
+            error instanceof Error ? error.message : i18n.t('chat:command.transcriptionFailed')
+          );
         } finally {
           setIsTranscribing(false);
         }
@@ -642,11 +648,7 @@ export const CommandCenter = forwardRef<CommandCenterHandle, CommandCenterProps>
         className={cn(styles.container, isCentered ? styles.centered : styles.bottom, className)}
       >
         {/* Greeting - Only shown in centered mode */}
-        {isCentered && defaultGreeting && (
-          <div className={styles.greeting}>
-            {defaultGreeting}
-          </div>
-        )}
+        {isCentered && defaultGreeting && <div className={styles.greeting}>{defaultGreeting}</div>}
 
         {/* Content Container */}
         <div className={styles.contentWrapper}>

@@ -11,6 +11,7 @@
  */
 
 import { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   X,
@@ -58,6 +59,7 @@ export function ArtifactPreviewModal({
   onClose,
   onNavigateToChat,
 }: ArtifactPreviewModalProps) {
+  const { t } = useTranslation('artifacts');
   const [viewMode, setViewMode] = useState<'preview' | 'code'>('preview');
   const [showDownloadMenu, setShowDownloadMenu] = useState(false);
   const [hideControls, setHideControls] = useState(false);
@@ -189,7 +191,11 @@ export function ArtifactPreviewModal({
       setShowDownloadMenu(false);
     } catch (error) {
       console.error('Error exporting PNG:', error);
-      alert(`Failed to export PNG: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      alert(
+        t('artifacts.failedToExportPng', {
+          message: error instanceof Error ? error.message : t('common.unknown'),
+        })
+      );
     } finally {
       setHideControls(false);
     }
@@ -223,7 +229,11 @@ export function ArtifactPreviewModal({
               <IconComponent size={18} className={styles.artifactIcon} />
               <div className={styles.titleGroup}>
                 <h3 className={styles.title}>{artifact.title}</h3>
-                {chatTitle && <span className={styles.chatTitle}>from {chatTitle}</span>}
+                {chatTitle && (
+                  <span className={styles.chatTitle}>
+                    {t('artifacts.fromChat', { title: chatTitle })}
+                  </span>
+                )}
               </div>
             </div>
 
@@ -231,20 +241,20 @@ export function ArtifactPreviewModal({
               {/* Preview/Code Toggle */}
               {supportsCodeView && (
                 <div className={styles.viewToggle}>
-                  <Tooltip content="Preview" position="bottom">
+                  <Tooltip content={t('artifacts.preview')} position="bottom">
                     <button
                       className={`${styles.viewToggleButton} ${viewMode === 'preview' ? styles.viewToggleActive : ''}`}
                       onClick={() => setViewMode('preview')}
-                      aria-label="Preview mode"
+                      aria-label={t('artifacts.previewMode')}
                     >
                       <Eye size={16} />
                     </button>
                   </Tooltip>
-                  <Tooltip content="Code" position="bottom">
+                  <Tooltip content={t('artifacts.code')} position="bottom">
                     <button
                       className={`${styles.viewToggleButton} ${viewMode === 'code' ? styles.viewToggleActive : ''}`}
                       onClick={() => setViewMode('code')}
-                      aria-label="Code mode"
+                      aria-label={t('artifacts.codeMode')}
                     >
                       <Code size={16} />
                     </button>
@@ -254,11 +264,11 @@ export function ArtifactPreviewModal({
 
               {/* Download Menu */}
               <div className={styles.downloadMenu} ref={downloadMenuRef}>
-                <Tooltip content="Download" position="bottom">
+                <Tooltip content={t('artifacts.download')} position="bottom">
                   <button
                     className={styles.actionButton}
                     onClick={() => setShowDownloadMenu(!showDownloadMenu)}
-                    aria-label="Download options"
+                    aria-label={t('artifacts.downloadOptions')}
                   >
                     <Download size={18} />
                     <ChevronDown size={12} className={styles.chevron} />
@@ -270,7 +280,7 @@ export function ArtifactPreviewModal({
                     {artifact.type !== 'image' && (
                       <button className={styles.downloadOption} onClick={handleDownloadSource}>
                         <FileCode size={16} />
-                        <span>Download Source</span>
+                        <span>{t('artifacts.downloadSource')}</span>
                       </button>
                     )}
                     {(artifact.type === 'svg' ||
@@ -278,7 +288,7 @@ export function ArtifactPreviewModal({
                       artifact.type === 'image') && (
                       <button className={styles.downloadOption} onClick={handleDownloadPNG}>
                         <Image size={16} />
-                        <span>Download PNG</span>
+                        <span>{t('artifacts.downloadPng')}</span>
                       </button>
                     )}
                   </div>
@@ -287,32 +297,41 @@ export function ArtifactPreviewModal({
 
               {/* Open in Chat */}
               {chatId && onNavigateToChat && (
-                <Tooltip content="Open in Chat" position="bottom">
+                <Tooltip content={t('artifacts.openInChat')} position="bottom">
                   <button
                     className={styles.openInChatButton}
                     onClick={handleOpenInChat}
-                    aria-label="Open in chat"
+                    aria-label={t('artifacts.openInChat')}
                   >
                     <MessageSquare size={16} />
-                    <span className={styles.openInChatText}>Open in Chat</span>
+                    <span className={styles.openInChatText}>{t('artifacts.openInChat')}</span>
                   </button>
                 </Tooltip>
               )}
 
               {/* Fullscreen Toggle */}
-              <Tooltip content={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'} position="bottom">
+              <Tooltip
+                content={isFullscreen ? t('artifacts.exitFullscreen') : t('artifacts.fullscreen')}
+                position="bottom"
+              >
                 <button
                   className={styles.actionButton}
                   onClick={() => setIsFullscreen(!isFullscreen)}
-                  aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+                  aria-label={
+                    isFullscreen ? t('artifacts.exitFullscreen') : t('artifacts.enterFullscreen')
+                  }
                 >
                   {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
                 </button>
               </Tooltip>
 
               {/* Close */}
-              <Tooltip content="Close" position="bottom">
-                <button className={styles.actionButton} onClick={onClose} aria-label="Close">
+              <Tooltip content={t('common.actions.close')} position="bottom">
+                <button
+                  className={styles.actionButton}
+                  onClick={onClose}
+                  aria-label={t('common.actions.close')}
+                >
                   <X size={18} />
                 </button>
               </Tooltip>
@@ -336,7 +355,7 @@ export function ArtifactPreviewModal({
             ) : (
               <div className={styles.noRenderer}>
                 <FileCode size={48} />
-                <p>No renderer available for this artifact type</p>
+                <p>{t('artifacts.noRenderer')}</p>
               </div>
             )}
           </div>

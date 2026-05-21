@@ -143,9 +143,14 @@ export function SetupRequiredPanel({
                     <div className="flex items-center gap-3">
                       <Key size={18} className="text-red-400" />
                       <div className="text-left">
-                        <p className="text-sm font-medium text-white">{t('setupRequired.missingCredentials')}</p>
+                        <p className="text-sm font-medium text-white">
+                          {t('setupRequired.missingCredentials')}
+                        </p>
                         <p className="text-xs text-white/40">
-                          {missingSummary.length} {t('setupRequired.integrationsNeedKeys', { count: missingSummary.length })}
+                          {missingSummary.length}{' '}
+                          {t('setupRequired.integrationsNeedKeys', {
+                            count: missingSummary.length,
+                          })}
                         </p>
                       </div>
                     </div>
@@ -180,9 +185,11 @@ export function SetupRequiredPanel({
                                   <p className="text-sm font-medium text-white">
                                     {integration.name}
                                   </p>
-                                    <p className="text-xs text-white/40">
-                                      {t('setupRequired.usedByBlocks', { count: integration.blockCount })}
-                                    </p>
+                                  <p className="text-xs text-white/40">
+                                    {t('setupRequired.usedByBlocks', {
+                                      count: integration.blockCount,
+                                    })}
+                                  </p>
                                 </div>
                               </div>
                               <button
@@ -201,7 +208,9 @@ export function SetupRequiredPanel({
                             className="w-full flex items-center justify-center gap-2 p-3 rounded-xl bg-white/5 hover:bg-[var(--color-accent)]/10 text-white/40 hover:text-[var(--color-accent)] transition-colors"
                           >
                             <Key size={16} />
-                            <span className="text-sm font-medium">{t('setupRequired.openCredsManager')}</span>
+                            <span className="text-sm font-medium">
+                              {t('setupRequired.openCredsManager')}
+                            </span>
                           </button>
                         </div>
                       </motion.div>
@@ -222,9 +231,12 @@ export function SetupRequiredPanel({
                     <div className="flex items-center gap-3">
                       <Settings size={18} className="text-amber-400" />
                       <div className="text-left">
-                        <p className="text-sm font-medium text-white">{t('setupRequired.blockConfig')}</p>
+                        <p className="text-sm font-medium text-white">
+                          {t('setupRequired.blockConfig')}
+                        </p>
                         <p className="text-xs text-white/40">
-                          {otherIssues.length} {t('setupRequired.itemsNeedAttention', { count: otherIssues.length })}
+                          {otherIssues.length}{' '}
+                          {t('setupRequired.itemsNeedAttention', { count: otherIssues.length })}
                         </p>
                       </div>
                     </div>
@@ -297,7 +309,9 @@ export function SetupRequiredPanel({
               {validation.isValid && validation.issues.length === 0 && (
                 <div className="p-6 rounded-2xl bg-green-500/10 text-center">
                   <CheckCircle size={40} className="text-green-400 mx-auto mb-3" />
-                  <p className="text-lg font-medium text-green-300">{t('setupRequired.readyToRun')}</p>
+                  <p className="text-lg font-medium text-green-300">
+                    {t('setupRequired.readyToRun')}
+                  </p>
                   <p className="text-sm text-green-300/60 mt-1">
                     {t('setupRequired.allConfigured')}
                   </p>

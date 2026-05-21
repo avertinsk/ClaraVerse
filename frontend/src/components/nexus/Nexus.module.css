@@ -3938,7 +3938,9 @@
   background: rgba(233, 30, 99, 0.06);
   box-shadow: inset 0 0 0 1.5px var(--color-accent);
   border-radius: var(--radius-lg);
-  transition: background 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    background 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 /* ── Richer Task Card Additions ────────────────────────────────────── */
@@ -5299,12 +5301,17 @@
 }
 
 @keyframes floatingBarSpin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes floatingBarPulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
     box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
   }

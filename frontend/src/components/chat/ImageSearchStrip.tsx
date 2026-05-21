@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ExternalLink, ZoomIn, X } from 'lucide-react';
 import { getApiBaseUrl } from '@/lib/config';
 
@@ -27,6 +28,7 @@ const getProxyUrl = (url: string): string => {
 };
 
 export const ImageSearchStrip = ({ images, query }: ImageSearchStripProps) => {
+  const { t } = useTranslation('chat');
   const [selectedImage, setSelectedImage] = useState<ImageSearchResult | null>(null);
   const [loadErrors, setLoadErrors] = useState<Set<number>>(new Set());
   const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
@@ -115,7 +117,7 @@ export const ImageSearchStrip = ({ images, query }: ImageSearchStripProps) => {
                         fontSize: 'var(--text-xs)',
                       }}
                     >
-                      Loading...
+                      {t('common.loading')}
                     </div>
                   )}
                   <img
@@ -233,7 +235,7 @@ export const ImageSearchStrip = ({ images, query }: ImageSearchStripProps) => {
                   lineHeight: 1.4,
                 }}
               >
-                {selectedImage.title || 'Image'}
+                {selectedImage.title || t('chat.imageSearch.image')}
               </h4>
               {selectedImage.resolution && (
                 <span
@@ -265,7 +267,7 @@ export const ImageSearchStrip = ({ images, query }: ImageSearchStripProps) => {
                 }}
               >
                 <ExternalLink size={14} />
-                View source
+                {t('chat.imageSearch.viewSource')}
               </a>
             </div>
 

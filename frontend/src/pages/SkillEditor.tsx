@@ -489,7 +489,6 @@ export const SkillEditor = () => {
               </div>
             </div>
           </section>
-
         </main>
       </div>
     </div>

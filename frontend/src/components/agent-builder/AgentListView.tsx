@@ -148,14 +148,18 @@ export function AgentListView({ className }: AgentListViewProps) {
     <div className={`flex-1 flex flex-col bg-[var(--color-bg-primary)] ${className || ''}`}>
       {/* Header */}
       <header className="flex items-center justify-between px-8 py-6 border-b border-[var(--color-border)]">
-        <h1 className="text-2xl font-semibold text-[var(--color-text-primary)]">{t('agents.myAgents')}</h1>
+        <h1 className="text-2xl font-semibold text-[var(--color-text-primary)]">
+          {t('agents.myAgents')}
+        </h1>
         <button
           onClick={handleNewAgent}
           disabled={isCreating}
           className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-primary)] hover:bg-[var(--color-surface-hover)] transition-colors disabled:opacity-50"
         >
           {isCreating ? <Loader2 size={18} className="animate-spin" /> : <Plus size={18} />}
-          <span className="text-sm font-medium">{isCreating ? t('agentList.creating') : t('agentList.newAgent')}</span>
+          <span className="text-sm font-medium">
+            {isCreating ? t('agentList.creating') : t('agentList.newAgent')}
+          </span>
         </button>
       </header>
 
@@ -226,18 +230,21 @@ export function AgentListView({ className }: AgentListViewProps) {
               {searchQuery ? (
                 // When searching, show filtered count
                 <>
-                  {filteredAgents.length} {filteredAgents.length === 1 ? t('agentList.result') : t('agentList.results')}
+                  {filteredAgents.length}{' '}
+                  {filteredAgents.length === 1 ? t('agentList.result') : t('agentList.results')}
                 </>
               ) : (
                 // When not searching, show loaded count / total
                 <>
                   {pagination.total > 0 ? (
                     <>
-                      {backendAgents.length} {t('agentList.of')} {pagination.total} {t('agentList.agents')}
+                      {backendAgents.length} {t('agentList.of')} {pagination.total}{' '}
+                      {t('agentList.agents')}
                     </>
                   ) : (
                     <>
-                      {filteredAgents.length} {filteredAgents.length === 1 ? t('agentList.agent') : t('agentList.agents')}
+                      {filteredAgents.length}{' '}
+                      {filteredAgents.length === 1 ? t('agentList.agent') : t('agentList.agents')}
                     </>
                   )}
                 </>
@@ -279,9 +286,9 @@ export function AgentListView({ className }: AgentListViewProps) {
               className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-primary)] hover:bg-[var(--color-surface-hover)] transition-colors disabled:opacity-50"
             >
               {isCreating ? <Loader2 size={18} className="animate-spin" /> : <Plus size={18} />}
-                <span className="text-sm font-medium">
-                  {isCreating ? t('agentList.creating') : t('agentList.createAgent')}
-                </span>
+              <span className="text-sm font-medium">
+                {isCreating ? t('agentList.creating') : t('agentList.createAgent')}
+              </span>
             </button>
           </div>
         ) : (

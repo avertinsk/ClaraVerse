@@ -339,7 +339,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 type="button"
               >
                 <Plus size={20} strokeWidth={2} />
-                {!isCollapsed && <span className={styles.newChatLabel}>{t('sidebar.newChat')}</span>}
+                {!isCollapsed && (
+                  <span className={styles.newChatLabel}>{t('sidebar.newChat')}</span>
+                )}
               </button>
             </NavItemWithTooltip>
           </div>

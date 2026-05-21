@@ -34,8 +34,8 @@ export function TaskInputBar({ onSendMessage }: TaskInputBarProps) {
     return () => document.removeEventListener('mousedown', handler);
   }, [modelOpen]);
 
-  const selectedModel = models.find((m) => m.id === selectedModelId);
-  const visibleModels = models.filter((m) => m.is_visible !== false);
+  const selectedModel = models.find(m => m.id === selectedModelId);
+  const visibleModels = models.filter(m => m.is_visible !== false);
 
   const handleSubmit = useCallback(() => {
     const trimmed = input.trim();
@@ -73,15 +73,12 @@ export function TaskInputBar({ onSendMessage }: TaskInputBarProps) {
   );
 
   // Group models by provider
-  const grouped = visibleModels.reduce<Record<string, typeof visibleModels>>(
-    (acc, model) => {
-      const key = model.provider_name || 'Other';
-      if (!acc[key]) acc[key] = [];
-      acc[key].push(model);
-      return acc;
-    },
-    {}
-  );
+  const grouped = visibleModels.reduce<Record<string, typeof visibleModels>>((acc, model) => {
+    const key = model.provider_name || 'Other';
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(model);
+    return acc;
+  }, {});
 
   return (
     <div className={styles.inputSection}>
@@ -118,10 +115,7 @@ export function TaskInputBar({ onSendMessage }: TaskInputBarProps) {
                   <span className={styles.modelName}>
                     {selectedModel?.display_name || 'Select model'}
                   </span>
-                  <ChevronDown
-                    size={12}
-                    className={modelOpen ? styles.chevronUp : undefined}
-                  />
+                  <ChevronDown size={12} className={modelOpen ? styles.chevronUp : undefined} />
                 </button>
 
                 {modelOpen && (
@@ -129,7 +123,7 @@ export function TaskInputBar({ onSendMessage }: TaskInputBarProps) {
                     {Object.entries(grouped).map(([provider, providerModels]) => (
                       <div key={provider}>
                         <div className={styles.modelProviderLabel}>{provider}</div>
-                        {providerModels.map((model) => (
+                        {providerModels.map(model => (
                           <button
                             key={model.id}
                             className={`${styles.modelOption} ${
@@ -144,9 +138,7 @@ export function TaskInputBar({ onSendMessage }: TaskInputBarProps) {
                                 className={styles.modelFavicon}
                               />
                             )}
-                            <span className={styles.modelOptionName}>
-                              {model.display_name}
-                            </span>
+                            <span className={styles.modelOptionName}>{model.display_name}</span>
                             {model.id === selectedModelId && (
                               <Check size={14} className={styles.modelCheck} />
                             )}

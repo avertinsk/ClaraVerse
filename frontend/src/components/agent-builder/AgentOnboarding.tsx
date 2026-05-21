@@ -214,7 +214,8 @@ export function AgentOnboarding() {
     // Add a system message about the manual setup
     const assistantMsg = {
       role: 'assistant' as const,
-      content: 'Created a blank workflow with a webhook trigger. Click the + button to add more blocks!',
+      content:
+        'Created a blank workflow with a webhook trigger. Click the + button to add more blocks!',
       workflowUpdate: {
         action: 'create' as const,
         workflow: newWorkflow,
@@ -508,7 +509,9 @@ export function AgentOnboarding() {
               )}
               <span className="text-[var(--color-text-tertiary)]">{t('onboarding.using')}:</span>
               <span className="text-[var(--color-text-primary)] max-w-[200px] truncate">
-                {modelsLoading ? t('onboarding.loading') : selectedModel?.name || t('onboarding.selectModel')}
+                {modelsLoading
+                  ? t('onboarding.loading')
+                  : selectedModel?.name || t('onboarding.selectModel')}
               </span>
               <ChevronDown
                 size={16}

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, AlertCircle, CheckCircle } from 'lucide-react';
@@ -21,6 +22,7 @@ export function InteractivePromptModal({
   onSkip,
   isSubmitting = false,
 }: InteractivePromptModalProps) {
+  const { t } = useTranslation('chat');
   const [answers, setAnswers] = useState<Record<string, PromptAnswer>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set());
@@ -50,12 +52,12 @@ export function InteractivePromptModal({
       // Required validation
       if (question.required) {
         if (!answer || answer.value === '' || answer.value === null || answer.value === undefined) {
-          return 'This field is required';
+          return t('chat.interactivePrompt.fieldRequired');
         }
 
         // Check for empty arrays in multi-select
         if (Array.isArray(answer.value) && answer.value.length === 0) {
-          return 'Please select at least one option';
+          return t('chat.interactivePrompt.selectAtLeastOne');
         }
       }
 
@@ -71,17 +73,17 @@ export function InteractivePromptModal({
         const textValue = String(answer.value);
 
         if (validation.min_length && textValue.length < validation.min_length) {
-          return `Minimum length is ${validation.min_length} characters`;
+          return t('chat.interactivePrompt.minLength', { min: validation.min_length });
         }
 
         if (validation.max_length && textValue.length > validation.max_length) {
-          return `Maximum length is ${validation.max_length} characters`;
+          return t('chat.interactivePrompt.maxLength', { max: validation.max_length });
         }
 
         if (validation.pattern) {
           const regex = new RegExp(validation.pattern);
           if (!regex.test(textValue)) {
-            return 'Invalid format';
+            return t('chat.interactivePrompt.invalidFormat');
           }
         }
       }
@@ -90,11 +92,11 @@ export function InteractivePromptModal({
         const numValue = Number(answer.value);
 
         if (validation.min !== undefined && numValue < validation.min) {
-          return `Minimum value is ${validation.min}`;
+          return t('chat.interactivePrompt.minValue', { min: validation.min });
         }
 
         if (validation.max !== undefined && numValue > validation.max) {
-          return `Maximum value is ${validation.max}`;
+          return t('chat.interactivePrompt.maxValue', { max: validation.max });
         }
       }
 
@@ -355,13 +357,13 @@ export function InteractivePromptModal({
                       }}
                       disabled={isSubmitting}
                     />
-                    <span>Other</span>
+                    <span>{t('chat.interactivePrompt.other')}</span>
                   </label>
                   {isOtherSelected && (
                     <input
                       type="text"
                       className={`prompt-input prompt-other-input ${hasError ? 'error' : ''}`}
-                      placeholder="Please specify..."
+                      placeholder={t('chat.interactivePrompt.pleaseSpecify')}
                       value={answer?.otherText || ''}
                       onChange={e => handleOtherTextChange(question.id, e.target.value)}
                       onBlur={() => handleBlur(question.id)}
@@ -428,13 +430,13 @@ export function InteractivePromptModal({
                       }}
                       disabled={isSubmitting}
                     />
-                    <span>Other</span>
+                    <span>{t('chat.interactivePrompt.other')}</span>
                   </label>
                   {isOtherChecked && (
                     <input
                       type="text"
                       className={`prompt-input prompt-other-input ${hasError ? 'error' : ''}`}
-                      placeholder="Please specify..."
+                      placeholder={t('chat.interactivePrompt.pleaseSpecify')}
                       value={answer?.otherText || ''}
                       onChange={e => {
                         const otherText = e.target.value;
@@ -499,7 +501,7 @@ export function InteractivePromptModal({
                 className="prompt-close-button"
                 onClick={handleClose}
                 disabled={isSubmitting}
-                aria-label="Close"
+                aria-label={t('common.actions.close')}
               >
                 <X size={20} />
               </button>
@@ -523,7 +525,7 @@ export function InteractivePromptModal({
                     onClick={handleClose}
                     disabled={isSubmitting}
                   >
-                    Skip
+                    {t('chat.interactivePrompt.skip')}
                   </button>
                 )}
                 <button
@@ -534,12 +536,12 @@ export function InteractivePromptModal({
                   {isSubmitting ? (
                     <>
                       <span className="spinner" />
-                      Submitting...
+                      {t('chat.interactivePrompt.submitting')}
                     </>
                   ) : (
                     <>
                       <CheckCircle size={18} />
-                      Submit
+                      {t('chat.interactivePrompt.submit')}
                     </>
                   )}
                 </button>

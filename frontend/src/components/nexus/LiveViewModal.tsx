@@ -13,7 +13,10 @@ interface LiveViewModalProps {
   onSendFollowUp?: (content: string, taskId: string) => void;
 }
 
-const statusConfig: Record<NexusTaskStatus, { variant: 'default' | 'accent' | 'success' | 'warning' | 'error'; label: string }> = {
+const statusConfig: Record<
+  NexusTaskStatus,
+  { variant: 'default' | 'accent' | 'success' | 'warning' | 'error'; label: string }
+> = {
   pending: { variant: 'default', label: 'Queued' },
   executing: { variant: 'accent', label: 'Running' },
   waiting_input: { variant: 'warning', label: 'Waiting' },
@@ -27,20 +30,26 @@ export const LiveViewModal = memo(function LiveViewModal({
   onClose,
   onSendFollowUp,
 }: LiveViewModalProps) {
-  const tasks = useNexusStore((s) => s.tasks);
-  const daemons = useNexusStore((s) => s.daemons);
-  const conversation = useNexusStore((s) => s.conversation);
+  const tasks = useNexusStore(s => s.tasks);
+  const daemons = useNexusStore(s => s.daemons);
+  const conversation = useNexusStore(s => s.conversation);
   const [replyText, setReplyText] = useState('');
 
-  const task = useMemo(() => tasks.find((t) => t.id === taskId), [tasks, taskId]);
+  const task = useMemo(() => tasks.find(t => t.id === taskId), [tasks, taskId]);
   const taskDaemons = useMemo(
-    () => Object.values(daemons).filter((d) => d.task_id === taskId),
+    () => Object.values(daemons).filter(d => d.task_id === taskId),
     [daemons, taskId]
   );
 
-  const daemonIds = useMemo(() => new Set(taskDaemons.map((d) => d.id).filter(Boolean)), [taskDaemons]);
+  const daemonIds = useMemo(
+    () => new Set(taskDaemons.map(d => d.id).filter(Boolean)),
+    [taskDaemons]
+  );
   const taskConversation = useMemo(
-    () => conversation.filter((item) => item.taskId === taskId || (item.daemonId && daemonIds.has(item.daemonId))),
+    () =>
+      conversation.filter(
+        item => item.taskId === taskId || (item.daemonId && daemonIds.has(item.daemonId))
+      ),
     [conversation, taskId, daemonIds]
   );
 
@@ -88,13 +97,11 @@ export const LiveViewModal = memo(function LiveViewModal({
 
   return createPortal(
     <div className={styles.liveViewOverlay} onClick={onClose}>
-      <div className={styles.liveViewModal} onClick={(e) => e.stopPropagation()}>
+      <div className={styles.liveViewModal} onClick={e => e.stopPropagation()}>
         <div className={styles.liveViewHeader}>
           <div className={styles.liveViewHeaderLeft}>
             <Badge variant={cfg.variant}>{cfg.label}</Badge>
-            <span className={styles.liveViewTitle}>
-              {task.goal || task.prompt}
-            </span>
+            <span className={styles.liveViewTitle}>{task.goal || task.prompt}</span>
           </div>
           <button className={styles.liveViewCloseBtn} onClick={onClose}>
             <X size={18} />
@@ -103,7 +110,7 @@ export const LiveViewModal = memo(function LiveViewModal({
 
         <div className={styles.liveViewBody}>
           {taskDaemons.length > 0 ? (
-            taskDaemons.map((daemon) => {
+            taskDaemons.map(daemon => {
               const items = groupedByDaemon[daemon.id!] ?? [];
               if (items.length > 0) {
                 return (
@@ -121,9 +128,17 @@ export const LiveViewModal = memo(function LiveViewModal({
                     <Bot size={14} />
                     <span>{daemon.role_label || daemon.role || 'Daemon'}</span>
                     <Badge
-                      variant={daemon.status === 'executing' ? 'accent' : daemon.status === 'completed' ? 'success' : daemon.status === 'failed' ? 'error' : 'default'}
+                      variant={
+                        daemon.status === 'executing'
+                          ? 'accent'
+                          : daemon.status === 'completed'
+                            ? 'success'
+                            : daemon.status === 'failed'
+                              ? 'error'
+                              : 'default'
+                      }
                     >
-                      {daemon.status === 'executing' ? 'Running' : daemon.status ?? 'Idle'}
+                      {daemon.status === 'executing' ? 'Running' : (daemon.status ?? 'Idle')}
                     </Badge>
                   </div>
                   {daemon.task_summary && (
@@ -160,7 +175,7 @@ export const LiveViewModal = memo(function LiveViewModal({
             <input
               className={styles.liveViewReplyInput}
               value={replyText}
-              onChange={(e) => setReplyText(e.target.value)}
+              onChange={e => setReplyText(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={isWaiting ? 'Respond to daemon...' : 'Ask a follow-up...'}
             />

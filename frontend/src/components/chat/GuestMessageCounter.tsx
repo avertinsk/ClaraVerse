@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 interface GuestMessageCounterProps {
   used: number;
   max: number;
@@ -14,6 +16,7 @@ export const GuestMessageCounter: React.FC<GuestMessageCounterProps> = ({
   max,
   onSignIn,
 }) => {
+  const { t } = useTranslation('chat');
   const remaining = max - used;
 
   const getColor = () => {
@@ -53,7 +56,7 @@ export const GuestMessageCounter: React.FC<GuestMessageCounterProps> = ({
             background: getColor(),
           }}
         />
-        {remaining} of {max} free messages remaining
+        {remaining} {t('chat.guest.messagesRemaining', { max })}
         {used > 0 && onSignIn && (
           <>
             {' · '}
@@ -71,7 +74,7 @@ export const GuestMessageCounter: React.FC<GuestMessageCounterProps> = ({
                 textUnderlineOffset: '2px',
               }}
             >
-              Sign in to save chat
+              {t('chat.guest.signInToSave')}
             </button>
           </>
         )}

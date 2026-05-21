@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Modal } from '@/components/design-system/feedback/Modal/Modal';
 import { Eye, EyeOff } from 'lucide-react';
 import type { ProviderConfig, CreateProviderRequest } from '@/types/admin';
@@ -18,6 +19,7 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
   provider = null,
   mode = 'create',
 }) => {
+  const { t } = useTranslation('admin');
   const [formData, setFormData] = useState<CreateProviderRequest>({
     name: '',
     base_url: '',
@@ -77,30 +79,30 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
     const newErrors: Record<string, string> = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = 'Provider name is required';
+      newErrors.name = t('admin.providerForm.nameRequired');
     } else if (formData.name.length > 255) {
-      newErrors.name = 'Provider name must be less than 255 characters';
+      newErrors.name = t('admin.providerForm.nameTooLong');
     }
 
     if (!formData.base_url.trim()) {
-      newErrors.base_url = 'Base URL is required';
+      newErrors.base_url = t('admin.providerForm.baseUrlRequired');
     } else {
       try {
         new URL(formData.base_url);
       } catch {
-        newErrors.base_url = 'Must be a valid URL';
+        newErrors.base_url = t('admin.providerForm.validUrl');
       }
     }
 
     if (!formData.api_key.trim()) {
-      newErrors.api_key = 'API key is required';
+      newErrors.api_key = t('admin.providerForm.apiKeyRequired');
     }
 
     // Validate that only one special type is selected
     const specialTypes = [formData.audio_only, formData.image_only, formData.image_edit_only];
     const selectedCount = specialTypes.filter(Boolean).length;
     if (selectedCount > 1) {
-      newErrors.special_type = 'Only one special type can be selected';
+      newErrors.special_type = t('admin.providerForm.oneSpecialType');
     }
 
     setErrors(newErrors);
@@ -120,7 +122,7 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
       onClose();
     } catch (error) {
       console.error('Failed to save provider:', error);
-      setErrors({ submit: 'Failed to save provider. Please try again.' });
+      setErrors({ submit: t('admin.providerForm.saveFailed') });
     } finally {
       setIsSubmitting(false);
     }
@@ -142,7 +144,11 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={mode === 'create' ? 'Add New Provider' : `Edit Provider: ${provider?.name}`}
+      title={
+        mode === 'create'
+          ? t('admin.providerForm.addProvider')
+          : t('admin.providerForm.editProvider', { name: provider?.name })
+      }
       size="lg"
       closeOnBackdrop={false}
       closeOnEscape={true}
@@ -151,7 +157,7 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
         {/* Basic Information */}
         <div className="space-y-4">
           <h4 className="text-sm font-semibold text-[var(--color-text-primary)] uppercase tracking-wide">
-            Basic Information
+            {t('admin.providerForm.basicInfo')}
           </h4>
 
           <div>
@@ -159,7 +165,7 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
               htmlFor="name"
               className="block text-sm font-medium text-[var(--color-text-primary)] mb-1"
             >
-              Provider Name *
+              {t('admin.providerForm.providerName')} *
             </label>
             <input
               type="text"
@@ -169,7 +175,7 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
               className={`w-full px-3 py-2 bg-[var(--color-surface)] rounded-lg text-[var(--color-text-primary)] placeholder-[var(--color-text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] ${
                 errors.name ? 'border border-[var(--color-error)]' : ''
               }`}
-              placeholder="e.g., OpenAI, Anthropic, Custom Provider"
+              placeholder={t('admin.providerForm.namePlaceholder')}
               disabled={isSubmitting}
             />
             {errors.name && <p className="text-xs text-[var(--color-error)] mt-1">{errors.name}</p>}
@@ -180,7 +186,7 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
               htmlFor="base_url"
               className="block text-sm font-medium text-[var(--color-text-primary)] mb-1"
             >
-              API Base URL *
+              {t('admin.providerForm.apiBaseUrl')} *
             </label>
             <input
               type="text"
@@ -190,7 +196,7 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
               className={`w-full px-3 py-2 bg-[var(--color-surface)] rounded-lg text-[var(--color-text-primary)] placeholder-[var(--color-text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] ${
                 errors.base_url ? 'border border-[var(--color-error)]' : ''
               }`}
-              placeholder="https://api.provider.com/v1"
+              placeholder={t('admin.providerForm.baseUrlPlaceholder')}
               disabled={isSubmitting}
             />
             {errors.base_url && (
@@ -203,7 +209,7 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
               htmlFor="api_key"
               className="block text-sm font-medium text-[var(--color-text-primary)] mb-1"
             >
-              API Key *
+              {t('admin.providerForm.apiKey')} *
             </label>
             <div className="relative">
               <input
@@ -214,7 +220,7 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
                 className={`w-full px-3 py-2 pr-10 bg-[var(--color-surface)] rounded-lg text-[var(--color-text-primary)] placeholder-[var(--color-text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] ${
                   errors.api_key ? 'border border-[var(--color-error)]' : ''
                 }`}
-                placeholder="sk-..."
+                placeholder={t('admin.providerForm.apiKeyPlaceholder')}
                 disabled={isSubmitting}
               />
               <button
@@ -235,10 +241,10 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
         {/* Special Provider Types */}
         <div className="space-y-3">
           <h4 className="text-sm font-semibold text-[var(--color-text-primary)] uppercase tracking-wide">
-            Special Provider Type
+            {t('admin.providerForm.specialType')}
           </h4>
           <p className="text-xs text-[var(--color-text-tertiary)]">
-            Select if this provider handles a specific type of content (only one can be selected)
+            {t('admin.providerForm.specialTypeDesc')}
           </p>
 
           <div className="space-y-2">
@@ -252,10 +258,10 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
               />
               <div>
                 <div className="text-sm font-medium text-[var(--color-text-primary)]">
-                  Audio Only (Transcription)
+                  {t('admin.providerForm.audioOnly')}
                 </div>
                 <div className="text-xs text-[var(--color-text-tertiary)]">
-                  Provider handles audio transcription and speech-to-text
+                  {t('admin.providerForm.audioOnlyDesc')}
                 </div>
               </div>
             </label>
@@ -270,10 +276,10 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
               />
               <div>
                 <div className="text-sm font-medium text-[var(--color-text-primary)]">
-                  Image Generation
+                  {t('admin.providerForm.imageGeneration')}
                 </div>
                 <div className="text-xs text-[var(--color-text-tertiary)]">
-                  Provider generates images from text descriptions
+                  {t('admin.providerForm.imageGenerationDesc')}
                 </div>
               </div>
             </label>
@@ -288,10 +294,10 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
               />
               <div>
                 <div className="text-sm font-medium text-[var(--color-text-primary)]">
-                  Image Editing
+                  {t('admin.providerForm.imageEditing')}
                 </div>
                 <div className="text-xs text-[var(--color-text-tertiary)]">
-                  Provider edits or modifies existing images
+                  {t('admin.providerForm.imageEditingDesc')}
                 </div>
               </div>
             </label>
@@ -304,7 +310,7 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
         {/* Security & Settings */}
         <div className="space-y-3">
           <h4 className="text-sm font-semibold text-[var(--color-text-primary)] uppercase tracking-wide">
-            Security & Settings
+            {t('admin.providerForm.securitySettings')}
           </h4>
 
           <label className="flex items-center gap-3 p-3 bg-[var(--color-surface)] rounded-lg hover:bg-[var(--color-surface-hover)] transition-colors cursor-pointer">
@@ -317,10 +323,10 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
             />
             <div>
               <div className="text-sm font-medium text-[var(--color-text-primary)]">
-                Private/Secure Provider
+                {t('admin.providerForm.privateSecure')}
               </div>
               <div className="text-xs text-[var(--color-text-tertiary)]">
-                Provider runs in TEE or doesn't store data (enhanced privacy)
+                {t('admin.providerForm.privateSecureDesc')}
               </div>
             </div>
           </label>
@@ -334,9 +340,11 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
               disabled={isSubmitting}
             />
             <div>
-              <div className="text-sm font-medium text-[var(--color-text-primary)]">Enabled</div>
+              <div className="text-sm font-medium text-[var(--color-text-primary)]">
+                {t('admin.providerForm.enabled')}
+              </div>
               <div className="text-xs text-[var(--color-text-tertiary)]">
-                Provider is active and available for use
+                {t('admin.providerForm.enabledDesc')}
               </div>
             </div>
           </label>
@@ -345,7 +353,7 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
         {/* Optional Metadata */}
         <div className="space-y-4">
           <h4 className="text-sm font-semibold text-[var(--color-text-primary)] uppercase tracking-wide">
-            Optional Metadata
+            {t('admin.providerForm.optionalMetadata')}
           </h4>
 
           <div>
@@ -353,7 +361,7 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
               htmlFor="default_model"
               className="block text-sm font-medium text-[var(--color-text-primary)] mb-1"
             >
-              Default Model
+              {t('admin.providerForm.defaultModel')}
             </label>
             <input
               type="text"
@@ -361,7 +369,7 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
               value={formData.default_model || ''}
               onChange={e => setFormData({ ...formData, default_model: e.target.value })}
               className="w-full px-3 py-2 bg-[var(--color-surface)] rounded-lg text-[var(--color-text-primary)] placeholder-[var(--color-text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
-              placeholder="gpt-4, claude-3-opus, etc."
+              placeholder={t('admin.providerForm.defaultModelPlaceholder')}
               disabled={isSubmitting}
             />
           </div>
@@ -371,7 +379,7 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
               htmlFor="favicon"
               className="block text-sm font-medium text-[var(--color-text-primary)] mb-1"
             >
-              Favicon URL
+              {t('admin.providerForm.faviconUrl')}
             </label>
             <input
               type="text"
@@ -379,7 +387,7 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
               value={formData.favicon || ''}
               onChange={e => setFormData({ ...formData, favicon: e.target.value })}
               className="w-full px-3 py-2 bg-[var(--color-surface)] rounded-lg text-[var(--color-text-primary)] placeholder-[var(--color-text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
-              placeholder="https://example.com/icon.png"
+              placeholder={t('admin.providerForm.faviconPlaceholder')}
               disabled={isSubmitting}
             />
           </div>
@@ -389,14 +397,14 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
               htmlFor="system_prompt"
               className="block text-sm font-medium text-[var(--color-text-primary)] mb-1"
             >
-              System Prompt
+              {t('admin.providerForm.systemPrompt')}
             </label>
             <textarea
               id="system_prompt"
               value={formData.system_prompt || ''}
               onChange={e => setFormData({ ...formData, system_prompt: e.target.value })}
               className="w-full px-3 py-2 bg-[var(--color-surface)] rounded-lg text-[var(--color-text-primary)] placeholder-[var(--color-text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] resize-none"
-              placeholder="Optional system prompt to prepend to all requests"
+              placeholder={t('admin.providerForm.systemPromptPlaceholder')}
               rows={3}
               disabled={isSubmitting}
             />
@@ -417,14 +425,18 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
             disabled={isSubmitting}
             className="px-4 py-2 text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] bg-[var(--color-surface)] hover:bg-[var(--color-surface-hover)] rounded-lg transition-colors disabled:opacity-50"
           >
-            Cancel
+            {t('common.actions.cancel')}
           </button>
           <button
             type="submit"
             disabled={isSubmitting}
             className="px-4 py-2 text-sm font-medium text-white bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isSubmitting ? 'Saving...' : mode === 'create' ? 'Create Provider' : 'Save Changes'}
+            {isSubmitting
+              ? t('admin.providerForm.saving')
+              : mode === 'create'
+                ? t('admin.providerForm.createProvider')
+                : t('admin.providerForm.saveChanges')}
           </button>
         </div>
       </form>

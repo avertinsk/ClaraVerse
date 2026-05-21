@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { ArtifactContainer } from './ArtifactContainer';
@@ -17,6 +18,7 @@ interface PdfArtifactProps {
 }
 
 export function PdfArtifact({ url, title, filename }: PdfArtifactProps) {
+  const { t } = useTranslation('artifacts');
   const [numPages, setNumPages] = useState<number>(0);
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [loading, setLoading] = useState(true);
@@ -60,7 +62,7 @@ export function PdfArtifact({ url, title, filename }: PdfArtifactProps) {
           (e.currentTarget.style.background = 'var(--color-surface-hover)')
         }
         onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-        aria-label="Previous page"
+        aria-label={t('artifacts.prevPage')}
       >
         <ChevronLeft className="w-4 h-4" />
       </button>
@@ -82,7 +84,7 @@ export function PdfArtifact({ url, title, filename }: PdfArtifactProps) {
           (e.currentTarget.style.background = 'var(--color-surface-hover)')
         }
         onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-        aria-label="Next page"
+        aria-label={t('artifacts.nextPage')}
       >
         <ChevronRight className="w-4 h-4" />
       </button>
@@ -91,7 +93,7 @@ export function PdfArtifact({ url, title, filename }: PdfArtifactProps) {
 
   return (
     <ArtifactContainer
-      title={title || filename || 'PDF Preview'}
+      title={title || filename || t('artifacts.pdfPreview')}
       downloadUrl={url}
       filename={filename}
       toolbar={toolbar}
@@ -114,7 +116,7 @@ export function PdfArtifact({ url, title, filename }: PdfArtifactProps) {
                   borderRightColor: 'var(--color-accent)',
                 }}
               ></div>
-              <span className="text-sm">Loading PDF...</span>
+              <span className="text-sm">{t('artifacts.loadingPdf')}</span>
             </div>
           )}
 
@@ -129,7 +131,7 @@ export function PdfArtifact({ url, title, filename }: PdfArtifactProps) {
                   borderRadius: 'var(--radius-md)',
                 }}
               >
-                Download link expired
+                {t('artifacts.downloadLinkExpired')}
               </div>
             ) : (
               // Full error message for other errors
@@ -141,7 +143,7 @@ export function PdfArtifact({ url, title, filename }: PdfArtifactProps) {
                   borderRadius: 'var(--radius-lg)',
                 }}
               >
-                <p className="font-medium">Failed to load PDF</p>
+                <p className="font-medium">{t('artifacts.failedToLoadPdf')}</p>
                 <p className="text-sm mt-1">{error}</p>
               </div>
             ))}

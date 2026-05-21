@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FileText, FileSpreadsheet, FileJson, X, ZoomIn, AlertCircle } from 'lucide-react';
 import type {
   Attachment,
@@ -20,6 +21,7 @@ interface CachedImageProps {
 }
 
 const CachedImage = ({ imageAttachment, onClickLightbox }: CachedImageProps) => {
+  const { t } = useTranslation('chat');
   // Check if URL is already absolute (from backend tools)
   const isAbsoluteUrl =
     imageAttachment.url.startsWith('http://') || imageAttachment.url.startsWith('https://');
@@ -81,10 +83,10 @@ const CachedImage = ({ imageAttachment, onClickLightbox }: CachedImageProps) => 
         >
           <AlertCircle size={32} />
           <div style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--font-medium)' }}>
-            Image Expired
+            {t('chat.messageAttachment.imageExpired')}
           </div>
           <div style={{ fontSize: 'var(--text-xs)', opacity: 0.8 }}>
-            {imageAttachment.filename || 'File no longer available'}
+            {imageAttachment.filename || t('chat.messageAttachment.fileNotAvailable')}
           </div>
         </div>
       ) : loading ? (
@@ -98,13 +100,13 @@ const CachedImage = ({ imageAttachment, onClickLightbox }: CachedImageProps) => 
             color: 'var(--color-text-secondary)',
           }}
         >
-          Loading...
+          {t('common.loading')}
         </div>
       ) : imageUrl ? (
         <>
           <img
             src={imageUrl}
-            alt={imageAttachment.filename || 'Uploaded image'}
+            alt={imageAttachment.filename || t('chat.messageAttachment.uploadedImage')}
             style={{
               width: '100%',
               height: '100%',
@@ -154,10 +156,10 @@ const CachedImage = ({ imageAttachment, onClickLightbox }: CachedImageProps) => 
         >
           <AlertCircle size={32} />
           <div style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--font-medium)' }}>
-            Image Unavailable
+            {t('chat.messageAttachment.imageUnavailable')}
           </div>
           <div style={{ fontSize: 'var(--text-xs)', opacity: 0.8 }}>
-            {imageAttachment.filename || 'File no longer available'}
+            {imageAttachment.filename || t('chat.messageAttachment.fileNotAvailable')}
           </div>
         </div>
       )}
@@ -170,6 +172,7 @@ interface MessageAttachmentProps {
 }
 
 export const MessageAttachment = ({ attachments }: MessageAttachmentProps) => {
+  const { t } = useTranslation('chat');
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
   if (!attachments || attachments.length === 0) {
@@ -238,8 +241,8 @@ export const MessageAttachment = ({ attachments }: MessageAttachmentProps) => {
                         wordBreak: 'break-word',
                       }}
                     >
-                      {docAttachment.filename || 'Document'}
-                      {isExpired && ' (Expired)'}
+                      {docAttachment.filename || t('chat.messageAttachment.document')}
+                      {isExpired && ` (${t('chat.messageAttachment.expired')})`}
                     </div>
                     <div
                       style={{
@@ -249,7 +252,7 @@ export const MessageAttachment = ({ attachments }: MessageAttachmentProps) => {
                       }}
                     >
                       {isExpired
-                        ? 'File expired and no longer available'
+                        ? t('chat.messageAttachment.fileExpired')
                         : `PDF • ${formatFileSize(docAttachment.size)}`}
                     </div>
                   </div>
@@ -318,8 +321,9 @@ export const MessageAttachment = ({ attachments }: MessageAttachmentProps) => {
               if (mimeType.includes('spreadsheet') || filename.endsWith('.xlsx')) return 'Excel';
               if (mimeType === 'application/vnd.ms-excel' || filename.endsWith('.xls'))
                 return 'Excel';
-              if (mimeType === 'text/plain' || filename.endsWith('.txt')) return 'Text';
-              return 'Data';
+              if (mimeType === 'text/plain' || filename.endsWith('.txt'))
+                return t('chat.messageAttachment.text');
+              return t('chat.messageAttachment.data');
             };
 
             return (
@@ -358,8 +362,8 @@ export const MessageAttachment = ({ attachments }: MessageAttachmentProps) => {
                         wordBreak: 'break-word',
                       }}
                     >
-                      {dataAttachment.filename || 'Data File'}
-                      {isExpired && ' (Expired)'}
+                      {dataAttachment.filename || t('chat.messageAttachment.dataFile')}
+                      {isExpired && ` (${t('chat.messageAttachment.expired')})`}
                     </div>
                     <div
                       style={{
@@ -369,7 +373,7 @@ export const MessageAttachment = ({ attachments }: MessageAttachmentProps) => {
                       }}
                     >
                       {isExpired
-                        ? 'File expired and no longer available'
+                        ? t('chat.messageAttachment.fileExpired')
                         : `${getFileTypeLabel()} • ${formatFileSize(dataAttachment.size)}`}
                     </div>
                   </div>
@@ -429,7 +433,7 @@ export const MessageAttachment = ({ attachments }: MessageAttachmentProps) => {
           </button>
           <img
             src={lightboxImage}
-            alt="Full size preview"
+            alt={t('chat.messageAttachment.fullSizePreview')}
             style={{
               maxWidth: '100%',
               maxHeight: '100%',

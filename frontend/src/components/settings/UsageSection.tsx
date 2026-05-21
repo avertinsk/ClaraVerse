@@ -42,7 +42,7 @@ function formatResetTime(resetAt: string): string {
   }
 
   // 7+ days: show day of week and time
-    return `Resets ${date.toLocaleDateString('en-US', { weekday: 'short' })} ${date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
+  return `Resets ${date.toLocaleDateString('en-US', { weekday: 'short' })} ${date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
 }
 
 // Helper to format relative time
@@ -304,9 +304,7 @@ export const UsageSection: React.FC = () => {
       <header className="usage-header">
         <div className="usage-title-section">
           <h1 className="usage-main-title">{t('usage.title')}</h1>
-          <p className="usage-subtitle">
-            {t('usage.subtitle')}
-          </p>
+          <p className="usage-subtitle">{t('usage.subtitle')}</p>
         </div>
       </header>
 
@@ -379,7 +377,9 @@ export const UsageSection: React.FC = () => {
             ))}
           </div>
           <p style={{ fontSize: '12px', color: '#9CA3AF', marginTop: '12px' }}>
-            {t('usage.memoryDesc', { score: memoryStats ? memoryStats.avg_score.toFixed(2) : 'N/A' })}
+            {t('usage.memoryDesc', {
+              score: memoryStats ? memoryStats.avg_score.toFixed(2) : 'N/A',
+            })}
           </p>
         </section>
       )}
@@ -388,9 +388,7 @@ export const UsageSection: React.FC = () => {
         <div style={{ padding: '24px', textAlign: 'center', color: '#9CA3AF' }}>
           <Brain size={24} style={{ margin: '0 auto 8px', opacity: 0.5 }} />
           <p style={{ fontSize: '14px' }}>{t('usage.noMemories')}</p>
-          <p style={{ fontSize: '12px', marginTop: '4px' }}>
-            {t('usage.memoriesExtracted')}
-          </p>
+          <p style={{ fontSize: '12px', marginTop: '4px' }}>{t('usage.memoriesExtracted')}</p>
         </div>
       )}
 
@@ -440,22 +438,20 @@ export const UsageSection: React.FC = () => {
             <div className="p-6 space-y-5 text-sm overflow-y-auto max-h-[calc(85vh-80px)]">
               {/* How it works */}
               <section>
-                <h3 className="text-sm font-semibold mb-2 text-gray-300">{t('usage.howItWorks')}</h3>
-                <p className="text-gray-400 leading-relaxed text-xs">
-                  {t('usage.howItWorksDesc')}
-                </p>
+                <h3 className="text-sm font-semibold mb-2 text-gray-300">
+                  {t('usage.howItWorks')}
+                </h3>
+                <p className="text-gray-400 leading-relaxed text-xs">{t('usage.howItWorksDesc')}</p>
               </section>
 
               {/* Extraction */}
               <section>
-                <h3 className="text-sm font-semibold mb-2 text-gray-300">{t('usage.extraction')}</h3>
+                <h3 className="text-sm font-semibold mb-2 text-gray-300">
+                  {t('usage.extraction')}
+                </h3>
                 <div className="space-y-2 text-gray-400">
-                  <p className="text-xs">
-                    {t('usage.extractionDesc')}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {t('usage.categories')}
-                  </p>
+                  <p className="text-xs">{t('usage.extractionDesc')}</p>
+                  <p className="text-xs text-gray-500">{t('usage.categories')}</p>
                 </div>
               </section>
 
@@ -463,9 +459,7 @@ export const UsageSection: React.FC = () => {
               <section>
                 <h3 className="text-sm font-semibold mb-2 text-gray-300">{t('usage.selection')}</h3>
                 <div className="space-y-2 text-gray-400">
-                  <p className="text-xs">
-                    {t('usage.selectionDesc')}
-                  </p>
+                  <p className="text-xs">{t('usage.selectionDesc')}</p>
                   <p className="text-xs text-gray-500">{t('usage.defaultTop5')}</p>
                 </div>
               </section>
@@ -474,53 +468,53 @@ export const UsageSection: React.FC = () => {
               <section>
                 <h3 className="text-sm font-semibold mb-2 text-gray-300">{t('usage.decay')}</h3>
                 <div className="space-y-3 text-gray-400">
-                  <p className="text-xs">
-                    {t('usage.decayDesc')}
-                  </p>
+                  <p className="text-xs">{t('usage.decayDesc')}</p>
                   <div
                     style={{ backgroundColor: '#0d0d0d' }}
                     className="rounded-lg p-3 font-mono text-xs"
                   >
-                    <p className="text-gray-300">
-                      {t('usage.scoreFormula')}
-                    </p>
+                    <p className="text-gray-300">{t('usage.scoreFormula')}</p>
                   </div>
                   <div className="grid grid-cols-3 gap-2 text-xs">
                     <div style={{ backgroundColor: '#0d0d0d' }} className="rounded-lg p-2.5">
-                      <p className="text-gray-200 font-medium mb-1.5 text-xs">{t('usage.recency')}</p>
+                      <p className="text-gray-200 font-medium mb-1.5 text-xs">
+                        {t('usage.recency')}
+                      </p>
                       <p className="text-gray-500 text-xs">{t('usage.recent')}</p>
                       <p className="text-gray-500 text-xs">{t('usage.oneWeek')}</p>
                       <p className="text-gray-500 text-xs">{t('usage.oneMonth')}</p>
                     </div>
                     <div style={{ backgroundColor: '#0d0d0d' }} className="rounded-lg p-2.5">
-                      <p className="text-gray-200 font-medium mb-1.5 text-xs">{t('usage.frequency')}</p>
+                      <p className="text-gray-200 font-medium mb-1.5 text-xs">
+                        {t('usage.frequency')}
+                      </p>
                       <p className="text-gray-500 text-xs">{t('usage.zeroUses')}</p>
                       <p className="text-gray-500 text-xs">{t('usage.tenUses')}</p>
                       <p className="text-gray-500 text-xs">{t('usage.twentyPlusUses')}</p>
                     </div>
                     <div style={{ backgroundColor: '#0d0d0d' }} className="rounded-lg p-2.5">
-                      <p className="text-gray-200 font-medium mb-1.5 text-xs">{t('usage.engagement')}</p>
+                      <p className="text-gray-200 font-medium mb-1.5 text-xs">
+                        {t('usage.engagement')}
+                      </p>
                       <p className="text-gray-500 text-xs">{t('usage.high')}</p>
                       <p className="text-gray-500 text-xs">{t('usage.med')}</p>
                       <p className="text-gray-500 text-xs">{t('usage.low')}</p>
                     </div>
                   </div>
-                  <p className="text-xs text-gray-500">
-                    {t('usage.archivedNote')}
-                  </p>
+                  <p className="text-xs text-gray-500">{t('usage.archivedNote')}</p>
                 </div>
               </section>
 
               {/* Privacy */}
               <section>
-                <h3 className="text-sm font-semibold mb-2 text-gray-300">{t('usage.privacySecurity')}</h3>
+                <h3 className="text-sm font-semibold mb-2 text-gray-300">
+                  {t('usage.privacySecurity')}
+                </h3>
                 <div className="space-y-2 text-gray-400">
                   <ul className="space-y-1.5">
                     <li className="flex items-start gap-2 text-xs">
                       <span className="text-gray-300/50 mt-0.5">•</span>
-                      <span>
-                        {t('usage.encrypted')}
-                      </span>
+                      <span>{t('usage.encrypted')}</span>
                     </li>
                     <li className="flex items-start gap-2 text-xs">
                       <span className="text-gray-300/50 mt-0.5">•</span>
@@ -536,9 +530,10 @@ export const UsageSection: React.FC = () => {
 
               {/* Credit Info */}
               <section style={{ backgroundColor: '#0d0d0d' }} className="rounded-lg p-3">
-                  <p className="text-xs text-gray-400">
-                    <span className="text-gray-300 font-medium">{t('usage.creditUsage')}:</span> {t('usage.creditUsageDesc')}
-                  </p>
+                <p className="text-xs text-gray-400">
+                  <span className="text-gray-300 font-medium">{t('usage.creditUsage')}:</span>{' '}
+                  {t('usage.creditUsageDesc')}
+                </p>
               </section>
             </div>
           </div>

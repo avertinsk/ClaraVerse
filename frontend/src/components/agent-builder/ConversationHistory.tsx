@@ -128,7 +128,9 @@ export function ConversationHistory({ className, onNewConversation }: Conversati
               size={32}
               className="mx-auto mb-2 text-[var(--color-text-tertiary)] opacity-50"
             />
-            <p className="text-xs text-[var(--color-text-tertiary)]">{t('agents.noConversations')}</p>
+            <p className="text-xs text-[var(--color-text-tertiary)]">
+              {t('agents.noConversations')}
+            </p>
             <p className="text-[10px] text-[var(--color-text-tertiary)] mt-1 opacity-75">
               {t('convHistory.startChatting')}
             </p>
@@ -163,7 +165,8 @@ export function ConversationHistory({ className, onNewConversation }: Conversati
                     <div className="mt-1 flex items-center gap-1.5">
                       <MessageSquare size={10} className="text-[var(--color-text-tertiary)]" />
                       <span className="text-[10px] text-[var(--color-text-tertiary)]">
-                        {conv.message_count} {conv.message_count !== 1 ? t('agents.messages') : t('agents.message')}
+                        {conv.message_count}{' '}
+                        {conv.message_count !== 1 ? t('agents.messages') : t('agents.message')}
                       </span>
                     </div>
                   </div>

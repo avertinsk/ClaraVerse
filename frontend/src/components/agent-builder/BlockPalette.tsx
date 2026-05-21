@@ -530,7 +530,9 @@ export function BlockPalette({ className, onClose }: BlockPaletteProps) {
       {/* Header */}
       <div className="px-3 py-2 border-b border-[var(--color-border)]">
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">{t('blockPalette.title')}</h3>
+          <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">
+            {t('blockPalette.title')}
+          </h3>
           {onClose && (
             <button
               onClick={onClose}
@@ -559,9 +561,7 @@ export function BlockPalette({ className, onClose }: BlockPaletteProps) {
       {/* No workflow banner */}
       {!hasWorkflow && (
         <div className="mx-3 mt-2 p-2 rounded-md bg-amber-500/10 border border-amber-500/20">
-          <p className="text-[11px] text-amber-400">
-            {t('blockPalette.noWorkflow')}
-          </p>
+          <p className="text-[11px] text-amber-400">{t('blockPalette.noWorkflow')}</p>
         </div>
       )}
 

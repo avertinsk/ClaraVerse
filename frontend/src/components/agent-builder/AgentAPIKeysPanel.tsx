@@ -128,7 +128,9 @@ export function AgentAPIKeysPanel({ agentId, className }: AgentAPIKeysPanelProps
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-sm font-medium text-[var(--color-text-primary)]">{t('apiKeys.title')}</h3>
+          <h3 className="text-sm font-medium text-[var(--color-text-primary)]">
+            {t('apiKeys.title')}
+          </h3>
           <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">
             {t('apiKeys.subtitle')}
           </p>

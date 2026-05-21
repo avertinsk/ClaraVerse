@@ -84,11 +84,7 @@
     "Evening! Still going strong?",
     "Hey! Winding down or second wind?"
   ],
-  "greeting.anonymous.night": [
-    "Good evening!",
-    "Night owl mode?",
-    "Late {day} vibes! What's up?"
-  ],
+  "greeting.anonymous.night": ["Good evening!", "Night owl mode?", "Late {day} vibes! What's up?"],
   "greeting.anonymous.lateNight": [
     "Whoa! Night owl, huh?",
     "Still up? Let's make it count!",

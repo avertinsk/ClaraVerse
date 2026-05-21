@@ -10,14 +10,14 @@ import styles from './Nexus.module.css';
  * This gives users a conversational feel for simple questions.
  */
 export const QuickChatStrip = memo(function QuickChatStrip() {
-  const conversation = useNexusStore((s) => s.conversation);
-  const tasks = useNexusStore((s) => s.tasks);
-  const isProcessing = useNexusStore((s) => s.isProcessing);
+  const conversation = useNexusStore(s => s.conversation);
+  const tasks = useNexusStore(s => s.tasks);
+  const isProcessing = useNexusStore(s => s.isProcessing);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Build a set of task IDs that are quick-mode
   const quickTaskIds = useMemo(
-    () => new Set(tasks.filter((t) => t.mode === 'quick').map((t) => t.id)),
+    () => new Set(tasks.filter(t => t.mode === 'quick').map(t => t.id)),
     [tasks]
   );
 
@@ -27,7 +27,7 @@ export const QuickChatStrip = memo(function QuickChatStrip() {
   // - cortex_thinking (brief thinking indicator)
   // Exclude: daemon_activity, task_result, error (those belong to the kanban)
   const quickItems = useMemo(() => {
-    const items = conversation.filter((item) => {
+    const items = conversation.filter(item => {
       if (item.type === 'user_message') return true;
       if (item.type === 'cortex_thinking') return true;
       if (item.type === 'cortex_response') {
@@ -62,7 +62,7 @@ export const QuickChatStrip = memo(function QuickChatStrip() {
 
   return (
     <div className={styles.quickChatStrip} ref={scrollRef}>
-      {quickItems.map((item) => {
+      {quickItems.map(item => {
         if (item.type === 'user_message') {
           return (
             <div key={item.id} className={styles.quickChatBubbleRow}>

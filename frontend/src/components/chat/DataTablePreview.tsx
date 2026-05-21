@@ -5,6 +5,7 @@
  * Shows headers, first few rows, and metadata (row count).
  */
 
+import { useTranslation } from 'react-i18next';
 import { Download, Maximize2 } from 'lucide-react';
 import type { DataPreview } from '@/types/websocket';
 import { Tooltip } from '@/components/design-system/Tooltip/Tooltip';
@@ -23,6 +24,7 @@ export const DataTablePreview = ({
   onDownload,
   onExpand,
 }: DataTablePreviewProps) => {
+  const { t } = useTranslation('chat');
   // Extract title from filename (remove extension)
   const title = filename.replace(/\.[^/.]+$/, '').replace(/_/g, ' ');
 
@@ -33,14 +35,14 @@ export const DataTablePreview = ({
         <h3 className={styles.title}>{title}</h3>
         <div className={styles.actions}>
           {onDownload && (
-            <Tooltip content="Download file" position="top">
+            <Tooltip content={t('chat.dataTable.downloadFile')} position="top">
               <button onClick={onDownload} className={styles.actionButton}>
                 <Download size={16} />
               </button>
             </Tooltip>
           )}
           {onExpand && (
-            <Tooltip content="Expand view" position="top">
+            <Tooltip content={t('chat.dataTable.expandView')} position="top">
               <button onClick={onExpand} className={styles.actionButton}>
                 <Maximize2 size={16} />
               </button>
@@ -80,7 +82,10 @@ export const DataTablePreview = ({
       {/* Footer with metadata */}
       {preview.row_count > preview.rows.length && (
         <div className={styles.footer}>
-          Showing {preview.rows.length} of {preview.row_count} rows
+          {t('chat.dataTable.showingRows', {
+            shown: preview.rows.length,
+            total: preview.row_count,
+          })}
         </div>
       )}
     </div>

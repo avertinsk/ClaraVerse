@@ -185,7 +185,8 @@ export const authService = {
   async resetPassword(_email: string): Promise<{ error: AuthError | null }> {
     return {
       error: {
-        message: 'Password reset not yet implemented. Contact your administrator to reset your password.',
+        message:
+          'Password reset not yet implemented. Contact your administrator to reset your password.',
       },
     };
   },

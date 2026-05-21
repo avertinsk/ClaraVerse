@@ -105,7 +105,10 @@ export const RoutinesView = memo(function RoutinesView() {
           <div className={styles.routinesEmpty}>
             <CalendarClock size={32} style={{ opacity: 0.3 }} />
             <p>No routines yet</p>
-            <span>Create a routine to run tasks on a schedule — daily briefings, weekly reports, automated monitoring.</span>
+            <span>
+              Create a routine to run tasks on a schedule — daily briefings, weekly reports,
+              automated monitoring.
+            </span>
             <button
               className={styles.routinesNewBtn}
               onClick={() => {
@@ -118,7 +121,7 @@ export const RoutinesView = memo(function RoutinesView() {
             </button>
           </div>
         ) : (
-          routines.map((routine) => (
+          routines.map(routine => (
             <RoutineCard
               key={routine.id}
               routine={routine}
@@ -132,9 +135,7 @@ export const RoutinesView = memo(function RoutinesView() {
         )}
       </div>
 
-      {showBuilder && (
-        <RoutineBuilder editingId={editingId} onClose={handleCloseBuilder} />
-      )}
+      {showBuilder && <RoutineBuilder editingId={editingId} onClose={handleCloseBuilder} />}
     </div>
   );
 });

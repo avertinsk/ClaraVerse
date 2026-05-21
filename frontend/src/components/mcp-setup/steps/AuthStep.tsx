@@ -55,7 +55,7 @@ export const AuthStep = ({ initialCode, userEmail, onAuthorized }: AuthStepProps
         setIsSubmitting(false);
       }
     },
-    [code, onAuthorized],
+    [code, onAuthorized]
   );
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

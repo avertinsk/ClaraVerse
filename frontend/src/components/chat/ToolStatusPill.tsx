@@ -1,4 +1,5 @@
 import { memo, useState, useMemo, useCallback, type ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, ChevronRight, CheckCircle2 } from 'lucide-react';
 import type { ToolCall } from '@/types/chat';
@@ -80,6 +81,7 @@ export const ToolStatusPill = memo(function ToolStatusPill({
   renderToolContent: _renderToolContent,
   renderCompletedToolContent: _renderCompletedToolContent,
 }: ToolStatusPillProps) {
+  const { t } = useTranslation('chat');
   const [isExpanded, setIsExpanded] = useState(false);
   const [expandedToolIds, setExpandedToolIds] = useState<Set<string>>(new Set());
 
@@ -161,7 +163,8 @@ export const ToolStatusPill = memo(function ToolStatusPill({
                   <span className={styles.dot} />
                 </div>
                 <span className={styles.collapsedLabel}>
-                  +{hiddenCount} {hiddenCount === 1 ? 'step' : 'steps'}
+                  +{hiddenCount}{' '}
+                  {hiddenCount === 1 ? t('chat.toolStatus.step') : t('chat.toolStatus.steps')}
                 </span>
               </motion.div>
             )}
@@ -330,7 +333,7 @@ export const ToolStatusPill = memo(function ToolStatusPill({
                       <CheckCircle2 size={14} />
                     </div>
                   </div>
-                  <span className={styles.completedStepText}>Done</span>
+                  <span className={styles.completedStepText}>{t('chat.toolStatus.done')}</span>
                 </div>
               </motion.div>
             )}

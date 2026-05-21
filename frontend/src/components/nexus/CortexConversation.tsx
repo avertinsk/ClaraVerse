@@ -1,12 +1,5 @@
 import { memo, useEffect, useRef, useMemo, useState, useCallback } from 'react';
-import {
-  Brain,
-  User,
-  AlertCircle,
-  CheckCircle2,
-  ChevronDown,
-  ArrowDown,
-} from 'lucide-react';
+import { Brain, User, AlertCircle, CheckCircle2, ChevronDown, ArrowDown } from 'lucide-react';
 import { MarkdownRenderer } from '@/components/design-system/content/MarkdownRenderer';
 import { useNexusStore } from '@/store/useNexusStore';
 import { DaemonActivityBlock } from './DaemonActivityBlock';
@@ -28,11 +21,11 @@ interface CortexConversationProps {
 export const CortexConversation = memo(function CortexConversation({
   onExplainTask,
 }: CortexConversationProps) {
-  const conversation = useNexusStore((s) => s.conversation);
-  const missedUpdates = useNexusStore((s) => s.missedUpdates);
-  const isProcessing = useNexusStore((s) => s.isProcessing);
-  const hasActiveDaemons = useNexusStore(
-    (s) => Object.values(s.daemons).some((d) => d.status === 'executing')
+  const conversation = useNexusStore(s => s.conversation);
+  const missedUpdates = useNexusStore(s => s.missedUpdates);
+  const isProcessing = useNexusStore(s => s.isProcessing);
+  const hasActiveDaemons = useNexusStore(s =>
+    Object.values(s.daemons).some(d => d.status === 'executing')
   );
   const showProcessing = isProcessing || hasActiveDaemons;
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -116,7 +109,7 @@ export const CortexConversation = memo(function CortexConversation({
               specialized Daemons that work autonomously with tools.
             </p>
             <div className={styles.suggestionPills}>
-              {SUGGESTIONS.map((s) => (
+              {SUGGESTIONS.map(s => (
                 <button key={s} className={styles.suggestionPill} tabIndex={-1}>
                   {s}
                 </button>
@@ -170,9 +163,7 @@ export const CortexConversation = memo(function CortexConversation({
                 )}
 
                 {/* Thinking */}
-                {item.type === 'cortex_thinking' && (
-                  <ThinkingPane content={item.content} />
-                )}
+                {item.type === 'cortex_thinking' && <ThinkingPane content={item.content} />}
 
                 {/* Task result */}
                 {item.type === 'task_result' && (

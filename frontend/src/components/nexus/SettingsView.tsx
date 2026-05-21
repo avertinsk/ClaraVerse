@@ -52,11 +52,11 @@ const engramTypeVariants: Record<string, 'default' | 'accent' | 'success' | 'inf
 };
 
 export const SettingsView = memo(function SettingsView({ send }: SettingsViewProps) {
-  const persona = useNexusStore((s) => s.persona);
-  const engrams = useNexusStore((s) => s.engrams);
-  const brainMemories = useNexusStore((s) => s.brainMemories);
-  const session = useNexusStore((s) => s.session);
-  const bridgeConnected = useNexusStore((s) => s.bridgeConnected);
+  const persona = useNexusStore(s => s.persona);
+  const engrams = useNexusStore(s => s.engrams);
+  const brainMemories = useNexusStore(s => s.brainMemories);
+  const session = useNexusStore(s => s.session);
+  const bridgeConnected = useNexusStore(s => s.bridgeConnected);
 
   const [memoriesOpen, setMemoriesOpen] = useState(false);
   const [skillsOpen, setSkillsOpen] = useState(false);
@@ -66,11 +66,11 @@ export const SettingsView = memo(function SettingsView({ send }: SettingsViewPro
   const [newCategory, setNewCategory] = useState('personality');
 
   const cortexMemories = useMemo(
-    () => brainMemories.filter((e) => e.source === 'tui_sync'),
+    () => brainMemories.filter(e => e.source === 'tui_sync'),
     [brainMemories]
   );
   const cortexSkills = useMemo(
-    () => brainMemories.filter((e) => e.source === 'tui_skill'),
+    () => brainMemories.filter(e => e.source === 'tui_skill'),
     [brainMemories]
   );
 
@@ -156,7 +156,7 @@ export const SettingsView = memo(function SettingsView({ send }: SettingsViewPro
                   {bridgeConnected ? 'No memories synced yet' : 'Connect desktop agent to sync'}
                 </div>
               ) : (
-                cortexMemories.slice(0, 20).map((m) => (
+                cortexMemories.slice(0, 20).map(m => (
                   <div key={m.id} className={styles.settingsMemoryItem}>
                     <Badge variant={memoryCategoryColors[m.type] ?? 'default'}>
                       {m.type.replace('_', ' ')}
@@ -184,7 +184,7 @@ export const SettingsView = memo(function SettingsView({ send }: SettingsViewPro
               {cortexSkills.length === 0 ? (
                 <div className={styles.settingsEmpty}>No skills promoted yet</div>
               ) : (
-                cortexSkills.map((s) => (
+                cortexSkills.map(s => (
                   <div key={s.id} className={styles.settingsMemoryItem}>
                     <Badge variant="accent">{s.key.replace('tui_skill_', '')}</Badge>
                     <span className={styles.settingsMemoryContent}>
@@ -212,7 +212,7 @@ export const SettingsView = memo(function SettingsView({ send }: SettingsViewPro
               {engrams.length === 0 ? (
                 <div className={styles.settingsEmpty}>No recent activity</div>
               ) : (
-                engrams.slice(0, 15).map((e) => (
+                engrams.slice(0, 15).map(e => (
                   <div key={e.id} className={styles.settingsMemoryItem}>
                     <Badge
                       variant={engramTypeVariants[e.type] ?? 'default'}
@@ -252,7 +252,7 @@ export const SettingsView = memo(function SettingsView({ send }: SettingsViewPro
             <select
               className={styles.settingsSelect}
               value={newCategory}
-              onChange={(e) => setNewCategory(e.target.value)}
+              onChange={e => setNewCategory(e.target.value)}
             >
               <option value="personality">Personality</option>
               <option value="communication">Communication</option>
@@ -262,18 +262,15 @@ export const SettingsView = memo(function SettingsView({ send }: SettingsViewPro
             <input
               className={styles.settingsInput}
               value={newContent}
-              onChange={(e) => setNewContent(e.target.value)}
+              onChange={e => setNewContent(e.target.value)}
               placeholder="e.g. Clara is concise and direct"
-              onKeyDown={(e) => e.key === 'Enter' && handleAddFact()}
+              onKeyDown={e => e.key === 'Enter' && handleAddFact()}
             />
             <div className={styles.settingsFormActions}>
               <button className={styles.settingsFormBtn} onClick={handleAddFact}>
                 Add
               </button>
-              <button
-                className={styles.settingsFormBtnCancel}
-                onClick={() => setAdding(false)}
-              >
+              <button className={styles.settingsFormBtnCancel} onClick={() => setAdding(false)}>
                 Cancel
               </button>
             </div>
@@ -283,7 +280,7 @@ export const SettingsView = memo(function SettingsView({ send }: SettingsViewPro
         {Object.entries(personaGrouped).map(([cat, facts]) => (
           <div key={cat} className={styles.settingsPersonaGroup}>
             <Badge variant={categoryColors[cat] ?? 'default'}>{cat}</Badge>
-            {facts.map((f) => (
+            {facts.map(f => (
               <div key={f.id} className={styles.settingsPersonaFact}>
                 <span>{f.content}</span>
                 {f.source === 'user_explicit' && (
@@ -319,7 +316,7 @@ export const SettingsView = memo(function SettingsView({ send }: SettingsViewPro
         {engrams.length === 0 ? (
           <div className={styles.settingsEmpty}>No engram entries yet</div>
         ) : (
-          engrams.slice(0, 15).map((e) => (
+          engrams.slice(0, 15).map(e => (
             <div key={e.id} className={styles.settingsEngramEntry}>
               <div className={styles.settingsEngramHeader}>
                 <Badge

@@ -23,6 +23,7 @@ import {
   Code,
 } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toPng } from 'html-to-image';
 import { useArtifactStore } from '@/store/useArtifactStore';
@@ -41,6 +42,7 @@ const ARTIFACT_ICONS: Record<ArtifactType, React.ComponentType<{ size?: number }
 };
 
 export function ArtifactPane() {
+  const { t } = useTranslation('artifacts');
   const isOpen = useArtifactStore(s => s.isOpen);
   const artifacts = useArtifactStore(s => s.artifacts);
   const selectedIndex = useArtifactStore(s => s.selectedIndex);
@@ -173,7 +175,11 @@ export function ArtifactPane() {
       setShowDownloadMenu(false);
     } catch (error) {
       console.error('Error exporting PNG:', error);
-      alert(`Failed to export PNG: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      alert(
+        t('artifacts.failedToExportPng', {
+          message: error instanceof Error ? error.message : t('common.unknown'),
+        })
+      );
     } finally {
       // Always restore controls visibility
       setHideControls(false);
@@ -201,27 +207,27 @@ export function ArtifactPane() {
         <div className={styles.header}>
           <div className={styles.headerLeft}>
             <IconComponent size={18} className={styles.artifactIcon} />
-            <h3 className={styles.title}>{selectedArtifact?.title || 'Artifact'}</h3>
+            <h3 className={styles.title}>{selectedArtifact?.title || t('artifacts.artifact')}</h3>
           </div>
 
           <div className={styles.headerActions}>
             {/* Preview/Code Toggle - Only for non-image artifacts */}
             {supportsCodeView && (
               <div className={styles.viewToggle}>
-                <Tooltip content="Preview" position="bottom">
+                <Tooltip content={t('artifacts.preview')} position="bottom">
                   <button
                     className={`${styles.viewToggleButton} ${viewMode === 'preview' ? styles.viewToggleActive : ''}`}
                     onClick={() => setViewMode('preview')}
-                    aria-label="Preview mode"
+                    aria-label={t('artifacts.previewMode')}
                   >
                     <Eye size={16} />
                   </button>
                 </Tooltip>
-                <Tooltip content="Code" position="bottom">
+                <Tooltip content={t('artifacts.code')} position="bottom">
                   <button
                     className={`${styles.viewToggleButton} ${viewMode === 'code' ? styles.viewToggleActive : ''}`}
                     onClick={() => setViewMode('code')}
-                    aria-label="Code mode"
+                    aria-label={t('artifacts.codeMode')}
                   >
                     <Code size={16} />
                   </button>
@@ -231,11 +237,11 @@ export function ArtifactPane() {
 
             {/* Download Menu */}
             <div className={styles.downloadMenu} ref={downloadMenuRef}>
-              <Tooltip content="Download" position="bottom">
+              <Tooltip content={t('artifacts.download')} position="bottom">
                 <button
                   className={styles.actionButton}
                   onClick={() => setShowDownloadMenu(!showDownloadMenu)}
-                  aria-label="Download options"
+                  aria-label={t('artifacts.downloadOptions')}
                 >
                   <Download size={18} />
                   <ChevronDown size={12} className={styles.chevron} />
@@ -247,7 +253,7 @@ export function ArtifactPane() {
                   {selectedArtifact?.type !== 'image' && (
                     <button className={styles.downloadOption} onClick={handleDownloadSource}>
                       <FileCode size={16} />
-                      <span>Download Source</span>
+                      <span>{t('artifacts.downloadSource')}</span>
                     </button>
                   )}
                   {(selectedArtifact?.type === 'svg' ||
@@ -255,28 +261,33 @@ export function ArtifactPane() {
                     selectedArtifact?.type === 'image') && (
                     <button className={styles.downloadOption} onClick={handleDownloadPNG}>
                       <Image size={16} />
-                      <span>Download PNG</span>
+                      <span>{t('artifacts.downloadPng')}</span>
                     </button>
                   )}
                 </div>
               )}
             </div>
 
-            <Tooltip content={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'} position="bottom">
+            <Tooltip
+              content={isFullscreen ? t('artifacts.exitFullscreen') : t('artifacts.fullscreen')}
+              position="bottom"
+            >
               <button
                 className={styles.actionButton}
                 onClick={toggleFullscreen}
-                aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+                aria-label={
+                  isFullscreen ? t('artifacts.exitFullscreen') : t('artifacts.enterFullscreen')
+                }
               >
                 {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
               </button>
             </Tooltip>
 
-            <Tooltip content="Close" position="bottom">
+            <Tooltip content={t('common.actions.close')} position="bottom">
               <button
                 className={styles.actionButton}
                 onClick={closePane}
-                aria-label="Close artifact pane"
+                aria-label={t('artifacts.closePane')}
               >
                 <X size={18} />
               </button>
@@ -327,13 +338,13 @@ export function ArtifactPane() {
             ) : (
               <div className={styles.noRenderer}>
                 <FileCode size={48} />
-                <p>No renderer available for this artifact type</p>
+                <p>{t('artifacts.noRenderer')}</p>
               </div>
             )
           ) : (
             <div className={styles.noRenderer}>
               <FileCode size={48} />
-              <p>No artifact selected</p>
+              <p>{t('artifacts.noArtifactSelected')}</p>
             </div>
           )}
         </div>
