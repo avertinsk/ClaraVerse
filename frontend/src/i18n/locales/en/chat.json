@@ -185,5 +185,8 @@
     "submit": "⌘ Enter submit",
     "continue": "Enter continue",
     "toggleSpace": "Enter or Space toggle"
-  }
+  },
+  "artifactCard.downloadArtifact": "Download artifact",
+  "artifactCard.copyMessage": "Copy message",
+  "artifactCard.copied": "Copied"
 }

@@ -6,6 +6,7 @@
  */
 
 import { memo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Copy, Check } from 'lucide-react';
 import type { Message } from '@/types/chat';
 import { MarkdownRenderer } from '@/components/design-system/content/MarkdownRenderer';
@@ -25,6 +26,7 @@ function UserMessageComponent({
   copiedMessageId,
   onCopy,
 }: UserMessageProps) {
+  const { t } = useTranslation('chat');
   return (
     <>
       {/* File Attachments - shown above chat bubble */}
@@ -46,7 +48,7 @@ function UserMessageComponent({
         <button
           onClick={() => onCopy(message.content, message.id)}
           className={styles.userCopyButton}
-          aria-label={copiedMessageId === message.id ? 'Copied' : 'Copy message'}
+          aria-label={copiedMessageId === message.id ? t('artifactCard.copied') : t('artifactCard.copyMessage')}
         >
           {copiedMessageId === message.id ? (
             <Check size={14} aria-hidden="true" />

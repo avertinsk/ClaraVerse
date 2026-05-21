@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ChevronDown,
   ChevronRight,
@@ -28,6 +29,7 @@ interface ChatExecutionOutputProps {
  * Replaces the modal-style output panel with an inline chat panel experience.
  */
 export function ChatExecutionOutput({ onBackToChat, onDeploy }: ChatExecutionOutputProps) {
+  const { t } = useTranslation('agents');
   const { blockStates, workflow, executionStatus, lastExecutionResult } = useAgentBuilderStore();
   const [expandedBlocks, setExpandedBlocks] = useState<Set<string>>(new Set());
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -132,7 +134,7 @@ export function ChatExecutionOutput({ onBackToChat, onDeploy }: ChatExecutionOut
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-white/5 hover:bg-white/10 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
           >
             <MessageSquare size={14} />
-            Back to Chat
+            {t('chatOutput.backToChat')}
           </button>
         </div>
 
@@ -157,8 +159,8 @@ export function ChatExecutionOutput({ onBackToChat, onDeploy }: ChatExecutionOut
         {lastExecutionResult?.result && !isRunning && (
           <div className="p-4 border-b border-white/5">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-semibold text-[var(--color-text-primary)]">
-                Final Output
+                <span className="text-sm font-semibold text-[var(--color-text-primary)]">
+                {t('chatOutput.finalOutput')}
               </span>
               <button
                 onClick={() => copyToClipboard(lastExecutionResult.result!, 'final')}
@@ -193,14 +195,14 @@ export function ChatExecutionOutput({ onBackToChat, onDeploy }: ChatExecutionOut
                   className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white transition-all"
                 >
                   <Rocket size={14} />
-                  Deploy Agent
+                  {t('chatOutput.deployAgent')}
                 </button>
                 <button
                   onClick={onBackToChat}
                   className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium bg-white/5 hover:bg-white/10 text-[var(--color-text-primary)] transition-all"
                 >
                   <MessageSquare size={14} />
-                  Refine with Chat
+                  {t('chatOutput.refineChat')}
                 </button>
               </div>
             )}
@@ -210,7 +212,7 @@ export function ChatExecutionOutput({ onBackToChat, onDeploy }: ChatExecutionOut
         {/* Block outputs */}
         <div className="p-4 space-y-2">
           <h3 className="text-xs font-semibold text-[var(--color-text-tertiary)] uppercase tracking-wide mb-3">
-            Block Outputs
+            {t('chatOutput.blockOutputs')}
           </h3>
 
           {workflow?.blocks?.map(block => {
@@ -256,7 +258,7 @@ export function ChatExecutionOutput({ onBackToChat, onDeploy }: ChatExecutionOut
                       {block.name}
                     </span>
                     {state?.status === 'running' && (
-                      <span className="text-xs text-blue-400 mt-0.5 block">Processing...</span>
+                      <span className="text-xs text-blue-400 mt-0.5 block">{t('chatOutput.processing')}</span>
                     )}
                   </div>
 
@@ -272,10 +274,10 @@ export function ChatExecutionOutput({ onBackToChat, onDeploy }: ChatExecutionOut
                       <div className="space-y-2">
                         <div className="flex items-center gap-2">
                           <h4 className="text-xs font-semibold text-[var(--color-text-tertiary)] uppercase tracking-wide">
-                            Available Inputs
+                            {t('chatOutput.availableInputs')}
                           </h4>
                           <span className="text-xs text-[var(--color-text-tertiary)] bg-white/10 px-2 py-0.5 rounded-full">
-                            {Object.keys(state.inputs).length} keys
+                            {t('chatOutput.keys')}
                           </span>
                         </div>
                         <div className="p-3 rounded-lg bg-black/20 border border-white/10 space-y-2">
@@ -316,9 +318,9 @@ export function ChatExecutionOutput({ onBackToChat, onDeploy }: ChatExecutionOut
 
                     {hasError && (
                       <div className="p-3 rounded-lg bg-red-500/10 text-xs text-red-400">
-                        <div className="flex items-center gap-1.5 mb-1 font-medium">
+                          <div className="flex items-center gap-1.5 mb-1 font-medium">
                           <AlertCircle size={12} />
-                          Error
+                          {t('chatOutput.error')}
                         </div>
                         <p className="whitespace-pre-wrap break-words">{state.error}</p>
                       </div>
@@ -355,33 +357,34 @@ export function ChatExecutionOutput({ onBackToChat, onDeploy }: ChatExecutionOut
  * Execution status badge with icon
  */
 function ExecutionStatusBadge({ status }: { status: ExecutionStatus | null }) {
+  const { t } = useTranslation('agents');
   const getStatusInfo = () => {
     switch (status) {
       case 'running':
         return {
           icon: <Loader2 size={16} className="animate-spin" />,
-          text: 'Running...',
+          text: t('chatOutput.running'),
           color: 'text-blue-400',
           bg: 'bg-blue-500/20',
         };
       case 'completed':
         return {
           icon: <CheckCircle2 size={16} />,
-          text: 'Completed',
+          text: t('chatOutput.completedStatus'),
           color: 'text-green-400',
           bg: 'bg-green-500/20',
         };
       case 'failed':
         return {
           icon: <XCircle size={16} />,
-          text: 'Failed',
+          text: t('chatOutput.failedStatus'),
           color: 'text-red-400',
           bg: 'bg-red-500/20',
         };
       case 'partial_failure':
         return {
           icon: <AlertCircle size={16} />,
-          text: 'Partial Failure',
+          text: t('chatOutput.partialFailure'),
           color: 'text-yellow-400',
           bg: 'bg-yellow-500/20',
         };

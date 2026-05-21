@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo, useRef, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
 import {
   Loader2,
@@ -188,6 +189,7 @@ export function ToolSelectionProgress({
   toolRegistry,
   isComplete,
 }: ToolSelectionProgressProps) {
+  const { t } = useTranslation('agents');
   const [showTools, setShowTools] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -341,7 +343,7 @@ export function ToolSelectionProgress({
                 </h4>
                 {step.status === 'completed' && step.tools && (
                   <span className="text-xs text-green-400/70">
-                    {step.tools.length} tools selected
+                    {t('toolSelectionProgress.toolsSelected', { count: step.tools.length })}
                   </span>
                 )}
               </div>
@@ -362,7 +364,7 @@ export function ToolSelectionProgress({
           transition={{ delay: 0.3 }}
         >
           <h4 className="text-sm font-medium text-[var(--color-text-tertiary)] mb-3 text-center">
-            Selected Tools
+            {t('toolSelectionProgress.selectedTools')}
           </h4>
           <div className="flex flex-wrap justify-center gap-2">
             {toolDetails.slice(0, 8).map(tool => {

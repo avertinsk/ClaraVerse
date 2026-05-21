@@ -14,5 +14,9 @@
   "nexus.companionStatusOffline": "Offline",
   "nexus.companionSetupHint": "Install & run the companion:",
   "nexus.defaultProject": "General",
-  "nexus.navigateChat": "Navigate to chat"
+  "nexus.navigateChat": "Navigate to chat",
+
+  "cortexConversation.whatCanIHelp": "What can I help with?",
+  "cortexConversation.giveClaraTask": "Give Clara a task. Simple questions get instant answers. Complex tasks deploy specialized Daemons that work autonomously with tools.",
+  "cortexConversation.taskComplete": "Task Complete"
 }

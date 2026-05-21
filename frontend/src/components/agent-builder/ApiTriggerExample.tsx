@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Copy, Check, ChevronDown, ChevronUp, Key } from 'lucide-react';
 
 interface ApiTriggerExampleProps {
@@ -8,6 +9,7 @@ interface ApiTriggerExampleProps {
 }
 
 export function ApiTriggerExample({ agentId, hasFileInput = false }: ApiTriggerExampleProps) {
+  const { t } = useTranslation('agents');
   const [copied, setCopied] = useState(false);
   const [expanded, setExpanded] = useState(false);
 
@@ -71,7 +73,7 @@ ${statusCmd}`;
         {/* Trigger example */}
         <div>
           <p className="text-[10px] text-[var(--color-text-tertiary)] mb-1">
-            <strong>1. Trigger Agent</strong>
+            <strong>{t('apiTrigger.step1Trigger')}</strong>
           </p>
           <div className="relative">
             <pre className="p-3 bg-[var(--color-bg-tertiary)] rounded-lg text-[10px] font-mono overflow-x-auto whitespace-pre-wrap text-[var(--color-text-secondary)]">
@@ -83,7 +85,7 @@ ${statusCmd}`;
         {/* Status check example */}
         <div>
           <p className="text-[10px] text-[var(--color-text-tertiary)] mb-1">
-            <strong>2. Check Status</strong> (use executionId from response)
+            <strong>{t('apiTrigger.step2Status')}</strong> {t('apiTrigger.step2StatusDesc')}
           </p>
           <div className="relative">
             <pre className="p-3 bg-[var(--color-bg-tertiary)] rounded-lg text-[10px] font-mono overflow-x-auto whitespace-pre-wrap text-[var(--color-text-secondary)]">
@@ -92,7 +94,7 @@ ${statusCmd}`;
             <button
               onClick={handleCopy}
               className="absolute top-2 right-2 p-1.5 rounded bg-[var(--color-surface)] hover:bg-[var(--color-surface-hover)] transition-colors"
-              title="Copy full script"
+              title={t('apiTrigger.copyFullScript')}
             >
               {copied ? (
                 <Check size={12} className="text-green-400" />
@@ -106,7 +108,7 @@ ${statusCmd}`;
         {/* Link to API keys */}
         <p className="text-[10px] text-[var(--color-text-tertiary)] flex items-center gap-1">
           <Key size={10} />
-          Create an API key with "execute" scope in the API Keys tab
+          {t('apiTrigger.apiKeyHint')}
         </p>
       </div>
     );
@@ -139,14 +141,14 @@ ${statusCmd}`;
         className="flex items-center gap-1 text-[10px] text-[var(--color-accent)] hover:underline"
       >
         {expanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-        {expanded ? 'Hide' : 'Show'} full workflow (upload → trigger → poll)
+        {expanded ? t('apiTrigger.hideFullWorkflow') : t('apiTrigger.showFullWorkflow')}
       </button>
 
       {expanded && (
         <div className="space-y-3 p-3 bg-[var(--color-bg-tertiary)] rounded-lg">
           <div>
             <p className="text-[10px] text-[var(--color-text-tertiary)] mb-1">
-              <strong>Step 1:</strong> Upload file (requires "upload" scope)
+              <strong>{t('apiTrigger.step1')}</strong> {t('apiTrigger.uploadFile')}
             </p>
             <pre className="text-[9px] font-mono text-[var(--color-text-secondary)] overflow-x-auto whitespace-pre-wrap">
               {uploadCmd}
@@ -155,7 +157,7 @@ ${statusCmd}`;
 
           <div>
             <p className="text-[10px] text-[var(--color-text-tertiary)] mb-1">
-              <strong>Step 2:</strong> Trigger workflow with file_id
+              <strong>{t('apiTrigger.step2')}</strong> {t('apiTrigger.triggerWorkflow')}
             </p>
             <pre className="text-[9px] font-mono text-[var(--color-text-secondary)] overflow-x-auto whitespace-pre-wrap">
               {fileTriggerCmd}
@@ -164,7 +166,7 @@ ${statusCmd}`;
 
           <div>
             <p className="text-[10px] text-[var(--color-text-tertiary)] mb-1">
-              <strong>Step 3:</strong> Poll for completion
+              <strong>{t('apiTrigger.step3')}</strong> {t('apiTrigger.pollCompletion')}
             </p>
             <pre className="text-[9px] font-mono text-[var(--color-text-secondary)] overflow-x-auto whitespace-pre-wrap">
               {statusCmd}
@@ -176,7 +178,7 @@ ${statusCmd}`;
       {/* Link to API keys */}
       <p className="text-[10px] text-[var(--color-text-tertiary)] flex items-center gap-1">
         <Key size={10} />
-        Create an API key with "upload" + "execute" scopes in the API Keys tab
+        {t('apiTrigger.apiKeyHintFile')}
       </p>
     </div>
   );

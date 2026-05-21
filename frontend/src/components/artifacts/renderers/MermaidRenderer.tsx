@@ -6,6 +6,7 @@
  */
 
 import { useEffect, useRef, useState, memo } from 'react';
+import { useTranslation } from 'react-i18next';
 import mermaid from 'mermaid';
 import { AlertCircle } from 'lucide-react';
 import { ZoomPanContainer } from '../ZoomPanContainer';
@@ -44,6 +45,7 @@ export const MermaidRenderer = memo(function MermaidRenderer({
   content,
   hideControls = false,
 }: MermaidRendererProps) {
+  const { t } = useTranslation('artifacts');
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isRendering, setIsRendering] = useState(true);
@@ -96,10 +98,10 @@ export const MermaidRenderer = memo(function MermaidRenderer({
     return (
       <div className={styles.error}>
         <AlertCircle size={24} />
-        <p>Failed to render Mermaid diagram</p>
+        <p>{t('mermaidRenderer.failedRender')}</p>
         <span>{error}</span>
         <details className={styles.errorDetails}>
-          <summary>View diagram source</summary>
+          <summary>{t('mermaidRenderer.viewSource')}</summary>
           <pre>{content}</pre>
         </details>
       </div>
@@ -110,7 +112,7 @@ export const MermaidRenderer = memo(function MermaidRenderer({
     return (
       <div className={styles.loading}>
         <div className={styles.spinner} />
-        <p>Rendering diagram...</p>
+        <p>{t('mermaidRenderer.renderingDiagram')}</p>
       </div>
     );
   }

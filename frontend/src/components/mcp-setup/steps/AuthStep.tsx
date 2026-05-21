@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link2, Loader2, AlertCircle, CheckCircle } from 'lucide-react';
 import { Typography, Alert } from '@/components/design-system';
 import { authorizeDevice, formatUserCode, isValidUserCode } from '@/services/deviceService';
@@ -12,6 +13,7 @@ export interface AuthStepProps {
 }
 
 export const AuthStep = ({ initialCode, userEmail, onAuthorized }: AuthStepProps) => {
+  const { t } = useTranslation('common');
   const [code, setCode] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -80,10 +82,10 @@ export const AuthStep = ({ initialCode, userEmail, onAuthorized }: AuthStepProps
           <Link2 size={24} />
         </div>
         <Typography variant="h4" weight="semibold" className="step-title">
-          Authorize Device
+          {t('authStep.authorizeDevice')}
         </Typography>
         <Typography variant="sm" className="step-subtitle">
-          Enter the code shown in your terminal to connect your device.
+          {t('authStep.authorizeDeviceDesc')}
         </Typography>
       </div>
 
@@ -150,11 +152,11 @@ export const AuthStep = ({ initialCode, userEmail, onAuthorized }: AuthStepProps
         >
           {isSubmitting ? (
             <>
-              <Loader2 size={18} className="spin" /> Authorizing...
+              <Loader2 size={18} className="spin" /> {t('authStep.authorizing')}
             </>
           ) : (
             <>
-              <CheckCircle size={18} /> Authorize Device
+              <CheckCircle size={18} /> {t('authStep.authorizeDevice')}
             </>
           )}
         </button>

@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAgentBuilderStore } from '@/store/useAgentBuilderStore';
 
 interface TemplatePreviewProps {
@@ -46,6 +47,7 @@ function formatPreview(value: unknown): string {
 }
 
 export function TemplatePreview({ value }: TemplatePreviewProps) {
+  const { t } = useTranslation('agents');
   const { workflow, blockOutputCache, blockStates } = useAgentBuilderStore();
 
   const resolved = useMemo(() => {
@@ -120,7 +122,7 @@ export function TemplatePreview({ value }: TemplatePreviewProps) {
           {r.resolved ? (
             <span className="text-[var(--color-accent)] break-all">{formatPreview(r.value)}</span>
           ) : (
-            <span className="text-amber-400/70 italic">no data yet</span>
+            <span className="text-amber-400/70 italic">{t('templatePreview.noData')}</span>
           )}
         </div>
       ))}

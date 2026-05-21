@@ -58,5 +58,19 @@
     "weeksAgo": "{{count}} нед. назад",
     "monthsAgo": "{{count}} мес. назад",
     "yearsAgo": "{{count}} г. назад"
-  }
+  },
+  "zoomPan.zoomIn": "Увеличить (Ctrl +)",
+  "zoomPan.zoomOut": "Уменьшить (Ctrl -)",
+  "zoomPan.fitToScreen": "Вместить на экран",
+  "zoomPan.resetView": "Сбросить вид (Ctrl 0)",
+  "imageRenderer.noImages": "Нет изображений",
+  "imageRenderer.noImagesDesc": "Этот артефакт не содержит изображений.",
+  "imageRenderer.invalidImageData": "Неверные данные изображения",
+  "imageRenderer.invalidImageDataDesc": "Данные изображения повреждены или неполны.",
+  "imageRenderer.prevImage": "Предыдущее изображение",
+  "imageRenderer.nextImage": "Следующее изображение",
+  "mermaidRenderer.failedRender": "Не удалось отобразить диаграмму Mermaid",
+  "mermaidRenderer.viewSource": "Просмотреть исходный код диаграммы",
+  "mermaidRenderer.renderingDiagram": "Отрисовка диаграммы...",
+  "svgRenderer.failedRender": "Не удалось отобразить SVG"
 }

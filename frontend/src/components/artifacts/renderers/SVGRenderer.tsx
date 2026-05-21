@@ -6,6 +6,7 @@
  */
 
 import { useState, useEffect, memo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AlertCircle } from 'lucide-react';
 import styles from './SVGRenderer.module.css';
 
@@ -16,6 +17,7 @@ interface SVGRendererProps {
 }
 
 export const SVGRenderer = memo(function SVGRenderer({ content }: SVGRendererProps) {
+  const { t } = useTranslation('artifacts');
   const [isValid, setIsValid] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -43,7 +45,7 @@ export const SVGRenderer = memo(function SVGRenderer({ content }: SVGRendererPro
     return (
       <div className={styles.error}>
         <AlertCircle size={24} />
-        <p>Failed to render SVG</p>
+        <p>{t('svgRenderer.failedRender')}</p>
         <span>{error}</span>
       </div>
     );

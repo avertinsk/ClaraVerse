@@ -58,5 +58,19 @@
     "weeksAgo": "{{count}} week(s) ago",
     "monthsAgo": "{{count}} month(s) ago",
     "yearsAgo": "{{count}} year(s) ago"
-  }
+  },
+  "zoomPan.zoomIn": "Zoom In (Ctrl +)",
+  "zoomPan.zoomOut": "Zoom Out (Ctrl -)",
+  "zoomPan.fitToScreen": "Fit to Screen",
+  "zoomPan.resetView": "Reset View (Ctrl 0)",
+  "imageRenderer.noImages": "No images to display",
+  "imageRenderer.noImagesDesc": "This artifact doesn't contain any images.",
+  "imageRenderer.invalidImageData": "Invalid image data",
+  "imageRenderer.invalidImageDataDesc": "The image data is corrupted or incomplete.",
+  "imageRenderer.prevImage": "Previous image",
+  "imageRenderer.nextImage": "Next image",
+  "mermaidRenderer.failedRender": "Failed to render Mermaid diagram",
+  "mermaidRenderer.viewSource": "View diagram source",
+  "mermaidRenderer.renderingDiagram": "Rendering diagram...",
+  "svgRenderer.failedRender": "Failed to render SVG"
 }

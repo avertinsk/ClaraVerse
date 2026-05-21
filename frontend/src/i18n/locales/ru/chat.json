@@ -185,5 +185,8 @@
     "submit": "⌘ Enter отправить",
     "continue": "Enter продолжить",
     "toggleSpace": "Enter или Пробел переключить"
-  }
+  },
+  "artifactCard.downloadArtifact": "Скачать артефакт",
+  "artifactCard.copyMessage": "Копировать сообщение",
+  "artifactCard.copied": "Скопировано"
 }

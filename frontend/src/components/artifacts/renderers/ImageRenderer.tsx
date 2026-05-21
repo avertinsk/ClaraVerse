@@ -6,6 +6,7 @@
  */
 
 import { useState, memo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ChevronLeft, ChevronRight, AlertCircle } from 'lucide-react';
 import type { Artifact } from '@/types/artifact';
 import { Tooltip } from '@/components/design-system/Tooltip/Tooltip';
@@ -18,6 +19,7 @@ interface ImageRendererProps {
 }
 
 export const ImageRenderer = memo(function ImageRenderer({ artifact }: ImageRendererProps) {
+  const { t } = useTranslation('artifacts');
   const [currentIndex, setCurrentIndex] = useState(0);
   const images = artifact?.images || [];
 
@@ -26,8 +28,8 @@ export const ImageRenderer = memo(function ImageRenderer({ artifact }: ImageRend
     return (
       <div className={styles.error}>
         <AlertCircle size={24} />
-        <p>No images to display</p>
-        <span>This artifact doesn't contain any images.</span>
+        <p>{t('imageRenderer.noImages')}</p>
+        <span>{t('imageRenderer.noImagesDesc')}</span>
       </div>
     );
   }
@@ -41,8 +43,8 @@ export const ImageRenderer = memo(function ImageRenderer({ artifact }: ImageRend
     return (
       <div className={styles.error}>
         <AlertCircle size={24} />
-        <p>Invalid image data</p>
-        <span>The image data is corrupted or incomplete.</span>
+        <p>{t('imageRenderer.invalidImageData')}</p>
+        <span>{t('imageRenderer.invalidImageDataDesc')}</span>
       </div>
     );
   }
@@ -74,7 +76,7 @@ export const ImageRenderer = memo(function ImageRenderer({ artifact }: ImageRend
       {/* Navigation - only show if multiple images */}
       {images.length > 1 && (
         <div className={styles.imageNav}>
-          <Tooltip content="Previous image" position="top">
+          <Tooltip content={t('imageRenderer.prevImage')} position="top">
             <button onClick={goToPrevious} disabled={safeIndex === 0} className={styles.navButton}>
               <ChevronLeft size={20} />
             </button>
@@ -84,7 +86,7 @@ export const ImageRenderer = memo(function ImageRenderer({ artifact }: ImageRend
             {safeIndex + 1} / {images.length}
           </span>
 
-          <Tooltip content="Next image" position="top">
+          <Tooltip content={t('imageRenderer.nextImage')} position="top">
             <button
               onClick={goToNext}
               disabled={safeIndex === images.length - 1}

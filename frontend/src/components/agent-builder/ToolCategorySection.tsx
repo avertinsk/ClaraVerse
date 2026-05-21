@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import * as LucideIcons from 'lucide-react';
 import type { ToolCategory, Tool } from '@/services/toolsService';
@@ -14,6 +15,7 @@ export function ToolCategorySection({
   selectedTools,
   onToolToggle,
 }: ToolCategorySectionProps) {
+  const { t } = useTranslation('agents');
   const [isExpanded, setIsExpanded] = useState(true);
 
   const getCategoryIcon = (categoryName: string) => {
@@ -30,12 +32,12 @@ export function ToolCategorySection({
 
   const getCategoryLabel = (categoryName: string) => {
     const labels: Record<string, string> = {
-      data_sources: 'Data Sources',
-      computation: 'Computation',
-      time: 'Time & Date',
-      output: 'Output & Files',
-      integration: 'Integration',
-      other: 'Other',
+      data_sources: t('toolCategory.dataSources'),
+      computation: t('toolCategory.computation'),
+      time: t('toolCategory.timeDate'),
+      output: t('toolCategory.outputFiles'),
+      integration: t('toolCategory.integration'),
+      other: t('toolCategory.other'),
     };
     return labels[categoryName] || categoryName;
   };

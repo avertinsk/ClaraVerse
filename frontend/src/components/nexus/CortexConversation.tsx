@@ -1,4 +1,5 @@
 import { memo, useEffect, useRef, useMemo, useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Brain, User, AlertCircle, CheckCircle2, ChevronDown, ArrowDown } from 'lucide-react';
 import { MarkdownRenderer } from '@/components/design-system/content/MarkdownRenderer';
 import { useNexusStore } from '@/store/useNexusStore';
@@ -21,6 +22,7 @@ interface CortexConversationProps {
 export const CortexConversation = memo(function CortexConversation({
   onExplainTask,
 }: CortexConversationProps) {
+  const { t } = useTranslation('nexus');
   const conversation = useNexusStore(s => s.conversation);
   const missedUpdates = useNexusStore(s => s.missedUpdates);
   const isProcessing = useNexusStore(s => s.isProcessing);
@@ -103,10 +105,9 @@ export const CortexConversation = memo(function CortexConversation({
             <div className={styles.emptyStateIcon}>
               <Brain size={56} strokeWidth={1} />
             </div>
-            <h3 className={styles.emptyStateTitle}>What can I help with?</h3>
+            <h3 className={styles.emptyStateTitle}>{t('cortexConversation.whatCanIHelp')}</h3>
             <p className={styles.emptyStateDescription}>
-              Give Clara a task. Simple questions get instant answers. Complex tasks deploy
-              specialized Daemons that work autonomously with tools.
+              {t('cortexConversation.giveClaraTask')}
             </p>
             <div className={styles.suggestionPills}>
               {SUGGESTIONS.map(s => (
@@ -170,7 +171,7 @@ export const CortexConversation = memo(function CortexConversation({
                   <div className={styles.taskResultMessage}>
                     <div className={styles.taskResultBadge}>
                       <CheckCircle2 size={12} />
-                      Task Complete
+                      {t('cortexConversation.taskComplete')}
                     </div>
                     <div className={styles.assistantContent}>
                       <MarkdownRenderer content={item.content} />

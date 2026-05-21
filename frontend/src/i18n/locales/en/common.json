@@ -103,5 +103,9 @@
   "routineBuilder.testRun": "Test Run",
   "routineBuilder.saving": "Saving...",
   "routineBuilder.saveChanges": "Save Changes",
-  "routineBuilder.createRoutine": "Create Routine"
+  "routineBuilder.createRoutine": "Create Routine",
+
+  "authStep.authorizeDevice": "Authorize Device",
+  "authStep.authorizeDeviceDesc": "Enter the code shown in your terminal to connect your device.",
+  "authStep.authorizing": "Authorizing..."
 }

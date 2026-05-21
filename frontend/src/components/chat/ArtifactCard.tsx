@@ -7,6 +7,7 @@
  */
 
 import { FileCode2, Download, ImageIcon, Layers } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import type { Artifact } from '@/types/artifact';
 import { useArtifactStore } from '@/store/useArtifactStore';
 import { useChatStore } from '@/store/useChatStore';
@@ -75,6 +76,7 @@ const downloadArtifact = (artifact: Artifact): void => {
 };
 
 export function ArtifactCard({ artifacts, chatId }: ArtifactCardProps) {
+  const { t } = useTranslation('chat');
   const { openArtifacts } = useArtifactStore();
   const { selectChat, selectedChat } = useChatStore();
   const { openGallery } = useImageGalleryStore();
@@ -171,14 +173,14 @@ export function ArtifactCard({ artifacts, chatId }: ArtifactCardProps) {
       </div>
 
       <div className={styles.actions}>
-        <Tooltip content="Download artifact" position="top">
+        <Tooltip content={t('artifactCard.downloadArtifact')} position="top">
           <button
             className={styles.downloadButton}
             onClick={e => {
               e.stopPropagation();
               downloadArtifact(artifact);
             }}
-            aria-label="Download artifact"
+            aria-label={t('artifactCard.downloadArtifact')}
           >
             <Download size={16} />
           </button>

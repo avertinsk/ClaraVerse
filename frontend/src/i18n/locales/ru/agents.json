@@ -576,5 +576,22 @@
   "agentDeploy.openWorkflow": "Открыть редактор рабочего процесса",
   "agentDeploy.blocks": "блоков",
   "agentDeploy.updated": "Обновлён",
-  "agentDeploy.justNow": "только что"
+  "agentDeploy.justNow": "только что",
+
+  "templatePreview.noData": "данных пока нет",
+
+  "toolSelector.loadingTools": "Загрузка инструментов...",
+  "toolSelector.failedLoad": "Не удалось загрузить инструменты. Попробуйте ещё раз.",
+  "toolSelector.recommendedTools": "Рекомендуемые инструменты",
+  "toolSelector.basedOn": "На основе",
+  "toolSelector.searchTools": "Поиск инструментов...",
+  "toolSelector.noToolsFound": "Инструменты, соответствующие \"{{query}}\", не найдены",
+  "toolSelector.selectedTools": "Выбранные инструменты",
+
+  "toolSelectionProgress.selectedTools": "Выбранные инструменты",
+  "toolSelectionProgress.toolsSelected": "{{count}} инструментов выбрано",
+
+  "deployPanel.tabApiKeys": "API-ключи",
+
+  "chatOutput.completedStatus": "Завершено"
 }

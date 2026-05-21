@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Clock, Key, History, Rocket, Play, Pause, ExternalLink, Code2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { SchedulePanel } from './SchedulePanel';
@@ -120,6 +121,7 @@ export function AgentDeployPanel({
   isMobile = false,
   onOpenWorkflow,
 }: AgentDeployPanelProps) {
+  const { t } = useTranslation('agents');
   const [activeTab, setActiveTab] = useState<Tab>('schedule');
   const [startBlockInput, setStartBlockInput] = useState<Record<string, unknown> | null>(null);
   const [hasFileInput, setHasFileInput] = useState(false);
@@ -163,11 +165,10 @@ export function AgentDeployPanel({
             <Rocket size={28} className="text-[var(--color-text-tertiary)]" />
           </div>
           <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-2">
-            Select an Agent
+            {t('agentDeploy.selectAgent')}
           </h3>
           <p className="text-sm text-[var(--color-text-secondary)] max-w-[280px]">
-            Choose an agent from the list to view its deployment settings, schedules, and execution
-            history.
+            {t('agentDeploy.selectAgentDesc')}
           </p>
         </div>
       </div>
@@ -178,10 +179,10 @@ export function AgentDeployPanel({
   const isPaused = agent.status === 'paused';
 
   const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
-    { id: 'schedule', label: 'Schedule', icon: <Clock size={14} /> },
-    { id: 'api-keys', label: 'API Keys', icon: <Key size={14} /> },
-    { id: 'history', label: 'History', icon: <History size={14} /> },
-    { id: 'docs', label: 'API Docs', icon: <Code2 size={14} /> },
+    { id: 'schedule', label: t('deployPanel.tabSchedule'), icon: <Clock size={14} /> },
+    { id: 'api-keys', label: t('deployPanel.tabApiKeys'), icon: <Key size={14} /> },
+    { id: 'history', label: t('deployPanel.tabHistory'), icon: <History size={14} /> },
+    { id: 'docs', label: t('deployPanel.tabDocs'), icon: <Code2 size={14} /> },
   ];
 
   return (
@@ -228,7 +229,7 @@ export function AgentDeployPanel({
                   className="flex items-center gap-2 px-3 py-2 rounded-lg bg-yellow-500/10 text-yellow-400 text-sm font-medium hover:bg-yellow-500/20 transition-colors"
                 >
                   <Pause size={14} />
-                  Pause
+                  {t('agentDeploy.pause')}
                 </button>
               ) : (
                 <button
@@ -236,13 +237,13 @@ export function AgentDeployPanel({
                   className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--color-accent)] text-white text-sm font-medium hover:bg-[var(--color-accent-hover)] transition-colors"
                 >
                   <Play size={14} />
-                  Deploy
+                  {t('agentDeploy.deploy')}
                 </button>
               )}
               <button
                 onClick={() => setActiveTab('api-keys')}
                 className="p-2 rounded-lg hover:bg-[var(--color-surface)] text-[var(--color-text-secondary)] transition-colors"
-                title="API Keys"
+                title={t('agentDeploy.apiKeys')}
               >
                 <Key size={16} />
               </button>
@@ -250,7 +251,7 @@ export function AgentDeployPanel({
                 <button
                   onClick={onOpenWorkflow}
                   className="p-2 rounded-lg hover:bg-[var(--color-surface)] text-[var(--color-text-secondary)] transition-colors"
-                  title="Open Workflow Editor"
+                  title={t('agentDeploy.openWorkflow')}
                 >
                   <ExternalLink size={16} />
                 </button>

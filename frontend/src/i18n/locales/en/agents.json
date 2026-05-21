@@ -576,5 +576,22 @@
   "agentDeploy.openWorkflow": "Open Workflow Editor",
   "agentDeploy.blocks": "blocks",
   "agentDeploy.updated": "Updated",
-  "agentDeploy.justNow": "just now"
+  "agentDeploy.justNow": "just now",
+
+  "templatePreview.noData": "no data yet",
+
+  "toolSelector.loadingTools": "Loading tools...",
+  "toolSelector.failedLoad": "Failed to load tools. Please try again.",
+  "toolSelector.recommendedTools": "Recommended Tools",
+  "toolSelector.basedOn": "Based on",
+  "toolSelector.searchTools": "Search tools...",
+  "toolSelector.noToolsFound": "No tools found matching \"{{query}}\"",
+  "toolSelector.selectedTools": "Selected tools",
+
+  "toolSelectionProgress.selectedTools": "Selected Tools",
+  "toolSelectionProgress.toolsSelected": "{{count}} tools selected",
+
+  "deployPanel.tabApiKeys": "API Keys",
+
+  "chatOutput.completedStatus": "Completed"
 }

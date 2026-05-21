@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -7,11 +8,8 @@ interface MobileMenuButtonProps {
   className?: string;
 }
 
-/**
- * Fixed hamburger menu button for mobile navigation.
- * Positioned in the top-left corner.
- */
 export function MobileMenuButton({ isOpen, onToggle, className }: MobileMenuButtonProps) {
+  const { t } = useTranslation('agents');
   return (
     <button
       onClick={onToggle}
@@ -24,7 +22,7 @@ export function MobileMenuButton({ isOpen, onToggle, className }: MobileMenuButt
         'active:scale-95',
         className
       )}
-      aria-label={isOpen ? 'Close menu' : 'Open menu'}
+      aria-label={isOpen ? t('mobileMenu.closeMenu') : t('mobileMenu.openMenu')}
       aria-expanded={isOpen}
     >
       {isOpen ? <X size={22} /> : <Menu size={22} />}

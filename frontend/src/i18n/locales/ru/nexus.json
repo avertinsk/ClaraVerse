@@ -14,5 +14,9 @@
   "nexus.companionStatusOffline": "Не в сети",
   "nexus.companionSetupHint": "Установите и запустите companion:",
   "nexus.defaultProject": "Общий",
-  "nexus.navigateChat": "Перейти к чату"
+  "nexus.navigateChat": "Перейти к чату",
+
+  "cortexConversation.whatCanIHelp": "Чем я могу помочь?",
+  "cortexConversation.giveClaraTask": "Дайте Кларе задачу. Простые вопросы получают мгновенные ответы. Сложные задачи запускают специализированных Демонов, которые работают автономно с инструментами.",
+  "cortexConversation.taskComplete": "Задача завершена"
 }
