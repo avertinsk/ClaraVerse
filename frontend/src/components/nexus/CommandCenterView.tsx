@@ -1,5 +1,6 @@
 import { memo, useMemo, useState } from 'react';
 import { Pencil, Search, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { KanbanBoard } from './KanbanBoard';
 import { LiveViewModal } from './LiveViewModal';
 import { useNexusStore } from '@/store/useNexusStore';
@@ -25,6 +26,7 @@ export const CommandCenterView = memo(function CommandCenterView({
   onCancelTask,
   onEditProject,
 }: CommandCenterViewProps) {
+  const { t } = useTranslation('nexus');
   const [liveViewTaskId, setLiveViewTaskId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const projects = useNexusStore(s => s.projects);
@@ -63,7 +65,7 @@ export const CommandCenterView = memo(function CommandCenterView({
               <input
                 type="text"
                 className={styles.projectHeaderSearchInput}
-                placeholder="Search tasks..."
+                placeholder={t('commandCenter.searchTasks')}
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
               />
@@ -71,14 +73,18 @@ export const CommandCenterView = memo(function CommandCenterView({
                 <button
                   className={styles.projectHeaderSearchClear}
                   onClick={() => setSearchQuery('')}
-                  title="Clear search"
+                  title={t('commandCenter.clearSearch')}
                 >
                   <X size={10} />
                 </button>
               )}
             </div>
             {onEditProject && (
-              <button className={styles.daemonIconBtn} onClick={onEditProject} title="Edit project">
+              <button
+                className={styles.daemonIconBtn}
+                onClick={onEditProject}
+                title={t('commandCenter.editProject')}
+              >
                 <Pencil size={14} />
               </button>
             )}
@@ -94,27 +100,27 @@ export const CommandCenterView = memo(function CommandCenterView({
             <div className={styles.projectStatusBar}>
               {statusCounts.draft > 0 && (
                 <span className={`${styles.projectStatusChip} ${styles.projectStatusChipDraft}`}>
-                  {statusCounts.draft} draft
+                  {statusCounts.draft} {t('commandCenter.draft')}
                 </span>
               )}
               {statusCounts.queued > 0 && (
                 <span className={`${styles.projectStatusChip} ${styles.projectStatusChipQueued}`}>
-                  {statusCounts.queued} queued
+                  {statusCounts.queued} {t('commandCenter.queued')}
                 </span>
               )}
               {statusCounts.running > 0 && (
                 <span className={`${styles.projectStatusChip} ${styles.projectStatusChipRunning}`}>
-                  {statusCounts.running} running
+                  {statusCounts.running} {t('commandCenter.running')}
                 </span>
               )}
               {statusCounts.done > 0 && (
                 <span className={`${styles.projectStatusChip} ${styles.projectStatusChipDone}`}>
-                  {statusCounts.done} done
+                  {statusCounts.done} {t('commandCenter.done')}
                 </span>
               )}
               {statusCounts.failed > 0 && (
                 <span className={`${styles.projectStatusChip} ${styles.projectStatusChipFailed}`}>
-                  {statusCounts.failed} failed
+                  {statusCounts.failed} {t('commandCenter.failed')}
                 </span>
               )}
             </div>

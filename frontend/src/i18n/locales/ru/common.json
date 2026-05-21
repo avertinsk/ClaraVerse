@@ -104,6 +104,13 @@
   "routineBuilder.saving": "Сохранение...",
   "routineBuilder.saveChanges": "Сохранить изменения",
   "routineBuilder.createRoutine": "Создать рутину",
+  "common.saving": "Сохранение...",
+
+  "mcpOnboarding.deviceAuthorized": "Устройство успешно авторизовано!",
+  "mcpOnboarding.deviceConnected": "Устройство {{platform}} подключено (v{{version}})",
+  "mcpOnboarding.closeWindow": "Вы можете безопасно закрыть это окно и продолжить в терминале.",
+  "mcpOnboarding.autoDetect": "CLI автоматически обнаружит авторизацию и продолжит настройку.",
+  "mcpOnboarding.goToDashboard": "Перейти к панели управления",
 
   "authStep.authorizeDevice": "Авторизация устройства",
   "authStep.authorizeDeviceDesc": "Введите код, показанный в вашем терминале, чтобы подключить устройство.",

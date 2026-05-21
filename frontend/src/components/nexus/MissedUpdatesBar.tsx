@@ -1,5 +1,6 @@
 import { memo, useCallback } from 'react';
 import { CheckCircle2, AlertCircle, Brain, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useNexusStore } from '@/store/useNexusStore';
 import type { MissedUpdate } from '@/types/nexus';
 import styles from './Nexus.module.css';
@@ -15,18 +16,18 @@ function iconForEvent(eventType: string) {
   return <Brain size={14} />;
 }
 
-function labelForEvent(eventType: string) {
+function labelForEvent(eventType: string, t: (key: string) => string) {
   switch (eventType) {
     case 'task_completed':
-      return 'Completed';
+      return t('missedUpdates.completed');
     case 'task_failed':
-      return 'Failed';
+      return t('missedUpdates.failed');
     case 'daemon_completed':
-      return 'Daemon done';
+      return t('missedUpdates.daemonDone');
     case 'daemon_failed':
-      return 'Daemon failed';
+      return t('missedUpdates.daemonFailed');
     case 'cortex_response':
-      return 'Response';
+      return t('missedUpdates.response');
     default:
       return eventType.replace(/_/g, ' ');
   }
@@ -35,6 +36,7 @@ function labelForEvent(eventType: string) {
 export const MissedUpdatesBar = memo(function MissedUpdatesBar({
   onExplainTask,
 }: MissedUpdatesBarProps) {
+  const { t } = useTranslation('nexus');
   const missedUpdates = useNexusStore(s => s.missedUpdates);
   const clearMissedUpdates = useNexusStore(s => s.clearMissedUpdates);
 
@@ -53,7 +55,7 @@ export const MissedUpdatesBar = memo(function MissedUpdatesBar({
   return (
     <div className={styles.missedBar}>
       <div className={styles.missedHeader}>
-        <span className={styles.missedTitle}>While you were away</span>
+        <span className={styles.missedTitle}>{t('missedUpdates.whileAway')}</span>
         <button className={styles.missedDismiss} onClick={clearMissedUpdates}>
           <X size={14} />
         </button>
@@ -69,7 +71,9 @@ export const MissedUpdatesBar = memo(function MissedUpdatesBar({
             >
               <div className={styles.missedCardIcon}>{iconForEvent(update.event_type)}</div>
               <div className={styles.missedCardBody}>
-                <span className={styles.missedCardLabel}>{labelForEvent(update.event_type)}</span>
+                <span className={styles.missedCardLabel}>
+                  {labelForEvent(update.event_type, t)}
+                </span>
                 <span className={styles.missedCardSummary}>{update.goal || update.summary}</span>
               </div>
             </button>

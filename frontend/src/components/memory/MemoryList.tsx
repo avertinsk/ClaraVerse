@@ -5,19 +5,20 @@ import {
   Filter,
   Archive,
   ArchiveRestore,
-  Trash2,
   Plus,
   Loader2,
   AlertCircle,
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import memoryService from '@/services/memoryService';
 import type { Memory, MemoryListResponse } from '@/services/memoryService';
 import { MemoryItem } from './MemoryItem';
 import { CreateMemoryModal } from './CreateMemoryModal';
 
 export const MemoryList: React.FC = () => {
+  const { t } = useTranslation('memory');
   const [memories, setMemories] = useState<Memory[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -56,7 +57,7 @@ export const MemoryList: React.FC = () => {
       setTotalMemories(response.pagination.total);
     } catch (err) {
       console.error('Failed to load memories:', err);
-      setError('Failed to load memories. Please try again.');
+      setError(t('list.loadFailed'));
     } finally {
       setLoading(false);
     }
@@ -81,7 +82,7 @@ export const MemoryList: React.FC = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to permanently delete this memory?')) {
+    if (!confirm(t('list.confirmDelete'))) {
       return;
     }
     try {
@@ -111,16 +112,16 @@ export const MemoryList: React.FC = () => {
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2">
             <Brain className="w-8 h-8" />
-            Memory Management
+            {t('list.title')}
           </h1>
-          <p className="text-gray-400 mt-1">View and manage your stored memories</p>
+          <p className="text-gray-400 mt-1">{t('list.subtitle')}</p>
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
         >
           <Plus className="w-4 h-4" />
-          Create Memory
+          {t('list.createButton')}
         </button>
       </div>
 
@@ -128,19 +129,19 @@ export const MemoryList: React.FC = () => {
       <div className="bg-gray-800 rounded-lg p-4 flex items-center justify-between">
         <div className="flex items-center gap-6">
           <div>
-            <p className="text-sm text-gray-400">Total</p>
+            <p className="text-sm text-gray-400">{t('list.stats.total')}</p>
             <p className="text-xl font-bold">{totalMemories}</p>
           </div>
           <div className="w-px h-8 bg-gray-700" />
           <div>
-            <p className="text-sm text-gray-400">Active</p>
+            <p className="text-sm text-gray-400">{t('list.stats.active')}</p>
             <p className="text-xl font-bold text-green-400">
               {memories.filter(m => !m.is_archived).length}
             </p>
           </div>
           <div className="w-px h-8 bg-gray-700" />
           <div>
-            <p className="text-sm text-gray-400">Archived</p>
+            <p className="text-sm text-gray-400">{t('list.stats.archived')}</p>
             <p className="text-xl font-bold text-gray-500">
               {memories.filter(m => m.is_archived).length}
             </p>
@@ -155,7 +156,7 @@ export const MemoryList: React.FC = () => {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
           <input
             type="text"
-            placeholder="Search memories..."
+            placeholder={t('list.searchPlaceholder')}
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-4 py-2 bg-gray-900 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -171,12 +172,12 @@ export const MemoryList: React.FC = () => {
               onChange={e => setCategoryFilter(e.target.value)}
               className="bg-gray-900 border border-gray-700 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">All Categories</option>
-              <option value="personal_info">Personal Info</option>
-              <option value="preferences">Preferences</option>
-              <option value="context">Context</option>
-              <option value="fact">Facts</option>
-              <option value="instruction">Instructions</option>
+              <option value="">{t('list.filters.allCategories')}</option>
+              <option value="personal_info">{t('list.filters.personalInfo')}</option>
+              <option value="preferences">{t('list.filters.preferences')}</option>
+              <option value="context">{t('list.filters.context')}</option>
+              <option value="fact">{t('list.filters.facts')}</option>
+              <option value="instruction">{t('list.filters.instructions')}</option>
             </select>
           </div>
 
@@ -193,7 +194,7 @@ export const MemoryList: React.FC = () => {
             ) : (
               <Archive className="w-4 h-4" />
             )}
-            {showArchived ? 'Show Active' : 'Show Archived'}
+            {showArchived ? t('list.showActive') : t('list.showArchived')}
           </button>
 
           <button
@@ -213,7 +214,7 @@ export const MemoryList: React.FC = () => {
                 />
               </svg>
             )}
-            Refresh
+            {t('list.refresh')}
           </button>
         </div>
       </div>
@@ -231,16 +232,14 @@ export const MemoryList: React.FC = () => {
         {loading && memories.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-gray-500">
             <Loader2 className="w-8 h-8 animate-spin mb-3" />
-            <p>Loading memories...</p>
+            <p>{t('list.loading')}</p>
           </div>
         ) : filteredMemories.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-gray-500">
             <Brain className="w-16 h-16 mb-3 opacity-50" />
-            <p className="text-lg font-semibold">No memories found</p>
+            <p className="text-lg font-semibold">{t('list.noMemoriesFound')}</p>
             <p className="text-sm mt-1">
-              {searchQuery
-                ? 'Try adjusting your search or filters'
-                : 'Memories will appear here as they are extracted from conversations'}
+              {searchQuery ? t('list.noMemoriesAdjustSearch') : t('list.noMemoriesHint')}
             </p>
           </div>
         ) : (
@@ -264,7 +263,7 @@ export const MemoryList: React.FC = () => {
       {totalPages > 1 && (
         <div className="flex items-center justify-between bg-gray-800 rounded-lg p-4">
           <p className="text-sm text-gray-400">
-            Page {currentPage} of {totalPages}
+            {t('list.pagination', { current: currentPage, total: totalPages })}
           </p>
           <div className="flex items-center gap-2">
             <button

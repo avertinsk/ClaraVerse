@@ -1,5 +1,6 @@
 import { memo, useRef, useState, useEffect, useCallback } from 'react';
 import { ChevronDown, ChevronRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { dropTargetForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
 import { KanbanTaskCard } from './KanbanTaskCard';
 import type { NexusTask, Daemon, NexusTaskStatus } from '@/types/nexus';
@@ -51,6 +52,7 @@ export const KanbanColumn = memo(function KanbanColumn({
   isExpanded = true,
   onToggle,
 }: KanbanColumnProps) {
+  const { t } = useTranslation('nexus');
   const columnRef = useRef<HTMLDivElement>(null);
   const [isOver, setIsOver] = useState(false);
 
@@ -111,7 +113,7 @@ export const KanbanColumn = memo(function KanbanColumn({
       {showBody && (
         <div className={styles.kanbanColumnBody}>
           {tasks.length === 0 ? (
-            <div className={styles.kanbanColumnEmpty}>No tasks</div>
+            <div className={styles.kanbanColumnEmpty}>{t('kanban.noTasks')}</div>
           ) : (
             tasks.map(task => (
               <KanbanTaskCard

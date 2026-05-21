@@ -13,6 +13,7 @@ import {
   Loader2,
   HelpCircle,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Badge } from '@/components/design-system';
 import type { Daemon, DaemonStatus } from '@/types/nexus';
 import styles from './Nexus.module.css';
@@ -38,20 +39,28 @@ const statusConfig: Record<
   DaemonStatus,
   {
     variant: 'default' | 'accent' | 'success' | 'warning' | 'error' | 'info';
-    label: string;
+    labelKey: string;
     icon: React.ReactNode;
   }
 > = {
-  idle: { variant: 'default', label: 'Idle', icon: <Bot size={12} /> },
+  idle: { variant: 'default', labelKey: 'daemonStatus.idle', icon: <Bot size={12} /> },
   executing: {
     variant: 'accent',
-    label: 'Running',
+    labelKey: 'daemonStatus.running',
     icon: <Loader2 size={12} className={styles.spin} />,
   },
-  waiting_input: { variant: 'warning', label: 'Waiting', icon: <HelpCircle size={12} /> },
-  completed: { variant: 'success', label: 'Done', icon: <CheckCircle2 size={12} /> },
-  failed: { variant: 'error', label: 'Failed', icon: <AlertCircle size={12} /> },
-  cancelled: { variant: 'default', label: 'Cancelled', icon: <X size={12} /> },
+  waiting_input: {
+    variant: 'warning',
+    labelKey: 'daemonStatus.waiting',
+    icon: <HelpCircle size={12} />,
+  },
+  completed: {
+    variant: 'success',
+    labelKey: 'daemonStatus.done',
+    icon: <CheckCircle2 size={12} />,
+  },
+  failed: { variant: 'error', labelKey: 'daemonStatus.failed', icon: <AlertCircle size={12} /> },
+  cancelled: { variant: 'default', labelKey: 'daemonStatus.cancelled', icon: <X size={12} /> },
 };
 
 export const DaemonCard = memo(function DaemonCard({
@@ -61,6 +70,7 @@ export const DaemonCard = memo(function DaemonCard({
   selected,
   compact,
 }: DaemonCardProps) {
+  const { t } = useTranslation('nexus');
   const status = (daemon.status ?? 'idle') as DaemonStatus;
   const cfg = statusConfig[status] ?? statusConfig.idle;
   const progress = daemon.progress ?? 0;
@@ -69,8 +79,8 @@ export const DaemonCard = memo(function DaemonCard({
   const isActive = status === 'executing';
 
   // Use task_summary for persistent description, fall back to role_label
-  const displayLabel = daemon.task_summary || daemon.role_label || 'Daemon';
-  const roleTag = daemon.role_label || daemon.role || 'Daemon';
+  const displayLabel = daemon.task_summary || daemon.role_label || t('daemonCard.daemon');
+  const roleTag = daemon.role_label || daemon.role || t('daemonCard.daemon');
 
   return (
     <div
@@ -95,7 +105,7 @@ export const DaemonCard = memo(function DaemonCard({
         </div>
         <div className={styles.daemonCardActions}>
           <Badge variant={cfg.variant} icon={cfg.icon}>
-            {cfg.label}
+            {t(cfg.labelKey)}
           </Badge>
           {isActive && onCancel && daemon.id && !compact && (
             <button
@@ -104,7 +114,7 @@ export const DaemonCard = memo(function DaemonCard({
                 e.stopPropagation();
                 onCancel(daemon.id!);
               }}
-              title="Cancel daemon"
+              title={t('daemonCard.cancelDaemon')}
             >
               <X size={14} />
             </button>
@@ -131,7 +141,9 @@ export const DaemonCard = memo(function DaemonCard({
         </div>
       )}
 
-      {status === 'failed' && <div className={styles.daemonCardError}>Execution failed</div>}
+      {status === 'failed' && (
+        <div className={styles.daemonCardError}>{t('daemonCard.executionFailed')}</div>
+      )}
     </div>
   );
 });

@@ -1,5 +1,6 @@
 import { memo, useCallback, useMemo, useState, useEffect } from 'react';
 import { Clock, Loader2, CheckCircle2, AlertCircle, Brain, Search, FileEdit } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { monitorForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
 import { KanbanColumn } from './KanbanColumn';
 import { useNexusStore } from '@/store/useNexusStore';
@@ -43,6 +44,7 @@ export const KanbanBoard = memo(function KanbanBoard({
   onRetryTask,
   onCancelTask,
 }: KanbanBoardProps) {
+  const { t } = useTranslation('nexus');
   const tasks = useNexusStore(s => s.tasks);
   const daemons = useNexusStore(s => s.daemons);
   const selectedTaskId = useNexusStore(s => s.selectedTaskId);
@@ -158,7 +160,7 @@ export const KanbanBoard = memo(function KanbanBoard({
   }[] = [
     {
       key: 'draft',
-      title: 'Draft',
+      title: t('kanban.draft'),
       icon: <FileEdit size={14} />,
       color: 'var(--color-text-quaternary, rgba(255,255,255,0.25))',
       status: 'draft' as NexusTaskStatus,
@@ -166,7 +168,7 @@ export const KanbanBoard = memo(function KanbanBoard({
     },
     {
       key: 'queued',
-      title: 'Queued',
+      title: t('kanban.queued'),
       icon: <Clock size={14} />,
       color: 'var(--color-text-tertiary)',
       status: 'pending' as NexusTaskStatus,
@@ -174,7 +176,7 @@ export const KanbanBoard = memo(function KanbanBoard({
     },
     {
       key: 'working',
-      title: 'Working',
+      title: t('kanban.working'),
       icon:
         columns.working.length > 0 ? (
           <Loader2 size={14} className={styles.spin} />
@@ -187,7 +189,7 @@ export const KanbanBoard = memo(function KanbanBoard({
     },
     {
       key: 'done',
-      title: 'Done',
+      title: t('kanban.done'),
       icon: <CheckCircle2 size={14} />,
       color: 'var(--color-success)',
       status: 'completed' as NexusTaskStatus,
@@ -195,7 +197,7 @@ export const KanbanBoard = memo(function KanbanBoard({
     },
     {
       key: 'failed',
-      title: 'Failed',
+      title: t('kanban.failed'),
       icon: <AlertCircle size={14} />,
       color: 'var(--color-error)',
       status: 'failed' as NexusTaskStatus,
@@ -210,11 +212,11 @@ export const KanbanBoard = memo(function KanbanBoard({
         <div className={styles.kanbanEmptyState}>
           <Brain size={56} strokeWidth={1} className={styles.kanbanEmptyIcon} />
           <h2 className={styles.kanbanEmptyTitle}>
-            {projectName ? `No tasks in ${projectName} yet` : 'No tasks yet'}
+            {projectName
+              ? t('kanban.noTasksInProject', { project: projectName })
+              : t('kanban.noTasksYet')}
           </h2>
-          <p className={styles.kanbanEmptyDescription}>
-            Use the bar below to create your first task.
-          </p>
+          <p className={styles.kanbanEmptyDescription}>{t('kanban.noTasksHint')}</p>
         </div>
       </div>
     );
@@ -248,7 +250,7 @@ export const KanbanBoard = memo(function KanbanBoard({
       {isSearchActive && boardTasks.length === 0 ? (
         <div className={styles.kanbanEmptySearch}>
           <Search size={24} className={styles.kanbanEmptyIcon} />
-          <p>No tasks match &ldquo;{searchQuery}&rdquo;</p>
+          <p>{t('kanban.noSearchResults', { query: searchQuery })}</p>
         </div>
       ) : (
         <div className={`${styles.kanbanColumns} ${isMobile ? styles.kanbanColumnsMobile : ''}`}>

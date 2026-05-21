@@ -44,6 +44,7 @@ import {
   Users,
   Wallet,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import type { NexusProject } from '@/types/nexus';
 import styles from './Nexus.module.css';
 
@@ -115,6 +116,7 @@ export const ProjectFormModal = memo(function ProjectFormModal({
   onDelete,
   onClose,
 }: ProjectFormModalProps) {
+  const { t } = useTranslation('nexus');
   const [name, setName] = useState(project?.name ?? '');
   const [description, setDescription] = useState(project?.description ?? '');
   const [systemInstruction, setSystemInstruction] = useState(project?.system_instruction ?? '');
@@ -138,7 +140,7 @@ export const ProjectFormModal = memo(function ProjectFormModal({
       <div className={styles.daemonBuilder} onClick={e => e.stopPropagation()}>
         {/* Header */}
         <div className={styles.daemonBuilderHeader}>
-          <h3>{project ? 'Edit Project' : 'New Project'}</h3>
+          <h3>{project ? t('projectForm.editProject') : t('projectForm.newProject')}</h3>
           <button className={styles.detailCloseBtn} onClick={onClose}>
             <X size={16} />
           </button>
@@ -148,43 +150,43 @@ export const ProjectFormModal = memo(function ProjectFormModal({
         <div className={styles.daemonBuilderBody}>
           {/* Name */}
           <div className={styles.daemonBuilderField}>
-            <label>Name</label>
+            <label>{t('projectForm.name')}</label>
             <input
               className={styles.daemonBuilderInput}
               value={name}
               onChange={e => setName(e.target.value)}
-              placeholder="Project name"
+              placeholder={t('projectForm.namePlaceholder')}
               autoFocus
             />
           </div>
 
           {/* Description */}
           <div className={styles.daemonBuilderField}>
-            <label>Description</label>
+            <label>{t('projectForm.description')}</label>
             <textarea
               className={styles.daemonBuilderTextarea}
               value={description}
               onChange={e => setDescription(e.target.value)}
-              placeholder="Optional description..."
+              placeholder={t('projectForm.descriptionPlaceholder')}
               rows={2}
             />
           </div>
 
           {/* System Instruction */}
           <div className={styles.daemonBuilderField}>
-            <label>System Instruction</label>
+            <label>{t('projectForm.systemInstruction')}</label>
             <textarea
               className={styles.daemonBuilderTextarea}
               value={systemInstruction}
               onChange={e => setSystemInstruction(e.target.value)}
-              placeholder="Instructions applied to every task in this project (e.g. paths, language, conventions)..."
+              placeholder={t('projectForm.systemInstructionPlaceholder')}
               rows={4}
             />
           </div>
 
           {/* Icon */}
           <div className={styles.daemonBuilderField}>
-            <label>Icon</label>
+            <label>{t('projectForm.icon')}</label>
             <div className={styles.projectIconGrid}>
               {ICON_OPTIONS.map(opt => (
                 <button
@@ -202,7 +204,7 @@ export const ProjectFormModal = memo(function ProjectFormModal({
 
           {/* Color */}
           <div className={styles.daemonBuilderField}>
-            <label>Color</label>
+            <label>{t('projectForm.color')}</label>
             <div className={styles.projectColorRow}>
               {COLOR_OPTIONS.map(c => (
                 <button
@@ -221,11 +223,11 @@ export const ProjectFormModal = memo(function ProjectFormModal({
         <div className={styles.daemonBuilderFooter}>
           {project && onDelete ? (
             <button className={styles.projectDeleteBtn} onClick={onDelete} type="button">
-              <Trash2 size={14} /> Delete
+              <Trash2 size={14} /> {t('actions.delete')}
             </button>
           ) : (
             <button className={styles.daemonBuilderCancelBtn} onClick={onClose}>
-              Cancel
+              {t('actions.cancel')}
             </button>
           )}
           <button
@@ -233,7 +235,7 @@ export const ProjectFormModal = memo(function ProjectFormModal({
             onClick={handleSave}
             disabled={!name.trim()}
           >
-            {project ? 'Save' : 'Create'}
+            {project ? t('actions.save') : t('projectForm.create')}
           </button>
         </div>
       </div>

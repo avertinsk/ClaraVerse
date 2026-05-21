@@ -1,6 +1,7 @@
 import { memo, useMemo, useState, useCallback, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Send, Loader2, Bot, Wrench } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Badge } from '@/components/design-system';
 import { DaemonActivityBlock } from './DaemonActivityBlock';
 import { useNexusStore } from '@/store/useNexusStore';
@@ -15,14 +16,14 @@ interface LiveViewModalProps {
 
 const statusConfig: Record<
   NexusTaskStatus,
-  { variant: 'default' | 'accent' | 'success' | 'warning' | 'error'; label: string }
+  { variant: 'default' | 'accent' | 'success' | 'warning' | 'error'; labelKey: string }
 > = {
-  pending: { variant: 'default', label: 'Queued' },
-  executing: { variant: 'accent', label: 'Running' },
-  waiting_input: { variant: 'warning', label: 'Waiting' },
-  completed: { variant: 'success', label: 'Done' },
-  failed: { variant: 'error', label: 'Failed' },
-  cancelled: { variant: 'default', label: 'Cancelled' },
+  pending: { variant: 'default', labelKey: 'liveView.queued' },
+  executing: { variant: 'accent', labelKey: 'liveView.running' },
+  waiting_input: { variant: 'warning', labelKey: 'liveView.waiting' },
+  completed: { variant: 'success', labelKey: 'liveView.done' },
+  failed: { variant: 'error', labelKey: 'liveView.failed' },
+  cancelled: { variant: 'default', labelKey: 'liveView.cancelled' },
 };
 
 export const LiveViewModal = memo(function LiveViewModal({
@@ -30,6 +31,7 @@ export const LiveViewModal = memo(function LiveViewModal({
   onClose,
   onSendFollowUp,
 }: LiveViewModalProps) {
+  const { t } = useTranslation('nexus');
   const tasks = useNexusStore(s => s.tasks);
   const daemons = useNexusStore(s => s.daemons);
   const conversation = useNexusStore(s => s.conversation);
@@ -100,7 +102,7 @@ export const LiveViewModal = memo(function LiveViewModal({
       <div className={styles.liveViewModal} onClick={e => e.stopPropagation()}>
         <div className={styles.liveViewHeader}>
           <div className={styles.liveViewHeaderLeft}>
-            <Badge variant={cfg.variant}>{cfg.label}</Badge>
+            <Badge variant={cfg.variant}>{t(cfg.labelKey)}</Badge>
             <span className={styles.liveViewTitle}>{task.goal || task.prompt}</span>
           </div>
           <button className={styles.liveViewCloseBtn} onClick={onClose}>
@@ -117,7 +119,7 @@ export const LiveViewModal = memo(function LiveViewModal({
                   <DaemonActivityBlock
                     key={daemon.id}
                     daemonId={daemon.id!}
-                    daemonRole={daemon.role_label || daemon.role || 'Daemon'}
+                    daemonRole={daemon.role_label || daemon.role || t('liveView.daemon')}
                     items={items}
                   />
                 );
@@ -126,7 +128,7 @@ export const LiveViewModal = memo(function LiveViewModal({
                 <div key={daemon.id} className={styles.liveViewDaemonLive}>
                   <div className={styles.liveViewDaemonHeader}>
                     <Bot size={14} />
-                    <span>{daemon.role_label || daemon.role || 'Daemon'}</span>
+                    <span>{daemon.role_label || daemon.role || t('liveView.daemon')}</span>
                     <Badge
                       variant={
                         daemon.status === 'executing'
@@ -138,7 +140,9 @@ export const LiveViewModal = memo(function LiveViewModal({
                               : 'default'
                       }
                     >
-                      {daemon.status === 'executing' ? 'Running' : (daemon.status ?? 'Idle')}
+                      {daemon.status === 'executing'
+                        ? t('liveView.running')
+                        : (daemon.status ?? t('liveView.idle'))}
                     </Badge>
                   </div>
                   {daemon.task_summary && (
@@ -163,10 +167,10 @@ export const LiveViewModal = memo(function LiveViewModal({
           ) : isRunning ? (
             <div className={styles.liveViewWaiting}>
               <Loader2 size={20} className={styles.spin} />
-              <span>Setting up daemons...</span>
+              <span>{t('liveView.settingUpDaemons')}</span>
             </div>
           ) : (
-            <div className={styles.liveViewEmpty}>No activity recorded yet.</div>
+            <div className={styles.liveViewEmpty}>{t('liveView.noActivity')}</div>
           )}
         </div>
 
@@ -177,7 +181,9 @@ export const LiveViewModal = memo(function LiveViewModal({
               value={replyText}
               onChange={e => setReplyText(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={isWaiting ? 'Respond to daemon...' : 'Ask a follow-up...'}
+              placeholder={
+                isWaiting ? t('liveView.respondToDaemon') : t('liveView.followUpPlaceholder')
+              }
             />
             <button
               className={styles.liveViewReplyBtn}

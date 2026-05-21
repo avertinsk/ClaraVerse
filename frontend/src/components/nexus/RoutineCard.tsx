@@ -12,6 +12,7 @@ import {
   ChevronUp,
   Clock,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Badge } from '@/components/design-system';
 import { fetchRoutineRuns, type Routine, type RoutineRun } from '@/services/clawService';
 import styles from './Nexus.module.css';
@@ -25,7 +26,10 @@ interface RoutineCardProps {
   onToggle: (id: string, enabled: boolean) => void;
 }
 
-function cronToHuman(cron: string): string {
+function cronToHuman(
+  cron: string,
+  t: (key: string, opts?: Record<string, string>) => string
+): string {
   const parts = cron.split(' ');
   if (parts.length !== 5) return cron;
   const [min, hour, , , dow] = parts;
@@ -33,24 +37,24 @@ function cronToHuman(cron: string): string {
     const h = parseInt(hour, 10);
     const m = parseInt(min, 10);
     const time = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
-    if (dow === '*') return `Daily at ${time}`;
-    if (dow === '1-5') return `Weekdays at ${time}`;
+    if (dow === '*') return t('routineCard.dailyAt', { time });
+    if (dow === '1-5') return t('routineCard.weekdaysAt', { time });
     return `${time} (${cron})`;
   }
-  if (hour.startsWith('*/')) return `Every ${hour.slice(2)}h`;
-  if (min.startsWith('*/')) return `Every ${min.slice(2)}m`;
+  if (hour.startsWith('*/')) return t('routineCard.everyHours', { count: hour.slice(2) });
+  if (min.startsWith('*/')) return t('routineCard.everyMinutes', { count: min.slice(2) });
   return cron;
 }
 
-function timeAgo(dateStr?: string): string {
-  if (!dateStr) return 'never';
+function timeAgo(dateStr: string | undefined, t: (key: string) => string): string {
+  if (!dateStr) return t('routineCard.never');
   const diff = Date.now() - new Date(dateStr).getTime();
   const mins = Math.floor(diff / 60000);
-  if (mins < 1) return 'just now';
-  if (mins < 60) return `${mins}m ago`;
+  if (mins < 1) return t('routineCard.justNow');
+  if (mins < 60) return t('routineCard.minutesAgo', { count: mins });
   const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  return `${Math.floor(hrs / 24)}d ago`;
+  if (hrs < 24) return t('routineCard.hoursAgo', { count: hrs });
+  return t('routineCard.daysAgo', { count: Math.floor(hrs / 24) });
 }
 
 const statusIcon: Record<string, React.ReactNode> = {
@@ -68,6 +72,7 @@ export const RoutineCard = memo(function RoutineCard({
   onTrigger,
   onToggle,
 }: RoutineCardProps) {
+  const { t } = useTranslation('nexus');
   const [expanded, setExpanded] = useState(false);
   const [runs, setRuns] = useState<RoutineRun[] | null>(null);
   const [loadingRuns, setLoadingRuns] = useState(false);
@@ -97,14 +102,14 @@ export const RoutineCard = memo(function RoutineCard({
         <div className={styles.routineCardTitle}>
           <span className={styles.routineCardName}>{routine.name}</span>
           <Badge variant={routine.enabled ? 'success' : 'default'}>
-            {routine.enabled ? 'Active' : 'Paused'}
+            {routine.enabled ? t('routineCard.active') : t('routineCard.paused')}
           </Badge>
         </div>
         <div className={styles.routineCardActions}>
           <button
             className={styles.routineActionBtn}
             onClick={() => onTrigger(routine.id)}
-            title="Run now"
+            title={t('routineCard.runNow')}
             disabled={triggering}
           >
             {triggering ? <Loader2 size={13} className={styles.spin} /> : <Play size={13} />}
@@ -112,14 +117,14 @@ export const RoutineCard = memo(function RoutineCard({
           <button
             className={styles.routineActionBtn}
             onClick={() => onEdit(routine.id)}
-            title="Edit"
+            title={t('routineCard.edit')}
           >
             <Pencil size={13} />
           </button>
           <button
             className={`${styles.routineActionBtn} ${styles.routineActionBtnDanger}`}
             onClick={() => onDelete(routine.id)}
-            title="Delete"
+            title={t('routineCard.delete')}
           >
             <Trash2 size={13} />
           </button>
@@ -127,11 +132,13 @@ export const RoutineCard = memo(function RoutineCard({
       </div>
 
       <div className={styles.routineCardMeta}>
-        <span>{cronToHuman(routine.cronExpression)}</span>
+        <span>{cronToHuman(routine.cronExpression, t)}</span>
         <span className={styles.routineCardDot} />
         <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
           {routine.deliveryMethod === 'telegram' ? <Send size={10} /> : <HardDrive size={10} />}
-          {routine.deliveryMethod === 'telegram' ? 'Telegram' : 'In-app'}
+          {routine.deliveryMethod === 'telegram'
+            ? t('routineCard.telegram')
+            : t('routineCard.inApp')}
         </span>
         {routine.enabledTools?.length > 0 && (
           <>
@@ -143,7 +150,9 @@ export const RoutineCard = memo(function RoutineCard({
 
       {routine.totalRuns > 0 && (
         <div className={styles.routineCardStats}>
-          <span>{routine.totalRuns} runs</span>
+          <span>
+            {routine.totalRuns} {t('routineCard.runs')}
+          </span>
           <span
             style={{
               display: 'inline-flex',
@@ -167,7 +176,9 @@ export const RoutineCard = memo(function RoutineCard({
             </span>
           )}
           <span className={styles.routineCardDot} />
-          <span>Last: {timeAgo(routine.lastRunAt)}</span>
+          <span>
+            {t('routineCard.last')}: {timeAgo(routine.lastRunAt, t)}
+          </span>
         </div>
       )}
 
@@ -175,7 +186,7 @@ export const RoutineCard = memo(function RoutineCard({
       {routine.totalRuns > 0 && (
         <button className={styles.routineHistoryToggle} onClick={toggleHistory}>
           {expanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-          {expanded ? 'Hide history' : 'View history'}
+          {expanded ? t('routineCard.hideHistory') : t('routineCard.viewHistory')}
         </button>
       )}
 
@@ -184,11 +195,11 @@ export const RoutineCard = memo(function RoutineCard({
         <div className={styles.routineRunHistory}>
           {loadingRuns && (
             <div className={styles.routineRunLoading}>
-              <Loader2 size={14} className={styles.spin} /> Loading...
+              <Loader2 size={14} className={styles.spin} /> {t('routineCard.loading')}
             </div>
           )}
           {!loadingRuns && runs && runs.length === 0 && (
-            <div className={styles.routineRunEmpty}>No runs recorded yet</div>
+            <div className={styles.routineRunEmpty}>{t('routineCard.noRuns')}</div>
           )}
           {!loadingRuns &&
             runs &&
@@ -196,7 +207,7 @@ export const RoutineCard = memo(function RoutineCard({
               <div key={run.id} className={styles.routineRunItem}>
                 <div className={styles.routineRunItemHeader}>
                   {statusIcon[run.status] ?? statusIcon.pending}
-                  <span className={styles.routineRunItemTime}>{timeAgo(run.created_at)}</span>
+                  <span className={styles.routineRunItemTime}>{timeAgo(run.created_at, t)}</span>
                   <Badge
                     variant={
                       run.status === 'completed'

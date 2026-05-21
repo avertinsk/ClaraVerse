@@ -12,6 +12,7 @@ import {
   Bot,
   Brain,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Badge } from '@/components/design-system';
 import type { DaemonTemplate } from '@/types/nexus';
 import styles from './Nexus.module.css';
@@ -41,6 +42,7 @@ export const DaemonTemplateCard = memo(function DaemonTemplateCard({
   onDelete,
   onToggle,
 }: DaemonTemplateCardProps) {
+  const { t } = useTranslation('nexus');
   const IconComponent = ICON_MAP[template.icon] ?? Bot;
   const isSystem = template.is_default;
   const { stats } = template;
@@ -92,14 +94,16 @@ export const DaemonTemplateCard = memo(function DaemonTemplateCard({
       <p className={styles.daemonCardDesc}>{template.description}</p>
 
       <div className={styles.daemonCardMeta}>
-        <span>{(template.default_tools ?? []).length} tools</span>
+        <span>
+          {(template.default_tools ?? []).length} {t('daemonTemplateCard.tools')}
+        </span>
         <span className={styles.routineCardDot} />
-        <span>max {template.max_iterations} iter</span>
+        <span>{t('daemonTemplateCard.maxIter', { max: template.max_iterations })}</span>
         {learningCount > 0 && (
           <>
             <span className={styles.routineCardDot} />
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
-              <Brain size={10} /> {learningCount} learnings
+              <Brain size={10} /> {learningCount} {t('daemonTemplateCard.learnings')}
             </span>
           </>
         )}
@@ -107,7 +111,9 @@ export const DaemonTemplateCard = memo(function DaemonTemplateCard({
 
       {stats.total_runs > 0 && (
         <div className={styles.routineCardStats}>
-          <span>{stats.total_runs} runs</span>
+          <span>
+            {stats.total_runs} {t('daemonTemplateCard.runs')}
+          </span>
           <span
             style={{
               display: 'inline-flex',
@@ -131,13 +137,13 @@ export const DaemonTemplateCard = memo(function DaemonTemplateCard({
             </span>
           )}
           <span className={styles.routineCardDot} />
-          <span>~{stats.avg_iterations.toFixed(1)} avg iter</span>
+          <span>{t('daemonTemplateCard.avgIter', { avg: stats.avg_iterations.toFixed(1) })}</span>
         </div>
       )}
 
       {isSystem && (
         <Badge variant="default" className={styles.daemonSystemBadge}>
-          System
+          {t('daemonTemplateCard.system')}
         </Badge>
       )}
 

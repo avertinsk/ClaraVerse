@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X, Plus, Loader2, Tag as TagIcon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import memoryService from '@/services/memoryService';
 
 interface CreateMemoryModalProps {
@@ -16,6 +17,7 @@ const CATEGORIES = [
 ];
 
 export const CreateMemoryModal: React.FC<CreateMemoryModalProps> = ({ onClose, onSuccess }) => {
+  const { t } = useTranslation('memory');
   const [content, setContent] = useState('');
   const [category, setCategory] = useState<string>('context');
   const [tagInput, setTagInput] = useState('');
@@ -47,7 +49,7 @@ export const CreateMemoryModal: React.FC<CreateMemoryModalProps> = ({ onClose, o
     setError(null);
 
     if (!content.trim()) {
-      setError('Content is required');
+      setError(t('createModal.contentRequired'));
       return;
     }
 
@@ -62,7 +64,7 @@ export const CreateMemoryModal: React.FC<CreateMemoryModalProps> = ({ onClose, o
       onSuccess();
     } catch (err) {
       console.error('Failed to create memory:', err);
-      setError('Failed to create memory. Please try again.');
+      setError(t('createModal.createFailed'));
     } finally {
       setIsSubmitting(false);
     }
@@ -73,7 +75,7 @@ export const CreateMemoryModal: React.FC<CreateMemoryModalProps> = ({ onClose, o
       <div className="bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-700">
-          <h2 className="text-xl font-bold">Create New Memory</h2>
+          <h2 className="text-xl font-bold">{t('createModal.title')}</h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-white transition-colors"
@@ -88,13 +90,13 @@ export const CreateMemoryModal: React.FC<CreateMemoryModalProps> = ({ onClose, o
           {/* Content */}
           <div>
             <label htmlFor="content" className="block text-sm font-medium text-gray-300 mb-2">
-              Content <span className="text-red-400">*</span>
+              {t('createModal.contentLabel')} <span className="text-red-400">*</span>
             </label>
             <textarea
               id="content"
               value={content}
               onChange={e => setContent(e.target.value)}
-              placeholder="Enter the memory content..."
+              placeholder={t('createModal.contentPlaceholder')}
               className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[120px] resize-y"
               disabled={isSubmitting}
             />
@@ -103,7 +105,7 @@ export const CreateMemoryModal: React.FC<CreateMemoryModalProps> = ({ onClose, o
           {/* Category */}
           <div>
             <label htmlFor="category" className="block text-sm font-medium text-gray-300 mb-2">
-              Category <span className="text-red-400">*</span>
+              {t('createModal.categoryLabel')} <span className="text-red-400">*</span>
             </label>
             <select
               id="category"
@@ -114,7 +116,8 @@ export const CreateMemoryModal: React.FC<CreateMemoryModalProps> = ({ onClose, o
             >
               {CATEGORIES.map(cat => (
                 <option key={cat.value} value={cat.value}>
-                  {cat.label} - {cat.description}
+                  {t(`createModal.categories.${cat.value}.label`)} -{' '}
+                  {t(`createModal.categories.${cat.value}.description`)}
                 </option>
               ))}
             </select>
@@ -123,7 +126,7 @@ export const CreateMemoryModal: React.FC<CreateMemoryModalProps> = ({ onClose, o
           {/* Tags */}
           <div>
             <label htmlFor="tags" className="block text-sm font-medium text-gray-300 mb-2">
-              Tags (optional)
+              {t('createModal.tagsLabel')}
             </label>
             <div className="flex gap-2 mb-2">
               <input
@@ -132,7 +135,7 @@ export const CreateMemoryModal: React.FC<CreateMemoryModalProps> = ({ onClose, o
                 value={tagInput}
                 onChange={e => setTagInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Add a tag..."
+                placeholder={t('createModal.tagPlaceholder')}
                 className="flex-1 px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 disabled={isSubmitting}
               />
@@ -143,7 +146,7 @@ export const CreateMemoryModal: React.FC<CreateMemoryModalProps> = ({ onClose, o
                 className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 disabled:text-gray-500 rounded-lg transition-colors flex items-center gap-2"
               >
                 <Plus className="w-4 h-4" />
-                Add
+                {t('createModal.addTag')}
               </button>
             </div>
 
@@ -181,9 +184,7 @@ export const CreateMemoryModal: React.FC<CreateMemoryModalProps> = ({ onClose, o
           {/* Help Text */}
           <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
             <p className="text-sm text-blue-300">
-              <strong>Tip:</strong> Memories you create manually will be included in the memory
-              selection process just like automatically extracted ones. They help personalize your
-              conversations.
+              <strong>{t('createModal.tipLabel')}</strong> {t('createModal.tipText')}
             </p>
           </div>
         </form>
@@ -196,7 +197,7 @@ export const CreateMemoryModal: React.FC<CreateMemoryModalProps> = ({ onClose, o
             disabled={isSubmitting}
             className="px-4 py-2 text-gray-300 hover:text-white transition-colors disabled:opacity-50"
           >
-            Cancel
+            {t('common.cancel')}
           </button>
           <button
             onClick={handleSubmit}
@@ -206,12 +207,12 @@ export const CreateMemoryModal: React.FC<CreateMemoryModalProps> = ({ onClose, o
             {isSubmitting ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                Creating...
+                {t('createModal.creating')}
               </>
             ) : (
               <>
                 <Plus className="w-4 h-4" />
-                Create Memory
+                {t('createModal.createButton')}
               </>
             )}
           </button>

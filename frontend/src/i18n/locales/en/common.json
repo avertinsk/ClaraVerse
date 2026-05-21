@@ -104,6 +104,13 @@
   "routineBuilder.saving": "Saving...",
   "routineBuilder.saveChanges": "Save Changes",
   "routineBuilder.createRoutine": "Create Routine",
+  "common.saving": "Saving...",
+
+  "mcpOnboarding.deviceAuthorized": "Device Authorized Successfully!",
+  "mcpOnboarding.deviceConnected": "{{platform}} device connected (v{{version}})",
+  "mcpOnboarding.closeWindow": "You can safely close this window and continue in your terminal.",
+  "mcpOnboarding.autoDetect": "The CLI will automatically detect the authorization and proceed with setup.",
+  "mcpOnboarding.goToDashboard": "Go to Dashboard",
 
   "authStep.authorizeDevice": "Authorize Device",
   "authStep.authorizeDeviceDesc": "Enter the code shown in your terminal to connect your device.",

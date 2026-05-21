@@ -14,6 +14,7 @@ import {
   ChevronDown,
   ChevronRight,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { nexusService } from '@/services/nexusService';
 import { useNexusStore } from '@/store/useNexusStore';
 import { useClawStore } from '@/store/useClawStore';
@@ -62,6 +63,7 @@ export const DaemonTemplateBuilder = memo(function DaemonTemplateBuilder({
   editingTemplate,
   onClose,
 }: DaemonTemplateBuilderProps) {
+  const { t } = useTranslation('nexus');
   const addDaemonTemplate = useNexusStore(s => s.addDaemonTemplate);
   const updateDaemonTemplateStore = useNexusStore(s => s.updateDaemonTemplate);
   const { toolCategories, toolsLoading, fetchTools } = useClawStore();
@@ -71,7 +73,7 @@ export const DaemonTemplateBuilder = memo(function DaemonTemplateBuilder({
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [role, setRole] = useState('custom');
-  const [roleLabel, setRoleLabel] = useState('Custom Agent');
+  const [roleLabel, setRoleLabel] = useState(t('daemonTemplateBuilder.customAgent'));
   const [persona, setPersona] = useState('');
   const [instructions, setInstructions] = useState('');
   const [constraints, setConstraints] = useState('');
@@ -215,12 +217,16 @@ export const DaemonTemplateBuilder = memo(function DaemonTemplateBuilder({
   ]);
 
   const title = isSystemTemplate
-    ? 'Customize System Daemon'
+    ? t('daemonTemplateBuilder.customizeSystemDaemon')
     : editingTemplate
-      ? 'Edit Daemon Template'
-      : 'New Daemon Template';
+      ? t('daemonTemplateBuilder.editDaemonTemplate')
+      : t('daemonTemplateBuilder.newDaemonTemplate');
 
-  const saveLabel = isSystemTemplate ? 'Save as Copy' : editingTemplate ? 'Update' : 'Create';
+  const saveLabel = isSystemTemplate
+    ? t('daemonTemplateBuilder.saveAsCopy')
+    : editingTemplate
+      ? t('daemonTemplateBuilder.update')
+      : t('daemonTemplateBuilder.create');
   const SaveIcon = isSystemTemplate ? Copy : Save;
 
   return (
@@ -236,23 +242,23 @@ export const DaemonTemplateBuilder = memo(function DaemonTemplateBuilder({
         <div className={styles.daemonBuilderBody}>
           {/* Name & Description */}
           <div className={styles.daemonBuilderField}>
-            <label>Name</label>
+            <label>{t('daemonTemplateBuilder.name')}</label>
             <input
               type="text"
               value={name}
               onChange={e => setName(e.target.value)}
-              placeholder="My Custom Daemon"
+              placeholder={t('daemonTemplateBuilder.namePlaceholder')}
               className={styles.daemonBuilderInput}
             />
           </div>
 
           <div className={styles.daemonBuilderField}>
-            <label>Description</label>
+            <label>{t('daemonTemplateBuilder.description')}</label>
             <input
               type="text"
               value={description}
               onChange={e => setDescription(e.target.value)}
-              placeholder="What this daemon specializes in..."
+              placeholder={t('daemonTemplateBuilder.descriptionPlaceholder')}
               className={styles.daemonBuilderInput}
             />
           </div>
@@ -260,7 +266,7 @@ export const DaemonTemplateBuilder = memo(function DaemonTemplateBuilder({
           {/* Role & Role Label */}
           <div className={styles.daemonBuilderRow}>
             <div className={styles.daemonBuilderField}>
-              <label>Role</label>
+              <label>{t('daemonTemplateBuilder.role')}</label>
               <select
                 value={role}
                 onChange={e => handleRoleChange(e.target.value)}
@@ -274,12 +280,12 @@ export const DaemonTemplateBuilder = memo(function DaemonTemplateBuilder({
               </select>
             </div>
             <div className={styles.daemonBuilderField}>
-              <label>Role Label</label>
+              <label>{t('daemonTemplateBuilder.roleLabel')}</label>
               <input
                 type="text"
                 value={roleLabel}
                 onChange={e => setRoleLabel(e.target.value)}
-                placeholder="Display label"
+                placeholder={t('daemonTemplateBuilder.roleLabelPlaceholder')}
                 className={styles.daemonBuilderInput}
               />
             </div>
@@ -287,11 +293,11 @@ export const DaemonTemplateBuilder = memo(function DaemonTemplateBuilder({
 
           {/* Persona */}
           <div className={styles.daemonBuilderField}>
-            <label>Persona / System Prompt</label>
+            <label>{t('daemonTemplateBuilder.persona')}</label>
             <textarea
               value={persona}
               onChange={e => setPersona(e.target.value)}
-              placeholder="You are an expert..."
+              placeholder={t('daemonTemplateBuilder.personaPlaceholder')}
               className={styles.daemonBuilderTextarea}
               rows={3}
             />
@@ -299,11 +305,11 @@ export const DaemonTemplateBuilder = memo(function DaemonTemplateBuilder({
 
           {/* Instructions */}
           <div className={styles.daemonBuilderField}>
-            <label>Instructions (Workflow)</label>
+            <label>{t('daemonTemplateBuilder.instructions')}</label>
             <textarea
               value={instructions}
               onChange={e => setInstructions(e.target.value)}
-              placeholder="Step-by-step workflow..."
+              placeholder={t('daemonTemplateBuilder.instructionsPlaceholder')}
               className={styles.daemonBuilderTextarea}
               rows={4}
             />
@@ -311,11 +317,11 @@ export const DaemonTemplateBuilder = memo(function DaemonTemplateBuilder({
 
           {/* Constraints */}
           <div className={styles.daemonBuilderField}>
-            <label>Constraints</label>
+            <label>{t('daemonTemplateBuilder.constraints')}</label>
             <textarea
               value={constraints}
               onChange={e => setConstraints(e.target.value)}
-              placeholder="Rules and guardrails..."
+              placeholder={t('daemonTemplateBuilder.constraintsPlaceholder')}
               className={styles.daemonBuilderTextarea}
               rows={3}
             />
@@ -323,11 +329,11 @@ export const DaemonTemplateBuilder = memo(function DaemonTemplateBuilder({
 
           {/* Output Format */}
           <div className={styles.daemonBuilderField}>
-            <label>Output Format</label>
+            <label>{t('daemonTemplateBuilder.outputFormat')}</label>
             <textarea
               value={outputFormat}
               onChange={e => setOutputFormat(e.target.value)}
-              placeholder="Expected output structure..."
+              placeholder={t('daemonTemplateBuilder.outputFormatPlaceholder')}
               className={styles.daemonBuilderTextarea}
               rows={2}
             />
@@ -335,7 +341,10 @@ export const DaemonTemplateBuilder = memo(function DaemonTemplateBuilder({
 
           {/* Tools — real tool picker */}
           <div className={styles.daemonBuilderField}>
-            <label>Default Tools {defaultTools.size > 0 && `(${defaultTools.size})`}</label>
+            <label>
+              {t('daemonTemplateBuilder.defaultTools')}{' '}
+              {defaultTools.size > 0 && `(${defaultTools.size})`}
+            </label>
             <div className={styles.toolPicker}>
               <div className={styles.toolSearchRow}>
                 <Search size={12} />
@@ -343,14 +352,14 @@ export const DaemonTemplateBuilder = memo(function DaemonTemplateBuilder({
                   className={styles.toolSearchInput}
                   value={toolSearch}
                   onChange={e => setToolSearch(e.target.value)}
-                  placeholder="Search tools..."
+                  placeholder={t('daemonTemplateBuilder.searchTools')}
                 />
               </div>
               <div className={styles.toolList}>
                 {toolsLoading ? (
-                  <div className={styles.toolEmpty}>Loading tools...</div>
+                  <div className={styles.toolEmpty}>{t('daemonTemplateBuilder.loadingTools')}</div>
                 ) : filteredCategories.length === 0 ? (
-                  <div className={styles.toolEmpty}>No tools found</div>
+                  <div className={styles.toolEmpty}>{t('daemonTemplateBuilder.noToolsFound')}</div>
                 ) : (
                   filteredCategories.map(cat => (
                     <div key={cat.name}>
@@ -389,7 +398,7 @@ export const DaemonTemplateBuilder = memo(function DaemonTemplateBuilder({
           {/* Icon & Color */}
           <div className={styles.daemonBuilderRow}>
             <div className={styles.daemonBuilderField}>
-              <label>Icon</label>
+              <label>{t('daemonTemplateBuilder.icon')}</label>
               <div className={styles.daemonBuilderChips}>
                 {ICON_OPTIONS.map(({ value, Icon }) => (
                   <button
@@ -404,7 +413,7 @@ export const DaemonTemplateBuilder = memo(function DaemonTemplateBuilder({
               </div>
             </div>
             <div className={styles.daemonBuilderField}>
-              <label>Color</label>
+              <label>{t('daemonTemplateBuilder.color')}</label>
               <div className={styles.daemonBuilderChips}>
                 {COLOR_OPTIONS.map(c => (
                   <button
@@ -421,7 +430,7 @@ export const DaemonTemplateBuilder = memo(function DaemonTemplateBuilder({
           {/* Behavior */}
           <div className={styles.daemonBuilderRow}>
             <div className={styles.daemonBuilderField}>
-              <label>Max Iterations</label>
+              <label>{t('daemonTemplateBuilder.maxIterations')}</label>
               <input
                 type="number"
                 value={maxIterations}
@@ -432,7 +441,7 @@ export const DaemonTemplateBuilder = memo(function DaemonTemplateBuilder({
               />
             </div>
             <div className={styles.daemonBuilderField}>
-              <label>Max Retries</label>
+              <label>{t('daemonTemplateBuilder.maxRetries')}</label>
               <input
                 type="number"
                 value={maxRetries}
@@ -447,7 +456,7 @@ export const DaemonTemplateBuilder = memo(function DaemonTemplateBuilder({
 
         <div className={styles.daemonBuilderFooter}>
           <button className={styles.daemonBuilderCancelBtn} onClick={onClose}>
-            Cancel
+            {t('common.cancel')}
           </button>
           <button
             className={styles.daemonBuilderSaveBtn}
@@ -455,7 +464,7 @@ export const DaemonTemplateBuilder = memo(function DaemonTemplateBuilder({
             disabled={saving || !name.trim()}
           >
             <SaveIcon size={14} />
-            {saving ? 'Saving...' : saveLabel}
+            {saving ? t('common.saving') : saveLabel}
           </button>
         </div>
       </div>

@@ -1,15 +1,6 @@
 import React, { useState } from 'react';
-import {
-  Tag,
-  Archive,
-  ArchiveRestore,
-  Trash2,
-  Clock,
-  TrendingUp,
-  Edit2,
-  Check,
-  X,
-} from 'lucide-react';
+import { Tag, Archive, ArchiveRestore, Trash2, Clock, TrendingUp } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import type { Memory } from '@/services/memoryService';
 
 interface MemoryItemProps {
@@ -29,14 +20,6 @@ const CATEGORY_COLORS: Record<string, string> = {
   instruction: 'bg-red-500/20 text-red-300 border-red-500/30',
 };
 
-const CATEGORY_LABELS: Record<string, string> = {
-  personal_info: 'Personal Info',
-  preferences: 'Preferences',
-  context: 'Context',
-  fact: 'Fact',
-  instruction: 'Instruction',
-};
-
 export const MemoryItem: React.FC<MemoryItemProps> = ({
   memory,
   onArchive,
@@ -45,23 +28,24 @@ export const MemoryItem: React.FC<MemoryItemProps> = ({
   isSelected,
   onSelect,
 }) => {
+  const { t } = useTranslation('memory');
   const [isExpanded, setIsExpanded] = useState(false);
   const isLongContent = memory.content.length > 200;
   const displayContent = isExpanded ? memory.content : memory.content.slice(0, 200);
 
   const formatDate = (dateStr: string | null) => {
-    if (!dateStr) return 'Never';
+    if (!dateStr) return t('item.never');
     const date = new Date(dateStr);
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-    if (diffDays === 0) return 'Today';
-    if (diffDays === 1) return 'Yesterday';
-    if (diffDays < 7) return `${diffDays} days ago`;
-    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
-    if (diffDays < 365) return `${Math.floor(diffDays / 30)} months ago`;
-    return `${Math.floor(diffDays / 365)} years ago`;
+    if (diffDays === 0) return t('item.today');
+    if (diffDays === 1) return t('item.yesterday');
+    if (diffDays < 7) return t('item.daysAgo', { count: diffDays });
+    if (diffDays < 30) return t('item.weeksAgo', { count: Math.floor(diffDays / 7) });
+    if (diffDays < 365) return t('item.monthsAgo', { count: Math.floor(diffDays / 30) });
+    return t('item.yearsAgo', { count: Math.floor(diffDays / 365) });
   };
 
   const getScoreColor = (score: number) => {
@@ -89,7 +73,7 @@ export const MemoryItem: React.FC<MemoryItemProps> = ({
             CATEGORY_COLORS[memory.category]
           }`}
         >
-          {CATEGORY_LABELS[memory.category]}
+          {t(`item.categories.${memory.category}`)}
         </span>
 
         {/* Actions */}
@@ -101,7 +85,7 @@ export const MemoryItem: React.FC<MemoryItemProps> = ({
                 onUnarchive();
               }}
               className="p-1.5 text-gray-400 hover:text-blue-400 hover:bg-gray-700 rounded transition-colors"
-              title="Restore from archive"
+              title={t('item.restoreFromArchive')}
             >
               <ArchiveRestore className="w-4 h-4" />
             </button>
@@ -112,7 +96,7 @@ export const MemoryItem: React.FC<MemoryItemProps> = ({
                 onArchive();
               }}
               className="p-1.5 text-gray-400 hover:text-yellow-400 hover:bg-gray-700 rounded transition-colors"
-              title="Archive memory"
+              title={t('item.archiveMemory')}
             >
               <Archive className="w-4 h-4" />
             </button>
@@ -123,7 +107,7 @@ export const MemoryItem: React.FC<MemoryItemProps> = ({
               onDelete();
             }}
             className="p-1.5 text-gray-400 hover:text-red-400 hover:bg-gray-700 rounded transition-colors"
-            title="Delete permanently"
+            title={t('item.deletePermanently')}
           >
             <Trash2 className="w-4 h-4" />
           </button>
@@ -144,7 +128,7 @@ export const MemoryItem: React.FC<MemoryItemProps> = ({
           }}
           className="text-sm text-blue-400 hover:text-blue-300 mb-3 transition-colors"
         >
-          {isExpanded ? 'Show less' : 'Show more'}
+          {isExpanded ? t('item.showLess') : t('item.showMore')}
         </button>
       )}
 
@@ -165,24 +149,29 @@ export const MemoryItem: React.FC<MemoryItemProps> = ({
 
       {/* Metadata */}
       <div className="flex items-center gap-4 text-xs text-gray-400 pt-3 border-t border-gray-700">
-        <div className="flex items-center gap-1" title={`Memory score: ${memory.score.toFixed(3)}`}>
+        <div
+          className="flex items-center gap-1"
+          title={t('item.memoryScore', { score: memory.score.toFixed(3) })}
+        >
           <TrendingUp className="w-3 h-3" />
           <span className={getScoreColor(memory.score)}>{(memory.score * 100).toFixed(0)}%</span>
         </div>
 
-        <div className="flex items-center gap-1" title="Access count">
+        <div className="flex items-center gap-1" title={t('item.accessCount')}>
           <span>🔄</span>
-          <span>{memory.access_count} uses</span>
+          <span>
+            {memory.access_count} {t('item.uses')}
+          </span>
         </div>
 
-        <div className="flex items-center gap-1" title="Last accessed">
+        <div className="flex items-center gap-1" title={t('item.lastAccessed')}>
           <Clock className="w-3 h-3" />
           <span>{formatDate(memory.last_accessed_at)}</span>
         </div>
 
         {memory.is_archived && (
           <span className="ml-auto px-2 py-0.5 bg-gray-700 text-gray-400 rounded text-xs">
-            Archived {formatDate(memory.archived_at)}
+            {t('item.archived')} {formatDate(memory.archived_at)}
           </span>
         )}
       </div>
@@ -191,7 +180,7 @@ export const MemoryItem: React.FC<MemoryItemProps> = ({
       {memory.source_engagement > 0 && (
         <div className="mt-2 pt-2 border-t border-gray-700">
           <div className="flex items-center gap-2 text-xs text-gray-500">
-            <span>Source conversation engagement:</span>
+            <span>{t('item.sourceEngagement')}:</span>
             <div className="flex-1 bg-gray-700 rounded-full h-1.5 overflow-hidden">
               <div
                 className="bg-blue-500 h-full transition-all"

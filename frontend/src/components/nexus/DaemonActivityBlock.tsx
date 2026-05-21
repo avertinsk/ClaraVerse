@@ -8,6 +8,7 @@ import {
   Loader2,
   X,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { MarkdownRenderer } from '@/components/design-system/content/MarkdownRenderer';
 import type { NexusConversationItem } from '@/types/nexus';
 import styles from './Nexus.module.css';
@@ -25,6 +26,7 @@ export const DaemonActivityBlock = memo(function DaemonActivityBlock({
   items,
   onCancel,
 }: DaemonActivityBlockProps) {
+  const { t } = useTranslation('nexus');
   const [expanded, setExpanded] = useState(true);
 
   const hasToolCalls = items.some(i => i.toolName);
@@ -55,7 +57,7 @@ export const DaemonActivityBlock = memo(function DaemonActivityBlock({
     >
       <button className={styles.daemonBlockHeader} onClick={() => setExpanded(!expanded)}>
         {expanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-        <span className={styles.daemonBlockRole}>{daemonRole ?? 'Daemon'}</span>
+        <span className={styles.daemonBlockRole}>{daemonRole ?? t('daemonActivity.daemon')}</span>
         {isActive && <Loader2 size={14} className={styles.spin} />}
         {isComplete && <CheckCircle2 size={14} className={styles.successIcon} />}
         {isError && <AlertCircle size={14} className={styles.errorIcon} />}
@@ -66,7 +68,7 @@ export const DaemonActivityBlock = memo(function DaemonActivityBlock({
               e.stopPropagation();
               onCancel(daemonId);
             }}
-            title="Stop daemon"
+            title={t('daemonActivity.stopDaemon')}
           >
             <X size={14} />
           </button>

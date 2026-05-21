@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle, Terminal, LayoutDashboard } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Card, Typography, Button } from '@/components/design-system';
 import { useAuthStore } from '@/store/useAuthStore';
 import { AuthStep } from './steps/AuthStep';
@@ -21,6 +22,7 @@ export interface DeviceInfo {
 }
 
 export const MCPOnboarding = ({ initialCode, onComplete }: MCPOnboardingProps) => {
+  const { t } = useTranslation('common');
   const navigate = useNavigate();
   const { user } = useAuthStore();
   const [isAuthorized, setIsAuthorized] = useState(false);
@@ -70,24 +72,25 @@ export const MCPOnboarding = ({ initialCode, onComplete }: MCPOnboardingProps) =
               </div>
 
               <Typography variant="h4" weight="semibold" className="success-title">
-                Device Authorized Successfully!
+                {t('mcpOnboarding.deviceAuthorized')}
               </Typography>
 
               {deviceInfo && (
                 <Typography variant="sm" className="success-device-info">
-                  {deviceInfo.platform} device connected (v{deviceInfo.client_version})
+                  {t('mcpOnboarding.deviceConnected', {
+                    platform: deviceInfo.platform,
+                    version: deviceInfo.client_version,
+                  })}
                 </Typography>
               )}
 
               <div className="success-message">
                 <Terminal size={20} />
-                <Typography variant="base">
-                  You can safely close this window and continue in your terminal.
-                </Typography>
+                <Typography variant="base">{t('mcpOnboarding.closeWindow')}</Typography>
               </div>
 
               <Typography variant="xs" className="success-hint">
-                The CLI will automatically detect the authorization and proceed with setup.
+                {t('mcpOnboarding.autoDetect')}
               </Typography>
 
               <Button
@@ -96,7 +99,7 @@ export const MCPOnboarding = ({ initialCode, onComplete }: MCPOnboardingProps) =
                 className="dashboard-button"
               >
                 <LayoutDashboard size={18} />
-                Go to Dashboard
+                {t('mcpOnboarding.goToDashboard')}
               </Button>
             </motion.div>
           )}

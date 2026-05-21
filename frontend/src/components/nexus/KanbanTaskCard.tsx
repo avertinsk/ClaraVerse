@@ -1,5 +1,6 @@
 import { memo, useMemo, useRef, useState, useEffect } from 'react';
 import { Zap, GitBranch, Trash2, Bot, Eye, RotateCcw, Square } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { draggable } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
 import { setCustomNativeDragPreview } from '@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview';
 import { pointerOutsideOfPreview } from '@atlaskit/pragmatic-drag-and-drop/element/pointer-outside-of-preview';
@@ -18,22 +19,25 @@ interface KanbanTaskCardProps {
   onCancelTask?: (taskId: string) => void;
 }
 
-const modeLabels: Record<string, { icon: React.ReactNode; label: string }> = {
-  quick: { icon: <Zap size={10} />, label: 'Quick' },
-  daemon: { icon: <Bot size={10} />, label: 'Daemon' },
-  multi_daemon: { icon: <GitBranch size={10} />, label: `Multi` },
+const modeLabels: Record<string, { icon: React.ReactNode; labelKey: string }> = {
+  quick: { icon: <Zap size={10} />, labelKey: 'kanbanTask.quick' },
+  daemon: { icon: <Bot size={10} />, labelKey: 'kanbanTask.daemon' },
+  multi_daemon: { icon: <GitBranch size={10} />, labelKey: 'kanbanTask.multi' },
 };
 
-function relativeTime(dateStr: string): string {
+function relativeTime(
+  dateStr: string,
+  t: (key: string, opts?: Record<string, number>) => string
+): string {
   const diff = Date.now() - new Date(dateStr).getTime();
   const seconds = Math.floor(diff / 1000);
-  if (seconds < 60) return 'just now';
+  if (seconds < 60) return t('kanbanTask.justNow');
   const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes}m ago`;
+  if (minutes < 60) return t('kanbanTask.minutesAgo', { count: minutes });
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
+  if (hours < 24) return t('kanbanTask.hoursAgo', { count: hours });
   const days = Math.floor(hours / 24);
-  return `${days}d ago`;
+  return t('kanbanTask.daysAgo', { count: days });
 }
 
 const MAX_TOOL_PILLS = 3;
@@ -48,6 +52,7 @@ export const KanbanTaskCard = memo(function KanbanTaskCard({
   onRetryTask,
   onCancelTask,
 }: KanbanTaskCardProps) {
+  const { t } = useTranslation('nexus');
   const cardRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -157,7 +162,7 @@ export const KanbanTaskCard = memo(function KanbanTaskCard({
       <div className={styles.kanbanTaskCardMeta}>
         {!isTerminal && (
           <Badge variant="default" icon={mode.icon}>
-            {mode.label}
+            {t(mode.labelKey)}
           </Badge>
         )}
         {!isTerminal && daemons.length > 0 && (
@@ -215,7 +220,7 @@ export const KanbanTaskCard = memo(function KanbanTaskCard({
             className={styles.kanbanTaskCardStatusDot}
             style={{ backgroundColor: statusDotColor[task.status] ?? 'rgba(255,255,255,0.3)' }}
           />
-          <span className={styles.kanbanTaskCardTime}>{relativeTime(task.created_at)}</span>
+          <span className={styles.kanbanTaskCardTime}>{relativeTime(task.created_at, t)}</span>
         </div>
         {hasActions && (
           <div className={styles.kanbanTaskCardActions}>
@@ -226,7 +231,7 @@ export const KanbanTaskCard = memo(function KanbanTaskCard({
                   e.stopPropagation();
                   onViewLive(task.id);
                 }}
-                title="View live"
+                title={t('kanbanTask.viewLive')}
               >
                 <Eye size={12} />
               </button>
@@ -238,7 +243,7 @@ export const KanbanTaskCard = memo(function KanbanTaskCard({
                   e.stopPropagation();
                   onCancelTask(task.id);
                 }}
-                title="Stop task"
+                title={t('kanbanTask.stopTask')}
               >
                 <Square size={10} fill="currentColor" />
               </button>
@@ -252,7 +257,7 @@ export const KanbanTaskCard = memo(function KanbanTaskCard({
                     e.stopPropagation();
                     onRetryTask(task.id);
                   }}
-                  title={`Retry (${task.manual_retry_count ?? 0}/3)`}
+                  title={t('kanbanTask.retry', { current: task.manual_retry_count ?? 0, max: 3 })}
                 >
                   <RotateCcw size={12} />
                 </button>
@@ -264,7 +269,7 @@ export const KanbanTaskCard = memo(function KanbanTaskCard({
                   e.stopPropagation();
                   onDelete(task.id);
                 }}
-                title="Remove card"
+                title={t('kanbanTask.removeCard')}
               >
                 <Trash2 size={12} />
               </button>

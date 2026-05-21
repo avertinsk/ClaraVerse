@@ -1,5 +1,6 @@
 import { memo, useEffect, useState, useCallback } from 'react';
 import { Plus, Bot } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { nexusService } from '@/services/nexusService';
 import { useNexusStore } from '@/store/useNexusStore';
 import { DaemonTemplateCard } from './DaemonTemplateCard';
@@ -8,6 +9,7 @@ import type { DaemonTemplate } from '@/types/nexus';
 import styles from './Nexus.module.css';
 
 export const DaemonsView = memo(function DaemonsView() {
+  const { t } = useTranslation('nexus');
   const daemonTemplates = useNexusStore(s => s.daemonTemplates);
   const setDaemonTemplates = useNexusStore(s => s.setDaemonTemplates);
   const removeDaemonTemplate = useNexusStore(s => s.removeDaemonTemplate);
@@ -36,7 +38,7 @@ export const DaemonsView = memo(function DaemonsView() {
 
   const handleDelete = useCallback(
     async (id: string) => {
-      if (!window.confirm('Delete this daemon template? This cannot be undone.')) return;
+      if (!window.confirm(t('daemonsView.confirmDelete'))) return;
       try {
         await nexusService.deleteDaemonTemplate(id);
         removeDaemonTemplate(id);
@@ -44,7 +46,7 @@ export const DaemonsView = memo(function DaemonsView() {
         console.error('Failed to delete template:', err);
       }
     },
-    [removeDaemonTemplate]
+    [removeDaemonTemplate, t]
   );
 
   const handleToggle = useCallback(
@@ -71,7 +73,7 @@ export const DaemonsView = memo(function DaemonsView() {
       <div className={styles.daemonsHeader}>
         <div className={styles.routinesHeaderLeft}>
           <Bot size={20} />
-          <h2 className={styles.routinesTitle}>Daemons</h2>
+          <h2 className={styles.routinesTitle}>{t('daemonsView.title')}</h2>
         </div>
         <div className={styles.routinesHeaderRight}>
           <button
@@ -82,7 +84,7 @@ export const DaemonsView = memo(function DaemonsView() {
             }}
           >
             <Plus size={14} />
-            New Daemon
+            {t('daemonsView.newDaemon')}
           </button>
         </div>
       </div>
@@ -91,7 +93,7 @@ export const DaemonsView = memo(function DaemonsView() {
         {/* System Templates */}
         {systemTemplates.length > 0 && (
           <section className={styles.daemonsSection}>
-            <h3 className={styles.daemonsSectionTitle}>System Daemons</h3>
+            <h3 className={styles.daemonsSectionTitle}>{t('daemonsView.systemDaemons')}</h3>
             <div className={styles.daemonsGrid}>
               {systemTemplates.map(tmpl => (
                 <DaemonTemplateCard key={tmpl.id} template={tmpl} onClick={handleEdit} />
@@ -102,15 +104,12 @@ export const DaemonsView = memo(function DaemonsView() {
 
         {/* User Templates */}
         <section className={styles.daemonsSection}>
-          <h3 className={styles.daemonsSectionTitle}>Your Daemons</h3>
+          <h3 className={styles.daemonsSectionTitle}>{t('daemonsView.yourDaemons')}</h3>
           {userTemplates.length === 0 ? (
             <div className={styles.routinesEmpty}>
               <Bot size={32} style={{ opacity: 0.3 }} />
-              <p>No custom daemons yet</p>
-              <span>
-                Create a daemon template to define reusable agent presets — specialized workers with
-                their own tools, personality, and learned behaviors.
-              </span>
+              <p>{t('daemonsView.noCustomDaemons')}</p>
+              <span>{t('daemonsView.noCustomDaemonsDesc')}</span>
               <button
                 className={styles.routinesNewBtn}
                 onClick={() => {
@@ -119,7 +118,7 @@ export const DaemonsView = memo(function DaemonsView() {
                 }}
               >
                 <Plus size={14} />
-                Create your first daemon
+                {t('daemonsView.createFirstDaemon')}
               </button>
             </div>
           ) : (

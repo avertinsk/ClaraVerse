@@ -24,6 +24,7 @@ import {
   Loader2,
   Bookmark,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useModelStore } from '@/store/useModelStore';
 import { useClawStore } from '@/store/useClawStore';
 import { useNexusStore } from '@/store/useNexusStore';
@@ -68,17 +69,17 @@ interface FloatingTaskBarProps {
 
 type DaemonMode = 'auto' | 'quick' | 'daemon' | 'multi_daemon';
 
-const DAEMON_MODES: { value: DaemonMode; label: string }[] = [
-  { value: 'auto', label: 'Auto' },
-  { value: 'quick', label: 'Quick' },
-  { value: 'daemon', label: 'Daemon' },
-  { value: 'multi_daemon', label: 'Multi' },
+const DAEMON_MODES: { value: DaemonMode; labelKey: string }[] = [
+  { value: 'auto', labelKey: 'floatingTaskBar.auto' },
+  { value: 'quick', labelKey: 'floatingTaskBar.quick' },
+  { value: 'daemon', labelKey: 'floatingTaskBar.daemonMode' },
+  { value: 'multi_daemon', labelKey: 'floatingTaskBar.multi' },
 ];
 
-const PRIORITIES: { value: number; label: string }[] = [
-  { value: 0, label: 'Low' },
-  { value: 1, label: 'Normal' },
-  { value: 2, label: 'High' },
+const PRIORITIES: { value: number; labelKey: string }[] = [
+  { value: 0, labelKey: 'floatingTaskBar.low' },
+  { value: 1, labelKey: 'floatingTaskBar.normal' },
+  { value: 2, labelKey: 'floatingTaskBar.high' },
 ];
 
 export const FloatingTaskBar = memo(function FloatingTaskBar({
@@ -89,6 +90,7 @@ export const FloatingTaskBar = memo(function FloatingTaskBar({
   onClearFollowUp,
   detailPanelOpen,
 }: FloatingTaskBarProps) {
+  const { t } = useTranslation('nexus');
   // Expanded/collapsed
   const [expanded, setExpanded] = useState(false);
 
@@ -470,34 +472,37 @@ export const FloatingTaskBar = memo(function FloatingTaskBar({
     }
   };
 
-  const transcribeAudio = useCallback(async (audioBlob: Blob) => {
-    setIsTranscribing(true);
-    try {
-      const formData = new FormData();
-      formData.append('file', audioBlob, 'recording.webm');
+  const transcribeAudio = useCallback(
+    async (audioBlob: Blob) => {
+      setIsTranscribing(true);
+      try {
+        const formData = new FormData();
+        formData.append('file', audioBlob, 'recording.webm');
 
-      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
-      const response = await fetch(`${apiBaseUrl}/api/audio/transcribe`, {
-        method: 'POST',
-        body: formData,
-      });
+        const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
+        const response = await fetch(`${apiBaseUrl}/api/audio/transcribe`, {
+          method: 'POST',
+          body: formData,
+        });
 
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({ error: 'Transcription failed' }));
-        throw new Error(error.error || 'Transcription failed');
+        if (!response.ok) {
+          const error = await response.json().catch(() => ({ error: 'Transcription failed' }));
+          throw new Error(error.error || 'Transcription failed');
+        }
+
+        const result = await response.json();
+        if (result.text) {
+          voiceSubmitRef.current(result.text);
+        }
+      } catch (error) {
+        console.error('Transcription error:', error);
+        alert(error instanceof Error ? error.message : t('floatingTaskBar.transcriptionFailed'));
+      } finally {
+        setIsTranscribing(false);
       }
-
-      const result = await response.json();
-      if (result.text) {
-        voiceSubmitRef.current(result.text);
-      }
-    } catch (error) {
-      console.error('Transcription error:', error);
-      alert(error instanceof Error ? error.message : 'Failed to transcribe audio');
-    } finally {
-      setIsTranscribing(false);
-    }
-  }, []);
+    },
+    [t]
+  );
 
   const startRecording = useCallback(async () => {
     try {
@@ -530,12 +535,12 @@ export const FloatingTaskBar = memo(function FloatingTaskBar({
     } catch (error) {
       console.error('Failed to start recording:', error);
       if (error instanceof Error && error.name === 'NotAllowedError') {
-        alert('Microphone access denied. Please allow microphone access to use voice input.');
+        alert(t('floatingTaskBar.microphoneAccessDenied'));
       } else {
-        alert('Failed to start recording. Please check your microphone.');
+        alert(t('floatingTaskBar.microphoneFailed'));
       }
     }
-  }, [transcribeAudio]);
+  }, [transcribeAudio, t]);
 
   const stopRecording = useCallback(() => {
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
@@ -632,14 +637,14 @@ export const FloatingTaskBar = memo(function FloatingTaskBar({
                       className={styles.toolSearchInput}
                       value={toolSearch}
                       onChange={e => setToolSearch(e.target.value)}
-                      placeholder="Search tools..."
+                      placeholder={t('floatingTaskBar.searchTools')}
                     />
                   </div>
                   <div className={styles.toolList}>
                     {toolsLoading ? (
-                      <div className={styles.toolEmpty}>Loading tools...</div>
+                      <div className={styles.toolEmpty}>{t('floatingTaskBar.loadingTools')}</div>
                     ) : filteredCategories.length === 0 ? (
-                      <div className={styles.toolEmpty}>No tools found</div>
+                      <div className={styles.toolEmpty}>{t('floatingTaskBar.noToolsFound')}</div>
                     ) : (
                       filteredCategories.map(cat => (
                         <div key={cat.name}>
@@ -700,7 +705,9 @@ export const FloatingTaskBar = memo(function FloatingTaskBar({
                       onClick={() => setSkillsExpanded(!skillsExpanded)}
                       type="button"
                     >
-                      {skillsExpanded ? 'Show less' : `+${enabledSkills.length - 6} more`}
+                      {skillsExpanded
+                        ? t('floatingTaskBar.showLess')
+                        : `+${enabledSkills.length - 6} ${t('floatingTaskBar.more')}`}
                     </button>
                   )}
                 </div>
@@ -732,7 +739,9 @@ export const FloatingTaskBar = memo(function FloatingTaskBar({
                       onClick={() => setSavesExpanded(!savesExpanded)}
                       type="button"
                     >
-                      {savesExpanded ? 'Show less' : `+${saves.length - 6} more`}
+                      {savesExpanded
+                        ? t('floatingTaskBar.showLess')
+                        : `+${saves.length - 6} ${t('floatingTaskBar.more')}`}
                     </button>
                   )}
                 </div>
@@ -741,14 +750,14 @@ export const FloatingTaskBar = memo(function FloatingTaskBar({
 
             {/* Daemon Template */}
             <div className={styles.formGroup}>
-              <label className={styles.formLabel}>Daemon</label>
+              <label className={styles.formLabel}>{t('floatingTaskBar.daemon')}</label>
               <div className={styles.templateChips}>
                 <button
                   className={`${styles.templateChip} ${!selectedTemplateId ? styles.templateChipActive : ''}`}
                   onClick={() => setSelectedTemplateId(null)}
                   type="button"
                 >
-                  Auto
+                  {t('floatingTaskBar.auto')}
                 </button>
                 {activeTemplates.map(tmpl => {
                   const Icon = TEMPLATE_ICON_MAP[tmpl.icon] ?? Bot;
@@ -771,7 +780,7 @@ export const FloatingTaskBar = memo(function FloatingTaskBar({
             {/* Mode — only when no template */}
             {!selectedTemplateId && (
               <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Mode</label>
+                <label className={styles.formLabel}>{t('floatingTaskBar.mode')}</label>
                 <div className={styles.segmentedControl}>
                   {DAEMON_MODES.map(mode => (
                     <button
@@ -782,7 +791,7 @@ export const FloatingTaskBar = memo(function FloatingTaskBar({
                       onClick={() => setDaemonMode(mode.value)}
                       type="button"
                     >
-                      {mode.label}
+                      {t(mode.labelKey)}
                     </button>
                   ))}
                 </div>
@@ -791,7 +800,7 @@ export const FloatingTaskBar = memo(function FloatingTaskBar({
 
             {/* Priority */}
             <div className={styles.formGroup}>
-              <label className={styles.formLabel}>Priority</label>
+              <label className={styles.formLabel}>{t('floatingTaskBar.priority')}</label>
               <div className={styles.segmentedControl}>
                 {PRIORITIES.map(p => (
                   <button
@@ -802,7 +811,7 @@ export const FloatingTaskBar = memo(function FloatingTaskBar({
                     onClick={() => setPriority(p.value)}
                     type="button"
                   >
-                    {p.label}
+                    {t(p.labelKey)}
                   </button>
                 ))}
               </div>
@@ -812,7 +821,7 @@ export const FloatingTaskBar = memo(function FloatingTaskBar({
             {projects.length > 1 && (
               <div className={styles.formGroup}>
                 <label className={styles.formLabel}>
-                  <Folder size={12} /> Project
+                  <Folder size={12} /> {t('floatingTaskBar.project')}
                 </label>
                 <select
                   className={styles.formSelect}
@@ -830,14 +839,14 @@ export const FloatingTaskBar = memo(function FloatingTaskBar({
 
             {/* Schedule */}
             <div className={styles.formGroup}>
-              <label className={styles.formLabel}>Schedule</label>
+              <label className={styles.formLabel}>{t('floatingTaskBar.schedule')}</label>
               <div className={styles.scheduleToggle}>
                 <button
                   className={`${styles.segmentedOption} ${!scheduleEnabled ? styles.segmentedOptionActive : ''}`}
                   onClick={() => setScheduleEnabled(false)}
                   type="button"
                 >
-                  Run Now
+                  {t('floatingTaskBar.runNow')}
                 </button>
                 <button
                   className={`${styles.segmentedOption} ${scheduleEnabled ? styles.segmentedOptionActive : ''}`}
@@ -845,7 +854,7 @@ export const FloatingTaskBar = memo(function FloatingTaskBar({
                   type="button"
                 >
                   <Calendar size={12} />
-                  Schedule
+                  {t('floatingTaskBar.scheduleBtn')}
                 </button>
               </div>
               {scheduleEnabled && (
@@ -874,7 +883,7 @@ export const FloatingTaskBar = memo(function FloatingTaskBar({
                   e.stopPropagation();
                   onClearFollowUp?.();
                 }}
-                title="Clear follow-up context"
+                title={t('floatingTaskBar.clearFollowUp')}
                 type="button"
               >
                 <X size={10} />
@@ -898,9 +907,9 @@ export const FloatingTaskBar = memo(function FloatingTaskBar({
             placeholder={
               isFollowUpMode
                 ? followUpTask?.status === 'waiting_input'
-                  ? 'Respond to daemon... (Shift+Enter to send)'
-                  : 'Follow up on this task... (Shift+Enter to send)'
-                : 'Describe a task... (Shift+Enter to send)'
+                  ? t('floatingTaskBar.respondToDaemon')
+                  : t('floatingTaskBar.followUpPlaceholder')
+                : t('floatingTaskBar.taskPlaceholder')
             }
             rows={1}
           />
@@ -912,11 +921,13 @@ export const FloatingTaskBar = memo(function FloatingTaskBar({
             <button
               className={`${styles.floatingBarToolBtn} ${expanded ? styles.floatingBarToolBtnActive : ''}`}
               onClick={toggleExpanded}
-              title={expanded ? 'Hide advanced settings' : 'Advanced settings'}
+              title={
+                expanded ? t('floatingTaskBar.hideAdvanced') : t('floatingTaskBar.advancedSettings')
+              }
               type="button"
             >
               <Settings2 size={14} />
-              <span>Advanced</span>
+              <span>{t('floatingTaskBar.advanced')}</span>
               {activeSettingsCount > 0 && (
                 <span className={styles.floatingBarBadge}>{activeSettingsCount}</span>
               )}
@@ -940,7 +951,7 @@ export const FloatingTaskBar = memo(function FloatingTaskBar({
                 setModelOpen(!modelOpen);
               }}
               type="button"
-              title="Select model"
+              title={t('floatingTaskBar.selectModel')}
             >
               {selectedModel?.provider_favicon && (
                 <img
@@ -949,7 +960,7 @@ export const FloatingTaskBar = memo(function FloatingTaskBar({
                   className={styles.floatingBarModelFavicon}
                 />
               )}
-              <span>{selectedModel?.display_name || 'Model'}</span>
+              <span>{selectedModel?.display_name || t('floatingTaskBar.model')}</span>
               <ChevronDown size={10} />
             </button>
           </div>
@@ -993,7 +1004,7 @@ export const FloatingTaskBar = memo(function FloatingTaskBar({
                   </div>
                 ))}
                 {visibleModels.length === 0 && (
-                  <div className={styles.formDropdownEmpty}>No models available</div>
+                  <div className={styles.formDropdownEmpty}>{t('floatingTaskBar.noModels')}</div>
                 )}
               </div>,
               document.body
@@ -1009,16 +1020,16 @@ export const FloatingTaskBar = memo(function FloatingTaskBar({
             <button
               className={`${styles.floatingBarModeToggle} ${submitMode === 'draft' ? styles.floatingBarModeToggleDraft : ''}`}
               onClick={() => setSubmitMode(prev => (prev === 'queue' ? 'draft' : 'queue'))}
-              title="Tab to toggle (Queue / Draft)"
+              title={t('floatingTaskBar.tabToToggle')}
               type="button"
             >
               {submitMode === 'queue' ? (
                 <>
-                  <ArrowUp size={10} /> Queue
+                  <ArrowUp size={10} /> {t('floatingTaskBar.queue')}
                 </>
               ) : (
                 <>
-                  <FileEdit size={10} /> Draft
+                  <FileEdit size={10} /> {t('floatingTaskBar.draft')}
                 </>
               )}
             </button>
@@ -1032,10 +1043,10 @@ export const FloatingTaskBar = memo(function FloatingTaskBar({
               disabled={isTranscribing}
               title={
                 isTranscribing
-                  ? 'Transcribing...'
+                  ? t('floatingTaskBar.transcribing')
                   : isRecording
-                    ? 'Click to stop recording'
-                    : 'Voice input'
+                    ? t('floatingTaskBar.stopRecording')
+                    : t('floatingTaskBar.voiceInput')
               }
               type="button"
             >
@@ -1053,10 +1064,10 @@ export const FloatingTaskBar = memo(function FloatingTaskBar({
               disabled={!prompt.trim()}
               title={
                 isFollowUpMode
-                  ? 'Send follow-up (Shift+Enter)'
+                  ? t('floatingTaskBar.sendFollowUp')
                   : submitMode === 'queue'
-                    ? 'Send to queue (Shift+Enter)'
-                    : 'Save as draft (Shift+Enter)'
+                    ? t('floatingTaskBar.sendToQueue')
+                    : t('floatingTaskBar.saveAsDraft')
               }
               type="button"
             >
