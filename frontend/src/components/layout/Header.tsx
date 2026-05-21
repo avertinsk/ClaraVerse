@@ -1,9 +1,11 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { LogOut, User } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/store/useAuthStore';
 import { Button } from '@/components/design-system';
 
 export const Header = () => {
+  const { t } = useTranslation('common');
   const { user, signOut } = useAuthStore();
   const navigate = useNavigate();
 
@@ -32,7 +34,7 @@ export const Header = () => {
                 textDecoration: 'none',
               }}
             >
-              ClaraVerse
+              {t('app.name')}
             </Link>
           </div>
           <div className="flex gap-4 items-center">
@@ -46,7 +48,7 @@ export const Header = () => {
               onMouseOver={e => (e.currentTarget.style.color = 'var(--color-accent)')}
               onMouseOut={e => (e.currentTarget.style.color = 'var(--color-text-secondary)')}
             >
-              Home
+              {t('actions.home')}
             </Link>
             <Link
               to="/design-system"
@@ -73,7 +75,7 @@ export const Header = () => {
                   style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
                 >
                   <LogOut size={16} />
-                  Sign Out
+                  {t('admin.signOut')}
                 </Button>
               </div>
             )}
