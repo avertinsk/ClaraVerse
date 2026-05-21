@@ -258,6 +258,7 @@ function AssistantMessageComponent({
   onOpenArtifacts,
 }: AssistantMessageProps) {
   const { t } = useTranslation('chat');
+
   const backendUrl =
     (window.__CLARA_CONFIG__?.API_BASE_URL ?? import.meta.env.VITE_API_BASE_URL) || '';
 
@@ -334,7 +335,9 @@ function AssistantMessageComponent({
               marginBottom: 'var(--space-3)',
             }}
           >
-            <span style={{ color: 'var(--color-text-tertiary)' }}>{t('assistantMessage.imageCreated')}</span>
+            <span style={{ color: 'var(--color-text-tertiary)' }}>
+              {t('assistantMessage.imageCreated')}
+            </span>
             <span style={{ margin: '0 6px', color: 'var(--color-text-tertiary)' }}>•</span>
             <span>{prompt.length > 60 ? prompt.slice(0, 60) + '...' : prompt}</span>
           </div>
@@ -650,7 +653,218 @@ function AssistantMessageComponent({
                 }}
               >
                 {fileTypeLabel}
-                  {parsedResult.size && ` • ${formatFileSize(parsedResult.size)}`}
+                {parsedResult.size && ` • ${formatFileSize(parsedResult.size)}`}
+              </div>
+            </div>
+          </div>
+          <div
+            style={{
+              marginTop: 'auto',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 'var(--space-1)',
+              fontSize: 'var(--text-xs)',
+              color: isPresentation
+                ? 'var(--color-warning)'
+                : isTextFile
+                  ? 'var(--color-success)'
+                  : 'var(--color-accent)',
+              fontWeight: 'var(--font-medium)',
+            }}
+          >
+            <Download size={12} />
+            <span>Download</span>
+          </div>
+        </button>
+      </div>
+    );
+  };
+
+  // Render file tiles for tools that generate files (run_python, html_to_pdf, etc.)
+  const renderFileTiles = () => {
+    // Find any tool that has files in its result
+    const toolsWithFiles = ['run_python', 'html_to_pdf', 'analyze_data'];
+    const fileTool = message.toolCalls?.find(
+      tool => toolsWithFiles.includes(tool.name) && tool.result
+    );
+    if (!fileTool || !fileTool.result) return null;
+
+    const parsedResult = parseToolResult(fileTool.result);
+    if (!parsedResult || !parsedResult.files || parsedResult.files.length === 0) return null;
+
+    // Handle file download - check for secure download URL or base64 data
+    const handleFileDownload = (file: {
+      filename: string;
+      download_url?: string;
+      data?: string;
+      size?: number;
+      expires_in?: string;
+    }) => {
+      if (file.download_url) {
+        // Use secure download URL - check if already absolute
+        const isAbsoluteUrl =
+          file.download_url.startsWith('http://') || file.download_url.startsWith('https://');
+        const downloadUrl = isAbsoluteUrl ? file.download_url : `${backendUrl}${file.download_url}`;
+        window.open(downloadUrl, '_blank');
+      } else if (file.data) {
+        // Fall back to base64 download
+        downloadBase64File(file as { filename: string; data: string; size: number });
+      }
+    };
+
+    return (
+      <div style={{ marginTop: 'var(--space-3)' }}>
+        <div
+          style={{
+            fontSize: 'var(--text-xs)',
+            color: 'var(--color-text-secondary)',
+            fontWeight: 'var(--font-medium)',
+            marginBottom: 'var(--space-2)',
+          }}
+        >
+          Generated Files ({parsedResult.files.length})
+        </div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-2)' }}>
+          {parsedResult.files.map((file, fileIdx) => {
+            const IconComponent = getIconByName(getFileIcon(file.filename));
+            const ext = file.filename.split('.').pop()?.toUpperCase() || 'FILE';
+            const hasSecureUrl = !!file.download_url;
+            return (
+              <button
+                key={fileIdx}
+                onClick={() => handleFileDownload(file)}
+                style={{
+                  padding: 'var(--space-3)',
+                  background: 'var(--color-surface)',
+                  border: 'none',
+                  borderRadius: 'var(--radius-md)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 'var(--space-2)',
+                  minHeight: '120px',
+                  minWidth: '160px',
+                  maxWidth: '200px',
+                  cursor: 'pointer',
+                  transition: 'all var(--transition-fast)',
+                  textAlign: 'left',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.transform = 'scale(1.02)';
+                  e.currentTarget.style.boxShadow = 'var(--shadow-md)';
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.transform = 'scale(1)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--space-2)' }}>
+                  <IconComponent size={24} color="var(--color-accent)" />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div
+                      style={{
+                        fontSize: 'var(--text-sm)',
+                        fontWeight: 'var(--font-medium)',
+                        color: 'var(--color-text-primary)',
+                        wordBreak: 'break-word',
+                      }}
+                    >
+                      {file.filename}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: 'var(--text-xs)',
+                        color: 'var(--color-text-secondary)',
+                        marginTop: 'var(--space-1)',
+                      }}
+                    >
+                      {ext} • {formatFileSize(file.size)}
+                    </div>
+                    {hasSecureUrl && file.expires_in && (
+                      <div
+                        style={{
+                          fontSize: 'var(--text-xs)',
+                          color: 'var(--color-text-tertiary)',
+                          marginTop: 'var(--space-1)',
+                        }}
+                      >
+                        Expires in {file.expires_in}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div
+                  style={{
+                    marginTop: 'auto',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 'var(--space-1)',
+                    fontSize: 'var(--text-xs)',
+                    color: 'var(--color-accent)',
+                    fontWeight: 'var(--font-medium)',
+                  }}
+                >
+                  <Download size={12} />
+                  <span>Download</span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
+  // Render tool content (expanded)
+  const renderToolContent = (tool: ToolCall) => {
+    const parsedResult = parseToolResult(tool.result || '');
+
+    // Handle download_url - check if already absolute
+    if (parsedResult && parsedResult.download_url) {
+      const isAbsoluteUrl =
+        parsedResult.download_url.startsWith('http://') ||
+        parsedResult.download_url.startsWith('https://');
+      const downloadUrl = isAbsoluteUrl
+        ? parsedResult.download_url
+        : `${backendUrl}${parsedResult.download_url}`;
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+          {parsedResult.message && (
+            <div
+              style={{
+                fontSize: 'var(--text-sm)',
+                color: 'var(--color-text-primary)',
+                marginBottom: 'var(--space-2)',
+              }}
+            >
+              {parsedResult.message.split('Click the link to download')[0].trim()}
+            </div>
+          )}
+          <button
+            onClick={() => handleDocumentDownload(downloadUrl, parsedResult.filename)}
+            className={styles.downloadTile}
+            style={{ width: '100%', textAlign: 'left' }}
+          >
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--space-2)' }}>
+              <FileText size={24} color="var(--color-accent)" />
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div
+                  style={{
+                    fontSize: 'var(--text-sm)',
+                    fontWeight: 'var(--font-medium)',
+                    color: 'var(--color-text-primary)',
+                    wordBreak: 'break-word',
+                  }}
+                >
+                  {parsedResult.filename || 'Document'}
+                </div>
+                <div
+                  style={{
+                    fontSize: 'var(--text-xs)',
+                    color: 'var(--color-text-secondary)',
+                    marginTop: 'var(--space-1)',
+                  }}
+                >
+                  PDF{parsedResult.size && ` • ${formatFileSize(parsedResult.size)}`}
                 </div>
               </div>
             </div>
@@ -666,7 +880,7 @@ function AssistantMessageComponent({
               }}
             >
               <Download size={12} />
-              <span>{t('assistantMessage.download')}</span>
+              <span>Download</span>
             </div>
           </button>
         </div>
@@ -805,7 +1019,7 @@ function AssistantMessageComponent({
       );
     }
 
-    return tool.result || t('assistantMessage.noResult');
+    return tool.result || 'No result available';
   };
 
   // Render expanded tool content for completed messages (includes plots)
@@ -895,7 +1109,7 @@ function AssistantMessageComponent({
               }}
             >
               <Download size={12} />
-              <span>{t('assistantMessage.download')}</span>
+              <span>Download</span>
             </div>
           </button>
         </div>
@@ -1059,7 +1273,7 @@ function AssistantMessageComponent({
             }}
           >
             <Download size={14} />
-            <span>{t('assistantMessage.download')}</span>
+            <span>Download</span>
           </button>
         </div>
       );
@@ -1136,7 +1350,7 @@ function AssistantMessageComponent({
               >
                 <ImageIcon size={16} />
                 <span>
-                  {t('assistantMessage.visualizations', { count: tool.plots.length })}
+                  {tool.plots.length} visualization{tool.plots.length > 1 ? 's' : ''}
                 </span>
               </div>
               <div
@@ -1146,7 +1360,7 @@ function AssistantMessageComponent({
                   marginTop: 'var(--space-1)',
                 }}
               >
-                {t('assistantMessage.clickToView')}
+                Click to view in artifact pane
               </div>
             </div>
           </button>
@@ -1170,7 +1384,7 @@ function AssistantMessageComponent({
         )}
         {(!parsedResult || (!parsedResult.files && !parsedResult.stdout && !tool.plots)) && (
           <div style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)' }}>
-            {tool.result || t('assistantMessage.noResult')}
+            {tool.result || 'No result available'}
           </div>
         )}
       </div>
@@ -1269,8 +1483,12 @@ function AssistantMessageComponent({
                   })
                 }
                 className={styles.iconButton}
-                aria-label="Show thought process"
-                title={isThinkingExpanded ? t('assistantMessage.hideThoughtProcess') : t('assistantMessage.showThoughtProcess')}
+                aria-label={t('assistantMessage.showThoughtProcess')}
+                title={
+                  isThinkingExpanded
+                    ? t('assistantMessage.hideThoughtProcess')
+                    : t('assistantMessage.showThoughtProcess')
+                }
                 style={{ color: isThinkingExpanded ? 'var(--color-accent)' : undefined }}
               >
                 <Lightbulb size={16} aria-hidden="true" />
@@ -1279,7 +1497,11 @@ function AssistantMessageComponent({
             <button
               onClick={() => onCopy(message.content, message.id)}
               className={styles.iconButton}
-              aria-label={copiedMessageId === message.id ? t('assistantMessage.copied') : t('assistantMessage.copyMessage')}
+              aria-label={
+                copiedMessageId === message.id
+                  ? t('assistantMessage.copied')
+                  : t('assistantMessage.copyMessage')
+              }
             >
               {copiedMessageId === message.id ? (
                 <Check size={16} aria-hidden="true" style={{ color: 'var(--color-success)' }} />
@@ -1302,7 +1524,7 @@ function AssistantMessageComponent({
                 <button
                   onClick={() => setShowSources(true)}
                   className={styles.retryButton}
-                  aria-label={`${sources.length} sources`}
+                  aria-label={t('assistantMessage.sources', { count: sources.length })}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -1347,7 +1569,7 @@ function AssistantMessageComponent({
                       );
                     })}
                   </div>
-                  <span style={{ fontSize: '13px' }}>{t('assistantMessage.sources')}</span>
+                  <span style={{ fontSize: '13px' }}>Sources</span>
                 </button>
                 {/* Sources Modal - Rendered via Portal to escape stacking context */}
                 {showSources &&
@@ -1461,13 +1683,114 @@ function AssistantMessageComponent({
                               fontWeight: 600,
                               color: 'var(--color-text-tertiary)',
                               padding: '8px 10px',
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.5px',
-                          }}>
-                            {t('assistantMessage.more')}
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.5px',
+                            }}
+                          >
+                            {t('assistantMessage.citations')}
                           </div>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                            {sources.slice(5).map((source, idx) => {
+                            {sources.slice(0, 5).map((source, idx) => {
+                              const hostname = (() => {
+                                try {
+                                  return new URL(source.url).hostname.replace('www.', '');
+                                } catch {
+                                  return 'link';
+                                }
+                              })();
+                              const faviconUrl = `https://www.google.com/s2/favicons?domain=${hostname}&sz=32`;
+
+                              return (
+                                <a
+                                  key={idx}
+                                  href={source.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{
+                                    display: 'flex',
+                                    alignItems: 'flex-start',
+                                    gap: '12px',
+                                    padding: '10px 12px',
+                                    borderRadius: '8px',
+                                    textDecoration: 'none',
+                                    color: 'var(--color-text-primary)',
+                                    transition: 'all 0.15s',
+                                    background: 'transparent',
+                                  }}
+                                  onMouseEnter={e => {
+                                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.06)';
+                                  }}
+                                  onMouseLeave={e => {
+                                    e.currentTarget.style.background = 'transparent';
+                                  }}
+                                >
+                                  <img
+                                    src={faviconUrl}
+                                    alt=""
+                                    style={{
+                                      width: '20px',
+                                      height: '20px',
+                                      borderRadius: '4px',
+                                      flexShrink: 0,
+                                      marginTop: '1px',
+                                      background: 'rgba(255, 255, 255, 0.1)',
+                                    }}
+                                    onError={e => {
+                                      e.currentTarget.style.display = 'none';
+                                    }}
+                                  />
+                                  <div style={{ flex: 1, minWidth: 0 }}>
+                                    <div
+                                      style={{
+                                        fontSize: '13px',
+                                        color: 'var(--color-text-secondary)',
+                                        marginBottom: '2px',
+                                      }}
+                                    >
+                                      {hostname}
+                                    </div>
+                                    <div
+                                      style={{
+                                        fontSize: '14px',
+                                        fontWeight: 500,
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap',
+                                      }}
+                                    >
+                                      {source.title}
+                                    </div>
+                                  </div>
+                                  <ExternalLink
+                                    size={14}
+                                    style={{
+                                      flexShrink: 0,
+                                      color: 'var(--color-text-tertiary)',
+                                      opacity: 0.5,
+                                      marginTop: '4px',
+                                    }}
+                                  />
+                                </a>
+                              );
+                            })}
+                          </div>
+                          {/* More Section */}
+                          {sources.length > 5 && (
+                            <>
+                              <div
+                                style={{
+                                  fontSize: '11px',
+                                  fontWeight: 600,
+                                  color: 'var(--color-text-tertiary)',
+                                  padding: '12px 10px 8px',
+                                  textTransform: 'uppercase',
+                                  letterSpacing: '0.5px',
+                                }}
+                              >
+                                {t('assistantMessage.more')}
+                              </div>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                {sources.slice(5).map((source, idx) => {
                                   const hostname = (() => {
                                     try {
                                       return new URL(source.url).hostname.replace('www.', '');
