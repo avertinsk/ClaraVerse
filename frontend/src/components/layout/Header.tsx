@@ -60,7 +60,7 @@ export const Header = () => {
               onMouseOver={e => (e.currentTarget.style.color = 'var(--color-accent)')}
               onMouseOut={e => (e.currentTarget.style.color = 'var(--color-text-secondary)')}
             >
-              Design System
+              {t('actions.designSystem')}
             </Link>
             {user && (
               <div className="flex items-center gap-3">
@@ -75,7 +75,7 @@ export const Header = () => {
                   style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
                 >
                   <LogOut size={16} />
-                  {t('admin.signOut')}
+                  {t('signOut')}
                 </Button>
               </div>
             )}

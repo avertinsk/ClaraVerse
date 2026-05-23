@@ -116,7 +116,7 @@ export const AdminLayout = () => {
                 <p className="font-medium text-[var(--color-text-primary)] truncate">
                   {user?.email}
                 </p>
-                <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">Administrator</p>
+                <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">{t('badge')}</p>
               </div>
               <button
                 onClick={handleSignOut}

@@ -105,17 +105,14 @@
   "routineBuilder.saveChanges": "Сохранить изменения",
   "routineBuilder.createRoutine": "Создать рутину",
   "common.saving": "Сохранение...",
-
   "mcpOnboarding.deviceAuthorized": "Устройство успешно авторизовано!",
   "mcpOnboarding.deviceConnected": "Устройство {{platform}} подключено (v{{version}})",
   "mcpOnboarding.closeWindow": "Вы можете безопасно закрыть это окно и продолжить в терминале.",
   "mcpOnboarding.autoDetect": "CLI автоматически обнаружит авторизацию и продолжит настройку.",
   "mcpOnboarding.goToDashboard": "Перейти к панели управления",
-
   "authStep.authorizeDevice": "Авторизация устройства",
   "authStep.authorizeDeviceDesc": "Введите код, показанный в вашем терминале, чтобы подключить устройство.",
   "authStep.authorizing": "Авторизация...",
-
   "about.title": "О приложении",
   "about.desc": "Это готовое к продакшену React-приложение с:",
   "about.react": "React 18 (LTS) с TypeScript",
@@ -124,7 +121,6 @@
   "about.router": "React Router v6 для навигации",
   "about.zustand": "Zustand для управления состоянием",
   "about.lint": "ESLint и Prettier для качества кода",
-
   "chatDemo.online": "В сети",
   "chatDemo.settings": "Настройки",
   "chatDemo.tabChat": "Чат",
@@ -150,11 +146,11 @@
   "chatDemo.demoFeature": "Демо-функция",
   "chatDemo.toastTitle": "Успех!",
   "chatDemo.toastMessage": "Сообщение скопировано в буфер обмена",
-
   "home.welcome": "Добро пожаловать в ClaraVerse",
   "home.desc": "Готовое к продакшену React-приложение, созданное с TypeScript, Vite и Tailwind CSS.",
   "home.getStarted": "Начать",
   "home.learnMore": "Узнать больше",
-
-  "imageCarousel.slide": "Слайд {{index}}"
+  "imageCarousel.slide": "Слайд {{index}}",
+  "signOut": "Выйти",
+  "actions.designSystem": "Дизайн-система"
 }

@@ -105,17 +105,14 @@
   "routineBuilder.saveChanges": "Save Changes",
   "routineBuilder.createRoutine": "Create Routine",
   "common.saving": "Saving...",
-
   "mcpOnboarding.deviceAuthorized": "Device Authorized Successfully!",
   "mcpOnboarding.deviceConnected": "{{platform}} device connected (v{{version}})",
   "mcpOnboarding.closeWindow": "You can safely close this window and continue in your terminal.",
   "mcpOnboarding.autoDetect": "The CLI will automatically detect the authorization and proceed with setup.",
   "mcpOnboarding.goToDashboard": "Go to Dashboard",
-
   "authStep.authorizeDevice": "Authorize Device",
   "authStep.authorizeDeviceDesc": "Enter the code shown in your terminal to connect your device.",
   "authStep.authorizing": "Authorizing...",
-
   "about.title": "About",
   "about.desc": "This is a production-ready React application featuring:",
   "about.react": "React 18 (LTS) with TypeScript",
@@ -124,7 +121,6 @@
   "about.router": "React Router v6 for navigation",
   "about.zustand": "Zustand for state management",
   "about.lint": "ESLint and Prettier for code quality",
-
   "chatDemo.online": "Online",
   "chatDemo.settings": "Settings",
   "chatDemo.tabChat": "Chat",
@@ -150,11 +146,11 @@
   "chatDemo.demoFeature": "Demo Feature",
   "chatDemo.toastTitle": "Success!",
   "chatDemo.toastMessage": "Message copied to clipboard",
-
   "home.welcome": "Welcome to ClaraVerse",
   "home.desc": "A production-ready React application built with TypeScript, Vite, and Tailwind CSS.",
   "home.getStarted": "Get Started",
   "home.learnMore": "Learn More",
-
-  "imageCarousel.slide": "Slide {{index}}"
+  "imageCarousel.slide": "Slide {{index}}",
+  "signOut": "Sign out",
+  "actions.designSystem": "Design System"
 }
