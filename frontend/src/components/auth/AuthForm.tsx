@@ -82,7 +82,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         response = await authService.signIn(email, password);
 
         if (response.error) {
-          setError(response.error.message || t('error.invalidCredentials'));
+          setError(t('error.invalidCredentials'));
           setIsLoading(false);
           return;
         }
@@ -91,7 +91,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         response = await authService.signUp(email, password, username.trim());
 
         if (response.error) {
-          setError(response.error.message);
+          setError(t('error.unexpectedError'));
           setIsLoading(false);
           return;
         }

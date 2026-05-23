@@ -10,44 +10,6 @@ interface CronBuilderProps {
 
 type FrequencyType = 'minutes' | 'hourly' | 'daily' | 'weekly' | 'monthly';
 
-const FREQUENCY_OPTIONS: {
-  type: FrequencyType;
-  label: string;
-  icon: React.ReactNode;
-  description: string;
-}[] = [
-  {
-    type: 'minutes',
-    label: t('cronBuilder.everyXMinutes'),
-    icon: <Timer size={16} />,
-    description: t('cronBuilder.runMultiple'),
-  },
-  {
-    type: 'hourly',
-    label: t('agents.freqHourly'),
-    icon: <Clock size={16} />,
-    description: t('cronBuilder.runOnceHour'),
-  },
-  {
-    type: 'daily',
-    label: t('agents.freqDaily'),
-    icon: <Calendar size={16} />,
-    description: t('cronBuilder.runOnceDay'),
-  },
-  {
-    type: 'weekly',
-    label: t('agents.freqWeekly'),
-    icon: <CalendarDays size={16} />,
-    description: t('cronBuilder.runSpecific'),
-  },
-  {
-    type: 'monthly',
-    label: t('agents.freqMonthly'),
-    icon: <Repeat size={16} />,
-    description: t('cronBuilder.runOnceMonth'),
-  },
-];
-
 const DAYS_OF_WEEK = [
   { value: 0, label: 'Sun', fullLabel: 'Sunday' },
   { value: 1, label: 'Mon', fullLabel: 'Monday' },
@@ -140,6 +102,41 @@ function parseCronToSettings(cron: string): {
 
 export function CronBuilder({ value, onChange }: CronBuilderProps) {
   const { t } = useTranslation('agents');
+  const frequencyOptions = useMemo(
+    () => [
+      {
+        type: 'minutes' as FrequencyType,
+        label: t('cronBuilder.everyXMinutes'),
+        icon: <Timer size={16} />,
+        description: t('cronBuilder.runMultiple'),
+      },
+      {
+        type: 'hourly' as FrequencyType,
+        label: t('agents.freqHourly'),
+        icon: <Clock size={16} />,
+        description: t('cronBuilder.runOnceHour'),
+      },
+      {
+        type: 'daily' as FrequencyType,
+        label: t('agents.freqDaily'),
+        icon: <Calendar size={16} />,
+        description: t('cronBuilder.runOnceDay'),
+      },
+      {
+        type: 'weekly' as FrequencyType,
+        label: t('agents.freqWeekly'),
+        icon: <CalendarDays size={16} />,
+        description: t('cronBuilder.runSpecific'),
+      },
+      {
+        type: 'monthly' as FrequencyType,
+        label: t('agents.freqMonthly'),
+        icon: <Repeat size={16} />,
+        description: t('cronBuilder.runOnceMonth'),
+      },
+    ],
+    [t]
+  );
   const parsed = useMemo(() => parseCronToSettings(value), [value]);
 
   const [frequency, setFrequency] = useState<FrequencyType>(parsed.frequency);
@@ -223,7 +220,7 @@ export function CronBuilder({ value, onChange }: CronBuilderProps) {
           {t('cronBuilder.howOften')}
         </label>
         <div className="flex flex-wrap gap-2">
-          {FREQUENCY_OPTIONS.map(opt => (
+          {frequencyOptions.map(opt => (
             <button
               key={opt.type}
               type="button"
