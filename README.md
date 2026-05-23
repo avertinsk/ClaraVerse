@@ -12,6 +12,7 @@
 [![GitHub Stars](https://img.shields.io/github/stars/claraverse-space/ClaraVerse?style=social)](https://github.com/claraverse-space/ClaraVerse/stargazers)
 [![Docker Pulls](https://img.shields.io/docker/pulls/claraverseoss/claraverse?color=blue)](https://hub.docker.com/r/claraverseoss/claraverse)
 [![Discord](https://img.shields.io/badge/Discord-Join%20Us-7289da?logo=discord&logoColor=white)](https://discord.com/invite/j633fsrAne)
+[![Russian Translation](https://img.shields.io/badge/i18n-Русский-1677b5)](README_ru.md)
 
 [Website](https://claraverse.space) · [Documentation](#documentation) · [Quick Start](#quick-start) · [Community](#community) · [Contributing](#contributing)
 
@@ -21,6 +22,8 @@
 ## What is ClaraVerse?
 
 ClaraVerse is a private AI workspace that combines chat, visual workflows, long-running tasks, and Telegram integration in one app. Assign Clara research, coding, or automation tasks and track everything on a board. Use OpenAI, Claude, Gemini, or local models like Ollama — with browser-local storage that keeps your conversations private.
+
+🌐 **Полная поддержка русского языка** — интерфейс полностью переведён на русский. Переключение языка в настройках аккаунта. [Читать на русском](README_ru.md).
 
 If you have **Ollama** or **LM Studio** running on your machine, ClaraVerse detects them automatically and imports all your models — zero configuration.
 
