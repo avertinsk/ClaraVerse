@@ -682,7 +682,7 @@ export const CommandCenter = forwardRef<CommandCenterHandle, CommandCenterProps>
               {isConnected && isLoadingModels && !selectedModelId && (
                 <div className={styles.loadingBanner}>
                   <Loader2 size={14} className={styles.spinIcon} />
-                  <span>Loading models...</span>
+                  <span>{t('command.loadingModels')}</span>
                 </div>
               )}
 
@@ -954,7 +954,7 @@ export const CommandCenter = forwardRef<CommandCenterHandle, CommandCenterProps>
                                   textAlign: 'center',
                                 }}
                               >
-                                Loading models...
+                                {t('command.loadingModels')}
                               </div>
                             ) : (
                               <>
