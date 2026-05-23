@@ -91,7 +91,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         response = await authService.signUp(email, password, username.trim());
 
         if (response.error) {
-          setError(t('error.unexpectedError'));
+          setError(response.error.message || t('error.unexpectedError'));
           setIsLoading(false);
           return;
         }
