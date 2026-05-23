@@ -30,6 +30,10 @@ import privacyEn from './locales/en/privacy.json';
 import privacyRu from './locales/ru/privacy.json';
 import uiEn from './locales/en/ui.json';
 import uiRu from './locales/ru/ui.json';
+import credentialsEn from './locales/en/credentials.json';
+import credentialsRu from './locales/ru/credentials.json';
+import memoryEn from './locales/en/memory.json';
+import memoryRu from './locales/ru/memory.json';
 
 const resources = {
   en: {
@@ -47,6 +51,8 @@ const resources = {
     errors: errorsEn,
     privacy: privacyEn,
     ui: uiEn,
+    credentials: credentialsEn,
+    memory: memoryEn,
   },
   ru: {
     common: commonRu,
@@ -63,6 +69,8 @@ const resources = {
     errors: errorsRu,
     privacy: privacyRu,
     ui: uiRu,
+    credentials: credentialsRu,
+    memory: memoryRu,
   },
 };
 
@@ -91,6 +99,8 @@ i18n
       'errors',
       'privacy',
       'ui',
+      'credentials',
+      'memory',
     ],
     defaultNS: 'common',
     detection: {
