@@ -1253,7 +1253,7 @@ export const Chat = () => {
             const state = useChatStore.getState();
             if (state.activePrompt?.promptId === message.prompt_id) {
               state.clearActivePrompt();
-              setError(message.message || 'Prompt timed out');
+              setError(message.message || t('error.promptTimeout'));
             }
           }
           break;
@@ -1266,7 +1266,7 @@ export const Chat = () => {
             if (state.activePrompt?.promptId === message.prompt_id) {
               // Show validation errors (could be enhanced to pass errors to modal)
               const errorMessages = Object.values(message.errors).join(', ');
-              setError(`Validation error: ${errorMessages}`);
+              setError(t('error.validationError', { message: errorMessages }));
             }
           }
           break;
@@ -1300,7 +1300,7 @@ export const Chat = () => {
 
         case 'error':
           {
-            setError(message.message || 'An error occurred');
+            setError(message.message || t('error.genericError'));
             setLoading(false);
             // Focus back to command center input after error
             setTimeout(() => {
@@ -1330,9 +1330,7 @@ export const Chat = () => {
           console.warn('⚠️ [FILES] Some files have expired:', message.content);
           // Show a notification or warning to the user
           // The backend will still process the message, just without the expired files
-          setError(
-            `⚠ Warning: Some attached files have expired and are no longer available. Continuing without them.`
-          );
+          setError(t('error.filesExpired'));
           break;
 
         case 'context_optimizing':
@@ -1407,9 +1405,7 @@ export const Chat = () => {
                 state.finalizeStreamingMessage(currentChat.id, streamingMsg.id);
 
                 // Show error to user
-                setError(
-                  'Connection was lost during response generation. The message may be incomplete.'
-                );
+                setError(t('error.streamIncomplete'));
               }
             }
             setLoading(false);
@@ -1634,27 +1630,27 @@ export const Chat = () => {
       // Validate message (validate original text, not the prefixed version)
       // Allow empty text if files are present
       if (!text.trim() && (!files || files.length === 0)) {
-        setError('Please enter a message or attach a file');
+        setError(t('error.enterMessage'));
         return false;
       }
 
       if (text.trim()) {
         const validation = validateMessage(text);
         if (!validation.isValid) {
-          setError(validation.error || 'Invalid message');
+          setError(validation.error || t('error.invalidMessage'));
           return false;
         }
       }
 
       // Check if model is selected
       if (!selectedModelId) {
-        setError('Please select a model first');
+        setError(t('error.selectModel'));
         return false;
       }
 
       // Check if WebSocket is connected
       if (!websocketService.isConnected()) {
-        setError('Not connected to server. Please try again.');
+        setError(t('error.notConnected'));
         return false;
       }
 
@@ -1714,9 +1710,9 @@ export const Chat = () => {
           } catch (uploadError) {
             setLoading(false);
             if (uploadError instanceof Error) {
-              setError(`Upload failed: ${uploadError.message}`);
+              setError(t('error.uploadFailed', { message: uploadError.message }));
             } else {
-              setError('Failed to upload files. Please try again.');
+              setError(t('error.uploadFilesFailed'));
             }
             return false;
           }
@@ -1899,13 +1895,13 @@ export const Chat = () => {
               });
             } else {
               console.error('❌ [CUSTOM PROVIDER] Provider not found or disabled:', providerId);
-              setError('Custom provider not found or disabled. Please check your settings.');
+              setError(t('error.customProviderNotFound'));
               setLoading(false);
               return false;
             }
           } else {
             console.error('❌ [CUSTOM PROVIDER] Invalid model ID format:', selectedModelId);
-            setError('Invalid custom model ID format.');
+            setError(t('error.invalidModelId'));
             setLoading(false);
             return false;
           }
@@ -1939,7 +1935,7 @@ export const Chat = () => {
         // Message sent successfully
         return true;
       } catch (err) {
-        setError('An unexpected error occurred. Please try again.');
+          setError(t('error.genericError'));
         console.error('Error sending message:', err);
         setLoading(false);
         return false;
@@ -1977,7 +1973,7 @@ export const Chat = () => {
         })
         .catch(err => {
           console.error('Failed to copy:', err);
-          setError('Failed to copy to clipboard');
+          setError(t('error.copyFailed'));
         });
     },
     [setError]

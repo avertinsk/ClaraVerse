@@ -88,7 +88,7 @@
   "error.customProviderNotFound": "Custom provider not found or disabled. Please check your settings.",
   "error.invalidModelId": "Invalid custom model ID format.",
   "error.streamIncomplete": "Connection was lost during response generation. The message may be incomplete.",
-  "error.filesExpired": "Warning: Some attached files have expired and are no longer available. Continuing without them.",
+  "error.filesExpired": "⚠ Warning: Some attached files have expired and are no longer available. Continuing without them.",
   "error.downloadFailed": "Failed to download document. Please try again.",
   "time.justNow": "just now",
   "time.minutesAgo": "{{n}} minute(s) ago",
@@ -210,5 +210,13 @@
   "assistantMessage.copied": "Copied",
   "assistantMessage.document": "Document",
   "assistantMessage.slides": "{{count}} Slides",
-  "assistantMessage.downloadTile": "Download"
+  "assistantMessage.downloadTile": "Download",
+  "error.selectModel": "Please select a model first",
+  "error.notConnected": "Not connected to server. Please try again.",
+  "error.enterMessage": "Please enter a message or attach a file",
+  "error.genericError": "An unexpected error occurred. Please try again.",
+  "error.promptTimeout": "Prompt timed out",
+  "error.validationError": "Validation error: {{message}}",
+  "error.copyFailed": "Failed to copy to clipboard",
+  "error.invalidMessage": "Invalid message"
 }
