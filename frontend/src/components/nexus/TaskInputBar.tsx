@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { ArrowUp, ChevronDown, Check } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useModelStore } from '@/store/useModelStore';
 import styles from './Nexus.module.css';
 
@@ -8,6 +9,7 @@ interface TaskInputBarProps {
 }
 
 export function TaskInputBar({ onSendMessage }: TaskInputBarProps) {
+  const { t } = useTranslation('nexus');
   const [input, setInput] = useState('');
   const [modelOpen, setModelOpen] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -91,7 +93,7 @@ export function TaskInputBar({ onSendMessage }: TaskInputBarProps) {
             value={input}
             onChange={handleInput}
             onKeyDown={handleKeyDown}
-            placeholder="Give Clara a task..."
+            placeholder={t('taskInputBar.placeholder')}
             rows={1}
           />
 
@@ -103,7 +105,7 @@ export function TaskInputBar({ onSendMessage }: TaskInputBarProps) {
                 <button
                   className={styles.modelBtn}
                   onClick={() => setModelOpen(!modelOpen)}
-                  title="Select model"
+                  title={t('taskInputBar.selectModel')}
                 >
                   {selectedModel?.provider_favicon && (
                     <img
@@ -113,7 +115,7 @@ export function TaskInputBar({ onSendMessage }: TaskInputBarProps) {
                     />
                   )}
                   <span className={styles.modelName}>
-                    {selectedModel?.display_name || 'Select model'}
+                    {selectedModel?.display_name || t('taskInputBar.selectModel')}
                   </span>
                   <ChevronDown size={12} className={modelOpen ? styles.chevronUp : undefined} />
                 </button>
@@ -147,7 +149,7 @@ export function TaskInputBar({ onSendMessage }: TaskInputBarProps) {
                       </div>
                     ))}
                     {visibleModels.length === 0 && (
-                      <div className={styles.modelEmpty}>No models available</div>
+                      <div className={styles.modelEmpty}>{t('taskInputBar.noModels')}</div>
                     )}
                   </div>
                 )}
@@ -160,7 +162,7 @@ export function TaskInputBar({ onSendMessage }: TaskInputBarProps) {
                 className={styles.sendButton}
                 onClick={handleSubmit}
                 disabled={!input.trim()}
-                title="Send task"
+                title={t('taskInputBar.sendTask')}
               >
                 <ArrowUp size={18} />
               </button>

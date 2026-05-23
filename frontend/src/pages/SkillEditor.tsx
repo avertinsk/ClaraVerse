@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
   ChevronLeft,
@@ -44,6 +45,7 @@ interface MCPServer {
 }
 
 export const SkillEditor = () => {
+  const { t } = useTranslation('skills');
   const { skillId } = useParams<{ skillId: string }>();
   const navigate = useNavigate();
   const isEditMode = Boolean(skillId);
@@ -231,7 +233,7 @@ export const SkillEditor = () => {
 
       navigate('/skills');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save skill');
+      setError(err instanceof Error ? err.message : t('createSkill.errorFailed'));
     } finally {
       setSaving(false);
     }
@@ -284,10 +286,10 @@ export const SkillEditor = () => {
         </div>
         <div className="skill-editor__topbar-actions">
           <Button variant="ghost" onClick={() => navigate('/skills')}>
-            Cancel
+            {t('createSkill.cancel')}
           </Button>
           <Button variant="primary" onClick={handleSave} disabled={saving}>
-            {saving ? 'Saving...' : 'Save Changes'}
+            {saving ? t('common.saving') : t('actions.save')}
           </Button>
         </div>
       </header>
@@ -300,20 +302,20 @@ export const SkillEditor = () => {
           </div>
 
           <div className="skill-editor__field">
-            <label className="skill-editor__label">Skill Name</label>
+            <label className="skill-editor__label">{t('createSkill.name')}</label>
             <Input
               value={name}
               onChange={e => setName(e.target.value)}
-              placeholder="e.g., Code Runner"
+              placeholder={t('createSkill.namePlaceholder')}
             />
           </div>
 
           <div className="skill-editor__field">
-            <label className="skill-editor__label">Description</label>
+            <label className="skill-editor__label">{t('createSkill.description')}</label>
             <Textarea
               value={description}
               onChange={e => setDescription(e.target.value)}
-              placeholder="What does this skill do?"
+              placeholder={t('createSkill.descriptionPlaceholder')}
               rows={4}
             />
           </div>
@@ -322,11 +324,13 @@ export const SkillEditor = () => {
 
           <div>
             <div className="skill-editor__enabled-row">
-              <span className="skill-editor__enabled-label">Enabled</span>
+              <span className="skill-editor__enabled-label">{t('skillDetail.enabled')}</span>
               <Switch checked={enabled} onChange={setEnabled} />
             </div>
             <p className="skill-editor__enabled-hint">
-              {enabled ? 'Currently active in library' : 'Disabled — not active'}
+              {enabled
+                ? t('skillDetail.enabled') + ' — active in library'
+                : t('skillDetail.disabled') + ' — not active'}
             </p>
           </div>
 
@@ -339,16 +343,16 @@ export const SkillEditor = () => {
               onClick={() => setAdvancedOpen(!advancedOpen)}
             >
               <ChevronRight size={14} />
-              Advanced
+              {t('skills.advanced') || 'Advanced'}
             </button>
             {advancedOpen && (
               <div className="skill-editor__advanced-content">
                 <div className="skill-editor__field">
-                  <label className="skill-editor__label">Category</label>
+                  <label className="skill-editor__label">{t('createSkill.category')}</label>
                   <Select options={CATEGORY_OPTIONS} value={category} onChange={setCategory} />
                 </div>
                 <div className="skill-editor__field">
-                  <label className="skill-editor__label">Mode</label>
+                  <label className="skill-editor__label">{t('createSkill.mode')}</label>
                   <Select
                     options={MODE_OPTIONS}
                     value={mode}
@@ -356,19 +360,19 @@ export const SkillEditor = () => {
                   />
                 </div>
                 <div className="skill-editor__field">
-                  <label className="skill-editor__label">Keywords</label>
+                  <label className="skill-editor__label">{t('createSkill.keywords')}</label>
                   <Input
                     value={keywords}
                     onChange={e => setKeywords(e.target.value)}
-                    placeholder="Comma-separated: review, code"
+                    placeholder={t('createSkill.keywordsPlaceholder')}
                   />
                 </div>
                 <div className="skill-editor__field">
-                  <label className="skill-editor__label">Trigger Patterns</label>
+                  <label className="skill-editor__label">{t('createSkill.triggerPatterns')}</label>
                   <Input
                     value={triggerPatterns}
                     onChange={e => setTriggerPatterns(e.target.value)}
-                    placeholder="Comma-separated: review this"
+                    placeholder={t('createSkill.triggerPatternsPlaceholder')}
                   />
                 </div>
               </div>
@@ -465,7 +469,7 @@ export const SkillEditor = () => {
                 </button>
                 <button className="skill-editor__prompt-btn" onClick={handleCopy}>
                   {copied ? <Check size={14} /> : <Copy size={14} />}
-                  {copied ? 'Copied' : 'Copy'}
+                  {copied ? t('skillDetail.copied') : t('skillDetail.copy')}
                 </button>
               </div>
             </div>

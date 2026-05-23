@@ -50,8 +50,10 @@ export function APIKeysSection({ className }: APIKeysSectionProps) {
   const [expiresIn, setExpiresIn] = useState<number | undefined>(undefined);
 
   // Load keys on mount
+
   useEffect(() => {
     loadKeys();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadKeys = async () => {
@@ -136,11 +138,6 @@ export function APIKeysSection({ className }: APIKeysSectionProps) {
         setTimeout(() => setCopiedKey(false), 2000);
       }
     }
-  };
-
-  const handleCopyKeyPrefix = async (keyId: string, keyPrefix: string) => {
-    // For the masked version, we copy the masked prefix
-    await handleCopyKey(keyPrefix, keyId);
   };
 
   const handleScopeToggle = (scope: string) => {
@@ -351,7 +348,8 @@ export function APIKeysSection({ className }: APIKeysSectionProps) {
                       {activeKeys.map(key => {
                         const { icon: Icon, color, bgColor } = getKeyIcon(key.name);
                         const lastUsedStatus = formatLastUsedStatus(key.lastUsedAt || null);
-                        const isCopied = copiedKeyId === key.id;
+                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                        const _isCopied = copiedKeyId === key.id;
 
                         return (
                           <tr

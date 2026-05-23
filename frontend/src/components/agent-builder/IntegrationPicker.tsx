@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Search, KeyRound, ExternalLink, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { Search, KeyRound, ExternalLink, CheckCircle, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useCredentialsStore } from '@/store/useCredentialsStore';
 import { IntegrationIcon } from '@/components/credentials/IntegrationIcon';

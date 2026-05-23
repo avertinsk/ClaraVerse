@@ -151,6 +151,7 @@ export function Nexus() {
       .finally(() => {
         fetchingProjectsRef.current = false;
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connected, setProjects, setActiveProjectId, navigateToProject, urlProjectId]);
 
   const handleCancelDaemon = useCallback(

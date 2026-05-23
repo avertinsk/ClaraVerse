@@ -8,6 +8,7 @@ import {
   AlertCircle,
   type LucideIcon,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Badge, SearchInput, Spinner } from '@/components/design-system';
 import { useSkillStore } from '@/store/useSkillStore';
 
@@ -39,6 +40,7 @@ function getIcon(iconName: string): LucideIcon {
 }
 
 export const CommunityBrowser = () => {
+  const { t } = useTranslation('skills');
   const {
     communitySkills,
     communityLoading,
@@ -92,7 +94,7 @@ export const CommunityBrowser = () => {
     return (
       <div className="skills-loading">
         <Spinner size="md" />
-        <span>Loading community skills from GitHub...</span>
+        <span>{t('community.loading')}</span>
       </div>
     );
   }
@@ -107,7 +109,7 @@ export const CommunityBrowser = () => {
           onClick={() => fetchCommunitySkills()}
           style={{ marginTop: '0.5rem' }}
         >
-          Retry
+          {t('community.retry')}
         </button>
       </div>
     );
@@ -132,7 +134,7 @@ export const CommunityBrowser = () => {
           <SearchInput
             value={search}
             onChange={setSearch}
-            placeholder="Filter community skills..."
+            placeholder={t('community.filterPlaceholder')}
           />
         </div>
       </div>
@@ -140,7 +142,7 @@ export const CommunityBrowser = () => {
       {filtered.length === 0 ? (
         <div className="skills-empty">
           <Search size={40} className="skills-empty__icon" />
-          <p>No community skills match your filter</p>
+          <p>{t('community.noMatch')}</p>
         </div>
       ) : (
         <div className="skills-grid">
@@ -166,7 +168,7 @@ export const CommunityBrowser = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="community-card__link"
-                    title="View on GitHub"
+                    title={t('community.viewOnGitHub')}
                   >
                     <ExternalLink size={14} />
                   </a>
@@ -174,7 +176,9 @@ export const CommunityBrowser = () => {
 
                 <div className="skill-card__body">
                   <h3 className="skill-card__name">{entry.name}</h3>
-                  <p className="skill-card__description">{entry.description || 'No description'}</p>
+                  <p className="skill-card__description">
+                    {entry.description || t('skillDetail.noDescription')}
+                  </p>
                 </div>
 
                 <div className="skill-card__footer">
@@ -184,7 +188,7 @@ export const CommunityBrowser = () => {
                   )}
                   <div style={{ marginLeft: 'auto' }}>
                     {isImported ? (
-                      <Badge variant="success">Imported</Badge>
+                      <Badge variant="success">{t('community.imported')}</Badge>
                     ) : (
                       <button
                         className="community-card__import-btn"
@@ -196,7 +200,7 @@ export const CommunityBrowser = () => {
                         ) : (
                           <Download size={14} />
                         )}
-                        {isImporting ? 'Importing...' : 'Import'}
+                        {isImporting ? t('community.importing') : t('community.import')}
                       </button>
                     )}
                   </div>

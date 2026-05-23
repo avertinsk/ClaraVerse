@@ -1,104 +1,96 @@
+import { useTranslation } from 'react-i18next';
 import './PrivacyPolicySidebar.css';
 
 export const PrivacyPolicySidebar = () => {
+  const { t } = useTranslation('settings');
+
   return (
     <aside className="privacy-policy-sidebar">
       <div className="privacy-policy-sidebar-header">
-        <h2>Privacy Policy</h2>
-        <p className="privacy-policy-updated">Last updated: December 25, 2024</p>
+        <h2>{t('privacyPolicy.title')}</h2>
+        <p className="privacy-policy-updated">{t('privacyPolicy.lastUpdated')}</p>
       </div>
 
       <div className="privacy-policy-sidebar-content">
         {/* Quick Summary */}
         <section className="policy-summary">
-          <h3>The Short Version</h3>
-          <p>
-            We collect only what's necessary to provide ClaraVerse services. Your data is encrypted,
-            you can export it anytime, and you can delete everything with one click. We don't sell
-            your data. Ever.
-          </p>
+          <h3>{t('privacyPolicy.shortVersion')}</h3>
+          <p>{t('privacyPolicy.shortVersionDesc')}</p>
         </section>
 
         {/* Data We Collect */}
         <section className="policy-section">
-          <h3>1. Data We Collect</h3>
+          <h3>{t('privacyPolicy.dataCollect')}</h3>
 
-          <h4>Account Information</h4>
-          <p>
-            User ID and email address provided by your authentication provider (Supabase). This is
-            the minimum needed to identify your account.
-          </p>
+          <h4>{t('privacyPolicy.accountInfo')}</h4>
+          <p>{t('privacyPolicy.accountInfoDesc')}</p>
 
-          <h4>Content You Create</h4>
+          <h4>{t('privacyPolicy.contentCreate')}</h4>
           <ul>
             <li>
-              <strong>Conversations</strong> — Chat messages and conversation history
+              <strong>{t('privacyPolicy.conversations')}</strong> —{' '}
+              {t('privacyPolicy.conversationsDesc')}
             </li>
             <li>
-              <strong>Uploaded Files</strong> — Images, PDFs, CSV, Excel, JSON, and other files you
-              upload for AI processing
+              <strong>{t('privacyPolicy.uploadedFiles')}</strong> —{' '}
+              {t('privacyPolicy.uploadedFilesDesc')}
             </li>
             <li>
-              <strong>Agents & Workflows</strong> — Custom AI agents and workflows you build
+              <strong>{t('privacyPolicy.agentsWorkflows')}</strong> —{' '}
+              {t('privacyPolicy.agentsWorkflowsDesc')}
             </li>
             <li>
-              <strong>Credentials</strong> — Encrypted API keys for external providers you configure
+              <strong>{t('privacyPolicy.credentials')}</strong> —{' '}
+              {t('privacyPolicy.credentialsDesc')}
             </li>
           </ul>
 
-          <h4>Usage Data</h4>
-          <p>
-            Timestamps, model selections, and feature usage patterns. This helps us improve the
-            service and debug issues.
-          </p>
+          <h4>{t('privacyPolicy.usageData')}</h4>
+          <p>{t('privacyPolicy.usageDataDesc')}</p>
         </section>
 
         {/* How We Use Your Data */}
         <section className="policy-section">
-          <h3>2. How We Use Your Data</h3>
+          <h3>{t('privacyPolicy.howUse')}</h3>
           <ul>
-            <li>To provide and operate ClaraVerse services</li>
-            <li>To process your requests through AI model providers</li>
-            <li>To sync your data across devices (when you enable cloud sync)</li>
-            <li>To authenticate and secure your account</li>
-            <li>To improve the service based on usage patterns</li>
+            <li>{t('privacyPolicy.useProvide')}</li>
+            <li>{t('privacyPolicy.useProcess')}</li>
+            <li>{t('privacyPolicy.useSync')}</li>
+            <li>{t('privacyPolicy.useAuth')}</li>
+            <li>{t('privacyPolicy.useImprove')}</li>
           </ul>
           <p className="policy-legal">
-            <strong>Legal Basis:</strong> Legitimate interest in providing the service (GDPR Article
-            6(1)(f))
+            <strong>{t('privacyPolicy.legalBasis')}</strong>
           </p>
         </section>
 
         {/* Data Retention */}
         <section className="policy-section">
-          <h3>3. Data Retention</h3>
+          <h3>{t('privacyPolicy.dataRetention')}</h3>
           <div className="policy-table-wrapper">
             <table className="policy-table">
               <thead>
                 <tr>
-                  <th>Data Type</th>
-                  <th>Retention</th>
+                  <th>{t('privacyPolicy.dataType')}</th>
+                  <th>{t('privacyPolicy.retention')}</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>Temporary Files - (PDF, Files Uploaded and Images)</td>
-                  <td>30 minutes</td>
+                  <td>{t('privacyPolicy.tempFiles')}</td>
+                  <td>{t('privacyPolicy.tempFilesRetention')}</td>
                 </tr>
                 <tr>
-                  <td>
-                    Local Conversations - (There stored in your browser never accessible by
-                    claraverse)
-                  </td>
-                  <td>Until cleared</td>
+                  <td>{t('privacyPolicy.localConv')}</td>
+                  <td>{t('privacyPolicy.localConvRetention')}</td>
                 </tr>
                 <tr>
-                  <td>Cloud-Synced Data - (If cross device sync is enabled)</td>
-                  <td>Until deleted</td>
+                  <td>{t('privacyPolicy.cloudSync')}</td>
+                  <td>{t('privacyPolicy.cloudSyncRetention')}</td>
                 </tr>
                 <tr>
-                  <td>Audit Logs - (Only Contains Timestamps, User ID, and Action Type)</td>
-                  <td>90 days</td>
+                  <td>{t('privacyPolicy.auditLogs')}</td>
+                  <td>{t('privacyPolicy.auditLogsRetention')}</td>
                 </tr>
               </tbody>
             </table>
@@ -107,23 +99,23 @@ export const PrivacyPolicySidebar = () => {
 
         {/* Your Rights */}
         <section className="policy-section">
-          <h3>4. Your Rights (GDPR)</h3>
-          <p>You have full control over your data:</p>
+          <h3>{t('privacyPolicy.yourRights')}</h3>
+          <p>{t('privacyPolicy.rightsDesc')}</p>
 
           <div className="policy-rights">
             <div className="policy-right">
-              <h4>Right to Access</h4>
-              <p>Download all your personal data at any time from Settings.</p>
+              <h4>{t('privacyPolicy.rightAccess')}</h4>
+              <p>{t('privacyPolicy.rightAccessDesc')}</p>
               <code>Article 15</code>
             </div>
             <div className="policy-right">
-              <h4>Right to Erasure</h4>
-              <p>Delete your account and all associated data permanently.</p>
+              <h4>{t('privacyPolicy.rightErasure')}</h4>
+              <p>{t('privacyPolicy.rightErasureDesc')}</p>
               <code>Article 17</code>
             </div>
             <div className="policy-right">
-              <h4>Right to Portability</h4>
-              <p>Export your data in machine-readable JSON format.</p>
+              <h4>{t('privacyPolicy.rightPortability')}</h4>
+              <p>{t('privacyPolicy.rightPortabilityDesc')}</p>
               <code>Article 20</code>
             </div>
           </div>
@@ -131,61 +123,50 @@ export const PrivacyPolicySidebar = () => {
 
         {/* Third Parties */}
         <section className="policy-section">
-          <h3>5. Third-Party Services</h3>
+          <h3>{t('privacyPolicy.thirdParty')}</h3>
 
           <div className="policy-third-party">
-            <h4>Supabase</h4>
-            <p>Authentication and user management</p>
-            <span className="policy-data-shared">Data shared: User ID, email, auth tokens</span>
+            <h4>{t('privacyPolicy.supabase')}</h4>
+            <p>{t('privacyPolicy.supabaseDesc')}</p>
+            <span className="policy-data-shared">{t('privacyPolicy.dataShared')}</span>
           </div>
 
           <div className="policy-third-party">
-            <h4>AI Model Providers</h4>
-            <p>Processing chat messages and generating responses</p>
-            <span className="policy-data-shared">
-              Data shared: Messages and file content you send. Provider varies based on your
-              selection (OpenAI, Anthropic, Google, etc.)
-              <br />
-              (Note: TEE Provider never store data and they cannot access it as well)
-            </span>
+            <h4>{t('privacyPolicy.aiProviders')}</h4>
+            <p>{t('privacyPolicy.aiProvidersDesc')}</p>
+            <span className="policy-data-shared">{t('privacyPolicy.aiDataShared')}</span>
           </div>
         </section>
 
         {/* Security */}
         <section className="policy-section">
-          <h3>6. Security Measures</h3>
+          <h3>{t('privacyPolicy.security')}</h3>
           <ul>
-            <li>AES-256-GCM encryption for sensitive data at rest</li>
-            <li>Bcrypt hashing for API key storage</li>
-            <li>JWT-based authentication with secure token handling</li>
-            <li>HTTPS encryption for all data in transit</li>
-            <li>Rate limiting and DDoS protection</li>
-            <li>Automatic data expiration for temporary files</li>
+            <li>{t('privacyPolicy.securityItem1')}</li>
+            <li>{t('privacyPolicy.securityItem2')}</li>
+            <li>{t('privacyPolicy.securityItem3')}</li>
+            <li>{t('privacyPolicy.securityItem4')}</li>
+            <li>{t('privacyPolicy.securityItem5')}</li>
+            <li>{t('privacyPolicy.securityItem6')}</li>
           </ul>
         </section>
 
         {/* Cookies */}
         <section className="policy-section">
-          <h3>7. Cookies</h3>
-          <p>
-            We use minimal cookies for authentication purposes only. No tracking cookies, no
-            third-party analytics, no advertising cookies.
-          </p>
+          <h3>{t('privacyPolicy.cookies')}</h3>
+          <p>{t('privacyPolicy.cookiesDesc')}</p>
         </section>
 
         {/* Changes */}
         <section className="policy-section">
-          <h3>8. Changes to This Policy</h3>
-          <p>
-            We'll notify you of significant changes via email or in-app notification. Continued use
-            after changes constitutes acceptance.
-          </p>
+          <h3>{t('privacyPolicy.changes')}</h3>
+          <p>{t('privacyPolicy.changesDesc')}</p>
         </section>
 
         {/* Contact */}
         <section className="policy-section policy-contact">
-          <h3>9. Contact Us</h3>
-          <p>Questions about this policy or want to exercise your rights?</p>
+          <h3>{t('privacyPolicy.contact')}</h3>
+          <p>{t('privacyPolicy.contactDesc')}</p>
           <a href="mailto:privacy@claraverse.app" className="policy-email-link">
             privacy@claraverse.app
           </a>
@@ -193,10 +174,7 @@ export const PrivacyPolicySidebar = () => {
 
         {/* Footer */}
         <footer className="policy-footer">
-          <p>
-            This policy is written in plain language because we believe privacy policies shouldn't
-            require a law degree to understand.
-          </p>
+          <p>{t('privacyPolicy.footer')}</p>
         </footer>
       </div>
     </aside>

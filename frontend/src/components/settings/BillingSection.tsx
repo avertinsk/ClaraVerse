@@ -11,7 +11,6 @@ import {
   AlertCircle,
   Calendar,
   RefreshCw,
-  Infinity,
 } from 'lucide-react';
 import { Card, Badge, Button, Spinner, Alert } from '@/components/design-system';
 import { useSubscriptionStore } from '@/store/useSubscriptionStore';
@@ -83,6 +82,7 @@ export const BillingSection: React.FC<BillingSectionProps> = ({
         onAutoCheckoutHandled?.();
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoCheckoutPlan, plans, subscription, autoCheckoutTriggered, onAutoCheckoutHandled]);
 
   // Handle checkout success - sync subscription after returning from payment
@@ -122,6 +122,7 @@ export const BillingSection: React.FC<BillingSectionProps> = ({
     };
 
     syncAfterCheckout();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checkoutSuccess, syncSubscription, onCheckoutSuccessHandled]);
 
   const currentTier = subscription?.tier || SubscriptionTier.FREE;

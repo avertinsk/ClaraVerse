@@ -14,6 +14,7 @@ import {
   Clock,
   Settings,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useNexusStore } from '@/store/useNexusStore';
 import { Badge } from '@/components/design-system';
 import type { NexusClientMessage, PersonaFact } from '@/types/nexus';
@@ -52,6 +53,7 @@ const engramTypeVariants: Record<string, 'default' | 'accent' | 'success' | 'inf
 };
 
 export const SettingsView = memo(function SettingsView({ send }: SettingsViewProps) {
+  const { t } = useTranslation('nexus');
   const persona = useNexusStore(s => s.persona);
   const engrams = useNexusStore(s => s.engrams);
   const brainMemories = useNexusStore(s => s.brainMemories);
@@ -107,35 +109,35 @@ export const SettingsView = memo(function SettingsView({ send }: SettingsViewPro
     <div className={styles.settingsView}>
       <div className={styles.settingsHeader}>
         <Settings size={20} />
-        <h2 className={styles.settingsTitle}>Settings</h2>
+        <h2 className={styles.settingsTitle}>{t('settingsView.title')}</h2>
       </div>
 
       {/* Cortex Brain Section */}
       <div className={styles.settingsSection}>
         <div className={styles.settingsSectionTitle}>
           <Brain size={16} />
-          Cortex Brain
+          {t('settingsView.cortexBrain')}
           <Badge variant={bridgeConnected ? 'success' : 'default'}>
-            {bridgeConnected ? 'Synced' : 'Offline'}
+            {bridgeConnected ? t('settingsView.synced') : t('settingsView.offline')}
           </Badge>
         </div>
 
         <div className={styles.cortexGrid}>
           <div className={styles.cortexStatCard}>
             <span className={styles.cortexStatValue}>{cortexMemories.length}</span>
-            <span className={styles.cortexStatLabel}>Memories</span>
+            <span className={styles.cortexStatLabel}>{t('settingsView.memories')}</span>
           </div>
           <div className={styles.cortexStatCard}>
             <span className={styles.cortexStatValue}>{cortexSkills.length}</span>
-            <span className={styles.cortexStatLabel}>Skills</span>
+            <span className={styles.cortexStatLabel}>{t('settingsView.skills')}</span>
           </div>
           <div className={styles.cortexStatCard}>
             <span className={styles.cortexStatValue}>{engrams.length}</span>
-            <span className={styles.cortexStatLabel}>Activity</span>
+            <span className={styles.cortexStatLabel}>{t('settingsView.activity')}</span>
           </div>
           <div className={styles.cortexStatCard}>
             <span className={styles.cortexStatValue}>{session?.total_tasks ?? 0}</span>
-            <span className={styles.cortexStatLabel}>Tasks</span>
+            <span className={styles.cortexStatLabel}>{t('settingsView.tasks')}</span>
           </div>
         </div>
 
@@ -147,13 +149,15 @@ export const SettingsView = memo(function SettingsView({ send }: SettingsViewPro
           >
             {memoriesOpen ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
             <Zap size={13} />
-            Memories ({cortexMemories.length})
+            {t('settingsView.memories')} ({cortexMemories.length})
           </button>
           {memoriesOpen && (
             <div className={styles.settingsAccordionContent}>
               {cortexMemories.length === 0 ? (
                 <div className={styles.settingsEmpty}>
-                  {bridgeConnected ? 'No memories synced yet' : 'Connect desktop agent to sync'}
+                  {bridgeConnected
+                    ? t('settingsView.noMemoriesSynced')
+                    : t('settingsView.connectAgent')}
                 </div>
               ) : (
                 cortexMemories.slice(0, 20).map(m => (
@@ -177,12 +181,12 @@ export const SettingsView = memo(function SettingsView({ send }: SettingsViewPro
           >
             {skillsOpen ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
             <Sparkles size={13} />
-            Skills ({cortexSkills.length})
+            {t('settingsView.skills')} ({cortexSkills.length})
           </button>
           {skillsOpen && (
             <div className={styles.settingsAccordionContent}>
               {cortexSkills.length === 0 ? (
-                <div className={styles.settingsEmpty}>No skills promoted yet</div>
+                <div className={styles.settingsEmpty}>{t('settingsView.noSkillsPromoted')}</div>
               ) : (
                 cortexSkills.map(s => (
                   <div key={s.id} className={styles.settingsMemoryItem}>
@@ -205,12 +209,12 @@ export const SettingsView = memo(function SettingsView({ send }: SettingsViewPro
           >
             {activityOpen ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
             <Database size={13} />
-            Recent Activity ({engrams.length})
+            {t('settingsView.activity')} ({engrams.length})
           </button>
           {activityOpen && (
             <div className={styles.settingsAccordionContent}>
               {engrams.length === 0 ? (
-                <div className={styles.settingsEmpty}>No recent activity</div>
+                <div className={styles.settingsEmpty}>{t('settingsView.noRecentActivity')}</div>
               ) : (
                 engrams.slice(0, 15).map(e => (
                   <div key={e.id} className={styles.settingsMemoryItem}>
@@ -233,19 +237,17 @@ export const SettingsView = memo(function SettingsView({ send }: SettingsViewPro
       <div className={styles.settingsSection}>
         <div className={styles.settingsSectionTitle}>
           <Sparkles size={16} />
-          Persona
+          {t('settingsView.persona')}
           <button
             className={styles.settingsAddBtn}
             onClick={() => setAdding(!adding)}
-            title="Add fact"
+            title={t('settingsView.addFact')}
           >
             <Plus size={14} />
           </button>
         </div>
 
-        <p className={styles.settingsDescription}>
-          Facts about your preferences and how Clara should interact with you.
-        </p>
+        <p className={styles.settingsDescription}>{t('settingsView.personaDesc')}</p>
 
         {adding && (
           <div className={styles.settingsPersonaForm}>
@@ -254,24 +256,24 @@ export const SettingsView = memo(function SettingsView({ send }: SettingsViewPro
               value={newCategory}
               onChange={e => setNewCategory(e.target.value)}
             >
-              <option value="personality">Personality</option>
-              <option value="communication">Communication</option>
-              <option value="expertise">Expertise</option>
-              <option value="boundaries">Boundaries</option>
+              <option value="personality">{t('settingsView.personality')}</option>
+              <option value="communication">{t('settingsView.communication')}</option>
+              <option value="expertise">{t('settingsView.expertise')}</option>
+              <option value="boundaries">{t('settingsView.boundaries')}</option>
             </select>
             <input
               className={styles.settingsInput}
               value={newContent}
               onChange={e => setNewContent(e.target.value)}
-              placeholder="e.g. Clara is concise and direct"
+              placeholder={t('settingsView.personaPlaceholder')}
               onKeyDown={e => e.key === 'Enter' && handleAddFact()}
             />
             <div className={styles.settingsFormActions}>
               <button className={styles.settingsFormBtn} onClick={handleAddFact}>
-                Add
+                {t('settingsView.add')}
               </button>
               <button className={styles.settingsFormBtnCancel} onClick={() => setAdding(false)}>
-                Cancel
+                {t('settingsView.cancel')}
               </button>
             </div>
           </div>
@@ -287,7 +289,7 @@ export const SettingsView = memo(function SettingsView({ send }: SettingsViewPro
                   <button
                     className={styles.settingsPersonaDelete}
                     onClick={() => handleDeleteFact(f)}
-                    title="Remove"
+                    title={t('settingsView.remove')}
                   >
                     <X size={12} />
                   </button>
@@ -298,7 +300,7 @@ export const SettingsView = memo(function SettingsView({ send }: SettingsViewPro
         ))}
 
         {persona.length === 0 && !adding && (
-          <div className={styles.settingsEmpty}>No persona facts yet</div>
+          <div className={styles.settingsEmpty}>{t('settingsView.noPersonaFacts')}</div>
         )}
       </div>
 
@@ -306,15 +308,13 @@ export const SettingsView = memo(function SettingsView({ send }: SettingsViewPro
       <div className={styles.settingsSection}>
         <div className={styles.settingsSectionTitle}>
           <Database size={16} />
-          Engram
+          {t('settingsView.engram')}
         </div>
 
-        <p className={styles.settingsDescription}>
-          Recent memory entries from daemon activity and task results.
-        </p>
+        <p className={styles.settingsDescription}>{t('settingsView.engramDesc')}</p>
 
         {engrams.length === 0 ? (
-          <div className={styles.settingsEmpty}>No engram entries yet</div>
+          <div className={styles.settingsEmpty}>{t('settingsView.noEngramEntries')}</div>
         ) : (
           engrams.slice(0, 15).map(e => (
             <div key={e.id} className={styles.settingsEngramEntry}>

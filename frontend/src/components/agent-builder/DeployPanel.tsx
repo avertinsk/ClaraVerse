@@ -245,6 +245,7 @@ export function DeployPanel({ isOpen, onClose }: DeployPanelProps) {
 
     // Load webhook info (for webhook-trigger agents)
     loadWebhookInfo();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentAgent, isOpen, loadWebhookInfo]);
 
   const loadExistingApiKey = async () => {

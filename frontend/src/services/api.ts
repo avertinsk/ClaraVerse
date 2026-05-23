@@ -109,7 +109,9 @@ async function fetchWithRetry(
           await authClient.refreshToken();
 
           // Retry request with new token
-          const newHeaders = createHeaders((options as any).includeAuth ?? true);
+          const newHeaders = createHeaders(
+            (options as { includeAuth?: boolean }).includeAuth ?? true
+          );
           const retryResponse = await fetch(url, {
             ...options,
             headers: newHeaders,

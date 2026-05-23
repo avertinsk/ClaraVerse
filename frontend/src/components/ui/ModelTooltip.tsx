@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { createPortal } from 'react-dom';
 import { Info, Zap, CheckCircle2, AlertTriangle, ShieldCheck } from 'lucide-react';
 import type { Model } from '@/types/websocket';
@@ -9,6 +10,7 @@ interface ModelTooltipProps {
 }
 
 export function ModelTooltip({ model, children }: ModelTooltipProps) {
+  const { t } = useTranslation('ui');
   const [isVisible, setIsVisible] = useState(false);
   const [isPositioned, setIsPositioned] = useState(false);
   const [position, setPosition] = useState({ top: 0, left: 0 });
@@ -25,9 +27,9 @@ export function ModelTooltip({ model, children }: ModelTooltipProps) {
 
   // Get speed tier based on milliseconds
   const getSpeedTier = (ms: number): { label: string; color: string } => {
-    if (ms < 2000) return { label: 'Fastest', color: 'text-green-400' };
-    if (ms < 5000) return { label: 'Fast', color: 'text-blue-400' };
-    return { label: 'Medium', color: 'text-yellow-400' };
+    if (ms < 2000) return { label: t('modelTooltip.fastest'), color: 'text-green-400' };
+    if (ms < 5000) return { label: t('modelTooltip.fast'), color: 'text-blue-400' };
+    return { label: t('modelTooltip.medium'), color: 'text-yellow-400' };
   };
 
   useEffect(() => {
@@ -125,7 +127,7 @@ export function ModelTooltip({ model, children }: ModelTooltipProps) {
                       {model.provider_secure && (
                         <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-400 text-[10px] font-semibold">
                           <ShieldCheck size={10} />
-                          DATA SAFE
+                          {t('modelTooltip.dataSafe')}
                         </span>
                       )}
                     </div>
@@ -149,14 +151,16 @@ export function ModelTooltip({ model, children }: ModelTooltipProps) {
                   <div className="space-y-2 pt-2 border-t border-[var(--color-border)]">
                     <div className="flex items-center gap-1.5 text-xs font-semibold text-[var(--color-text-tertiary)] uppercase tracking-wider">
                       <CheckCircle2 size={12} />
-                      Structured Output
+                      {t('modelTooltip.structuredOutput')}
                     </div>
 
                     <div className="space-y-1.5">
                       {/* Quality */}
                       {model.structured_output_support && (
                         <div className="flex items-center justify-between">
-                          <span className="text-xs text-[var(--color-text-tertiary)]">Quality</span>
+                          <span className="text-xs text-[var(--color-text-tertiary)]">
+                            {t('modelTooltip.quality')}
+                          </span>
                           <span
                             className={`text-xs font-semibold px-2 py-0.5 rounded ${
                               model.structured_output_support === 'excellent'
@@ -177,7 +181,7 @@ export function ModelTooltip({ model, children }: ModelTooltipProps) {
                       {model.structured_output_compliance !== undefined && (
                         <div className="flex items-center justify-between">
                           <span className="text-xs text-[var(--color-text-tertiary)]">
-                            Compliance
+                            {t('modelTooltip.compliance')}
                           </span>
                           <span className="text-xs font-semibold text-[var(--color-text-primary)]">
                             {model.structured_output_compliance}%
@@ -191,7 +195,7 @@ export function ModelTooltip({ model, children }: ModelTooltipProps) {
                           <div className="flex items-center justify-between">
                             <span className="text-xs text-[var(--color-text-tertiary)] flex items-center gap-1">
                               <Zap size={10} />
-                              Avg Response
+                              {t('modelTooltip.avgResponse')}
                             </span>
                             <span className="text-xs font-semibold text-[var(--color-text-primary)]">
                               {formatSpeed(model.structured_output_speed_ms)}
@@ -199,7 +203,7 @@ export function ModelTooltip({ model, children }: ModelTooltipProps) {
                           </div>
                           <div className="flex items-center justify-between">
                             <span className="text-xs text-[var(--color-text-tertiary)]">
-                              Speed Tier
+                              {t('modelTooltip.speedTier')}
                             </span>
                             <span
                               className={`text-xs font-semibold ${getSpeedTier(model.structured_output_speed_ms).color}`}
@@ -227,8 +231,7 @@ export function ModelTooltip({ model, children }: ModelTooltipProps) {
                     <div className="flex gap-2 p-2.5 rounded-lg bg-blue-500/10 border border-blue-500/20">
                       <Info size={14} className="text-blue-400 flex-shrink-0 mt-0.5" />
                       <p className="text-xs text-blue-200/90 leading-relaxed">
-                        Structured outputs work but may have degraded performance. Full testing
-                        pending.
+                        {t('modelTooltip.unknownNotice')}
                       </p>
                     </div>
                   )}

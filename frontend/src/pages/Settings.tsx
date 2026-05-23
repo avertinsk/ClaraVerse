@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import {
   SettingsLayout,
@@ -16,6 +17,7 @@ import type { SettingsTab } from '@/components/settings/SettingsLayout';
 import './Settings.css';
 
 export const Settings = () => {
+  const { t } = useTranslation('settings');
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState<SettingsTab>('ai');
   const [saveIndicatorVisible, setSaveIndicatorVisible] = useState(false);
@@ -73,11 +75,8 @@ export const Settings = () => {
       {/* Credentials/Integrations Tab */}
       {activeTab === 'credentials' && (
         <section className="settings-section">
-          <h2 className="settings-section-title">Integration Credentials</h2>
-          <p className="settings-section-description">
-            Securely manage API keys and webhooks for external integrations like Discord, Slack,
-            GitHub, and more.
-          </p>
+          <h2 className="settings-section-title">{t('settings.integrationCredentials')}</h2>
+          <p className="settings-section-description">{t('settings.integrationCredentialsDesc')}</p>
           <CredentialsSection />
         </section>
       )}

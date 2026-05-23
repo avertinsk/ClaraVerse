@@ -38,10 +38,12 @@ export const MemorySection: React.FC<MemorySectionProps> = ({ onSave }) => {
   }, [initializeFromBackend]);
 
   // Load memory statistics
+
   useEffect(() => {
     if (memoryEnabled) {
       loadStats();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [memoryEnabled]);
 
   const loadStats = async () => {

@@ -197,7 +197,7 @@ class AuthClient {
           },
           credentials: 'include',
         });
-      } catch (error) {
+      } catch {
         // Refresh failed, clear session
         this.clearSession();
         throw new Error('Session expired. Please log in again.');

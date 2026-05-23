@@ -28,6 +28,8 @@ import errorsEn from './locales/en/errors.json';
 import errorsRu from './locales/ru/errors.json';
 import privacyEn from './locales/en/privacy.json';
 import privacyRu from './locales/ru/privacy.json';
+import uiEn from './locales/en/ui.json';
+import uiRu from './locales/ru/ui.json';
 
 const resources = {
   en: {
@@ -44,6 +46,7 @@ const resources = {
     admin: adminEn,
     errors: errorsEn,
     privacy: privacyEn,
+    ui: uiEn,
   },
   ru: {
     common: commonRu,
@@ -59,6 +62,7 @@ const resources = {
     admin: adminRu,
     errors: errorsRu,
     privacy: privacyRu,
+    ui: uiRu,
   },
 };
 
@@ -86,6 +90,7 @@ i18n
       'admin',
       'errors',
       'privacy',
+      'ui',
     ],
     defaultNS: 'common',
     detection: {

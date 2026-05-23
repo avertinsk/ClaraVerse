@@ -1,10 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { LogOut, User, ChevronDown } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useNavigate } from 'react-router-dom';
 import './UserMenu.css';
 
 export const UserMenu = ({ collapsed = false }: { collapsed?: boolean }) => {
+  const { t } = useTranslation('ui');
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const { user, signOut } = useAuthStore();
@@ -67,7 +69,7 @@ export const UserMenu = ({ collapsed = false }: { collapsed?: boolean }) => {
       <button
         className="user-menu-trigger"
         onClick={() => setIsOpen(!isOpen)}
-        aria-label="User menu"
+        aria-label={t('userMenu.ariaLabel')}
         aria-expanded={isOpen}
         style={collapsed ? { padding: 'var(--space-2)', justifyContent: 'center' } : undefined}
       >
@@ -107,14 +109,14 @@ export const UserMenu = ({ collapsed = false }: { collapsed?: boolean }) => {
 
           <button className="user-menu-item" onClick={() => navigate('/settings')}>
             <User size={16} />
-            <span>Profile Settings</span>
+            <span>{t('userMenu.profileSettings')}</span>
           </button>
 
           <div className="user-menu-divider" />
 
           <button className="user-menu-item user-menu-item-danger" onClick={handleSignOut}>
             <LogOut size={16} />
-            <span>Sign Out</span>
+            <span>{t('userMenu.signOut')}</span>
           </button>
         </div>
       )}

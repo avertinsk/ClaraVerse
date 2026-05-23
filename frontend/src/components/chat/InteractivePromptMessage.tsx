@@ -192,6 +192,7 @@ export function InteractivePromptMessage({
         setOtherInputActive(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [currentQuestion, answers, isLast, onSubmit]
   );
 
@@ -623,6 +624,7 @@ export function InteractivePromptMessage({
       );
     }
     return null;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentQuestion, prompt.allowSkip]);
 
   if (!currentQuestion) return null;

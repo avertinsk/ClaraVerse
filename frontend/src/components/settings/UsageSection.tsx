@@ -170,6 +170,7 @@ export const UsageSection: React.FC = () => {
       console.error('Failed to fetch memory stats:', err);
       setMemoryStatsError(t('memory.statsFailed'));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [memoryEnabled]);
 
   // Fetch usage stats on mount

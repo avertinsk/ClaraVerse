@@ -102,6 +102,7 @@ export function InteractivePromptModal({
 
       return null;
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 
@@ -221,6 +222,7 @@ export function InteractivePromptModal({
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, prompt?.allowSkip]);
 
   if (!isOpen || !prompt) return null;
@@ -318,7 +320,7 @@ export function InteractivePromptModal({
           </div>
         );
 
-      case 'select':
+      case 'select': {
         const selectedValue = answer?.value as string;
         const isOtherSelected = answer?.isOther || false;
 
@@ -382,8 +384,9 @@ export function InteractivePromptModal({
             )}
           </div>
         );
+      }
 
-      case 'multi-select':
+      case 'multi-select': {
         const selectedValues = (answer?.value as string[]) || [];
         const isOtherChecked = answer?.isOther || false;
 
@@ -470,6 +473,7 @@ export function InteractivePromptModal({
             )}
           </div>
         );
+      }
 
       default:
         return null;

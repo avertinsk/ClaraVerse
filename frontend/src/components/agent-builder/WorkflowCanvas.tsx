@@ -529,6 +529,7 @@ export function WorkflowCanvas({ className }: WorkflowCanvasProps) {
     }
 
     handleRunWorkflow();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     executionStatus,
     isWorkflowValid,

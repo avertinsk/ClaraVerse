@@ -54,6 +54,7 @@ export const ModelManagement = () => {
   useEffect(() => {
     loadModels();
     autoFetchAllProviders(); // Auto-fetch models from all providers on page load
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadModels = async () => {
@@ -124,7 +125,7 @@ export const ModelManagement = () => {
       alert(result.message || 'Aliases imported successfully!');
       // Reload models to reflect any changes
       await loadModels();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to import aliases:', err);
       const errorMessage = err?.response?.data?.error || err?.message || 'Unknown error';
       alert(`Failed to import aliases:\n\n${errorMessage}`);
@@ -408,7 +409,7 @@ export const ModelManagement = () => {
           {/* Capability Filter */}
           <select
             value={filters.capability || ''}
-            onChange={e => setFilters({ ...filters, capability: e.target.value as any })}
+            onChange={e => setFilters({ ...filters, capability: e.target.value })}
             className="px-4 py-2 bg-[var(--color-surface-hover)] text-[var(--color-text-primary)] rounded-lg border border-[var(--color-border)] focus:outline-none focus:border-[var(--color-accent)]"
           >
             <option value="">{t('model.management.allCapabilities')}</option>
@@ -420,7 +421,7 @@ export const ModelManagement = () => {
           {/* Visibility Filter */}
           <select
             value={filters.visibility || 'all'}
-            onChange={e => setFilters({ ...filters, visibility: e.target.value as any })}
+            onChange={e => setFilters({ ...filters, visibility: e.target.value })}
             className="px-4 py-2 bg-[var(--color-surface-hover)] text-[var(--color-text-primary)] rounded-lg border border-[var(--color-border)] focus:outline-none focus:border-[var(--color-accent)]"
           >
             <option value="all">{t('model.management.allModels')}</option>
@@ -734,10 +735,12 @@ const ModelRow = ({
   const [loadingAliases, setLoadingAliases] = useState(false);
 
   // Load aliases when row is expanded
+
   useEffect(() => {
     if (isExpanded && aliases.length === 0) {
       loadAliases();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isExpanded]);
 
   const loadAliases = async () => {
@@ -1275,7 +1278,7 @@ const FetchModelsModal = ({
 // Create Model Modal (Placeholder)
 const CreateModelModal = ({
   onClose,
-  onSuccess,
+  onSuccess: _onSuccess,
 }: {
   onClose: () => void;
   onSuccess: () => void;
@@ -1405,7 +1408,7 @@ const AliasEditorModal = ({
     }
   };
 
-  const updateField = (field: string, value: any) => {
+  const updateField = (field: string, value: unknown) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -1460,7 +1463,7 @@ const AliasEditorModal = ({
           'Test completed, but no structured output results were returned. Check backend logs for details.'
         );
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to run benchmark:', err);
       const errorMessage = err?.response?.data?.error || err?.message || 'Unknown error';
       alert(

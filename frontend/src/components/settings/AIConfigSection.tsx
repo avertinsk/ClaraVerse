@@ -1,17 +1,6 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  Bot,
-  MessageSquare,
-  Info,
-  AlertCircle,
-  Plus,
-  RefreshCw,
-  Loader2,
-  X,
-  Server,
-  Link as LinkIcon,
-} from 'lucide-react';
+import { Bot, Server, Link as LinkIcon } from 'lucide-react';
 import { useSettingsStore, encryptApiKey } from '@/store/useSettingsStore';
 import type { CustomProvider } from '@/store/useSettingsStore';
 import { useModelStore } from '@/store/useModelStore';
@@ -87,7 +76,6 @@ export const AIConfigSection: React.FC<AIConfigSectionProps> = ({ onSave }) => {
   // Settings store
   const {
     defaultSystemInstructions,
-    defaultModelId,
     toolPredictorModelId,
     customProviders,
     setDefaultSystemInstructions,

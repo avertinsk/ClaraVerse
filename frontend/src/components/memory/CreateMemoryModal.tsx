@@ -58,7 +58,7 @@ export const CreateMemoryModal: React.FC<CreateMemoryModalProps> = ({ onClose, o
     try {
       await memoryService.createMemory({
         content: content.trim(),
-        category: category as any,
+        category: category as string,
         tags,
       });
       onSuccess();

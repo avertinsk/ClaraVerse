@@ -10,6 +10,7 @@ import {
   Check,
   FileText,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { MarkdownRenderer } from '@/components/design-system/content/MarkdownRenderer';
 import { useNexusStore } from '@/store/useNexusStore';
 import { nexusService } from '@/services/nexusService';
@@ -17,6 +18,7 @@ import type { NexusSave } from '@/types/nexus';
 import styles from './Nexus.module.css';
 
 export const SavesView = memo(function SavesView() {
+  const { t } = useTranslation('nexus');
   const saves = useNexusStore(s => s.saves);
   const setSaves = useNexusStore(s => s.setSaves);
   const updateSaveInStore = useNexusStore(s => s.updateSaveInStore);
@@ -138,9 +140,9 @@ export const SavesView = memo(function SavesView() {
       <div className={styles.savesViewContainer}>
         <div className={styles.savesViewHeader}>
           <Bookmark size={18} />
-          <h2>Saved</h2>
+          <h2>{t('savesView.title')}</h2>
         </div>
-        <div className={styles.detailEmpty}>Loading saves...</div>
+        <div className={styles.detailEmpty}>{t('savesView.loading')}</div>
       </div>
     );
   }
@@ -149,7 +151,7 @@ export const SavesView = memo(function SavesView() {
     <div className={styles.savesViewContainer}>
       <div className={styles.savesViewHeader}>
         <Bookmark size={18} />
-        <h2>Saved</h2>
+        <h2>{t('savesView.title')}</h2>
         <span className={styles.savesCount}>{saves.length}</span>
       </div>
 
@@ -159,7 +161,7 @@ export const SavesView = memo(function SavesView() {
           <Search size={14} />
           <input
             className={styles.savesSearchInput}
-            placeholder="Search saves..."
+            placeholder={t('savesView.searchPlaceholder')}
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
           />
@@ -192,9 +194,7 @@ export const SavesView = memo(function SavesView() {
       {/* Save cards */}
       {filtered.length === 0 ? (
         <div className={styles.detailEmpty}>
-          {saves.length === 0
-            ? 'No saves yet. Save a task result to see it here.'
-            : 'No saves match your search.'}
+          {saves.length === 0 ? t('savesView.noSaves') : t('savesView.noMatch')}
         </div>
       ) : (
         <div className={styles.savesList}>
@@ -210,7 +210,9 @@ export const SavesView = memo(function SavesView() {
                 >
                   <FileText size={14} className={styles.saveCardIcon} />
                   <div className={styles.saveCardTitleWrap}>
-                    <span className={styles.saveCardTitle}>{save.title || 'Untitled'}</span>
+                    <span className={styles.saveCardTitle}>
+                      {save.title || t('savesView.untitled')}
+                    </span>
                     <span className={styles.saveCardDate}>
                       {new Date(save.created_at).toLocaleDateString()}
                     </span>
@@ -223,7 +225,7 @@ export const SavesView = memo(function SavesView() {
                           e.stopPropagation();
                           navigateToSourceTask(save);
                         }}
-                        title="Go to source task"
+                        title={t('savesView.goToSource')}
                       >
                         <ExternalLink size={13} />
                       </button>
@@ -234,7 +236,7 @@ export const SavesView = memo(function SavesView() {
                         e.stopPropagation();
                         startEdit(save);
                       }}
-                      title="Edit"
+                      title={t('savesView.edit')}
                     >
                       <Edit3 size={13} />
                     </button>
@@ -244,7 +246,7 @@ export const SavesView = memo(function SavesView() {
                         e.stopPropagation();
                         handleDelete(save.id);
                       }}
-                      title="Delete"
+                      title={t('savesView.delete')}
                     >
                       <Trash2 size={13} />
                     </button>
@@ -277,30 +279,30 @@ export const SavesView = memo(function SavesView() {
                           className={styles.saveEditTitle}
                           value={editTitle}
                           onChange={e => setEditTitle(e.target.value)}
-                          placeholder="Title"
+                          placeholder={t('savesView.titlePlaceholder')}
                         />
                         <textarea
                           className={styles.saveEditContent}
                           value={editContent}
                           onChange={e => setEditContent(e.target.value)}
-                          placeholder="Content (markdown)"
+                          placeholder={t('savesView.contentPlaceholder')}
                           rows={8}
                         />
                         <input
                           className={styles.saveEditTags}
                           value={editTags}
                           onChange={e => setEditTags(e.target.value)}
-                          placeholder="Tags (comma-separated)"
+                          placeholder={t('savesView.tagsPlaceholder')}
                         />
                         <div className={styles.saveEditActions}>
                           <button
                             className={styles.saveEditSaveBtn}
                             onClick={() => saveEdit(save.id)}
                           >
-                            <Check size={14} /> Save
+                            <Check size={14} /> {t('savesView.save')}
                           </button>
                           <button className={styles.saveEditCancelBtn} onClick={cancelEdit}>
-                            Cancel
+                            {t('savesView.cancel')}
                           </button>
                         </div>
                       </div>

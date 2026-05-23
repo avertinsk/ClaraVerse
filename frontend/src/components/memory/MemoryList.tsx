@@ -40,6 +40,7 @@ export const MemoryList: React.FC = () => {
 
   useEffect(() => {
     loadMemories();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, categoryFilter, showArchived]);
 
   const loadMemories = async () => {

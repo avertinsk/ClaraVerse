@@ -60,7 +60,7 @@ const DAYS_OF_WEEK = [
 
 const MINUTE_INTERVALS = [1, 5, 10, 15, 30, 60];
 const HOURS = Array.from({ length: 24 }, (_, i) => i);
-const MINUTES = Array.from({ length: 60 }, (_, i) => i);
+// const MINUTES = Array.from({ length: 60 }, (_, i) => i);
 const DAYS_OF_MONTH = Array.from({ length: 31 }, (_, i) => i + 1);
 
 // Parse a cron expression to extract settings
@@ -201,15 +201,17 @@ export function CronBuilder({ value, onChange }: CronBuilderProps) {
         return `Hourly at :${minute.toString().padStart(2, '0')}`;
       case 'daily':
         return `Daily at ${formatTime(hour, minute)}`;
-      case 'weekly':
+      case 'weekly': {
         const dayNames = daysOfWeek
           .map(d => DAYS_OF_WEEK.find(dw => dw.value === d)?.label)
           .join(', ');
         return `${dayNames} at ${formatTime(hour, minute)}`;
-      case 'monthly':
+      }
+      case 'monthly': {
         const suffix =
           dayOfMonth === 1 ? 'st' : dayOfMonth === 2 ? 'nd' : dayOfMonth === 3 ? 'rd' : 'th';
         return `${dayOfMonth}${suffix} of each month at ${formatTime(hour, minute)}`;
+      }
     }
   };
 

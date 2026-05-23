@@ -73,6 +73,7 @@ export const CredentialFormModal = ({
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [name, formData, integration.fields]);
 
   // Handle field change

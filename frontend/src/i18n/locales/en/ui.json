@@ -1,0 +1,43 @@
+{
+  "apiKeyModal.title": "API Key Required",
+  "apiKeyModal.description": "Enter your API key for <strong>{{providerName}}</strong> to continue.",
+  "apiKeyModal.placeholder": "sk-...",
+  "apiKeyModal.rememberSession": "Remember for this session only",
+  "apiKeyModal.securityNoteSession": "Key will be cleared when you close the browser tab.",
+  "apiKeyModal.securityNoteOnce": "Key will be used once and not stored.",
+  "apiKeyModal.cancel": "Cancel",
+  "apiKeyModal.continue": "Continue",
+
+  "badgeInfo.secure.title": "Secure Provider",
+  "badgeInfo.secure.desc": "This model runs on a provider that either doesn't store your data or operates in Trusted Execution Environments (TEEs). Your conversations are more private and secure.",
+  "badgeInfo.vision.title": "Vision Capable",
+  "badgeInfo.vision.desc": "This model can understand and analyze images. You can upload pictures and ask questions about them, or include images in your conversations.",
+  "badgeInfo.top.title": "Top Tier Model",
+  "badgeInfo.top.desc": "The most capable model from this provider. Best for complex reasoning, creative tasks, and when you need the highest quality responses.",
+  "badgeInfo.medium.title": "Balanced Model",
+  "badgeInfo.medium.desc": "A well-balanced model offering good performance at a reasonable cost. Great for everyday tasks and general conversations.",
+  "badgeInfo.fastest.title": "Fastest Model",
+  "badgeInfo.fastest.desc": "Optimized for speed and efficiency. Best for quick responses, simple tasks, and when low latency matters most.",
+  "badgeInfo.new.title": "Newly Added",
+  "badgeInfo.new.desc": "A recently added model to ClaraVerse. Try it out and explore its capabilities - it might become your new favorite!",
+
+  "modelSelector.title": "Select a model",
+  "modelSelector.searchPlaceholder": "Search models...",
+  "modelSelector.noResults": "No models found matching \"{{query}}\"",
+  "modelSelector.noModels": "No models available",
+
+  "modelTooltip.dataSafe": "DATA SAFE",
+  "modelTooltip.structuredOutput": "Structured Output",
+  "modelTooltip.quality": "Quality",
+  "modelTooltip.compliance": "Compliance",
+  "modelTooltip.avgResponse": "Avg Response",
+  "modelTooltip.speedTier": "Speed Tier",
+  "modelTooltip.fastest": "Fastest",
+  "modelTooltip.fast": "Fast",
+  "modelTooltip.medium": "Medium",
+  "modelTooltip.unknownNotice": "Structured outputs work but may have degraded performance. Full testing pending.",
+
+  "userMenu.profileSettings": "Profile Settings",
+  "userMenu.signOut": "Sign Out",
+  "userMenu.ariaLabel": "User menu"
+}

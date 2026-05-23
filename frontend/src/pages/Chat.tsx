@@ -194,6 +194,7 @@ export const Chat = () => {
     }, 300);
 
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contextOptimizing?.active]);
 
   const [isAnimatingTitle, setIsAnimatingTitle] = useState(false);

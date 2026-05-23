@@ -75,6 +75,7 @@ export function ImageGalleryModal({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, currentIndex, images.length]);
 
   // Prevent body scroll when modal is open

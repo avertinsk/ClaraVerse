@@ -17,6 +17,7 @@ import {
   Bookmark,
   BookmarkCheck,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Badge } from '@/components/design-system';
 import { MarkdownRenderer } from '@/components/design-system/content/MarkdownRenderer';
 import { DaemonActivityBlock } from './DaemonActivityBlock';
@@ -49,17 +50,17 @@ const statusConfig: Record<
   NexusTaskStatus,
   {
     variant: 'default' | 'accent' | 'success' | 'warning' | 'error';
-    label: string;
+    labelKey: string;
     icon: React.ReactNode;
   }
 > = {
-  draft: { variant: 'default', label: 'Draft', icon: <FileEdit size={12} /> },
-  pending: { variant: 'default', label: 'Queued', icon: <Clock size={12} /> },
-  executing: { variant: 'accent', label: 'Running', icon: <Loader2 size={12} /> },
-  waiting_input: { variant: 'warning', label: 'Waiting', icon: <Clock size={12} /> },
-  completed: { variant: 'success', label: 'Done', icon: <CheckCircle2 size={12} /> },
-  failed: { variant: 'error', label: 'Failed', icon: <AlertCircle size={12} /> },
-  cancelled: { variant: 'default', label: 'Cancelled', icon: <X size={12} /> },
+  draft: { variant: 'default', labelKey: 'taskDetail.draft', icon: <FileEdit size={12} /> },
+  pending: { variant: 'default', labelKey: 'taskDetail.queued', icon: <Clock size={12} /> },
+  executing: { variant: 'accent', labelKey: 'taskDetail.running', icon: <Loader2 size={12} /> },
+  waiting_input: { variant: 'warning', labelKey: 'taskDetail.waiting', icon: <Clock size={12} /> },
+  completed: { variant: 'success', labelKey: 'taskDetail.done', icon: <CheckCircle2 size={12} /> },
+  failed: { variant: 'error', labelKey: 'taskDetail.failed', icon: <AlertCircle size={12} /> },
+  cancelled: { variant: 'default', labelKey: 'taskDetail.cancelled', icon: <X size={12} /> },
 };
 
 export const TaskDetailPanel = memo(function TaskDetailPanel({
@@ -70,6 +71,7 @@ export const TaskDetailPanel = memo(function TaskDetailPanel({
   onRetryTask,
   onStatusChange,
 }: TaskDetailPanelProps) {
+  const { t } = useTranslation('nexus');
   const tasks = useNexusStore(s => s.tasks);
   const daemons = useNexusStore(s => s.daemons);
   const conversation = useNexusStore(s => s.conversation);
@@ -191,7 +193,7 @@ export const TaskDetailPanel = memo(function TaskDetailPanel({
     return (
       <div className={styles.detailPanel}>
         <div className={styles.detailPanelHeader}>
-          <h3>Task not found</h3>
+          <h3>{t('taskDetail.notFound')}</h3>
           <button className={styles.detailCloseBtn} onClick={onClose}>
             <X size={16} />
           </button>
@@ -210,7 +212,7 @@ export const TaskDetailPanel = memo(function TaskDetailPanel({
       <div className={styles.detailPanelBackdrop} onClick={onClose} aria-hidden="true" />
       <div className={styles.detailPanel}>
         <div className={styles.detailPanelHeader}>
-          <h3>Task Detail</h3>
+          <h3>{t('taskDetail.title')}</h3>
           <div className={styles.detailHeaderActions}>
             {(isRunning || task.status === 'waiting_input') && onCancelTask && (
               <button
@@ -219,7 +221,7 @@ export const TaskDetailPanel = memo(function TaskDetailPanel({
                   setStopping(true);
                   onCancelTask(taskId);
                 }}
-                title="Stop task"
+                title={t('taskDetail.stopTask')}
                 disabled={stopping}
               >
                 {stopping ? (
@@ -237,7 +239,9 @@ export const TaskDetailPanel = memo(function TaskDetailPanel({
                   onRetryTask(taskId);
                 }}
                 title={
-                  (task.manual_retry_count ?? 0) >= 3 ? 'Maximum retries reached' : 'Retry task'
+                  (task.manual_retry_count ?? 0) >= 3
+                    ? t('taskDetail.maxRetries')
+                    : t('taskDetail.retryTask')
                 }
                 disabled={(task.manual_retry_count ?? 0) >= 3 || retrying}
               >
@@ -253,7 +257,7 @@ export const TaskDetailPanel = memo(function TaskDetailPanel({
         <div className={styles.detailPanelBody}>
           <div className={styles.detailTaskSummary}>
             <Badge variant={cfg.variant} icon={cfg.icon}>
-              {cfg.label}
+              {t(cfg.labelKey)}
             </Badge>
             {task.status === 'draft' ? (
               <textarea
@@ -268,13 +272,13 @@ export const TaskDetailPanel = memo(function TaskDetailPanel({
                       .catch(err => console.error('Failed to save draft:', err));
                   }
                 }}
-                placeholder="Describe what you want to do..."
+                placeholder={t('taskDetail.draftPlaceholder')}
               />
             ) : (
               <p>{task.goal || task.prompt}</p>
             )}
             <div className={styles.detailTaskMeta}>
-              <span>{task.mode === 'multi_daemon' ? 'Multi-daemon' : task.mode}</span>
+              <span>{task.mode === 'multi_daemon' ? t('taskDetail.multiDaemon') : task.mode}</span>
               {task.created_at && <span>{new Date(task.created_at).toLocaleTimeString()}</span>}
               {durationText && <span>{durationText}</span>}
             </div>
@@ -283,7 +287,7 @@ export const TaskDetailPanel = memo(function TaskDetailPanel({
                 className={styles.detailQueueBtn}
                 onClick={() => onStatusChange(taskId, 'pending')}
               >
-                Queue Task <ArrowRight size={14} />
+                {t('taskDetail.queueTask')} <ArrowRight size={14} />
               </button>
             )}
             {projects.length > 0 && (
@@ -294,7 +298,7 @@ export const TaskDetailPanel = memo(function TaskDetailPanel({
                   value={task.project_id ?? ''}
                   onChange={e => handleMoveToProject(e.target.value)}
                 >
-                  <option value="">Inbox (no project)</option>
+                  <option value="">{t('taskDetail.inbox')}</option>
                   {projects.map(p => (
                     <option key={p.id} value={p.id}>
                       {p.name}
@@ -308,11 +312,11 @@ export const TaskDetailPanel = memo(function TaskDetailPanel({
           {task.result && (
             <div className={styles.detailTaskResult}>
               <div className={styles.detailResultHeader}>
-                <CheckCircle2 size={14} /> Result
+                <CheckCircle2 size={14} /> {t('taskDetail.result')}
                 <button
                   className={`${styles.detailSaveBtn} ${isSaved ? styles.detailSaveBtnSaved : ''}`}
                   onClick={handleSaveResult}
-                  title={isSaved ? 'Saved' : 'Save to Saves'}
+                  title={isSaved ? t('taskDetail.saved') : t('taskDetail.saveToSaves')}
                   disabled={isSaved || saving}
                 >
                   {saving ? (
@@ -338,7 +342,7 @@ export const TaskDetailPanel = memo(function TaskDetailPanel({
           {task.retry_of_task_id && (
             <div className={styles.detailRetryInfo}>
               <RotateCcw size={12} />
-              <span>Retry attempt {task.manual_retry_count ?? 1} of 3</span>
+              <span>{t('taskDetail.retryAttempt', { count: task.manual_retry_count ?? 1 })}</span>
             </div>
           )}
 
@@ -346,7 +350,9 @@ export const TaskDetailPanel = memo(function TaskDetailPanel({
             otherwise show a live status card per daemon */}
           {taskDaemons.length > 0 && (
             <div className={styles.detailDaemons}>
-              <h4 className={styles.detailSectionTitle}>Daemon Activity ({taskDaemons.length})</h4>
+              <h4 className={styles.detailSectionTitle}>
+                {t('taskDetail.daemonActivity', { count: taskDaemons.length })}
+              </h4>
               {taskDaemons.map(daemon => {
                 const items = groupedByDaemon[daemon.id!] ?? [];
                 if (items.length > 0) {
@@ -407,7 +413,7 @@ export const TaskDetailPanel = memo(function TaskDetailPanel({
           {/* Conversation thread — user follow-ups and cortex responses */}
           {taskLevelMessages.length > 0 && (
             <div className={styles.detailConversation}>
-              <h4 className={styles.detailSectionTitle}>Conversation</h4>
+              <h4 className={styles.detailSectionTitle}>{t('taskDetail.conversation')}</h4>
               {taskLevelMessages.map(item => (
                 <div
                   key={item.id}
@@ -436,14 +442,16 @@ export const TaskDetailPanel = memo(function TaskDetailPanel({
             taskLevelMessages.length === 0 &&
             !isRunning && (
               <div className={styles.detailEmpty}>
-                {task.status === 'pending' ? 'Waiting to start...' : 'No activity recorded yet.'}
+                {task.status === 'pending'
+                  ? t('taskDetail.waitingToStart')
+                  : t('taskDetail.noActivity')}
               </div>
             )}
 
           {taskDaemons.length === 0 && isRunning && (
             <div className={styles.detailWaiting}>
               <Loader2 size={16} className={styles.spin} />
-              <span>Setting up daemons...</span>
+              <span>{t('taskDetail.settingUpDaemons')}</span>
             </div>
           )}
         </div>

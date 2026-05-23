@@ -6,6 +6,7 @@
  */
 
 import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { X, Shield, Image, Sparkles, Zap, Star, FlaskConical } from 'lucide-react';
 import styles from './BadgeInfoModal.module.css';
 
@@ -20,53 +21,48 @@ interface BadgeInfoModalProps {
 
 const badgeInfo: Record<
   BadgeType,
-  { icon: React.ReactNode; title: string; description: string; color: string }
+  { icon: React.ReactNode; titleKey: string; descKey: string; color: string }
 > = {
   secure: {
     icon: <Shield size={20} />,
-    title: 'Secure Provider',
-    description:
-      "This model runs on a provider that either doesn't store your data or operates in Trusted Execution Environments (TEEs). Your conversations are more private and secure.",
+    titleKey: 'badgeInfo.secure.title',
+    descKey: 'badgeInfo.secure.desc',
     color: 'var(--color-success, #22c55e)',
   },
   vision: {
     icon: <Image size={20} />,
-    title: 'Vision Capable',
-    description:
-      'This model can understand and analyze images. You can upload pictures and ask questions about them, or include images in your conversations.',
+    titleKey: 'badgeInfo.vision.title',
+    descKey: 'badgeInfo.vision.desc',
     color: 'var(--color-accent)',
   },
   top: {
     icon: <Star size={20} />,
-    title: 'Top Tier Model',
-    description:
-      'The most capable model from this provider. Best for complex reasoning, creative tasks, and when you need the highest quality responses.',
+    titleKey: 'badgeInfo.top.title',
+    descKey: 'badgeInfo.top.desc',
     color: '#f59e0b',
   },
   medium: {
     icon: <Sparkles size={20} />,
-    title: 'Balanced Model',
-    description:
-      'A well-balanced model offering good performance at a reasonable cost. Great for everyday tasks and general conversations.',
+    titleKey: 'badgeInfo.medium.title',
+    descKey: 'badgeInfo.medium.desc',
     color: '#8b5cf6',
   },
   fastest: {
     icon: <Zap size={20} />,
-    title: 'Fastest Model',
-    description:
-      'Optimized for speed and efficiency. Best for quick responses, simple tasks, and when low latency matters most.',
+    titleKey: 'badgeInfo.fastest.title',
+    descKey: 'badgeInfo.fastest.desc',
     color: '#06b6d4',
   },
   new: {
     icon: <FlaskConical size={20} />,
-    title: 'Newly Added',
-    description:
-      'A recently added model to ClaraVerse. Try it out and explore its capabilities - it might become your new favorite!',
+    titleKey: 'badgeInfo.new.title',
+    descKey: 'badgeInfo.new.desc',
     color: '#10b981',
   },
 };
 
 export function BadgeInfoModal({ isOpen, onClose, badgeType, anchorRect }: BadgeInfoModalProps) {
+  const { t } = useTranslation('ui');
   const modalRef = useRef<HTMLDivElement>(null);
   const info = badgeInfo[badgeType];
 
@@ -145,8 +141,8 @@ export function BadgeInfoModal({ isOpen, onClose, badgeType, anchorRect }: Badge
           <div className={styles.iconWrapper} style={{ color: info.color }}>
             {info.icon}
           </div>
-          <h3 className={styles.title}>{info.title}</h3>
-          <p className={styles.description}>{info.description}</p>
+          <h3 className={styles.title}>{t(info.titleKey)}</h3>
+          <p className={styles.description}>{t(info.descKey)}</p>
         </div>
       </div>
     </div>

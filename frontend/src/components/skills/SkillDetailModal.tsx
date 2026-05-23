@@ -10,6 +10,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Badge, Modal, Switch, Button } from '@/components/design-system';
 import type { Skill } from '@/services/skillService';
 
@@ -89,6 +90,7 @@ export const SkillDetailModal = ({
   onToggle,
   onExport,
 }: SkillDetailModalProps) => {
+  const { t } = useTranslation('skills');
   const [toggling, setToggling] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -136,7 +138,9 @@ export const SkillDetailModal = ({
             <p className="skill-detail__description">{skill.description}</p>
           </div>
           <div className="skill-detail__toggle">
-            <span className="skill-detail__toggle-label">{enabled ? 'Enabled' : 'Disabled'}</span>
+            <span className="skill-detail__toggle-label">
+              {enabled ? t('skillDetail.enabled') : t('skillDetail.disabled')}
+            </span>
             <Switch checked={enabled} onChange={handleToggle} disabled={toggling} />
           </div>
         </div>
@@ -144,10 +148,10 @@ export const SkillDetailModal = ({
         {/* Meta badges */}
         <div className="skill-detail__meta">
           <Badge variant={skill.mode === 'auto' ? 'accent' : 'default'}>
-            {skill.mode === 'auto' ? 'Auto' : 'Manual'}
+            {skill.mode === 'auto' ? t('skillDetail.auto') : t('skillDetail.manual')}
           </Badge>
           <Badge variant="info">{skill.category.replace(/-/g, ' ')}</Badge>
-          {skill.is_builtin && <Badge variant="default">Built-in</Badge>}
+          {skill.is_builtin && <Badge variant="default">{t('skillDetail.builtIn')}</Badge>}
           {skill.version && (
             <span className="skill-detail__meta-item">
               <Tag size={12} /> v{skill.version}
@@ -169,7 +173,7 @@ export const SkillDetailModal = ({
         {tools.length > 0 && (
           <div className="skill-detail__section">
             <h4 className="skill-detail__section-title">
-              <Wrench size={14} /> Required Tools
+              <Wrench size={14} /> {t('skillDetail.requiredTools')}
             </h4>
             <div className="skill-detail__tags">
               {tools.map(tool => (
@@ -185,7 +189,7 @@ export const SkillDetailModal = ({
         {servers.length > 0 && (
           <div className="skill-detail__section">
             <h4 className="skill-detail__section-title">
-              <Server size={14} /> Preferred MCP Servers
+              <Server size={14} /> {t('skillDetail.preferredServers')}
             </h4>
             <div className="skill-detail__tags">
               {servers.map(s => (
@@ -201,7 +205,7 @@ export const SkillDetailModal = ({
         {keywords.length > 0 && (
           <div className="skill-detail__section">
             <h4 className="skill-detail__section-title">
-              <Tag size={14} /> Keywords
+              <Tag size={14} /> {t('skillDetail.keywords')}
             </h4>
             <div className="skill-detail__tags">
               {keywords.map(kw => (
@@ -217,14 +221,14 @@ export const SkillDetailModal = ({
         {skill.system_prompt && (
           <div className="skill-detail__section">
             <div className="skill-detail__section-header">
-              <h4 className="skill-detail__section-title">System Prompt</h4>
+              <h4 className="skill-detail__section-title">{t('skillDetail.systemPrompt')}</h4>
               <button
                 className="skill-detail__copy-btn"
                 onClick={handleCopyPrompt}
-                title="Copy to clipboard"
+                title={t('skillDetail.copyPrompt')}
               >
                 {copied ? <Check size={14} /> : <Copy size={14} />}
-                {copied ? 'Copied' : 'Copy'}
+                {copied ? t('skillDetail.copied') : t('skillDetail.copy')}
               </button>
             </div>
             <pre className="skill-detail__prompt">{skill.system_prompt}</pre>
@@ -236,7 +240,7 @@ export const SkillDetailModal = ({
           <div className="skill-detail__actions">
             <Button variant="secondary" size="sm" onClick={() => onExport(skill.id)}>
               <Download size={14} />
-              Export as SKILL.md
+              {t('skillDetail.export')}
             </Button>
           </div>
         )}

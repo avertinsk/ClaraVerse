@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ArrowRight, Loader2, AlertTriangle, Calendar, Zap, CreditCard } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Modal, Button, Spinner } from '@/components/design-system';
 import { useSubscriptionStore } from '@/store/useSubscriptionStore';
 import {
@@ -31,6 +32,7 @@ export const PlanChangeModal: React.FC<PlanChangeModalProps> = ({
   targetPlan,
   subscription,
 }) => {
+  const { t } = useTranslation('settings');
   const { createCheckout, changePlan, previewPlanChange, isChangingPlan } = useSubscriptionStore();
   const [preview, setPreview] = useState<PlanChangePreview | null>(null);
   const [isLoadingPreview, setIsLoadingPreview] = useState(false);
@@ -103,7 +105,7 @@ export const PlanChangeModal: React.FC<PlanChangeModalProps> = ({
           ) : (
             <CreditCard size={20} className="text-[#e91e63]" />
           )}
-          {isUpgradeAction ? 'Upgrade Your Plan' : 'Change Your Plan'}
+          {isUpgradeAction ? t('planChange.upgrade') : t('planChange.change')}
         </span>
       }
       size="md"
@@ -120,15 +122,15 @@ export const PlanChangeModal: React.FC<PlanChangeModalProps> = ({
             {isChangingPlan ? (
               <>
                 <Loader2 size={16} className="animate-spin" />
-                Processing...
+                {t('planChange.processing')}
               </>
             ) : isUpgradeAction ? (
               <>
                 <Zap size={16} />
-                Upgrade Now
+                {t('planChange.upgradeNow')}
               </>
             ) : (
-              'Confirm Downgrade'
+              t('planChange.confirmDowngrade')
             )}
           </Button>
         </div>
@@ -138,14 +140,14 @@ export const PlanChangeModal: React.FC<PlanChangeModalProps> = ({
         {isLoadingPreview ? (
           <div className="plan-modal-loading">
             <Spinner size="md" />
-            <p>Loading plan details...</p>
+            <p>{t('planChange.loading')}</p>
           </div>
         ) : (
           <>
             {/* Plan Comparison */}
             <div className="plan-comparison">
               <div className="plan-compare-item plan-compare-from">
-                <span className="compare-label">Current Plan</span>
+                <span className="compare-label">{t('planChange.currentPlan')}</span>
                 <h4 className="compare-plan-name">{currentPlan.name}</h4>
                 <span className="compare-price">
                   {formatMonthlyPrice(currentPlan.price_monthly)}
@@ -157,7 +159,7 @@ export const PlanChangeModal: React.FC<PlanChangeModalProps> = ({
               </div>
 
               <div className="plan-compare-item plan-compare-to">
-                <span className="compare-label">New Plan</span>
+                <span className="compare-label">{t('planChange.newPlan')}</span>
                 <h4 className="compare-plan-name">{targetPlan.name}</h4>
                 <span className="compare-price">
                   {formatMonthlyPrice(targetPlan.price_monthly)}
@@ -173,14 +175,11 @@ export const PlanChangeModal: React.FC<PlanChangeModalProps> = ({
                     <Zap size={20} />
                   </div>
                   <div className="change-info-content">
-                    <h5>Immediate Upgrade</h5>
-                    <p>
-                      Your plan will be upgraded immediately. You'll be charged a prorated amount
-                      for the remainder of your billing period.
-                    </p>
+                    <h5>{t('planChange.immediateUpgrade')}</h5>
+                    <p>{t('planChange.immediateUpgradeDesc')}</p>
                     {preview?.prorated_amount !== undefined && preview.prorated_amount > 0 && (
                       <div className="proration-amount">
-                        <span>Prorated charge:</span>
+                        <span>{t('planChange.proratedCharge')}:</span>
                         <strong>{formatPrice(preview.prorated_amount)}</strong>
                       </div>
                     )}
@@ -192,14 +191,11 @@ export const PlanChangeModal: React.FC<PlanChangeModalProps> = ({
                     <Calendar size={20} />
                   </div>
                   <div className="change-info-content">
-                    <h5>Scheduled Downgrade</h5>
-                    <p>
-                      Your plan will change at the end of your current billing period. You'll
-                      continue to have access to {currentPlan.name} features until then.
-                    </p>
+                    <h5>{t('planChange.scheduledDowngrade')}</h5>
+                    <p>{t('planChange.scheduledDowngradeDesc', { planName: currentPlan.name })}</p>
                     {preview?.effective_at && (
                       <div className="effective-date">
-                        <span>Effective date:</span>
+                        <span>{t('planChange.effectiveDate')}:</span>
                         <strong>{new Date(preview.effective_at).toLocaleDateString()}</strong>
                       </div>
                     )}
@@ -211,51 +207,48 @@ export const PlanChangeModal: React.FC<PlanChangeModalProps> = ({
               {!isUpgradeAction && (
                 <div className="downgrade-warning">
                   <AlertTriangle size={16} />
-                  <span>
-                    After downgrading, you may lose access to some features and your usage limits
-                    will be reduced.
-                  </span>
+                  <span>{t('planChange.downgradeWarning')}</span>
                 </div>
               )}
             </div>
 
             {/* Feature Comparison */}
             <div className="feature-comparison">
-              <h5>What changes:</h5>
+              <h5>{t('planChange.whatChanges')}</h5>
               <div className="feature-diff">
                 <div className="feature-diff-item">
-                  <span className="diff-label">Schedules</span>
+                  <span className="diff-label">{t('planChange.schedules')}</span>
                   <span className="diff-change">
                     {currentPlan.limits.maxSchedules === -1
-                      ? 'Unlimited'
+                      ? t('planChange.unlimited')
                       : currentPlan.limits.maxSchedules}
                     {' → '}
                     {targetPlan.limits.maxSchedules === -1
-                      ? 'Unlimited'
+                      ? t('planChange.unlimited')
                       : targetPlan.limits.maxSchedules}
                   </span>
                 </div>
                 <div className="feature-diff-item">
-                  <span className="diff-label">API Keys</span>
+                  <span className="diff-label">{t('planChange.apiKeys')}</span>
                   <span className="diff-change">
                     {currentPlan.limits.maxApiKeys === -1
-                      ? 'Unlimited'
+                      ? t('planChange.unlimited')
                       : currentPlan.limits.maxApiKeys}
                     {' → '}
                     {targetPlan.limits.maxApiKeys === -1
-                      ? 'Unlimited'
+                      ? t('planChange.unlimited')
                       : targetPlan.limits.maxApiKeys}
                   </span>
                 </div>
                 <div className="feature-diff-item">
-                  <span className="diff-label">Executions/day</span>
+                  <span className="diff-label">{t('planChange.executionsPerDay')}</span>
                   <span className="diff-change">
                     {currentPlan.limits.maxExecutionsPerDay === -1
-                      ? 'Unlimited'
+                      ? t('planChange.unlimited')
                       : currentPlan.limits.maxExecutionsPerDay}
                     {' → '}
                     {targetPlan.limits.maxExecutionsPerDay === -1
-                      ? 'Unlimited'
+                      ? t('planChange.unlimited')
                       : targetPlan.limits.maxExecutionsPerDay}
                   </span>
                 </div>

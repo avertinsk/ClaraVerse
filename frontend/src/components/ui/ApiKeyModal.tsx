@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X, Key, Shield } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Input, Button } from '@/components/design-system';
 import styles from './ApiKeyModal.module.css';
 
@@ -16,6 +17,7 @@ export const ApiKeyModal: React.FC<ApiKeyModalProps> = ({
   onSubmit,
   providerName,
 }) => {
+  const { t } = useTranslation('ui');
   const [apiKey, setApiKey] = useState('');
   const [rememberSession, setRememberSession] = useState(false);
 
@@ -38,7 +40,7 @@ export const ApiKeyModal: React.FC<ApiKeyModalProps> = ({
             <div className={styles.iconWrapper}>
               <Key size={20} />
             </div>
-            <h2 className={styles.title}>API Key Required</h2>
+            <h2 className={styles.title}>{t('apiKeyModal.title')}</h2>
           </div>
           <button onClick={onClose} className={styles.closeButton}>
             <X size={20} />
@@ -46,15 +48,16 @@ export const ApiKeyModal: React.FC<ApiKeyModalProps> = ({
         </div>
 
         <form onSubmit={handleSubmit} className={styles.content}>
-          <p className={styles.description}>
-            Enter your API key for <strong>{providerName}</strong> to continue.
-          </p>
+          <p
+            className={styles.description}
+            dangerouslySetInnerHTML={{ __html: t('apiKeyModal.description', { providerName }) }}
+          />
 
           <div className={styles.inputGroup}>
             <Input
               value={apiKey}
               onChange={e => setApiKey(e.target.value)}
-              placeholder="sk-..."
+              placeholder={t('apiKeyModal.placeholder')}
               type="password"
               autoFocus
             />
@@ -67,7 +70,7 @@ export const ApiKeyModal: React.FC<ApiKeyModalProps> = ({
                 checked={rememberSession}
                 onChange={e => setRememberSession(e.target.checked)}
               />
-              <span>Remember for this session only</span>
+              <span>{t('apiKeyModal.rememberSession')}</span>
             </label>
           </div>
 
@@ -75,17 +78,17 @@ export const ApiKeyModal: React.FC<ApiKeyModalProps> = ({
             <Shield size={14} />
             <span>
               {rememberSession
-                ? 'Key will be cleared when you close the browser tab.'
-                : 'Key will be used once and not stored.'}
+                ? t('apiKeyModal.securityNoteSession')
+                : t('apiKeyModal.securityNoteOnce')}
             </span>
           </div>
 
           <div className={styles.actions}>
             <Button variant="ghost" onClick={onClose} type="button">
-              Cancel
+              {t('apiKeyModal.cancel')}
             </Button>
             <Button variant="primary" type="submit" disabled={!apiKey.trim()}>
-              Continue
+              {t('apiKeyModal.continue')}
             </Button>
           </div>
         </form>

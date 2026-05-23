@@ -202,7 +202,8 @@ export const useNexusStore = create<NexusState>()(
 
       removeDaemon: daemonId =>
         set(state => {
-          const { [daemonId]: _, ...rest } = state.daemons;
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { [daemonId]: _unused, ...rest } = state.daemons;
           return { daemons: rest };
         }),
 

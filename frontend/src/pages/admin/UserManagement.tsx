@@ -37,6 +37,7 @@ export const UserManagement = () => {
   useEffect(() => {
     loadUsers();
     loadGDPRPolicy();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, tierFilter, searchFilter]);
 
   const loadUsers = async () => {

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ChatBubble,
   ChatInput,
@@ -26,6 +27,7 @@ interface Message {
 }
 
 export const ChatDemo = () => {
+  const { t } = useTranslation('common');
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -42,9 +44,9 @@ export const ChatDemo = () => {
   const [isStreaming, setIsStreaming] = useState(false);
 
   const tabs: Tab[] = [
-    { id: 'chat', label: 'Chat', icon: '💬' },
-    { id: 'components', label: 'Components', icon: '🧩' },
-    { id: 'examples', label: 'Examples', icon: '📝' },
+    { id: 'chat', label: t('chatDemo.tabChat'), icon: '💬' },
+    { id: 'components', label: t('chatDemo.tabComponents'), icon: '🧩' },
+    { id: 'examples', label: t('chatDemo.tabExamples'), icon: '📝' },
   ];
 
   const handleSendMessage = (message: string) => {
@@ -130,7 +132,7 @@ All components follow the **Rose Pink** design system with a premium dark theme.
             Online
           </Badge>
           <Button variant="secondary" size="sm" onClick={() => setShowModal(true)}>
-            Settings
+            {t('chatDemo.settings')}
           </Button>
         </div>
       </div>
@@ -176,7 +178,7 @@ All components follow the **Rose Pink** design system with a premium dark theme.
               {isTyping && <TypingIndicator />}
             </div>
             <div className="chat-demo-input">
-              <ChatInput onSubmit={handleSendMessage} placeholder="Ask me anything..." />
+              <ChatInput onSubmit={handleSendMessage} placeholder={t('chatDemo.placeholder')} />
             </div>
           </>
         )}
@@ -184,7 +186,7 @@ All components follow the **Rose Pink** design system with a premium dark theme.
         {activeTab === 'components' && (
           <div className="chat-demo-showcase">
             <Card variant="glass">
-              <Typography variant="h5">Available Components</Typography>
+              <Typography variant="h5">{t('chatDemo.availableComponents')}</Typography>
               <div className="component-list">
                 <Badge variant="accent">ChatBubble</Badge>
                 <Badge variant="accent">ChatInput</Badge>
@@ -200,12 +202,12 @@ All components follow the **Rose Pink** design system with a premium dark theme.
             </Card>
 
             <Card variant="feature">
-              <Typography variant="h6">Code Block Example</Typography>
+              <Typography variant="h6">{t('chatDemo.codeBlockExample')}</Typography>
               <CodeBlock code={exampleCode} language="typescript" />
             </Card>
 
             <Card variant="feature">
-              <Typography variant="h6">Markdown Rendering</Typography>
+              <Typography variant="h6">{t('chatDemo.markdownRendering')}</Typography>
               <MarkdownRenderer content={exampleMarkdown} />
             </Card>
           </div>
@@ -214,28 +216,28 @@ All components follow the **Rose Pink** design system with a premium dark theme.
         {activeTab === 'examples' && (
           <div className="chat-demo-showcase">
             <Card variant="glass">
-              <Typography variant="h5">Try These Examples</Typography>
+              <Typography variant="h5">{t('chatDemo.tryExamples')}</Typography>
               <div className="example-buttons">
                 <Button
                   variant="secondary"
                   onClick={() => handleSendMessage('Show me a code example')}
                 >
-                  Request Code Example
+                  {t('chatDemo.requestCode')}
                 </Button>
                 <Button
                   variant="secondary"
                   onClick={() => handleSendMessage('Show me markdown features')}
                 >
-                  Request Markdown Demo
+                  {t('chatDemo.requestMarkdown')}
                 </Button>
                 <Button variant="secondary" onClick={() => setShowToast(true)}>
-                  Show Toast Notification
+                  {t('chatDemo.showToast')}
                 </Button>
               </div>
             </Card>
 
             <Card variant="feature" icon="✨">
-              <Typography variant="h6">Streaming Text Demo</Typography>
+              <Typography variant="h6">{t('chatDemo.streamingDemo')}</Typography>
               <StreamingText
                 text="This text appears character by character with a blinking cursor, perfect for simulating AI responses in real-time!"
                 speed={40}
@@ -243,8 +245,8 @@ All components follow the **Rose Pink** design system with a premium dark theme.
             </Card>
 
             <Card variant="feature" icon="⌨️">
-              <Typography variant="h6">Typing Indicator</Typography>
-              <TypingIndicator text="AI is thinking" />
+              <Typography variant="h6">{t('chatDemo.typingIndicator')}</Typography>
+              <TypingIndicator text={t('chatDemo.aiThinking')} />
             </Card>
           </div>
         )}
@@ -254,23 +256,21 @@ All components follow the **Rose Pink** design system with a premium dark theme.
       <Modal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
-        title="Settings"
+        title={t('chatDemo.modalTitle')}
         footer={
           <>
             <Button variant="secondary" onClick={() => setShowModal(false)}>
-              Cancel
+              {t('chatDemo.modalCancel')}
             </Button>
             <Button variant="primary" onClick={() => setShowModal(false)}>
-              Save Changes
+              {t('chatDemo.modalSave')}
             </Button>
           </>
         }
       >
-        <Typography variant="base">
-          Configure your AI chat settings here. This is a demo modal showcasing the Modal component.
-        </Typography>
+        <Typography variant="base">{t('chatDemo.modalDesc')}</Typography>
         <div style={{ marginTop: 'var(--space-6)' }}>
-          <Badge variant="info">Demo Feature</Badge>
+          <Badge variant="info">{t('chatDemo.demoFeature')}</Badge>
         </div>
       </Modal>
 
@@ -279,8 +279,8 @@ All components follow the **Rose Pink** design system with a premium dark theme.
         <div className="toast-container">
           <Toast
             variant="success"
-            title="Success!"
-            message="Message copied to clipboard"
+            title={t('chatDemo.toastTitle')}
+            message={t('chatDemo.toastMessage')}
             onClose={() => setShowToast(false)}
           />
         </div>

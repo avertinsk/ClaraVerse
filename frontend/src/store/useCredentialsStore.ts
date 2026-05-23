@@ -74,7 +74,7 @@ const initialState = {
 
 export const useCredentialsStore = create<CredentialsState>()(
   devtools(
-    (set, get) => ({
+    (set, _get) => ({
       ...initialState,
 
       // ========================================================================

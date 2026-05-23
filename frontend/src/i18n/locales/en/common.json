@@ -114,5 +114,47 @@
 
   "authStep.authorizeDevice": "Authorize Device",
   "authStep.authorizeDeviceDesc": "Enter the code shown in your terminal to connect your device.",
-  "authStep.authorizing": "Authorizing..."
+  "authStep.authorizing": "Authorizing...",
+
+  "about.title": "About",
+  "about.desc": "This is a production-ready React application featuring:",
+  "about.react": "React 18 (LTS) with TypeScript",
+  "about.vite": "Vite for fast development and optimized builds",
+  "about.tailwind": "Tailwind CSS for styling",
+  "about.router": "React Router v6 for navigation",
+  "about.zustand": "Zustand for state management",
+  "about.lint": "ESLint and Prettier for code quality",
+
+  "chatDemo.online": "Online",
+  "chatDemo.settings": "Settings",
+  "chatDemo.tabChat": "Chat",
+  "chatDemo.tabComponents": "Components",
+  "chatDemo.tabExamples": "Examples",
+  "chatDemo.placeholder": "Ask me anything...",
+  "chatDemo.title": "ClaraVerse AI Chat",
+  "chatDemo.subtitle": "Complete AI Chat Design System",
+  "chatDemo.availableComponents": "Available Components",
+  "chatDemo.codeBlockExample": "Code Block Example",
+  "chatDemo.markdownRendering": "Markdown Rendering",
+  "chatDemo.tryExamples": "Try These Examples",
+  "chatDemo.requestCode": "Request Code Example",
+  "chatDemo.requestMarkdown": "Request Markdown Demo",
+  "chatDemo.showToast": "Show Toast Notification",
+  "chatDemo.streamingDemo": "Streaming Text Demo",
+  "chatDemo.typingIndicator": "Typing Indicator",
+  "chatDemo.aiThinking": "AI is thinking",
+  "chatDemo.modalTitle": "Settings",
+  "chatDemo.modalCancel": "Cancel",
+  "chatDemo.modalSave": "Save Changes",
+  "chatDemo.modalDesc": "Configure your AI chat settings here. This is a demo modal showcasing the Modal component.",
+  "chatDemo.demoFeature": "Demo Feature",
+  "chatDemo.toastTitle": "Success!",
+  "chatDemo.toastMessage": "Message copied to clipboard",
+
+  "home.welcome": "Welcome to ClaraVerse",
+  "home.desc": "A production-ready React application built with TypeScript, Vite, and Tailwind CSS.",
+  "home.getStarted": "Get Started",
+  "home.learnMore": "Learn More",
+
+  "imageCarousel.slide": "Slide {{index}}"
 }

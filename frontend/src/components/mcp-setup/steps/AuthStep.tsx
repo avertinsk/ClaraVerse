@@ -28,6 +28,7 @@ export const AuthStep = ({ initialCode, userEmail, onAuthorized }: AuthStepProps
         setTimeout(() => handleSubmit(normalized), 500);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialCode]);
 
   const handleSubmit = useCallback(

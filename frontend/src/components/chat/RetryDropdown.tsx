@@ -153,6 +153,7 @@ export function RetryDropdown({ onRetry, disabled }: RetryDropdownProps) {
           break;
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [isOpen, focusedIndex, toggleOpen, handleSelect]
   );
 

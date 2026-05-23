@@ -6,6 +6,7 @@
  */
 
 import { useState, useEffect, useRef, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { X, Search, Check, Image, Shield } from 'lucide-react';
 import { useModelStore } from '@/store/useModelStore';
 import { useSettingsStore } from '@/store/useSettingsStore';
@@ -26,6 +27,7 @@ export function ModelSelectorModal({
   onSelectModel,
   currentModelId,
 }: ModelSelectorModalProps) {
+  const { t } = useTranslation('ui');
   const { models } = useModelStore();
   const { customProviders } = useSettingsStore();
   const [searchQuery, setSearchQuery] = useState('');
@@ -133,7 +135,7 @@ export function ModelSelectorModal({
       <div className={styles.modal} onClick={e => e.stopPropagation()}>
         {/* Header */}
         <div className={styles.header}>
-          <h2 className={styles.title}>Select a model</h2>
+          <h2 className={styles.title}>{t('modelSelector.title')}</h2>
           <button onClick={onClose} className={styles.closeButton} aria-label="Close">
             <X size={20} />
           </button>
@@ -147,7 +149,7 @@ export function ModelSelectorModal({
             type="text"
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            placeholder="Search models..."
+            placeholder={t('modelSelector.searchPlaceholder')}
             className={styles.searchInput}
           />
         </div>
@@ -156,7 +158,7 @@ export function ModelSelectorModal({
         <div className={styles.modelList}>
           {filteredModels.length === 0 ? (
             <div className={styles.emptyState}>
-              <p>No models found matching "{searchQuery}"</p>
+              <p>{t('modelSelector.noResults', { query: searchQuery })}</p>
             </div>
           ) : (
             Object.entries(groupedModels).map(([providerName, providerModels]) => (

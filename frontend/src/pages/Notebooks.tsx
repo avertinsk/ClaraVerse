@@ -1,8 +1,11 @@
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 import { Typography } from '@/components/design-system';
 
 export const Notebooks = () => {
+  const { t } = useTranslation('common');
+
   return (
     <div
       style={{
@@ -31,7 +34,7 @@ export const Notebooks = () => {
           onMouseOut={e => (e.currentTarget.style.color = 'var(--color-text-secondary)')}
         >
           <ChevronLeft size={20} />
-          Home
+          {t('actions.home')}
         </Link>
       </div>
       <div
@@ -43,7 +46,7 @@ export const Notebooks = () => {
         }}
       >
         <Typography variant="display" gradient align="center">
-          Coming Soon
+          {t('comingSoon')}
         </Typography>
       </div>
     </div>

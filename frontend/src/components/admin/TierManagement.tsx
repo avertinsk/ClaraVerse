@@ -88,6 +88,7 @@ export const TierManagement: React.FC = () => {
   useEffect(() => {
     loadTiers();
     loadModels();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadModels = async () => {

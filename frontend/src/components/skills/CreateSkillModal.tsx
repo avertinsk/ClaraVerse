@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Sparkles } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Modal, Button, Input, Textarea, Select } from '@/components/design-system';
 import type { CreateSkillRequest } from '@/services/skillService';
 
@@ -49,6 +50,7 @@ interface CreateSkillModalProps {
 }
 
 export const CreateSkillModal = ({ isOpen, onClose, onSubmit }: CreateSkillModalProps) => {
+  const { t } = useTranslation('skills');
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [icon, setIcon] = useState('zap');
@@ -74,7 +76,7 @@ export const CreateSkillModal = ({ isOpen, onClose, onSubmit }: CreateSkillModal
 
   const handleSubmit = async () => {
     if (!name.trim() || !systemPrompt.trim()) {
-      setError('Name and system prompt are required');
+      setError(t('createSkill.errorRequired'));
       return;
     }
 
@@ -102,7 +104,7 @@ export const CreateSkillModal = ({ isOpen, onClose, onSubmit }: CreateSkillModal
       resetForm();
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create skill');
+      setError(err instanceof Error ? err.message : t('createSkill.errorFailed'));
     } finally {
       setSubmitting(false);
     }
@@ -119,17 +121,17 @@ export const CreateSkillModal = ({ isOpen, onClose, onSubmit }: CreateSkillModal
       onClose={handleClose}
       title={
         <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <Sparkles size={18} /> Create Custom Skill
+          <Sparkles size={18} /> {t('createSkill.title')}
         </span>
       }
       size="lg"
       footer={
         <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
           <Button variant="ghost" onClick={handleClose} disabled={submitting}>
-            Cancel
+            {t('createSkill.cancel')}
           </Button>
           <Button variant="primary" onClick={handleSubmit} disabled={submitting}>
-            {submitting ? 'Creating...' : 'Create Skill'}
+            {submitting ? t('createSkill.creating') : t('createSkill.createBtn')}
           </Button>
         </div>
       }
@@ -139,35 +141,35 @@ export const CreateSkillModal = ({ isOpen, onClose, onSubmit }: CreateSkillModal
 
         <div className="create-skill-row">
           <div className="create-skill-field" style={{ flex: 1 }}>
-            <label className="create-skill-label">Name *</label>
+            <label className="create-skill-label">{t('createSkill.name')} *</label>
             <Input
               value={name}
               onChange={e => setName(e.target.value)}
-              placeholder="e.g., Code Reviewer"
+              placeholder={t('createSkill.namePlaceholder')}
             />
           </div>
           <div className="create-skill-field" style={{ width: '140px' }}>
-            <label className="create-skill-label">Icon</label>
+            <label className="create-skill-label">{t('createSkill.icon')}</label>
             <Select options={ICON_OPTIONS} value={icon} onChange={setIcon} />
           </div>
         </div>
 
         <div className="create-skill-field">
-          <label className="create-skill-label">Description</label>
+          <label className="create-skill-label">{t('createSkill.description')}</label>
           <Input
             value={description}
             onChange={e => setDescription(e.target.value)}
-            placeholder="What does this skill do?"
+            placeholder={t('createSkill.descriptionPlaceholder')}
           />
         </div>
 
         <div className="create-skill-row">
           <div className="create-skill-field" style={{ flex: 1 }}>
-            <label className="create-skill-label">Category</label>
+            <label className="create-skill-label">{t('createSkill.category')}</label>
             <Select options={CATEGORY_OPTIONS} value={category} onChange={setCategory} />
           </div>
           <div className="create-skill-field" style={{ flex: 1 }}>
-            <label className="create-skill-label">Mode</label>
+            <label className="create-skill-label">{t('createSkill.mode')}</label>
             <Select
               options={MODE_OPTIONS}
               value={mode}
@@ -177,33 +179,33 @@ export const CreateSkillModal = ({ isOpen, onClose, onSubmit }: CreateSkillModal
         </div>
 
         <div className="create-skill-field">
-          <label className="create-skill-label">System Prompt *</label>
+          <label className="create-skill-label">{t('createSkill.systemPrompt')} *</label>
           <Textarea
             value={systemPrompt}
             onChange={e => setSystemPrompt(e.target.value)}
-            placeholder="Instructions the AI will follow when this skill is active..."
+            placeholder={t('createSkill.systemPromptPlaceholder')}
             rows={6}
           />
         </div>
 
         <div className="create-skill-field">
-          <label className="create-skill-label">Keywords</label>
+          <label className="create-skill-label">{t('createSkill.keywords')}</label>
           <Input
             value={keywords}
             onChange={e => setKeywords(e.target.value)}
-            placeholder="Comma-separated: review, code, bug, lint"
+            placeholder={t('createSkill.keywordsPlaceholder')}
           />
-          <span className="create-skill-hint">Words that trigger this skill in auto mode</span>
+          <span className="create-skill-hint">{t('createSkill.keywordsHint')}</span>
         </div>
 
         <div className="create-skill-field">
-          <label className="create-skill-label">Trigger Patterns</label>
+          <label className="create-skill-label">{t('createSkill.triggerPatterns')}</label>
           <Input
             value={triggerPatterns}
             onChange={e => setTriggerPatterns(e.target.value)}
-            placeholder="Comma-separated: review this, check my code"
+            placeholder={t('createSkill.triggerPatternsPlaceholder')}
           />
-          <span className="create-skill-hint">Phrase prefixes for higher-priority matching</span>
+          <span className="create-skill-hint">{t('createSkill.triggerPatternsHint')}</span>
         </div>
       </div>
     </Modal>

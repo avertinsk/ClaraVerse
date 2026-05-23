@@ -1,0 +1,43 @@
+{
+  "apiKeyModal.title": "Требуется API-ключ",
+  "apiKeyModal.description": "Введите ваш API-ключ для <strong>{{providerName}}</strong>, чтобы продолжить.",
+  "apiKeyModal.placeholder": "sk-...",
+  "apiKeyModal.rememberSession": "Запомнить только для этой сессии",
+  "apiKeyModal.securityNoteSession": "Ключ будет удалён при закрытии вкладки браузера.",
+  "apiKeyModal.securityNoteOnce": "Ключ будет использован один раз и не сохранён.",
+  "apiKeyModal.cancel": "Отмена",
+  "apiKeyModal.continue": "Продолжить",
+
+  "badgeInfo.secure.title": "Безопасный провайдер",
+  "badgeInfo.secure.desc": "Эта модель работает на провайдере, который либо не хранит ваши данные, либо использует доверенные исполняемые среды (TEE). Ваши разговоры более приватны и защищены.",
+  "badgeInfo.vision.title": "Поддержка зрения",
+  "badgeInfo.vision.desc": "Эта модель может понимать и анализировать изображения. Вы можете загружать картинки и задавать вопросы о них или включать изображения в свои разговоры.",
+  "badgeInfo.top.title": "Модель высшего уровня",
+  "badgeInfo.top.desc": "Самая мощная модель от этого провайдера. Лучше всего подходит для сложных рассуждений, творческих задач и когда нужны ответы высочайшего качества.",
+  "badgeInfo.medium.title": "Сбалансированная модель",
+  "badgeInfo.medium.desc": "Хорошо сбалансированная модель, предлагающая хорошую производительность по разумной цене. Отлично подходит для повседневных задач и общих разговоров.",
+  "badgeInfo.fastest.title": "Самая быстрая модель",
+  "badgeInfo.fastest.desc": "Оптимизирована для скорости и эффективности. Лучше всего подходит для быстрых ответов, простых задач и когда важна низкая задержка.",
+  "badgeInfo.new.title": "Недавно добавлена",
+  "badgeInfo.new.desc": "Недавно добавленная модель в ClaraVerse. Попробуйте и изучите её возможности — она может стать вашей новой любимой!",
+
+  "modelSelector.title": "Выберите модель",
+  "modelSelector.searchPlaceholder": "Поиск моделей...",
+  "modelSelector.noResults": "Нет моделей, соответствующих «{{query}}»",
+  "modelSelector.noModels": "Нет доступных моделей",
+
+  "modelTooltip.dataSafe": "ДАННЫЕ В БЕЗОПАСНОСТИ",
+  "modelTooltip.structuredOutput": "Структурированный вывод",
+  "modelTooltip.quality": "Качество",
+  "modelTooltip.compliance": "Соответствие",
+  "modelTooltip.avgResponse": "Среднее время ответа",
+  "modelTooltip.speedTier": "Уровень скорости",
+  "modelTooltip.fastest": "Самый быстрый",
+  "modelTooltip.fast": "Быстрый",
+  "modelTooltip.medium": "Средний",
+  "modelTooltip.unknownNotice": "Структурированный вывод работает, но производительность может быть снижена. Полное тестирование ещё не завершено.",
+
+  "userMenu.profileSettings": "Настройки профиля",
+  "userMenu.signOut": "Выйти",
+  "userMenu.ariaLabel": "Меню пользователя"
+}

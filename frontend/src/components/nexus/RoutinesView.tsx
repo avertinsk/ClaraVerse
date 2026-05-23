@@ -1,5 +1,6 @@
 import { memo, useEffect, useState, useCallback } from 'react';
 import { Plus, Wifi, WifiOff, Send, Monitor, CalendarClock } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useClawStore } from '@/store/useClawStore';
 import { RoutineBuilder } from '@/components/claras-claw/RoutineBuilder';
 import { Badge } from '@/components/design-system';
@@ -7,6 +8,7 @@ import { RoutineCard } from './RoutineCard';
 import styles from './Nexus.module.css';
 
 export const RoutinesView = memo(function RoutinesView() {
+  const { t } = useTranslation('nexus');
   const {
     routines,
     telegramConnected,
@@ -36,9 +38,10 @@ export const RoutinesView = memo(function RoutinesView() {
 
   const handleDelete = useCallback(
     async (id: string) => {
-      if (!window.confirm('Delete this routine? This cannot be undone.')) return;
+      if (!window.confirm(t('routinesView.confirmDelete'))) return;
       await deleteRoutine(id);
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [deleteRoutine]
   );
 
@@ -72,7 +75,7 @@ export const RoutinesView = memo(function RoutinesView() {
       <div className={styles.routinesHeader}>
         <div className={styles.routinesHeaderLeft}>
           <CalendarClock size={20} />
-          <h2 className={styles.routinesTitle}>Routines</h2>
+          <h2 className={styles.routinesTitle}>{t('routinesView.title')}</h2>
         </div>
         <div className={styles.routinesHeaderRight}>
           <Badge
@@ -95,7 +98,7 @@ export const RoutinesView = memo(function RoutinesView() {
             }}
           >
             <Plus size={14} />
-            New Routine
+            {t('routinesView.newRoutine')}
           </button>
         </div>
       </div>
@@ -104,11 +107,8 @@ export const RoutinesView = memo(function RoutinesView() {
         {routines.length === 0 ? (
           <div className={styles.routinesEmpty}>
             <CalendarClock size={32} style={{ opacity: 0.3 }} />
-            <p>No routines yet</p>
-            <span>
-              Create a routine to run tasks on a schedule — daily briefings, weekly reports,
-              automated monitoring.
-            </span>
+            <p>{t('routinesView.noRoutines')}</p>
+            <span>{t('routinesView.noRoutinesDesc')}</span>
             <button
               className={styles.routinesNewBtn}
               onClick={() => {
@@ -117,7 +117,7 @@ export const RoutinesView = memo(function RoutinesView() {
               }}
             >
               <Plus size={14} />
-              Create your first routine
+              {t('routinesView.createFirst')}
             </button>
           </div>
         ) : (

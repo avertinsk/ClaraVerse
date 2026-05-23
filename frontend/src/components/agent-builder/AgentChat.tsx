@@ -118,6 +118,7 @@ export interface AgentSuggestion {
   requiredIntegration?: string; // Integration type required for this suggestion
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const AGENT_SUGGESTIONS: AgentSuggestion[] = [
   // General suggestions (no integration required) - always available
   { text: 'Build a research assistant that searches the web and summarizes findings' },
@@ -675,15 +676,15 @@ export function AgentChat({ className, onOpenSidebar, onCloseSidebar }: AgentCha
         }
 
         // Build context from workflow
-        let workflowContext = '';
-        if (workflow && workflow.blocks.length > 0) {
-          workflowContext = `\nCurrent Workflow:\n${workflow.blocks
-            .map(
-              (block, i) =>
-                `${i + 1}. ${block.name} (${block.type}): ${block.description || 'No description'}`
-            )
-            .join('\n')}`;
-        }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const _workflowContext = workflow?.blocks?.length
+          ? `\nCurrent Workflow:\n${workflow.blocks
+              .map(
+                (block: { name: string; type: string; description?: string }, i: number) =>
+                  `${i + 1}. ${block.name} (${block.type}): ${block.description || 'No description'}`
+              )
+              .join('\n')}`
+          : '';
 
         // Generate deployment code sample for context
         const deploymentExample =

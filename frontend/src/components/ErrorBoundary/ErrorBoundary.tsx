@@ -281,4 +281,5 @@ ${errorInfo?.componentStack || 'No component stack available'}
   }
 }
 
-export default withTranslation('common')(ErrorBoundary);
+const ErrorBoundaryWithTranslation = withTranslation('common')(ErrorBoundary);
+export default ErrorBoundaryWithTranslation;

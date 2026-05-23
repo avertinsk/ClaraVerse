@@ -102,6 +102,7 @@ export interface CommandCenterHandle {
 }
 
 // Helper function to get tier color for indicator dot
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const getTierColor = (tier: string): string => {
   const colors: Record<string, string> = {
     tier1: '#8b5cf6', // Purple for Elite
@@ -144,7 +145,7 @@ export const CommandCenter = forwardRef<CommandCenterHandle, CommandCenterProps>
     const [message, setMessage] = useState('');
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isDeepThinking, setIsDeepThinking] = useState(false);
+    const [isDeepThinking] = useState(false);
     const [badgeModalOpen, setBadgeModalOpen] = useState(false);
     const [badgeModalType, setBadgeModalType] = useState<BadgeType>('secure');
     const [badgeModalAnchor, setBadgeModalAnchor] = useState<DOMRect | null>(null);
@@ -974,6 +975,7 @@ export const CommandCenter = forwardRef<CommandCenterHandle, CommandCenterProps>
                                         m.recommendation_tier &&
                                         typeof m.recommendation_tier === 'object'
                                     );
+                                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
                                     const nonTieredModels = eligibleModels.filter(
                                       m =>
                                         !m.recommendation_tier ||

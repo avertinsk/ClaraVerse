@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import './ImageCarousel.css';
 
 interface ImageCarouselProps {
@@ -17,6 +18,7 @@ export const ImageCarousel: React.FC<ImageCarouselProps> = ({
   rounded = true,
   className = '',
 }) => {
+  const { t } = useTranslation('common');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
@@ -53,7 +55,7 @@ export const ImageCarousel: React.FC<ImageCarouselProps> = ({
           >
             <img
               src={image}
-              alt={`Slide ${index + 1}`}
+              alt={t('imageCarousel.slide', { index: index + 1 })}
               className="image-carousel__image"
               loading={index === 0 ? 'eager' : 'lazy'}
             />
@@ -70,7 +72,7 @@ export const ImageCarousel: React.FC<ImageCarouselProps> = ({
                 index === currentIndex ? 'image-carousel__dot--active' : ''
               }`}
               onClick={() => goToSlide(index)}
-              aria-label={`Go to slide ${index + 1}`}
+              aria-label={t('imageCarousel.slide', { index: index + 1 })}
             />
           ))}
         </div>

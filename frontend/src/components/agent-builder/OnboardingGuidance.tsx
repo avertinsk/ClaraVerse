@@ -12,7 +12,10 @@ interface OnboardingGuidanceProps {
   onDeploy: () => void;
 }
 
-export function OnboardingGuidance({ onRun, onDeploy }: OnboardingGuidanceProps) {
+export function OnboardingGuidance({
+  onRun: _onRun,
+  onDeploy: _onDeploy,
+}: OnboardingGuidanceProps) {
   const { setShowOnboardingGuidance } = useAgentBuilderStore();
 
   // Auto-hide immediately

@@ -114,5 +114,47 @@
 
   "authStep.authorizeDevice": "Авторизация устройства",
   "authStep.authorizeDeviceDesc": "Введите код, показанный в вашем терминале, чтобы подключить устройство.",
-  "authStep.authorizing": "Авторизация..."
+  "authStep.authorizing": "Авторизация...",
+
+  "about.title": "О приложении",
+  "about.desc": "Это готовое к продакшену React-приложение с:",
+  "about.react": "React 18 (LTS) с TypeScript",
+  "about.vite": "Vite для быстрой разработки и оптимизированных сборок",
+  "about.tailwind": "Tailwind CSS для стилизации",
+  "about.router": "React Router v6 для навигации",
+  "about.zustand": "Zustand для управления состоянием",
+  "about.lint": "ESLint и Prettier для качества кода",
+
+  "chatDemo.online": "В сети",
+  "chatDemo.settings": "Настройки",
+  "chatDemo.tabChat": "Чат",
+  "chatDemo.tabComponents": "Компоненты",
+  "chatDemo.tabExamples": "Примеры",
+  "chatDemo.placeholder": "Спросите что угодно...",
+  "chatDemo.title": "ClaraVerse AI Chat",
+  "chatDemo.subtitle": "Полная дизайн-система AI-чата",
+  "chatDemo.availableComponents": "Доступные компоненты",
+  "chatDemo.codeBlockExample": "Пример блока кода",
+  "chatDemo.markdownRendering": "Рендеринг Markdown",
+  "chatDemo.tryExamples": "Попробуйте эти примеры",
+  "chatDemo.requestCode": "Запросить пример кода",
+  "chatDemo.requestMarkdown": "Запросить демо Markdown",
+  "chatDemo.showToast": "Показать уведомление",
+  "chatDemo.streamingDemo": "Демо потокового текста",
+  "chatDemo.typingIndicator": "Индикатор набора",
+  "chatDemo.aiThinking": "ИИ думает",
+  "chatDemo.modalTitle": "Настройки",
+  "chatDemo.modalCancel": "Отмена",
+  "chatDemo.modalSave": "Сохранить изменения",
+  "chatDemo.modalDesc": "Настройте параметры AI-чата здесь. Это демо-модальное окно, демонстрирующее компонент Modal.",
+  "chatDemo.demoFeature": "Демо-функция",
+  "chatDemo.toastTitle": "Успех!",
+  "chatDemo.toastMessage": "Сообщение скопировано в буфер обмена",
+
+  "home.welcome": "Добро пожаловать в ClaraVerse",
+  "home.desc": "Готовое к продакшену React-приложение, созданное с TypeScript, Vite и Tailwind CSS.",
+  "home.getStarted": "Начать",
+  "home.learnMore": "Узнать больше",
+
+  "imageCarousel.slide": "Слайд {{index}}"
 }

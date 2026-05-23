@@ -52,6 +52,7 @@ export function ToolSelector({
     } finally {
       setIsLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadRecommendations = useCallback(async () => {

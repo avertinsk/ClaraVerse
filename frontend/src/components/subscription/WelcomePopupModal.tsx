@@ -22,8 +22,9 @@ export function WelcomePopupModal() {
   // Only show for promo users who haven't seen it
   // Disabled - keeping code intact but hiding the popup
   const shouldShow = false;
-  const _originalShouldShow =
-    subscription?.is_promo_user === true && subscription?.has_seen_welcome_popup === false;
+  // Original condition preserved for re-enabling:
+  // const _originalShouldShow =
+  //   subscription?.is_promo_user === true && subscription?.has_seen_welcome_popup === false;
 
   // Random privacy quote index (memoized to prevent re-rendering changes)
   const randomQuoteIndex = useMemo(() => {

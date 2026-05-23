@@ -27,7 +27,7 @@ const getProxyUrl = (url: string): string => {
   return `${API_BASE_URL}/api/proxy/image?url=${encodeURIComponent(url)}`;
 };
 
-export const ImageSearchStrip = ({ images, query }: ImageSearchStripProps) => {
+export const ImageSearchStrip = ({ images, query: _query }: ImageSearchStripProps) => {
   const { t } = useTranslation('chat');
   const [selectedImage, setSelectedImage] = useState<ImageSearchResult | null>(null);
   const [loadErrors, setLoadErrors] = useState<Set<number>>(new Set());

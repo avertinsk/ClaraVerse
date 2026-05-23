@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Upload, Github } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Modal, Button, Input, Textarea, Tabs } from '@/components/design-system';
 import type { Skill } from '@/services/skillService';
 
@@ -18,6 +19,7 @@ export const ImportSkillModal = ({
   importFromSkillMD,
   importFromGitHub,
 }: ImportSkillModalProps) => {
+  const { t } = useTranslation('skills');
   const [activeTab, setActiveTab] = useState('paste');
   const [content, setContent] = useState('');
   const [githubUrl, setGithubUrl] = useState('');
@@ -32,7 +34,7 @@ export const ImportSkillModal = ({
 
   const handleImportPaste = async () => {
     if (!content.trim()) {
-      setError('Paste SKILL.md content');
+      setError(t('importSkill.errorPaste'));
       return;
     }
     setSubmitting(true);
@@ -43,7 +45,7 @@ export const ImportSkillModal = ({
       resetForm();
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Import failed');
+      setError(err instanceof Error ? err.message : t('importSkill.errorFailed'));
     } finally {
       setSubmitting(false);
     }
@@ -51,7 +53,7 @@ export const ImportSkillModal = ({
 
   const handleImportGitHub = async () => {
     if (!githubUrl.trim()) {
-      setError('Enter a GitHub URL');
+      setError(t('importSkill.errorUrl'));
       return;
     }
     setSubmitting(true);
@@ -62,7 +64,7 @@ export const ImportSkillModal = ({
       resetForm();
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Import failed');
+      setError(err instanceof Error ? err.message : t('importSkill.errorFailed'));
     } finally {
       setSubmitting(false);
     }
@@ -79,7 +81,7 @@ export const ImportSkillModal = ({
       onClose={handleClose}
       title={
         <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <Upload size={18} /> Import Skill
+          <Upload size={18} /> {t('importSkill.title')}
         </span>
       }
       size="lg"
@@ -87,8 +89,8 @@ export const ImportSkillModal = ({
       <div className="import-skill-modal">
         <Tabs
           tabs={[
-            { id: 'paste', label: 'Paste SKILL.md', icon: <Upload size={14} /> },
-            { id: 'github', label: 'GitHub URL', icon: <Github size={14} /> },
+            { id: 'paste', label: t('importSkill.tabPaste'), icon: <Upload size={14} /> },
+            { id: 'github', label: t('importSkill.tabGitHub'), icon: <Github size={14} /> },
           ]}
           activeTab={activeTab}
           onChange={setActiveTab}
@@ -98,14 +100,11 @@ export const ImportSkillModal = ({
 
         {activeTab === 'paste' && (
           <div className="import-skill-tab">
-            <p className="import-skill-hint">
-              Paste the contents of a SKILL.md file. This is the open standard format used by Claude
-              Code, Codex CLI, Gemini CLI, and 27+ AI tools.
-            </p>
+            <p className="import-skill-hint">{t('importSkill.pasteHint')}</p>
             <Textarea
               value={content}
               onChange={e => setContent(e.target.value)}
-              placeholder={`---\nname: my-skill\ndescription: What this skill does\nallowed-tools: Read Grep\n---\n\nYour instructions here...`}
+              placeholder={t('importSkill.pastePlaceholder')}
               rows={12}
             />
             <Button
@@ -114,21 +113,18 @@ export const ImportSkillModal = ({
               disabled={submitting || !content.trim()}
               style={{ alignSelf: 'flex-end' }}
             >
-              {submitting ? 'Importing...' : 'Import Skill'}
+              {submitting ? t('importSkill.importing') : t('importSkill.importBtn')}
             </Button>
           </div>
         )}
 
         {activeTab === 'github' && (
           <div className="import-skill-tab">
-            <p className="import-skill-hint">
-              Enter a GitHub URL pointing to a skill directory (e.g.,{' '}
-              <code>github.com/anthropics/skills/tree/main/pdf</code>).
-            </p>
+            <p className="import-skill-hint">{t('importSkill.githubHint')}</p>
             <Input
               value={githubUrl}
               onChange={e => setGithubUrl(e.target.value)}
-              placeholder="https://github.com/anthropics/skills/tree/main/pdf"
+              placeholder={t('importSkill.githubPlaceholder')}
             />
             <Button
               variant="primary"
@@ -136,7 +132,7 @@ export const ImportSkillModal = ({
               disabled={submitting || !githubUrl.trim()}
               style={{ alignSelf: 'flex-end' }}
             >
-              {submitting ? 'Importing...' : 'Import from GitHub'}
+              {submitting ? t('importSkill.importing') : t('importSkill.importFromGitHub')}
             </Button>
           </div>
         )}

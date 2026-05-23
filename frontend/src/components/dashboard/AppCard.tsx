@@ -1,5 +1,4 @@
 import { forwardRef } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import type { LucideProps } from 'lucide-react';
 import './AppCard.css';
@@ -16,7 +15,6 @@ export interface AppCardProps {
 
 export const AppCard = forwardRef<HTMLAnchorElement, AppCardProps>(
   ({ icon: Icon, title, description, href, className = '', compact = false }, ref) => {
-    const { t } = useTranslation('dashboard');
     if (compact) {
       // Phone-style app icon layout
       return (

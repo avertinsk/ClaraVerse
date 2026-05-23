@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useSearchParams } from 'react-router-dom';
 import {
   ChevronLeft,
@@ -24,6 +25,7 @@ import { IntegrationIcon } from '@/components/credentials/IntegrationIcon';
 import './Credentials.css';
 
 export const Credentials = () => {
+  const { t } = useTranslation('credentials');
   // URL params for required integrations
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -177,11 +179,9 @@ export const Credentials = () => {
           <div>
             <h1 className="text-xl font-semibold text-[var(--color-text-primary)] flex items-center gap-2">
               <KeyRound size={24} className="text-[var(--color-accent)]" />
-              Credentials
+              {t('page.title')}
             </h1>
-            <p className="text-sm text-[var(--color-text-tertiary)] mt-0.5">
-              Securely manage API keys and webhooks for your integrations
-            </p>
+            <p className="text-sm text-[var(--color-text-tertiary)] mt-0.5">{t('page.subtitle')}</p>
           </div>
         </div>
       </header>
@@ -212,7 +212,7 @@ export const Credentials = () => {
                   : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-hover)]'
               }`}
             >
-              All Integrations
+              {t('credentials.allIntegrations')}
             </button>
           </div>
 
@@ -237,7 +237,7 @@ export const Credentials = () => {
           {/* Search Bar */}
           <div className="mb-6 max-w-md">
             <SearchInput
-              placeholder="Search credentials or integrations..."
+              placeholder={t('page.searchPlaceholder')}
               value={searchQuery}
               onChange={setSearchQuery}
               onClear={() => setSearchQuery('')}
@@ -261,10 +261,10 @@ export const Credentials = () => {
                       </div>
                       <div>
                         <h2 className="text-lg font-semibold text-[var(--color-text-primary)]">
-                          Required for Your Workflow
+                          {t('page.requiredWorkflow')}
                         </h2>
                         <p className="text-sm text-[var(--color-text-tertiary)]">
-                          Add credentials for these integrations to run your workflow
+                          {t('page.requiredWorkflowDesc')}
                         </p>
                       </div>
                     </div>
@@ -272,7 +272,7 @@ export const Credentials = () => {
                       onClick={clearRequiredParams}
                       className="text-sm text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] transition-colors"
                     >
-                      Clear filter
+                      {t('page.clearFilter')}
                     </button>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -305,11 +305,11 @@ export const Credentials = () => {
                                 {hasCredential ? (
                                   <span className="px-2 py-0.5 text-xs rounded-full bg-green-500/20 text-green-400 flex items-center gap-1">
                                     <CheckCircle size={12} />
-                                    Configured
+                                    {t('page.configured')}
                                   </span>
                                 ) : (
                                   <span className="px-2 py-0.5 text-xs rounded-full bg-amber-500/20 text-amber-400">
-                                    Required
+                                    {t('page.required')}
                                   </span>
                                 )}
                               </div>
@@ -324,7 +324,7 @@ export const Credentials = () => {
                                     className="text-xs text-amber-400 hover:text-amber-300"
                                   >
                                     <Plus size={14} />
-                                    <span className="ml-1">Add Credential</span>
+                                    <span className="ml-1">{t('page.addCredential')}</span>
                                   </Button>
                                 </div>
                               )}
@@ -341,7 +341,7 @@ export const Credentials = () => {
               {filteredCredentials.length > 0 && (
                 <section className="mb-8">
                   <h2 className="text-lg font-semibold text-[var(--color-text-primary)] mb-4">
-                    Your Credentials ({filteredCredentials.length})
+                    {t('page.yourCredentials', { count: filteredCredentials.length })}
                   </h2>
                   <div className="grid gap-4">
                     {filteredCredentials.map(credential => {
@@ -391,7 +391,7 @@ export const Credentials = () => {
                                 ) : (
                                   <RefreshCw size={14} />
                                 )}
-                                <span className="ml-1">Test</span>
+                                <span className="ml-1">{t('page.test')}</span>
                               </Button>
                               <Button
                                 variant="ghost"
@@ -408,14 +408,14 @@ export const Credentials = () => {
                                     onClick={() => handleDeleteCredential(credential.id)}
                                     className="text-red-400 hover:text-red-300"
                                   >
-                                    Confirm
+                                    {t('page.confirm')}
                                   </Button>
                                   <Button
                                     variant="ghost"
                                     size="sm"
                                     onClick={() => setDeleteConfirmId(null)}
                                   >
-                                    Cancel
+                                    {t('page.cancel')}
                                   </Button>
                                 </div>
                               ) : (
@@ -454,7 +454,7 @@ export const Credentials = () => {
                   return (
                     <section className="mb-8">
                       <h2 className="text-lg font-semibold text-[var(--color-text-primary)] mb-4">
-                        Available Integrations
+                        {t('page.availableIntegrations')}
                       </h2>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {availableIntegrations.map(integration => {
@@ -480,7 +480,7 @@ export const Credentials = () => {
                                     </h3>
                                     {count > 0 && (
                                       <span className="px-2 py-0.5 text-xs rounded-full bg-[var(--color-accent)]/20 text-[var(--color-accent)]">
-                                        {count} configured
+                                        {t('credentials.configured', { count })}
                                       </span>
                                     )}
                                   </div>
@@ -490,7 +490,7 @@ export const Credentials = () => {
                                   <div className="flex items-center gap-2 mt-3">
                                     <Button variant="ghost" size="sm" className="text-xs">
                                       <Plus size={14} />
-                                      <span className="ml-1">Add</span>
+                                      <span className="ml-1">{t('page.add')}</span>
                                     </Button>
                                     {integration.docsUrl && (
                                       <a
@@ -501,7 +501,7 @@ export const Credentials = () => {
                                         onClick={e => e.stopPropagation()}
                                       >
                                         <ExternalLink size={12} />
-                                        Docs
+                                        {t('page.docs')}
                                       </a>
                                     )}
                                   </div>
@@ -567,11 +567,11 @@ export const Credentials = () => {
                                     </h3>
                                     {isComingSoon ? (
                                       <span className="px-2 py-0.5 text-xs rounded-full bg-yellow-500/20 text-yellow-400">
-                                        Coming Soon
+                                        {t('page.comingSoon')}
                                       </span>
                                     ) : count > 0 ? (
                                       <span className="px-2 py-0.5 text-xs rounded-full bg-[var(--color-accent)]/20 text-[var(--color-accent)]">
-                                        {count} configured
+                                        {t('credentials.configured', { count })}
                                       </span>
                                     ) : null}
                                   </div>
@@ -582,7 +582,7 @@ export const Credentials = () => {
                                     <div className="flex items-center gap-2 mt-3">
                                       <Button variant="ghost" size="sm" className="text-xs">
                                         <Plus size={14} />
-                                        <span className="ml-1">Add</span>
+                                        <span className="ml-1">{t('page.add')}</span>
                                       </Button>
                                       {integration.docsUrl && (
                                         <a
@@ -593,7 +593,7 @@ export const Credentials = () => {
                                           onClick={e => e.stopPropagation()}
                                         >
                                           <ExternalLink size={12} />
-                                          Docs
+                                          {t('page.docs')}
                                         </a>
                                       )}
                                     </div>
@@ -613,10 +613,10 @@ export const Credentials = () => {
                 <div className="flex flex-col items-center justify-center h-64 text-center">
                   <Search size={48} className="text-[var(--color-text-tertiary)] mb-4" />
                   <h3 className="text-lg font-medium text-[var(--color-text-primary)]">
-                    No results found
+                    {t('page.noResults')}
                   </h3>
                   <p className="text-sm text-[var(--color-text-tertiary)] mt-1">
-                    Try a different search term
+                    {t('page.noResultsDesc')}
                   </p>
                 </div>
               )}
