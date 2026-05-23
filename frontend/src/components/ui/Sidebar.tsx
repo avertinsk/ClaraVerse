@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -154,11 +154,7 @@ export interface SidebarProps {
 /**
  * Sidebar component with proper accessibility and type safety
  */
-/** Default footer links */
-const DEFAULT_FOOTER_LINKS: FooterLink[] = [
-  { href: '/', label: 'Home', icon: Home, ariaLabel: 'Navigate to home' },
-  { href: '/chat', label: 'Chats', icon: MessageSquare, ariaLabel: 'Navigate to chats' },
-];
+
 
 export const Sidebar: React.FC<SidebarProps> = ({
   brandName = '',
@@ -169,11 +165,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
   className = '',
   isOpen: externalIsOpen,
   onOpenChange,
-  footerLinks = DEFAULT_FOOTER_LINKS,
+  footerLinks = defaultFooterLinks,
   isLoadingChats = false,
   statusSlot,
 }) => {
   const { t } = useTranslation('common');
+
+  const defaultFooterLinks = useMemo<FooterLink[]>(() => [
+    { href: '/', label: t('navigateHome'), icon: Home, ariaLabel: t('navigateHome') },
+    { href: '/chat', label: t('sidebar.chats'), icon: MessageSquare, ariaLabel: t('navigateChats') },
+  ], [t]);
 
   // Internal state for when not externally controlled
   const [internalIsCollapsed, setInternalIsCollapsed] = useState(() => isMobileDevice());
@@ -297,7 +298,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <header className={styles.header}>
           {!isCollapsed && (
             <div className={styles.brandContainer}>
-              <img src={faviconIcon} alt="Clara logo" className={styles.brandIcon} />
+              <img src={faviconIcon} alt={t('brand.clara')} className={styles.brandIcon} />
               <span className={styles.brandName}>{brandName}</span>
             </div>
           )}

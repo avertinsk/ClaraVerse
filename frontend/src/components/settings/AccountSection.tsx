@@ -71,14 +71,14 @@ export const AccountSection: React.FC<AccountSectionProps> = ({ onSave: _onSave 
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      toast.success('Data exported successfully!');
+      toast.success(t('account.exportSuccess'));
     } catch (error: unknown) {
       console.error('Failed to export data:', error);
       if (error instanceof Error && error.message.includes('404')) {
-        toast.error('Export endpoint not available. Please ensure the backend is running.');
+        toast.error(t('account.exportEndpointMissing'));
       } else {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-        toast.error(`Failed to export data: ${errorMessage}`);
+        toast.error(t('account.exportFail', { message: errorMessage }));
       }
     } finally {
       setIsExporting(false);
@@ -87,19 +87,19 @@ export const AccountSection: React.FC<AccountSectionProps> = ({ onSave: _onSave 
 
   const handleDeleteAccount = async () => {
     if (deleteConfirmation.trim().toLowerCase() !== 'delete my account') {
-      toast.error('Please type "delete my account" to confirm');
+      toast.error(t('account.deleteConfirm'));
       return;
     }
 
     setIsDeleting(true);
     try {
       await api.deleteWithBody('/user/account', { confirmation: deleteConfirmation });
-      toast.success('Account deleted successfully');
+      toast.success(t('account.deleteSuccess'));
       await signOut();
       navigate('/');
     } catch (error) {
       console.error('Failed to delete account:', error);
-      toast.error('Failed to delete account. Please try again.');
+      toast.error(t('account.deleteFail'));
     } finally {
       setIsDeleting(false);
     }
@@ -121,8 +121,8 @@ export const AccountSection: React.FC<AccountSectionProps> = ({ onSave: _onSave 
   const formatTheme = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
   const formatFontSize = (f: string) => f.charAt(0).toUpperCase() + f.slice(1);
   const formatPrivacyMode = (m: string | null) => {
-    if (!m) return 'Not set';
-    return m === 'local' ? 'Local Only' : 'Cloud Sync';
+    if (!m) return t('account.privacyNotSet');
+    return m === 'local' ? t('account.storageLocal') : t('account.storageCloud');
   };
 
   return (
@@ -163,7 +163,7 @@ export const AccountSection: React.FC<AccountSectionProps> = ({ onSave: _onSave 
                 {user?.created_at && (
                   <div className="account-member-since">
                     <Calendar size={14} />
-                    <span>Member since {new Date(user.created_at).toLocaleDateString()}</span>
+                    <span>{t('account.memberSince', { date: new Date(user.created_at).toLocaleDateString() })}</span>
                   </div>
                 )}
               </div>
@@ -277,7 +277,7 @@ export const AccountSection: React.FC<AccountSectionProps> = ({ onSave: _onSave 
           <div className="account-card">
             <div className="account-card-header">
               <Database size={18} />
-              <h3>Storage</h3>
+              <h3>{t('account.storage')}</h3>
             </div>
             <div className="account-stats-grid">
               <div className="account-stat-item">
@@ -285,9 +285,9 @@ export const AccountSection: React.FC<AccountSectionProps> = ({ onSave: _onSave 
                   {chatPrivacyMode === 'cloud' ? <Cloud size={20} /> : <HardDrive size={20} />}
                 </div>
                 <div className="account-stat-content">
-                  <span className="account-stat-label">Storage Mode</span>
+                  <span className="account-stat-label">{t('account.storageMode')}</span>
                   <span className="account-stat-value">
-                    {chatPrivacyMode === 'cloud' ? 'Cloud Sync' : 'Local Storage'}
+                    {chatPrivacyMode === 'cloud' ? t('account.storageCloud') : t('account.storageLocal')}
                   </span>
                 </div>
               </div>
@@ -296,8 +296,8 @@ export const AccountSection: React.FC<AccountSectionProps> = ({ onSave: _onSave 
                   <Lock size={20} />
                 </div>
                 <div className="account-stat-content">
-                  <span className="account-stat-label">Encryption</span>
-                  <span className="account-stat-value">AES-256-GCM</span>
+                  <span className="account-stat-label">{t('account.encryption')}</span>
+                  <span className="account-stat-value">{t('account.encryptionValue')}</span>
                 </div>
               </div>
             </div>

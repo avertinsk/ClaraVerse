@@ -152,5 +152,7 @@
   "home.learnMore": "Узнать больше",
   "imageCarousel.slide": "Слайд {{index}}",
   "signOut": "Выйти",
-  "actions.designSystem": "Дизайн-система"
+  "actions.designSystem": "Дизайн-система",
+  "sidebar.chats": "Чаты",
+  "navigateChats": "К чатам"
 }

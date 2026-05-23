@@ -152,5 +152,7 @@
   "home.learnMore": "Learn More",
   "imageCarousel.slide": "Slide {{index}}",
   "signOut": "Sign out",
-  "actions.designSystem": "Design System"
+  "actions.designSystem": "Design System",
+  "sidebar.chats": "Chats",
+  "navigateChats": "Navigate to chats"
 }

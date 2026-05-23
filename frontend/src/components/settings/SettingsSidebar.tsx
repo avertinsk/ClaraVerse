@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Bot,
@@ -15,11 +15,7 @@ import {
 import { Sidebar, type NavItem, type FooterLink } from '@/components/ui/Sidebar';
 import type { SettingsTab } from './SettingsLayout';
 
-/** Footer links for settings - Home and Chats */
-const SETTINGS_FOOTER_LINKS: FooterLink[] = [
-  { href: '/', label: 'Home', icon: Home, ariaLabel: 'Navigate to home' },
-  { href: '/chat', label: 'Chats', icon: MessageSquare, ariaLabel: 'Navigate to chats' },
-];
+
 
 export interface SettingsSidebarProps {
   /** Currently active tab */
@@ -44,6 +40,11 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({
   onOpenChange,
 }) => {
   const { t } = useTranslation('settings');
+
+  const footerLinks: FooterLink[] = useMemo(() => [
+    { href: '/', label: t('settings.footer.home'), icon: Home, ariaLabel: t('settings.footer.navigateHome') },
+    { href: '/chat', label: t('settings.footer.chats'), icon: MessageSquare, ariaLabel: t('settings.footer.navigateChats') },
+  ], [t]);
 
   const navItems: NavItem[] = [
     {
@@ -110,7 +111,7 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({
       navItems={navItems}
       isOpen={isOpen}
       onOpenChange={onOpenChange}
-      footerLinks={SETTINGS_FOOTER_LINKS}
+      footerLinks={footerLinks}
     />
   );
 };
