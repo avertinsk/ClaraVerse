@@ -8,6 +8,7 @@ import (
 	"claraverse/internal/utils"
 	"encoding/csv"
 	"fmt"
+	"hash/fnv"
 	"io"
 	"log"
 	"mime/multipart"
@@ -319,13 +320,18 @@ func (h *UploadHandler) handlePDFUpload(c *fiber.Ctx, fileID, userID, conversati
 	}
 
 afterExtraction:
+	// Index in Qdrant for semantic search (async — don't block upload)
+	if metadata != nil && metadata.Text != "" {
+		go indexDocumentInQdrant(metadata.Text, fileHeader.Filename)
+	}
+
 	// Delete encrypted file immediately (max 3 seconds on disk)
 	if err := security.SecureDeleteFile(tempEncryptedPath); err != nil {
 		log.Printf("⚠️  [UPLOAD] Failed to securely delete temp file: %v", err)
 		// Continue anyway - file is encrypted
 	}
 
-	log.Printf("🗑️  [UPLOAD] Encrypted temp file deleted (file was on disk < 3 seconds)")
+	log.Printf("🗑️ [UPLOAD] Encrypted temp file deleted (file was on disk < 3 seconds)")
 
 	// Store in memory cache only
 	cachedFile := &filecache.CachedFile{
@@ -942,4 +948,54 @@ func (h *UploadHandler) Delete(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{
 		"message": "File deleted successfully",
 	})
+}
+
+func indexDocumentInQdrant(text, filename string) {
+	embedSvc := services.GetEmbeddingService()
+	qdrantSvc := services.GetQdrantService()
+	if embedSvc == nil || qdrantSvc == nil || !embedSvc.IsAvailable() || !qdrantSvc.IsAvailable() {
+		log.Printf("ℹ️ [QDRANT] Skipping index — services not ready")
+		return
+	}
+
+	chunks := services.ChunkDocument(text, filename)
+	if len(chunks) == 0 {
+		return
+	}
+
+	if err := qdrantSvc.EnsureCollection("documents", embedSvc.VectorSize()); err != nil {
+		log.Printf("⚠️ [QDRANT] Failed to create collection: %v", err)
+		return
+	}
+
+	log.Printf("📊 [QDRANT] Indexing %d chunks from %s", len(chunks), filename)
+
+	for _, chunk := range chunks {
+		vec, err := embedSvc.EmbedDocument(chunk.Text)
+		if err != nil {
+			log.Printf("⚠️ [QDRANT] Embedding failed for chunk %d: %v", chunk.Index, err)
+			continue
+		}
+		// Generate unique uint64 ID from filename + chunk index
+		h := fnv.New64a()
+		h.Write([]byte(filename))
+		h.Write([]byte{0})
+		h.Write([]byte(fmt.Sprintf("%d", chunk.Index)))
+		pointID := h.Sum64()
+
+		point := services.QdrantPoint{
+			ID:     pointID,
+			Vector: vec,
+			Payload: map[string]interface{}{
+				"text":        chunk.Text,
+				"source":      chunk.Source,
+				"chunk_index": chunk.Index,
+				"word_count":  chunk.WordCount,
+			},
+		}
+		if err := qdrantSvc.UpsertPoints("documents", []services.QdrantPoint{point}); err != nil {
+			log.Printf("⚠️ [QDRANT] Upsert failed for chunk %d: %v", chunk.Index, err)
+		}
+	}
+	log.Printf("✅ [QDRANT] Finished indexing %s", filename)
 }

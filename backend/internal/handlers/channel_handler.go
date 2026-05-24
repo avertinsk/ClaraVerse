@@ -935,6 +935,11 @@ func (h *ChannelHandler) processPDFDocument(ctx context.Context, channel *models
 
 	log.Printf("📄 [TELEGRAM] Extracted %d pages, %d words from PDF", metadata.PageCount, metadata.WordCount)
 
+	// Index in Qdrant for semantic search (async — non-blocking)
+	if metadata.Text != "" {
+		go indexDocumentInQdrant(metadata.Text, msg.Document.FileName)
+	}
+
 	// Build prompt with extracted text
 	prompt := caption
 	if prompt == "" {

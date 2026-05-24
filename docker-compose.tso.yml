@@ -128,6 +128,21 @@ services:
       - claraverse-network
 
   # ============================
+  # Qdrant — векторная БД для семантического поиска (RAG)
+  # ============================
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: claraverse-qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant-data:/qdrant/storage
+    restart: unless-stopped
+    networks:
+      - claraverse-network
+
+  # ============================
   # E2B Code Executor — локальное исполнение Python кода
   # ============================
   e2b-service:
@@ -174,6 +189,8 @@ services:
       - SEARXNG_URLS=http://searxng:8080
       - E2B_SERVICE_URL=http://e2b-service:8001
       - DOCLING_URL=http://docling:5001
+      - QDRANT_URL=http://qdrant:6333
+      - EMBEDDING_MODEL=nomic-embed-text:v1.5
       - FRONTEND_URL=http://10.10.0.1:3000
       - BACKEND_URL=http://10.10.0.1:3000
       - ALLOWED_ORIGINS=*
@@ -195,6 +212,8 @@ services:
       searxng:
         condition: service_healthy
       e2b-service:
+        condition: service_started
+      qdrant:
         condition: service_started
       docling:
         condition: service_started
@@ -220,6 +239,8 @@ volumes:
   redis-data:
     driver: local
   searxng-config:
+    driver: local
+  qdrant-data:
     driver: local
 
 networks:
