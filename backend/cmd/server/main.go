@@ -1477,6 +1477,11 @@ func main() {
 			log.Println("✅ Admin routes registered (status, analytics, user management, providers, system models, e2b)")
 		}
 
+		// E2B code execution endpoint (authenticated users)
+		e2bExecuteHandler := handlers.NewE2BExecuteHandler()
+		api.Post("/e2b/execute", middleware.LocalAuthMiddleware(jwtAuth), e2bExecuteHandler.Execute)
+		log.Println("✅ E2B execute endpoint registered")
+
 	}
 
 	// Trigger endpoints (API key authenticated, CORS open for external access)
