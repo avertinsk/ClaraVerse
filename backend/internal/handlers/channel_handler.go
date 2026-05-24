@@ -900,12 +900,37 @@ func (h *ChannelHandler) processPDFDocument(ctx context.Context, channel *models
 
 	log.Printf("📄 [TELEGRAM] Downloaded PDF: %s (%d bytes)", msg.Document.FileName, len(pdfData))
 
-	// Extract text from PDF
+	// Extract text from PDF — fallback to Docling OCR if needed
 	metadata, err := utils.ExtractPDFText(pdfData)
-	if err != nil {
-		log.Printf("❌ [TELEGRAM] Failed to extract PDF text: %v", err)
-		h.sendTelegramError(ctx, botToken, chatID, "Sorry, I couldn't read this PDF. It may be scanned or corrupted.")
-		return
+	if err != nil || metadata.WordCount < 50 {
+		if err != nil {
+			log.Printf("⚠️ [TELEGRAM] Primary PDF extraction failed: %v — trying Docling OCR fallback", err)
+		} else {
+			log.Printf("⚠️ [TELEGRAM] Primary PDF extraction returned only %d words — trying Docling OCR fallback", metadata.WordCount)
+		}
+
+		doclingSvc := services.GetDoclingService()
+		if doclingSvc != nil && doclingSvc.IsAvailable() {
+			if doclingResult, dErr := doclingSvc.ConvertPDF(pdfData); dErr == nil && doclingResult.Markdown != "" {
+				wordCount := utils.CountWords(doclingResult.Markdown)
+				log.Printf("✅ [TELEGRAM] Docling OCR fallback succeeded: %d words", wordCount)
+				metadata = &utils.PDFMetadata{
+					PageCount: 1,
+					WordCount: wordCount,
+					Text:      doclingResult.Markdown,
+				}
+			} else {
+				log.Printf("❌ [TELEGRAM] Docling fallback also failed: %v", dErr)
+			}
+		} else {
+			log.Printf("ℹ️ [TELEGRAM] Docling service not available — skipping OCR fallback")
+		}
+
+		if err != nil || metadata == nil || metadata.WordCount == 0 {
+			log.Printf("❌ [TELEGRAM] Failed to extract PDF text: %v", err)
+			h.sendTelegramError(ctx, botToken, chatID, "Sorry, I couldn't read this PDF. It may be scanned or corrupted.")
+			return
+		}
 	}
 
 	log.Printf("📄 [TELEGRAM] Extracted %d pages, %d words from PDF", metadata.PageCount, metadata.WordCount)

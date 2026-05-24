@@ -79,7 +79,7 @@ func ExtractPDFText(data []byte) (*PDFMetadata, error) {
 			textBuilder.WriteString("\n")
 
 			// Count words
-			wordCount += countWords(cleaned)
+			wordCount += CountWords(cleaned)
 		}
 
 		// Check size limit
@@ -143,8 +143,8 @@ func normalizeWhitespace(text string) string {
 	return result.String()
 }
 
-// countWords counts the number of words in text
-func countWords(text string) int {
+// CountWords counts the number of words in text
+func CountWords(text string) int {
 	count := 0
 	inWord := false
 

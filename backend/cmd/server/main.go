@@ -533,6 +533,17 @@ func main() {
 	// Wire health reporter into audio service
 	initAudioHealthReporter()
 
+	// Initialize Docling service (for OCR document recognition)
+	doclingURL := os.Getenv("DOCLING_URL")
+	if doclingURL == "" {
+		doclingURL = "http://docling:5001"
+	}
+	if os.Getenv("DOCLING_ENABLED") != "false" {
+		services.InitDoclingService(doclingURL)
+	} else {
+		log.Println("[DOCLING] Explicitly disabled via DOCLING_ENABLED=false")
+	}
+
 	// NOTE: providers.json file watcher removed - all provider management now in MySQL
 
 	// Start background model refresh job (refreshes from database)

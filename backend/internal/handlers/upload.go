@@ -281,17 +281,44 @@ func (h *UploadHandler) handlePDFUpload(c *fiber.Ctx, fileID, userID, conversati
 		})
 	}
 
-	// Extract text from PDF (in memory)
+	// Extract text from PDF (in memory) — fallback to Docling OCR if needed
 	metadata, err := utils.ExtractPDFText(fileData)
-	if err != nil {
-		// Clean up temp file before returning
+	if err != nil || metadata.WordCount < 50 {
+		if err != nil {
+			log.Printf("⚠️ [UPLOAD] Primary PDF extraction failed: %v — trying Docling OCR fallback", err)
+		} else {
+			log.Printf("⚠️ [UPLOAD] Primary PDF extraction returned only %d words — trying Docling OCR fallback", metadata.WordCount)
+		}
+
+		doclingSvc := services.GetDoclingService()
+		if doclingSvc != nil && doclingSvc.IsAvailable() {
+			if doclingResult, dErr := doclingSvc.ConvertPDF(fileData); dErr == nil && doclingResult.Markdown != "" {
+				wordCount := utils.CountWords(doclingResult.Markdown)
+				pageCount := 1
+				// Clean up temp file before proceeding
+				security.SecureDeleteFile(tempEncryptedPath)
+				log.Printf("✅ [UPLOAD] Docling OCR fallback succeeded: %d words", wordCount)
+				metadata = &utils.PDFMetadata{
+					PageCount: pageCount,
+					WordCount: wordCount,
+					Text:      doclingResult.Markdown,
+				}
+				goto afterExtraction
+			} else {
+				log.Printf("❌ [UPLOAD] Docling fallback also failed: %v", dErr)
+			}
+		} else {
+			log.Printf("ℹ️ [UPLOAD] Docling service not available — skipping OCR fallback")
+		}
+
+		// Both primary and fallback failed
 		security.SecureDeleteFile(tempEncryptedPath)
-		log.Printf("❌ [UPLOAD] Failed to extract PDF text: %v", err)
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Failed to extract text from PDF. File may be corrupted or scanned.",
 		})
 	}
 
+afterExtraction:
 	// Delete encrypted file immediately (max 3 seconds on disk)
 	if err := security.SecureDeleteFile(tempEncryptedPath); err != nil {
 		log.Printf("⚠️  [UPLOAD] Failed to securely delete temp file: %v", err)
