@@ -3,6 +3,7 @@ import { devtools, persist, createJSONStorage, type StateStorage } from 'zustand
 import type { Chat, Message } from '@/types/chat';
 import type { ActivePrompt, PromptAnswer } from '@/types/interactivePrompt';
 import * as chatSyncService from '@/services/chatSyncService';
+import { generateUUID } from '@/lib/utils';
 import { useSettingsStore } from '@/store/useSettingsStore';
 import { createIDBChatStorage } from '@/services/idbChatStorage';
 import * as chatDatabase from '@/services/chatDatabase';
@@ -295,7 +296,7 @@ export const useChatStore = create<ChatState>()(
           }),
 
         createChat: (title, firstMessage, systemInstructions?, chatId?) => {
-          const finalChatId = chatId || crypto.randomUUID(); // Use provided ID or generate new UUID v4
+          const finalChatId = chatId || generateUUID(); // Use provided ID or generate new UUID v4
           const now = new Date();
 
           const newChat: Chat = {

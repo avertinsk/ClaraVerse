@@ -13,6 +13,7 @@ import { NexusSidebar } from '@/components/nexus/NexusSidebar';
 import { ProjectFormModal } from '@/components/nexus/ProjectFormModal';
 import { useNexusWebSocket } from '@/hooks/useNexusWebSocket';
 import { useNexusStore } from '@/store/useNexusStore';
+import { generateUUID } from '@/lib/utils';
 import { nexusService } from '@/services/nexusService';
 import type { NexusProject, NexusTaskStatus } from '@/types/nexus';
 import styles from '@/components/nexus/Nexus.module.css';
@@ -239,7 +240,7 @@ export function Nexus() {
   const handleFollowUp = useCallback(
     (content: string, taskId: string) => {
       useNexusStore.getState().addConversationItem({
-        id: crypto.randomUUID(),
+        id: generateUUID(),
         type: 'user_message',
         content,
         timestamp: new Date(),
@@ -255,7 +256,7 @@ export function Nexus() {
       const task = useNexusStore.getState().tasks.find(t => t.id === taskId);
       if (task && (task.manual_retry_count ?? 0) >= 3) {
         useNexusStore.getState().addConversationItem({
-          id: crypto.randomUUID(),
+          id: generateUUID(),
           type: 'error',
           content: 'Maximum retry limit (3) reached for this task.',
           timestamp: new Date(),
@@ -284,7 +285,7 @@ export function Nexus() {
         if (isTerminal) {
           if ((task.manual_retry_count ?? 0) >= 3) {
             useNexusStore.getState().addConversationItem({
-              id: crypto.randomUUID(),
+              id: generateUUID(),
               type: 'error',
               content: 'Maximum retry limit (3) reached for this task.',
               timestamp: new Date(),

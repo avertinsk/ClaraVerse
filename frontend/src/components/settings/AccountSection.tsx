@@ -163,7 +163,11 @@ export const AccountSection: React.FC<AccountSectionProps> = ({ onSave: _onSave 
                 {user?.created_at && (
                   <div className="account-member-since">
                     <Calendar size={14} />
-                    <span>{t('account.memberSince', { date: new Date(user.created_at).toLocaleDateString() })}</span>
+                    <span>
+                      {t('account.memberSince', {
+                        date: new Date(user.created_at).toLocaleDateString(),
+                      })}
+                    </span>
                   </div>
                 )}
               </div>
@@ -287,7 +291,9 @@ export const AccountSection: React.FC<AccountSectionProps> = ({ onSave: _onSave 
                 <div className="account-stat-content">
                   <span className="account-stat-label">{t('account.storageMode')}</span>
                   <span className="account-stat-value">
-                    {chatPrivacyMode === 'cloud' ? t('account.storageCloud') : t('account.storageLocal')}
+                    {chatPrivacyMode === 'cloud'
+                      ? t('account.storageCloud')
+                      : t('account.storageLocal')}
                   </span>
                 </div>
               </div>

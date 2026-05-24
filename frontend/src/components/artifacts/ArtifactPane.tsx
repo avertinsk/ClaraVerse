@@ -176,7 +176,7 @@ export function ArtifactPane() {
     } catch (error) {
       console.error('Error exporting PNG:', error);
       alert(
-        t('artifacts.failedToExportPng', {
+        t('failedToExportPng', {
           message: error instanceof Error ? error.message : t('common.unknown'),
         })
       );
@@ -207,27 +207,27 @@ export function ArtifactPane() {
         <div className={styles.header}>
           <div className={styles.headerLeft}>
             <IconComponent size={18} className={styles.artifactIcon} />
-            <h3 className={styles.title}>{selectedArtifact?.title || t('artifacts.artifact')}</h3>
+            <h3 className={styles.title}>{selectedArtifact?.title || t('artifact')}</h3>
           </div>
 
           <div className={styles.headerActions}>
             {/* Preview/Code Toggle - Only for non-image artifacts */}
             {supportsCodeView && (
               <div className={styles.viewToggle}>
-                <Tooltip content={t('artifacts.preview')} position="bottom">
+                <Tooltip content={t('preview')} position="bottom">
                   <button
                     className={`${styles.viewToggleButton} ${viewMode === 'preview' ? styles.viewToggleActive : ''}`}
                     onClick={() => setViewMode('preview')}
-                    aria-label={t('artifacts.previewMode')}
+                    aria-label={t('previewMode')}
                   >
                     <Eye size={16} />
                   </button>
                 </Tooltip>
-                <Tooltip content={t('artifacts.code')} position="bottom">
+                <Tooltip content={t('code')} position="bottom">
                   <button
                     className={`${styles.viewToggleButton} ${viewMode === 'code' ? styles.viewToggleActive : ''}`}
                     onClick={() => setViewMode('code')}
-                    aria-label={t('artifacts.codeMode')}
+                    aria-label={t('codeMode')}
                   >
                     <Code size={16} />
                   </button>
@@ -237,11 +237,11 @@ export function ArtifactPane() {
 
             {/* Download Menu */}
             <div className={styles.downloadMenu} ref={downloadMenuRef}>
-              <Tooltip content={t('artifacts.download')} position="bottom">
+              <Tooltip content={t('download')} position="bottom">
                 <button
                   className={styles.actionButton}
                   onClick={() => setShowDownloadMenu(!showDownloadMenu)}
-                  aria-label={t('artifacts.downloadOptions')}
+                  aria-label={t('downloadOptions')}
                 >
                   <Download size={18} />
                   <ChevronDown size={12} className={styles.chevron} />
@@ -253,7 +253,7 @@ export function ArtifactPane() {
                   {selectedArtifact?.type !== 'image' && (
                     <button className={styles.downloadOption} onClick={handleDownloadSource}>
                       <FileCode size={16} />
-                      <span>{t('artifacts.downloadSource')}</span>
+                      <span>{t('downloadSource')}</span>
                     </button>
                   )}
                   {(selectedArtifact?.type === 'svg' ||
@@ -261,7 +261,7 @@ export function ArtifactPane() {
                     selectedArtifact?.type === 'image') && (
                     <button className={styles.downloadOption} onClick={handleDownloadPNG}>
                       <Image size={16} />
-                      <span>{t('artifacts.downloadPng')}</span>
+                      <span>{t('downloadPng')}</span>
                     </button>
                   )}
                 </div>
@@ -269,15 +269,13 @@ export function ArtifactPane() {
             </div>
 
             <Tooltip
-              content={isFullscreen ? t('artifacts.exitFullscreen') : t('artifacts.fullscreen')}
+              content={isFullscreen ? t('exitFullscreen') : t('fullscreen')}
               position="bottom"
             >
               <button
                 className={styles.actionButton}
                 onClick={toggleFullscreen}
-                aria-label={
-                  isFullscreen ? t('artifacts.exitFullscreen') : t('artifacts.enterFullscreen')
-                }
+                aria-label={isFullscreen ? t('exitFullscreen') : t('enterFullscreen')}
               >
                 {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
               </button>
@@ -287,7 +285,7 @@ export function ArtifactPane() {
               <button
                 className={styles.actionButton}
                 onClick={closePane}
-                aria-label={t('artifacts.closePane')}
+                aria-label={t('closePane')}
               >
                 <X size={18} />
               </button>
@@ -338,13 +336,13 @@ export function ArtifactPane() {
             ) : (
               <div className={styles.noRenderer}>
                 <FileCode size={48} />
-                <p>{t('artifacts.noRenderer')}</p>
+                <p>{t('noRenderer')}</p>
               </div>
             )
           ) : (
             <div className={styles.noRenderer}>
               <FileCode size={48} />
-              <p>{t('artifacts.noArtifactSelected')}</p>
+              <p>{t('noArtifactSelected')}</p>
             </div>
           )}
         </div>

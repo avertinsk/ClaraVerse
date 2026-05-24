@@ -39,6 +39,7 @@ import {
 import type { CommandCenterHandle } from '@/components/ui';
 import { Tooltip } from '@/components/design-system/Tooltip/Tooltip';
 import { UserMessage, AssistantMessage } from '@/components/chat';
+import { generateUUID } from '@/lib/utils';
 import { useChatStore } from '@/store/useChatStore';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useModelStore } from '@/store/useModelStore';
@@ -1661,7 +1662,7 @@ export const Chat = () => {
         // Determine conversation ID BEFORE uploading files
         // This ensures file upload and chat creation use the same ID
         const isNewChat = !chat?.id;
-        const conversationIdToUse = isNewChat ? crypto.randomUUID() : chat.id;
+        const conversationIdToUse = isNewChat ? generateUUID() : chat.id;
 
         console.log('🔑 [CONVERSATION] Using ID:', conversationIdToUse, '(new:', isNewChat, ')');
 
@@ -1935,7 +1936,7 @@ export const Chat = () => {
         // Message sent successfully
         return true;
       } catch (err) {
-          setError(t('error.genericError'));
+        setError(t('error.genericError'));
         console.error('Error sending message:', err);
         setLoading(false);
         return false;
@@ -1976,7 +1977,7 @@ export const Chat = () => {
           setError(t('error.copyFailed'));
         });
     },
-    [setError]
+    [t, setError]
   );
 
   const handleToggleThinking = useCallback(
@@ -2026,7 +2027,7 @@ export const Chat = () => {
 
       // Generate or reuse version group ID
       const isNewVersionGroup = !assistantMessage.versionGroupId;
-      const versionGroupId = assistantMessage.versionGroupId || crypto.randomUUID();
+      const versionGroupId = assistantMessage.versionGroupId || generateUUID();
 
       // Count existing versions in this group
       // If this is a new version group, the current message will become version 1

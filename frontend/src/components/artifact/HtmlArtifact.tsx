@@ -39,7 +39,7 @@ export function HtmlArtifact({ content, url, title, filename }: HtmlArtifactProp
 
   return (
     <ArtifactContainer
-      title={title || filename || t('artifacts.htmlPreview')}
+      title={title || filename || t('htmlPreview')}
       downloadUrl={url}
       filename={filename}
       error={error}
@@ -60,7 +60,7 @@ export function HtmlArtifact({ content, url, title, filename }: HtmlArtifactProp
                 borderRightColor: 'var(--color-accent)',
               }}
             ></div>
-            <span className="text-sm">{t('artifacts.loadingHtml')}</span>
+            <span className="text-sm">{t('loadingHtml')}</span>
           </div>
         )}
 
@@ -75,7 +75,7 @@ export function HtmlArtifact({ content, url, title, filename }: HtmlArtifactProp
                 borderRadius: 'var(--radius-md)',
               }}
             >
-              {t('artifacts.downloadLinkExpired')}
+              {t('downloadLinkExpired')}
             </div>
           ) : (
             // Full error message for other errors
@@ -87,7 +87,7 @@ export function HtmlArtifact({ content, url, title, filename }: HtmlArtifactProp
                 borderRadius: 'var(--radius-lg)',
               }}
             >
-              <p className="font-medium">{t('artifacts.failedToLoadHtml')}</p>
+              <p className="font-medium">{t('failedToLoadHtml')}</p>
               <p className="text-sm mt-1">{error}</p>
             </div>
           ))}
@@ -102,7 +102,7 @@ export function HtmlArtifact({ content, url, title, filename }: HtmlArtifactProp
               boxShadow: 'var(--shadow-sm)',
               background: 'white',
             }}
-            title={title || t('artifacts.htmlPreview')}
+            title={title || t('htmlPreview')}
           />
         )}
       </div>

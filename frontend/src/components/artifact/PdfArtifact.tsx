@@ -62,7 +62,7 @@ export function PdfArtifact({ url, title, filename }: PdfArtifactProps) {
           (e.currentTarget.style.background = 'var(--color-surface-hover)')
         }
         onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-        aria-label={t('artifacts.prevPage')}
+        aria-label={t('prevPage')}
       >
         <ChevronLeft className="w-4 h-4" />
       </button>
@@ -84,7 +84,7 @@ export function PdfArtifact({ url, title, filename }: PdfArtifactProps) {
           (e.currentTarget.style.background = 'var(--color-surface-hover)')
         }
         onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-        aria-label={t('artifacts.nextPage')}
+        aria-label={t('nextPage')}
       >
         <ChevronRight className="w-4 h-4" />
       </button>
@@ -93,7 +93,7 @@ export function PdfArtifact({ url, title, filename }: PdfArtifactProps) {
 
   return (
     <ArtifactContainer
-      title={title || filename || t('artifacts.pdfPreview')}
+      title={title || filename || t('pdfPreview')}
       downloadUrl={url}
       filename={filename}
       toolbar={toolbar}
@@ -116,7 +116,7 @@ export function PdfArtifact({ url, title, filename }: PdfArtifactProps) {
                   borderRightColor: 'var(--color-accent)',
                 }}
               ></div>
-              <span className="text-sm">{t('artifacts.loadingPdf')}</span>
+              <span className="text-sm">{t('loadingPdf')}</span>
             </div>
           )}
 
@@ -131,7 +131,7 @@ export function PdfArtifact({ url, title, filename }: PdfArtifactProps) {
                   borderRadius: 'var(--radius-md)',
                 }}
               >
-                {t('artifacts.downloadLinkExpired')}
+                {t('downloadLinkExpired')}
               </div>
             ) : (
               // Full error message for other errors
@@ -143,7 +143,7 @@ export function PdfArtifact({ url, title, filename }: PdfArtifactProps) {
                   borderRadius: 'var(--radius-lg)',
                 }}
               >
-                <p className="font-medium">{t('artifacts.failedToLoadPdf')}</p>
+                <p className="font-medium">{t('failedToLoadPdf')}</p>
                 <p className="text-sm mt-1">{error}</p>
               </div>
             ))}

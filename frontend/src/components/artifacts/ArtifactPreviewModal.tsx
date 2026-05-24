@@ -192,7 +192,7 @@ export function ArtifactPreviewModal({
     } catch (error) {
       console.error('Error exporting PNG:', error);
       alert(
-        t('artifacts.failedToExportPng', {
+        t('failedToExportPng', {
           message: error instanceof Error ? error.message : t('common.unknown'),
         })
       );
@@ -230,9 +230,7 @@ export function ArtifactPreviewModal({
               <div className={styles.titleGroup}>
                 <h3 className={styles.title}>{artifact.title}</h3>
                 {chatTitle && (
-                  <span className={styles.chatTitle}>
-                    {t('artifacts.fromChat', { title: chatTitle })}
-                  </span>
+                  <span className={styles.chatTitle}>{t('fromChat', { title: chatTitle })}</span>
                 )}
               </div>
             </div>
@@ -241,20 +239,20 @@ export function ArtifactPreviewModal({
               {/* Preview/Code Toggle */}
               {supportsCodeView && (
                 <div className={styles.viewToggle}>
-                  <Tooltip content={t('artifacts.preview')} position="bottom">
+                  <Tooltip content={t('preview')} position="bottom">
                     <button
                       className={`${styles.viewToggleButton} ${viewMode === 'preview' ? styles.viewToggleActive : ''}`}
                       onClick={() => setViewMode('preview')}
-                      aria-label={t('artifacts.previewMode')}
+                      aria-label={t('previewMode')}
                     >
                       <Eye size={16} />
                     </button>
                   </Tooltip>
-                  <Tooltip content={t('artifacts.code')} position="bottom">
+                  <Tooltip content={t('code')} position="bottom">
                     <button
                       className={`${styles.viewToggleButton} ${viewMode === 'code' ? styles.viewToggleActive : ''}`}
                       onClick={() => setViewMode('code')}
-                      aria-label={t('artifacts.codeMode')}
+                      aria-label={t('codeMode')}
                     >
                       <Code size={16} />
                     </button>
@@ -264,11 +262,11 @@ export function ArtifactPreviewModal({
 
               {/* Download Menu */}
               <div className={styles.downloadMenu} ref={downloadMenuRef}>
-                <Tooltip content={t('artifacts.download')} position="bottom">
+                <Tooltip content={t('download')} position="bottom">
                   <button
                     className={styles.actionButton}
                     onClick={() => setShowDownloadMenu(!showDownloadMenu)}
-                    aria-label={t('artifacts.downloadOptions')}
+                    aria-label={t('downloadOptions')}
                   >
                     <Download size={18} />
                     <ChevronDown size={12} className={styles.chevron} />
@@ -280,7 +278,7 @@ export function ArtifactPreviewModal({
                     {artifact.type !== 'image' && (
                       <button className={styles.downloadOption} onClick={handleDownloadSource}>
                         <FileCode size={16} />
-                        <span>{t('artifacts.downloadSource')}</span>
+                        <span>{t('downloadSource')}</span>
                       </button>
                     )}
                     {(artifact.type === 'svg' ||
@@ -288,7 +286,7 @@ export function ArtifactPreviewModal({
                       artifact.type === 'image') && (
                       <button className={styles.downloadOption} onClick={handleDownloadPNG}>
                         <Image size={16} />
-                        <span>{t('artifacts.downloadPng')}</span>
+                        <span>{t('downloadPng')}</span>
                       </button>
                     )}
                   </div>
@@ -297,29 +295,27 @@ export function ArtifactPreviewModal({
 
               {/* Open in Chat */}
               {chatId && onNavigateToChat && (
-                <Tooltip content={t('artifacts.openInChat')} position="bottom">
+                <Tooltip content={t('openInChat')} position="bottom">
                   <button
                     className={styles.openInChatButton}
                     onClick={handleOpenInChat}
-                    aria-label={t('artifacts.openInChat')}
+                    aria-label={t('openInChat')}
                   >
                     <MessageSquare size={16} />
-                    <span className={styles.openInChatText}>{t('artifacts.openInChat')}</span>
+                    <span className={styles.openInChatText}>{t('openInChat')}</span>
                   </button>
                 </Tooltip>
               )}
 
               {/* Fullscreen Toggle */}
               <Tooltip
-                content={isFullscreen ? t('artifacts.exitFullscreen') : t('artifacts.fullscreen')}
+                content={isFullscreen ? t('exitFullscreen') : t('fullscreen')}
                 position="bottom"
               >
                 <button
                   className={styles.actionButton}
                   onClick={() => setIsFullscreen(!isFullscreen)}
-                  aria-label={
-                    isFullscreen ? t('artifacts.exitFullscreen') : t('artifacts.enterFullscreen')
-                  }
+                  aria-label={isFullscreen ? t('exitFullscreen') : t('enterFullscreen')}
                 >
                   {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
                 </button>
@@ -355,7 +351,7 @@ export function ArtifactPreviewModal({
             ) : (
               <div className={styles.noRenderer}>
                 <FileCode size={48} />
-                <p>{t('artifacts.noRenderer')}</p>
+                <p>{t('noRenderer')}</p>
               </div>
             )}
           </div>

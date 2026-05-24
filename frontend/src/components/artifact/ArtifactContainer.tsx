@@ -65,7 +65,7 @@ export function ArtifactContainer({
               {title}
             </p>
             <p className="text-xs truncate" style={{ color: 'var(--color-text-secondary)' }}>
-              {filename || t('artifacts.downloadFile')}
+              {filename || t('downloadFile')}
             </p>
           </div>
         </div>
@@ -78,7 +78,7 @@ export function ArtifactContainer({
               borderRadius: 'var(--radius-md)',
             }}
           >
-            {t('artifacts.linkExpired')}
+            {t('linkExpired')}
           </div>
         ) : (
           <a
@@ -100,7 +100,7 @@ export function ArtifactContainer({
             }}
           >
             <Download className="w-4 h-4" />
-            {t('artifacts.download')}
+            {t('download')}
           </a>
         )}
       </div>
@@ -139,7 +139,7 @@ export function ArtifactContainer({
             }}
             onMouseEnter={e => (e.currentTarget.style.background = 'var(--color-surface-hover)')}
             onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-            aria-label={isExpanded ? t('artifacts.collapse') : t('artifacts.expand')}
+            aria-label={isExpanded ? t('collapse') : t('expand')}
           >
             {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
           </button>
@@ -164,8 +164,8 @@ export function ArtifactContainer({
             }}
             onMouseEnter={e => (e.currentTarget.style.background = 'var(--color-surface-hover)')}
             onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-            aria-label={isFullscreen ? t('artifacts.exitFullscreen') : t('artifacts.fullscreen')}
-            title={isFullscreen ? t('artifacts.exitFullscreen') : t('artifacts.fullscreen')}
+            aria-label={isFullscreen ? t('exitFullscreen') : t('fullscreen')}
+            title={isFullscreen ? t('exitFullscreen') : t('fullscreen')}
           >
             {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
           </button>
@@ -191,7 +191,7 @@ export function ArtifactContainer({
               }}
             >
               <Download className="w-3.5 h-3.5" />
-              {t('artifacts.download')}
+              {t('download')}
             </a>
           )}
         </div>

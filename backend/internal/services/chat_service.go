@@ -2398,6 +2398,57 @@ func (s *ChatService) processStream(reader io.Reader, userConn *models.UserConne
 		// Regular message without tool calls
 		content := fullContent.String()
 
+		// Check if content is an inline tool call (model output JSON instead of using native tool call)
+		if toolName, toolArgs, ok := parseInlineToolCall(content); ok {
+			log.Printf("🔧 [INLINE-TOOL] Detected inline tool call: %s", toolName)
+
+			// Generate a tool call ID
+			toolCallID := fmt.Sprintf("call_%s_%d", toolName, time.Now().UnixMilli())
+
+			// Send tool_call status to frontend
+			userConn.WriteChan <- models.ServerMessage{
+				Type:     "tool_call",
+				ToolName: toolName,
+				Status:   "executing",
+			}
+
+			// Execute tool directly
+			result := s.executeToolSyncWithResult(toolCallID, toolName, toolArgs, userConn)
+
+			// Get messages from cache
+			messages := s.getConversationMessages(userConn.ConversationID)
+
+			// Add assistant message with tool call to history
+			messages = append(messages, map[string]interface{}{
+				"role": "assistant",
+				"content": "",
+				"tool_calls": []map[string]interface{}{
+					{
+						"id":   toolCallID,
+						"type": "function",
+						"function": map[string]interface{}{
+							"name":      toolName,
+							"arguments": toolArgs,
+						},
+					},
+				},
+			})
+
+			// Add tool result message
+			messages = append(messages, map[string]interface{}{
+				"role":         "tool",
+				"tool_call_id": toolCallID,
+				"name":         toolName,
+				"content":      result,
+			})
+
+			s.setConversationMessages(userConn.ConversationID, messages)
+
+			// Continue conversation with tool results
+			go s.StreamChatCompletion(userConn)
+			return nil
+		}
+
 		// Only add assistant message if there's actual content
 		if content != "" {
 			// Get messages from cache and add assistant response
@@ -2826,57 +2877,8 @@ parseSuccess:
 }
 
 // getMarkdownFormattingGuidelines returns formatting rules appended to all system prompts
-// getAskUserInstructions returns intelligent guidance for ask_user tool usage
-// Balanced approach: use when it adds value, skip when it interrupts natural flow
 func getAskUserInstructions() string {
-	return `
-
-## 🎯 Interactive Tool - ask_user
-
-You have an **ask_user** tool that creates interactive modal dialogs. Use it intelligently for gathering structured input.
-
-**When to USE ask_user (high value scenarios):**
-
-1. **Planning complex tasks** - Gathering requirements before implementation
-   - Example: "Create a website" → ask: style, colors, features, pages
-   - Example: "Build a game" → ask: language, library, controls, difficulty
-
-2. **User explicitly requests questions**
-   - User: "Ask me questions to understand what I need"
-   - User: "Help me figure out what I want"
-   - User: "Guide me through this"
-
-3. **Important decisions with multiple valid options**
-   - Technical choices: "Which framework? React/Vue/Angular"
-   - Approach selection: "Approach A (fast) or B (thorough)?"
-   - Confirmation for destructive actions: "Delete all files?"
-
-4. **Missing critical information for task execution**
-   - Need specific values: project name, API key, configuration
-   - Need preferences that significantly impact output: code style, documentation level
-
-**When NOT to use ask_user (let conversation flow naturally):**
-
-1. **Casual conversation** - Just chat normally
-2. **Emotional support** - Be empathetic in text, don't interrupt with modals
-3. **Simple clarifications** - Ask in text: "Did you mean X or Y?"
-4. **Follow-up questions in dialogue** - Natural back-and-forth
-5. **Rhetorical questions** - Part of your explanation style
-
-**Smart Usage Examples:**
-
-✅ GOOD:
-- User: "Create a landing page" → ask_user: Design style? Color scheme? Sections?
-- User: "I need help planning my app" → ask_user: Features? Users? Platform?
-- User: "Build me a calculator" → ask_user: Basic or scientific? UI style?
-
-❌ NOT NEEDED:
-- User: "I'm feeling lost" → Just respond with empathy, don't open modal
-- User: "Tell me about React" → Just explain, don't ask questions
-- Natural conversation → Keep it flowing, don't interrupt
-
-**Guideline:** Use ask_user when it **helps you gather structured input for better results**. Skip it when it would **interrupt natural conversation flow**.
-`
+	return "\n\nUse the ask_user tool to gather structured input from the user when needed."
 }
 
 func getMarkdownFormattingGuidelines() string {
@@ -3081,10 +3083,11 @@ func getDefaultSystemPrompt() string {
 
 ## Artifacts
 
-Create interactive content when appropriate:
-- **html** blocks for web interfaces
-- **svg** blocks for vector graphics
-- **mermaid** blocks for diagrams
+Create interactive content when appropriate using markdown code fences:
+- **html** — wrap in ` + "` ```html " + `...` + "` ```" + ` for web interfaces
+- **svg** — wrap in ` + "` ```svg " + `...` + "` ```" + ` for vector graphics
+- **mermaid** — wrap in ` + "` ```mermaid " + `...` + "` ```" + ` for diagrams
+- Never use JSON format for artifacts. Always use markdown code fences.
 
 ## Guidelines
 
@@ -3706,6 +3709,36 @@ func (s *ChatService) getConfigForModel(modelID string) (*models.Config, error) 
 		Model:      modelName,
 		ProviderID: provider.ID,
 	}, nil
+}
+
+// parseInlineToolCall checks if content is an inline tool call JSON and extracts tool name and arguments
+func parseInlineToolCall(content string) (string, string, bool) {
+	trimmed := strings.TrimSpace(content)
+	if !strings.HasPrefix(trimmed, "{") {
+		return "", "", false
+	}
+
+	var parsed map[string]interface{}
+	if err := json.Unmarshal([]byte(trimmed), &parsed); err != nil {
+		return "", "", false
+	}
+
+	name, hasName := parsed["name"].(string)
+	if !hasName || name == "" {
+		return "", "", false
+	}
+
+	args, hasArgs := parsed["arguments"]
+	if !hasArgs {
+		return "", "", false
+	}
+
+	argsJSON, err := json.Marshal(args)
+	if err != nil {
+		return "", "", false
+	}
+
+	return name, string(argsJSON), true
 }
 
 // extractLastUserMessage extracts the last user message content from messages array

@@ -155,7 +155,6 @@ export interface SidebarProps {
  * Sidebar component with proper accessibility and type safety
  */
 
-
 export const Sidebar: React.FC<SidebarProps> = ({
   brandName = '',
   navItems = [],
@@ -165,16 +164,26 @@ export const Sidebar: React.FC<SidebarProps> = ({
   className = '',
   isOpen: externalIsOpen,
   onOpenChange,
-  footerLinks = defaultFooterLinks,
+  footerLinks,
   isLoadingChats = false,
   statusSlot,
 }) => {
   const { t } = useTranslation('common');
 
-  const defaultFooterLinks = useMemo<FooterLink[]>(() => [
-    { href: '/', label: t('navigateHome'), icon: Home, ariaLabel: t('navigateHome') },
-    { href: '/chat', label: t('sidebar.chats'), icon: MessageSquare, ariaLabel: t('navigateChats') },
-  ], [t]);
+  const defaultFooterLinks = useMemo<FooterLink[]>(
+    () => [
+      { href: '/', label: t('navigateHome'), icon: Home, ariaLabel: t('navigateHome') },
+      {
+        href: '/chat',
+        label: t('sidebar.chats'),
+        icon: MessageSquare,
+        ariaLabel: t('navigateChats'),
+      },
+    ],
+    [t]
+  );
+
+  const resolvedFooterLinks = footerLinks ?? defaultFooterLinks;
 
   // Internal state for when not externally controlled
   const [internalIsCollapsed, setInternalIsCollapsed] = useState(() => isMobileDevice());
@@ -454,7 +463,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {/* Optional status slot (e.g. connection indicators) — above nav links */}
           {statusSlot && <div className={styles.statusSlotWrapper}>{statusSlot}</div>}
           <div className={styles.footerNav}>
-            {footerLinks.map((link, index) => {
+            {resolvedFooterLinks.map((link, index) => {
               const Icon = link.icon;
               return (
                 <a

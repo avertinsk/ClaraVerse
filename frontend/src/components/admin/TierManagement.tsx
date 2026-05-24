@@ -58,19 +58,19 @@ const TIER_CONFIGS: TierConfig[] = [
 ];
 
 const TIER_LABEL_KEYS: Record<string, string> = {
-  tier1: 'admin.tierManagement.elite',
-  tier2: 'admin.tierManagement.premium',
-  tier3: 'admin.tierManagement.standard',
-  tier4: 'admin.tierManagement.fast',
-  tier5: 'admin.tierManagement.new',
+  tier1: 'tierManagement.elite',
+  tier2: 'tierManagement.premium',
+  tier3: 'tierManagement.standard',
+  tier4: 'tierManagement.fast',
+  tier5: 'tierManagement.new',
 };
 
 const TIER_DESC_KEYS: Record<string, string> = {
-  tier1: 'admin.tierManagement.eliteDesc',
-  tier2: 'admin.tierManagement.premiumDesc',
-  tier3: 'admin.tierManagement.standardDesc',
-  tier4: 'admin.tierManagement.fastDesc',
-  tier5: 'admin.tierManagement.newDesc',
+  tier1: 'tierManagement.eliteDesc',
+  tier2: 'tierManagement.premiumDesc',
+  tier3: 'tierManagement.standardDesc',
+  tier4: 'tierManagement.fastDesc',
+  tier5: 'tierManagement.newDesc',
 };
 
 export const TierManagement: React.FC = () => {

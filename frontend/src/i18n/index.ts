@@ -34,6 +34,8 @@ import credentialsEn from './locales/en/credentials.json';
 import credentialsRu from './locales/ru/credentials.json';
 import memoryEn from './locales/en/memory.json';
 import memoryRu from './locales/ru/memory.json';
+import artifactsEn from './locales/en/artifacts.json';
+import artifactsRu from './locales/ru/artifacts.json';
 
 const resources = {
   en: {
@@ -53,6 +55,7 @@ const resources = {
     ui: uiEn,
     credentials: credentialsEn,
     memory: memoryEn,
+    artifacts: artifactsEn,
   },
   ru: {
     common: commonRu,
@@ -71,6 +74,7 @@ const resources = {
     ui: uiRu,
     credentials: credentialsRu,
     memory: memoryRu,
+    artifacts: artifactsRu,
   },
 };
 
@@ -101,6 +105,7 @@ i18n
       'ui',
       'credentials',
       'memory',
+      'artifacts',
     ],
     defaultNS: 'common',
     detection: {

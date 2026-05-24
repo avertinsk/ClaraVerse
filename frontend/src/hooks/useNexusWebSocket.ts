@@ -8,6 +8,7 @@ import type {
 } from '@/types/nexus';
 import { useNexusStore } from '@/store/useNexusStore';
 import { useAuthStore } from '@/store/useAuthStore';
+import { generateUUID } from '@/lib/utils';
 import { getWsUrl } from '@/lib/config';
 
 const WS_URL = getWsUrl();
@@ -65,7 +66,7 @@ export function useNexusWebSocket() {
         case 'cortex_thinking':
           if (d?.content) {
             addConversationItem({
-              id: crypto.randomUUID(),
+              id: generateUUID(),
               type: 'cortex_thinking',
               content: d.content as string,
               timestamp: new Date(),
@@ -76,7 +77,7 @@ export function useNexusWebSocket() {
         case 'cortex_response':
           if (d?.content) {
             addConversationItem({
-              id: crypto.randomUUID(),
+              id: generateUUID(),
               type: 'cortex_response',
               content: d.content as string,
               timestamp: new Date(),
@@ -103,7 +104,7 @@ export function useNexusWebSocket() {
               progress: 0,
             });
             addConversationItem({
-              id: crypto.randomUUID(),
+              id: generateUUID(),
               type: 'daemon_activity',
               content: `${d.role_label} deployed: ${d.task_summary}`,
               timestamp: new Date(),
@@ -118,7 +119,7 @@ export function useNexusWebSocket() {
             updateDaemon(d);
             if (d.current_action) {
               addConversationItem({
-                id: crypto.randomUUID(),
+                id: generateUUID(),
                 type: 'daemon_activity',
                 content: d.current_action as string,
                 timestamp: new Date(),
@@ -134,7 +135,7 @@ export function useNexusWebSocket() {
             updateDaemon(d);
             if (d.content) {
               addConversationItem({
-                id: crypto.randomUUID(),
+                id: generateUUID(),
                 type: 'daemon_activity',
                 content: d.content as string,
                 timestamp: new Date(),
@@ -149,7 +150,7 @@ export function useNexusWebSocket() {
           if (d) {
             updateDaemon(d);
             addConversationItem({
-              id: crypto.randomUUID(),
+              id: generateUUID(),
               type: 'daemon_activity',
               content: (d.current_action as string) || `Using ${d.tool_name}...`,
               timestamp: new Date(),
@@ -164,7 +165,7 @@ export function useNexusWebSocket() {
           if (d) {
             updateDaemon(d);
             addConversationItem({
-              id: crypto.randomUUID(),
+              id: generateUUID(),
               type: 'daemon_activity',
               content: `${d.tool_name} completed`,
               timestamp: new Date(),
@@ -181,7 +182,7 @@ export function useNexusWebSocket() {
             updateDaemon({ ...d, status: 'completed', progress: 1 });
             const result = d.result as Record<string, unknown> | undefined;
             addConversationItem({
-              id: crypto.randomUUID(),
+              id: generateUUID(),
               type: 'daemon_activity',
               content: (result?.summary as string) || `${d.role} completed`,
               timestamp: new Date(),
@@ -195,7 +196,7 @@ export function useNexusWebSocket() {
           if (d) {
             updateDaemon({ ...d, status: 'failed' });
             addConversationItem({
-              id: crypto.randomUUID(),
+              id: generateUUID(),
               type: 'error',
               content: `Daemon failed: ${d.error}`,
               timestamp: new Date(),
@@ -208,7 +209,7 @@ export function useNexusWebSocket() {
           if (d?.daemon_id) {
             updateDaemon({ daemon_id: d.daemon_id, id: d.daemon_id, status: 'cancelled' });
             addConversationItem({
-              id: crypto.randomUUID(),
+              id: generateUUID(),
               type: 'daemon_activity',
               content: 'Daemon cancelled by user',
               timestamp: new Date(),
@@ -235,7 +236,7 @@ export function useNexusWebSocket() {
             const resultSummary = taskResult?.summary as string | undefined;
             if (resultSummary) {
               addConversationItem({
-                id: crypto.randomUUID(),
+                id: generateUUID(),
                 type: 'task_result',
                 content: resultSummary,
                 timestamp: new Date(),
@@ -251,7 +252,7 @@ export function useNexusWebSocket() {
           if (d) {
             updateTask({ ...d, status: 'failed' });
             addConversationItem({
-              id: crypto.randomUUID(),
+              id: generateUUID(),
               type: 'error',
               content: `Task failed: ${d.error}`,
               timestamp: new Date(),
@@ -270,7 +271,7 @@ export function useNexusWebSocket() {
         case 'retry_started':
           if (d?.original_task_id) {
             addConversationItem({
-              id: crypto.randomUUID(),
+              id: generateUUID(),
               type: 'cortex_thinking',
               content: 'Retrying task...',
               timestamp: new Date(),
@@ -305,7 +306,7 @@ export function useNexusWebSocket() {
 
         case 'error':
           addConversationItem({
-            id: crypto.randomUUID(),
+            id: generateUUID(),
             type: 'error',
             content: (d?.message as string) || 'Unknown error',
             timestamp: new Date(),
@@ -414,7 +415,7 @@ export function useNexusWebSocket() {
   const sendMessage = useCallback(
     (content: string, modelId?: string) => {
       addConversationItem({
-        id: crypto.randomUUID(),
+        id: generateUUID(),
         type: 'user_message',
         content,
         timestamp: new Date(),
@@ -438,7 +439,7 @@ export function useNexusWebSocket() {
       saveIds?: string[];
     }) => {
       addConversationItem({
-        id: crypto.randomUUID(),
+        id: generateUUID(),
         type: 'user_message',
         content: opts.content,
         timestamp: new Date(),

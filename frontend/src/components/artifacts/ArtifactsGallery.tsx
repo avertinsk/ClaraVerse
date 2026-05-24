@@ -86,12 +86,12 @@ function formatRelativeDate(
   date: Date | undefined | null,
   t: (key: string, params?: Record<string, unknown>) => string
 ): string {
-  if (!date) return t('artifacts.time.unknown');
+  if (!date) return t('time.unknown');
 
   try {
     const now = new Date();
     const dateObj = date instanceof Date ? date : new Date(date);
-    if (isNaN(dateObj.getTime())) return t('artifacts.time.unknown');
+    if (isNaN(dateObj.getTime())) return t('time.unknown');
 
     const diffMs = now.getTime() - dateObj.getTime();
     const diffSeconds = Math.floor(diffMs / 1000);
@@ -103,22 +103,22 @@ function formatRelativeDate(
     const diffYears = Math.floor(diffDays / 365);
 
     if (diffSeconds < 60) {
-      return t('artifacts.time.justNow');
+      return t('time.justNow');
     } else if (diffMinutes < 60) {
-      return t('artifacts.time.minutesAgo', { count: diffMinutes });
+      return t('time.minutesAgo', { count: diffMinutes });
     } else if (diffHours < 24) {
-      return t('artifacts.time.hoursAgo', { count: diffHours });
+      return t('time.hoursAgo', { count: diffHours });
     } else if (diffDays < 7) {
-      return t('artifacts.time.daysAgo', { count: diffDays });
+      return t('time.daysAgo', { count: diffDays });
     } else if (diffWeeks < 4) {
-      return t('artifacts.time.weeksAgo', { count: diffWeeks });
+      return t('time.weeksAgo', { count: diffWeeks });
     } else if (diffMonths < 12) {
-      return t('artifacts.time.monthsAgo', { count: diffMonths });
+      return t('time.monthsAgo', { count: diffMonths });
     } else {
-      return t('artifacts.time.yearsAgo', { count: diffYears });
+      return t('time.yearsAgo', { count: diffYears });
     }
   } catch {
-    return t('artifacts.time.unknown');
+    return t('time.unknown');
   }
 }
 
@@ -328,10 +328,10 @@ export function ArtifactsGallery({
     <div className={styles.container}>
       {/* Header */}
       <div className={styles.header}>
-        <h1 className={styles.title}>{t('artifacts.title')}</h1>
+        <h1 className={styles.title}>{t('title')}</h1>
         <button className={styles.newButton} onClick={onNewArtifact}>
           <Plus size={18} />
-          <span>{t('artifacts.newArtifact')}</span>
+          <span>{t('newArtifact')}</span>
         </button>
       </div>
 
@@ -365,11 +365,11 @@ export function ArtifactsGallery({
           {allArtifacts.length === 0 ? (
             <>
               <FileCode size={48} className={styles.emptyIcon} />
-              <h2 className={styles.emptyTitle}>{t('artifacts.empty.title')}</h2>
-              <p className={styles.emptyText}>{t('artifacts.empty.description')}</p>
+              <h2 className={styles.emptyTitle}>{t('empty.title')}</h2>
+              <p className={styles.emptyText}>{t('empty.description')}</p>
               <button className={styles.emptyButton} onClick={onNewArtifact}>
                 <Plus size={18} />
-                <span>{t('artifacts.empty.startChat')}</span>
+                <span>{t('empty.startChat')}</span>
               </button>
             </>
           ) : (
@@ -379,18 +379,18 @@ export function ArtifactsGallery({
                 return <ActiveTabIcon size={48} className={styles.emptyIcon} />;
               })()}
               <h2 className={styles.emptyTitle}>
-                {t('artifacts.empty.noFiltered', {
+                {t('empty.noFiltered', {
                   type: t(TAB_LABEL_KEYS[activeTab]).toLowerCase(),
                 })}
               </h2>
               <p className={styles.emptyText}>
                 {activeTab === 'image'
-                  ? t('artifacts.empty.noImages')
-                  : t('artifacts.empty.noType', { type: activeTab })}
+                  ? t('empty.noImages')
+                  : t('empty.noType', { type: activeTab })}
               </p>
               <button className={styles.emptyButton} onClick={() => setActiveTab('all')}>
                 <LayoutGrid size={18} />
-                <span>{t('artifacts.empty.viewAll')}</span>
+                <span>{t('empty.viewAll')}</span>
               </button>
             </>
           )}
@@ -433,7 +433,7 @@ export function ArtifactsGallery({
                         <div className={styles.cardContent}>
                           <h3 className={styles.cardTitle}>{artifact.title}</h3>
                           <p className={styles.cardDate}>
-                            {t('artifacts.lastEdited')} {formatRelativeDate(artifact.createdAt, t)}
+                            {t('lastEdited')} {formatRelativeDate(artifact.createdAt, t)}
                           </p>
                         </div>
                       </button>
@@ -474,7 +474,7 @@ export function ArtifactsGallery({
                   <div className={styles.cardContent}>
                     <h3 className={styles.cardTitle}>{group.chatTitle}</h3>
                     <p className={styles.cardDate}>
-                      {t('artifacts.lastEdited')} {formatRelativeDate(group.latestDate, t)}
+                      {t('lastEdited')} {formatRelativeDate(group.latestDate, t)}
                     </p>
                   </div>
                 </button>

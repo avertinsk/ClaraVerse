@@ -15,8 +15,6 @@ import {
 import { Sidebar, type NavItem, type FooterLink } from '@/components/ui/Sidebar';
 import type { SettingsTab } from './SettingsLayout';
 
-
-
 export interface SettingsSidebarProps {
   /** Currently active tab */
   activeTab: SettingsTab;
@@ -41,10 +39,23 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({
 }) => {
   const { t } = useTranslation('settings');
 
-  const footerLinks: FooterLink[] = useMemo(() => [
-    { href: '/', label: t('settings.footer.home'), icon: Home, ariaLabel: t('settings.footer.navigateHome') },
-    { href: '/chat', label: t('settings.footer.chats'), icon: MessageSquare, ariaLabel: t('settings.footer.navigateChats') },
-  ], [t]);
+  const footerLinks: FooterLink[] = useMemo(
+    () => [
+      {
+        href: '/',
+        label: t('settings.footer.home'),
+        icon: Home,
+        ariaLabel: t('settings.footer.navigateHome'),
+      },
+      {
+        href: '/chat',
+        label: t('settings.footer.chats'),
+        icon: MessageSquare,
+        ariaLabel: t('settings.footer.navigateChats'),
+      },
+    ],
+    [t]
+  );
 
   const navItems: NavItem[] = [
     {
