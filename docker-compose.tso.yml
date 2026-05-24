@@ -168,6 +168,24 @@ services:
       retries: 3
 
   # ============================
+  # MCP Filesystem sidecar (file read/write/list tools)
+  # ============================
+  mcp-filesystem:
+    build:
+      context: ./backend
+      dockerfile: cmd/mcp-filesystem/Dockerfile
+    image: mcp-filesystem:${CLARAVERSE_TAG:-latest}
+    container_name: claraverse-mcp-filesystem
+    volumes:
+      - claraverse-sidecar-data:/data
+    environment:
+      - ALLOWED_DIRECTORY=/data
+      - PORT=3003
+    restart: unless-stopped
+    networks:
+      - claraverse-network
+
+  # ============================
   # ClaraVerse (сборка из исходников + host.docker.internal)
   # ============================
   claraverse:
@@ -183,6 +201,7 @@ services:
     volumes:
       - claraverse-data:/app/data
       - claraverse-uploads:/app/uploads
+      - claraverse-sidecar-data:/data
       - /srv/smb:/data/smb:ro
     environment:
       - ENVIRONMENT=production
@@ -197,6 +216,7 @@ services:
       - DOCLING_URL=http://docling:5001
       - QDRANT_URL=http://qdrant:6333
       - EMBEDDING_MODEL=nomic-embed-text:v1.5
+      - SIDECAR_URLS=http://mcp-filesystem:3003
       - FRONTEND_URL=http://10.10.0.1:3000
       - BACKEND_URL=http://10.10.0.1:3000
       - ALLOWED_ORIGINS=*
@@ -237,6 +257,8 @@ volumes:
   claraverse-data:
     driver: local
   claraverse-uploads:
+    driver: local
+  claraverse-sidecar-data:
     driver: local
   mongodb-data:
     driver: local

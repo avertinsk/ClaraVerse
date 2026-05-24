@@ -235,7 +235,7 @@ export const ImageSearchStrip = ({ images, query: _query }: ImageSearchStripProp
                   lineHeight: 1.4,
                 }}
               >
-                {selectedImage.title || t('chat.imageSearch.image')}
+                {selectedImage.title || t('imageSearch.image')}
               </h4>
               {selectedImage.resolution && (
                 <span
@@ -267,7 +267,7 @@ export const ImageSearchStrip = ({ images, query: _query }: ImageSearchStripProp
                 }}
               >
                 <ExternalLink size={14} />
-                {t('chat.imageSearch.viewSource')}
+                {t('imageSearch.viewSource')}
               </a>
             </div>
 

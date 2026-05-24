@@ -565,6 +565,9 @@ func main() {
 	// Register the search_documents AI tool
 	services.RegisterSearchTool()
 
+	// Discover and register sidecar tools (filesystem, etc.)
+	services.InitSidecarService(tools.GetRegistry())
+
 	// NOTE: providers.json file watcher removed - all provider management now in MySQL
 
 	// Start background model refresh job (refreshes from database)
@@ -1473,6 +1476,11 @@ func main() {
 			e2b.SetAPIKeyProvider(func() string {
 				return handlers.GetE2BAPIKey(settingsService)
 			})
+
+			// Service monitoring endpoints (Docling, Qdrant, Embedding)
+			serviceMonHandler := handlers.NewServiceMonitoringHandler()
+			adminRoutes.Get("/service-monitoring", serviceMonHandler.GetStatus)
+			adminRoutes.Post("/service-monitoring/rag/clear", serviceMonHandler.ClearRAGIndex)
 
 			log.Println("✅ Admin routes registered (status, analytics, user management, providers, system models, e2b)")
 		}

@@ -41,7 +41,7 @@ export function VersionNavigator({
       <button
         onClick={() => onNavigate('prev')}
         disabled={!canGoPrev}
-        aria-label={t('chat.versionNavigator.prevVersion')}
+        aria-label={t('versionNavigator.prevVersion')}
         style={{
           display: 'flex',
           alignItems: 'center',
@@ -89,7 +89,7 @@ export function VersionNavigator({
       <button
         onClick={() => onNavigate('next')}
         disabled={!canGoNext}
-        aria-label={t('chat.versionNavigator.nextVersion')}
+        aria-label={t('versionNavigator.nextVersion')}
         style={{
           display: 'flex',
           alignItems: 'center',

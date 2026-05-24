@@ -83,10 +83,10 @@ const CachedImage = ({ imageAttachment, onClickLightbox }: CachedImageProps) => 
         >
           <AlertCircle size={32} />
           <div style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--font-medium)' }}>
-            {t('chat.messageAttachment.imageExpired')}
+            {t('messageAttachment.imageExpired')}
           </div>
           <div style={{ fontSize: 'var(--text-xs)', opacity: 0.8 }}>
-            {imageAttachment.filename || t('chat.messageAttachment.fileNotAvailable')}
+            {imageAttachment.filename || t('messageAttachment.fileNotAvailable')}
           </div>
         </div>
       ) : loading ? (
@@ -106,7 +106,7 @@ const CachedImage = ({ imageAttachment, onClickLightbox }: CachedImageProps) => 
         <>
           <img
             src={imageUrl}
-            alt={imageAttachment.filename || t('chat.messageAttachment.uploadedImage')}
+            alt={imageAttachment.filename || t('messageAttachment.uploadedImage')}
             style={{
               width: '100%',
               height: '100%',
@@ -156,10 +156,10 @@ const CachedImage = ({ imageAttachment, onClickLightbox }: CachedImageProps) => 
         >
           <AlertCircle size={32} />
           <div style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--font-medium)' }}>
-            {t('chat.messageAttachment.imageUnavailable')}
+            {t('messageAttachment.imageUnavailable')}
           </div>
           <div style={{ fontSize: 'var(--text-xs)', opacity: 0.8 }}>
-            {imageAttachment.filename || t('chat.messageAttachment.fileNotAvailable')}
+            {imageAttachment.filename || t('messageAttachment.fileNotAvailable')}
           </div>
         </div>
       )}
@@ -241,8 +241,8 @@ export const MessageAttachment = ({ attachments }: MessageAttachmentProps) => {
                         wordBreak: 'break-word',
                       }}
                     >
-                      {docAttachment.filename || t('chat.messageAttachment.document')}
-                      {isExpired && ` (${t('chat.messageAttachment.expired')})`}
+                      {docAttachment.filename || t('messageAttachment.document')}
+                      {isExpired && ` (${t('messageAttachment.expired')})`}
                     </div>
                     <div
                       style={{
@@ -252,7 +252,7 @@ export const MessageAttachment = ({ attachments }: MessageAttachmentProps) => {
                       }}
                     >
                       {isExpired
-                        ? t('chat.messageAttachment.fileExpired')
+                        ? t('messageAttachment.fileExpired')
                         : `PDF • ${formatFileSize(docAttachment.size)}`}
                     </div>
                   </div>
@@ -322,8 +322,8 @@ export const MessageAttachment = ({ attachments }: MessageAttachmentProps) => {
               if (mimeType === 'application/vnd.ms-excel' || filename.endsWith('.xls'))
                 return 'Excel';
               if (mimeType === 'text/plain' || filename.endsWith('.txt'))
-                return t('chat.messageAttachment.text');
-              return t('chat.messageAttachment.data');
+                return t('messageAttachment.text');
+              return t('messageAttachment.data');
             };
 
             return (
@@ -362,8 +362,8 @@ export const MessageAttachment = ({ attachments }: MessageAttachmentProps) => {
                         wordBreak: 'break-word',
                       }}
                     >
-                      {dataAttachment.filename || t('chat.messageAttachment.dataFile')}
-                      {isExpired && ` (${t('chat.messageAttachment.expired')})`}
+                      {dataAttachment.filename || t('messageAttachment.dataFile')}
+                      {isExpired && ` (${t('messageAttachment.expired')})`}
                     </div>
                     <div
                       style={{
@@ -373,7 +373,7 @@ export const MessageAttachment = ({ attachments }: MessageAttachmentProps) => {
                       }}
                     >
                       {isExpired
-                        ? t('chat.messageAttachment.fileExpired')
+                        ? t('messageAttachment.fileExpired')
                         : `${getFileTypeLabel()} • ${formatFileSize(dataAttachment.size)}`}
                     </div>
                   </div>
@@ -433,7 +433,7 @@ export const MessageAttachment = ({ attachments }: MessageAttachmentProps) => {
           </button>
           <img
             src={lightboxImage}
-            alt={t('chat.messageAttachment.fullSizePreview')}
+            alt={t('messageAttachment.fullSizePreview')}
             style={{
               maxWidth: '100%',
               maxHeight: '100%',

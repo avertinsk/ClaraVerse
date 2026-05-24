@@ -52,12 +52,12 @@ export function InteractivePromptModal({
       // Required validation
       if (question.required) {
         if (!answer || answer.value === '' || answer.value === null || answer.value === undefined) {
-          return t('chat.interactivePrompt.fieldRequired');
+          return t('interactivePrompt.fieldRequired');
         }
 
         // Check for empty arrays in multi-select
         if (Array.isArray(answer.value) && answer.value.length === 0) {
-          return t('chat.interactivePrompt.selectAtLeastOne');
+          return t('interactivePrompt.selectAtLeastOne');
         }
       }
 
@@ -73,17 +73,17 @@ export function InteractivePromptModal({
         const textValue = String(answer.value);
 
         if (validation.min_length && textValue.length < validation.min_length) {
-          return t('chat.interactivePrompt.minLength', { min: validation.min_length });
+          return t('interactivePrompt.minLength', { min: validation.min_length });
         }
 
         if (validation.max_length && textValue.length > validation.max_length) {
-          return t('chat.interactivePrompt.maxLength', { max: validation.max_length });
+          return t('interactivePrompt.maxLength', { max: validation.max_length });
         }
 
         if (validation.pattern) {
           const regex = new RegExp(validation.pattern);
           if (!regex.test(textValue)) {
-            return t('chat.interactivePrompt.invalidFormat');
+            return t('interactivePrompt.invalidFormat');
           }
         }
       }
@@ -92,11 +92,11 @@ export function InteractivePromptModal({
         const numValue = Number(answer.value);
 
         if (validation.min !== undefined && numValue < validation.min) {
-          return t('chat.interactivePrompt.minValue', { min: validation.min });
+          return t('interactivePrompt.minValue', { min: validation.min });
         }
 
         if (validation.max !== undefined && numValue > validation.max) {
-          return t('chat.interactivePrompt.maxValue', { max: validation.max });
+          return t('interactivePrompt.maxValue', { max: validation.max });
         }
       }
 
@@ -359,13 +359,13 @@ export function InteractivePromptModal({
                       }}
                       disabled={isSubmitting}
                     />
-                    <span>{t('chat.interactivePrompt.other')}</span>
+                    <span>{t('interactivePrompt.other')}</span>
                   </label>
                   {isOtherSelected && (
                     <input
                       type="text"
                       className={`prompt-input prompt-other-input ${hasError ? 'error' : ''}`}
-                      placeholder={t('chat.interactivePrompt.pleaseSpecify')}
+                      placeholder={t('interactivePrompt.pleaseSpecify')}
                       value={answer?.otherText || ''}
                       onChange={e => handleOtherTextChange(question.id, e.target.value)}
                       onBlur={() => handleBlur(question.id)}
@@ -433,13 +433,13 @@ export function InteractivePromptModal({
                       }}
                       disabled={isSubmitting}
                     />
-                    <span>{t('chat.interactivePrompt.other')}</span>
+                    <span>{t('interactivePrompt.other')}</span>
                   </label>
                   {isOtherChecked && (
                     <input
                       type="text"
                       className={`prompt-input prompt-other-input ${hasError ? 'error' : ''}`}
-                      placeholder={t('chat.interactivePrompt.pleaseSpecify')}
+                      placeholder={t('interactivePrompt.pleaseSpecify')}
                       value={answer?.otherText || ''}
                       onChange={e => {
                         const otherText = e.target.value;
@@ -529,7 +529,7 @@ export function InteractivePromptModal({
                     onClick={handleClose}
                     disabled={isSubmitting}
                   >
-                    {t('chat.interactivePrompt.skip')}
+                    {t('interactivePrompt.skip')}
                   </button>
                 )}
                 <button
@@ -540,12 +540,12 @@ export function InteractivePromptModal({
                   {isSubmitting ? (
                     <>
                       <span className="spinner" />
-                      {t('chat.interactivePrompt.submitting')}
+                      {t('interactivePrompt.submitting')}
                     </>
                   ) : (
                     <>
                       <CheckCircle size={18} />
-                      {t('chat.interactivePrompt.submit')}
+                      {t('interactivePrompt.submit')}
                     </>
                   )}
                 </button>

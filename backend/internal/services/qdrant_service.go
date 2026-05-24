@@ -91,6 +91,13 @@ func (s *QdrantService) IsAvailable() bool {
 	return s.available
 }
 
+func (s *QdrantService) BaseURL() string {
+	if s == nil {
+		return ""
+	}
+	return s.baseURL
+}
+
 func (s *QdrantService) EnsureCollection(name string, vectorSize int) error {
 	if name == "" {
 		return fmt.Errorf("collection name is required")

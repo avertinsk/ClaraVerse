@@ -11,6 +11,7 @@ import {
   Users,
   Settings,
   Code,
+  Activity,
   ChevronLeft,
   ChevronRight,
   LogOut,
@@ -34,6 +35,7 @@ export const AdminLayout = () => {
     { path: '/admin/analytics', label: t('nav.analytics'), icon: BarChart3 },
     { path: '/admin/models', label: t('nav.models'), icon: Box },
     { path: '/admin/system-models', label: t('nav.systemModels'), icon: Settings },
+    { path: '/admin/services', label: t('nav.services'), icon: Activity },
     { path: '/admin/code-execution', label: t('nav.codeExecution'), icon: Code },
     { path: '/admin/users', label: t('nav.users'), icon: Users },
   ];

@@ -28,6 +28,7 @@ import {
   UserManagement,
   SystemModels,
   E2BSettings,
+  ServiceMonitoring,
 } from '@/pages/admin';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -220,6 +221,7 @@ const router = createBrowserRouter([
           { path: 'models', element: <ModelManagement /> },
           { path: 'system-models', element: <SystemModels /> },
           { path: 'code-execution', element: <E2BSettings /> },
+          { path: 'services', element: <ServiceMonitoring /> },
           { path: 'users', element: <UserManagement /> },
           { path: '', element: <Navigate to="dashboard" replace /> },
         ],

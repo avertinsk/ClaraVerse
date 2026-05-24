@@ -143,6 +143,20 @@ func (s *EmbeddingService) IsAvailable() bool {
 	return s.available
 }
 
+func (s *EmbeddingService) Model() string {
+	if s == nil {
+		return ""
+	}
+	return s.model
+}
+
+func (s *EmbeddingService) BaseURL() string {
+	if s == nil {
+		return ""
+	}
+	return s.baseURL
+}
+
 func (s *EmbeddingService) checkHealth() error {
 	url := os.Getenv("OLLAMA_BASE_URL")
 	if url == "" {

@@ -12,6 +12,7 @@
     "models": "Models",
     "systemModels": "System Models",
     "codeExecution": "Code Execution",
+    "services": "Services",
     "users": "Users"
   },
   "dashboard": {

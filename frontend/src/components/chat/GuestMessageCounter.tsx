@@ -56,7 +56,7 @@ export const GuestMessageCounter: React.FC<GuestMessageCounterProps> = ({
             background: getColor(),
           }}
         />
-        {remaining} {t('chat.guest.messagesRemaining', { max })}
+        {remaining} {t('guest.messagesRemaining', { max })}
         {used > 0 && onSignIn && (
           <>
             {' · '}
@@ -74,7 +74,7 @@ export const GuestMessageCounter: React.FC<GuestMessageCounterProps> = ({
                 textUnderlineOffset: '2px',
               }}
             >
-              {t('chat.guest.signInToSave')}
+              {t('guest.signInToSave')}
             </button>
           </>
         )}

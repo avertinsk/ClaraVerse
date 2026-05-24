@@ -191,7 +191,7 @@ export function ImageGalleryModal({
               className={styles.headerButton}
               onClick={handleZoomOut}
               disabled={scale <= 1}
-              aria-label={t('chat.imageGallery.zoomOut')}
+              aria-label={t('imageGallery.zoomOut')}
             >
               <ZoomOut size={20} />
             </button>
@@ -199,21 +199,21 @@ export function ImageGalleryModal({
               className={styles.headerButton}
               onClick={handleZoomIn}
               disabled={scale >= 3}
-              aria-label={t('chat.imageGallery.zoomIn')}
+              aria-label={t('imageGallery.zoomIn')}
             >
               <ZoomIn size={20} />
             </button>
             <button
               className={styles.headerButton}
               onClick={handleDownload}
-              aria-label={t('chat.imageGallery.downloadImage')}
+              aria-label={t('imageGallery.downloadImage')}
             >
               <Download size={20} />
             </button>
             <button
               className={styles.closeButton}
               onClick={onClose}
-              aria-label={t('chat.imageGallery.closeGallery')}
+              aria-label={t('imageGallery.closeGallery')}
             >
               <X size={24} />
             </button>
@@ -249,7 +249,7 @@ export function ImageGalleryModal({
               key={currentIndex}
               src={currentImage.src}
               alt={
-                currentImage.title || t('chat.imageGallery.imageLabel', { index: currentIndex + 1 })
+                currentImage.title || t('imageGallery.imageLabel', { index: currentIndex + 1 })
               }
               className={styles.image}
               initial={{ opacity: 0 }}
@@ -270,7 +270,7 @@ export function ImageGalleryModal({
                 e.stopPropagation();
                 goToPrevious();
               }}
-              aria-label={t('chat.imageGallery.prevImage')}
+              aria-label={t('imageGallery.prevImage')}
             >
               <ChevronLeft size={32} />
             </button>
@@ -280,7 +280,7 @@ export function ImageGalleryModal({
                 e.stopPropagation();
                 goToNext();
               }}
-              aria-label={t('chat.imageGallery.nextImage')}
+              aria-label={t('imageGallery.nextImage')}
             >
               <ChevronRight size={32} />
             </button>
@@ -300,7 +300,7 @@ export function ImageGalleryModal({
                   setScale(1);
                   setPosition({ x: 0, y: 0 });
                 }}
-                aria-label={t('chat.imageGallery.goToImage', { index: index + 1 })}
+                aria-label={t('imageGallery.goToImage', { index: index + 1 })}
               />
             ))}
           </div>

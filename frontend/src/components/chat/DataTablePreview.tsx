@@ -35,14 +35,14 @@ export const DataTablePreview = ({
         <h3 className={styles.title}>{title}</h3>
         <div className={styles.actions}>
           {onDownload && (
-            <Tooltip content={t('chat.dataTable.downloadFile')} position="top">
+            <Tooltip content={t('dataTable.downloadFile')} position="top">
               <button onClick={onDownload} className={styles.actionButton}>
                 <Download size={16} />
               </button>
             </Tooltip>
           )}
           {onExpand && (
-            <Tooltip content={t('chat.dataTable.expandView')} position="top">
+            <Tooltip content={t('dataTable.expandView')} position="top">
               <button onClick={onExpand} className={styles.actionButton}>
                 <Maximize2 size={16} />
               </button>
@@ -82,7 +82,7 @@ export const DataTablePreview = ({
       {/* Footer with metadata */}
       {preview.row_count > preview.rows.length && (
         <div className={styles.footer}>
-          {t('chat.dataTable.showingRows', {
+          {t('dataTable.showingRows', {
             shown: preview.rows.length,
             total: preview.row_count,
           })}

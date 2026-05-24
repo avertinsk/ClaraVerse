@@ -78,10 +78,12 @@ if (import.meta.env.DEV) {
   import('@/utils/interactivePromptTestHelper');
 }
 
+import i18n from '@/i18n';
+
 /** Footer links for chat page - Home and Agents */
 const CHAT_FOOTER_LINKS: FooterLink[] = [
-  { href: '/', label: 'Home', icon: Home, ariaLabel: 'Navigate to home' },
-  { href: '/agents', label: 'Agents', icon: Bot, ariaLabel: 'Navigate to agents' },
+  { href: '/', label: i18n.t('chat:sidebar.home'), icon: Home, ariaLabel: i18n.t('chat:sidebar.navigateHome') },
+  { href: '/agents', label: i18n.t('chat:sidebar.agents'), icon: Bot, ariaLabel: i18n.t('chat:sidebar.navigateAgents') },
 ];
 
 export const Chat = () => {
@@ -274,7 +276,7 @@ export const Chat = () => {
   const messages = useMemo(() => chat?.messages || [], [chat?.messages]);
 
   // Update document title based on current state
-  useDocumentTitle(chat?.title ? chat.title : activeNav === 'artifacts' ? 'Artifacts' : 'Chat');
+  useDocumentTitle(chat?.title ? chat.title : activeNav === 'artifacts' ? t('sidebar.artifacts') : t('sidebar.brand'));
 
   // Handle URL-based navigation (like ChatGPT/Claude - fetch from cloud if not local)
   useEffect(() => {
@@ -899,7 +901,7 @@ export const Chat = () => {
                   // Add new tool call
                   const newToolCall = {
                     id: toolId,
-                    name: message.tool_name || 'Unknown tool',
+                    name: message.tool_name || t('assistantMessage.unknownTool'),
                     displayName: message.tool_display_name, // Store display name from backend
                     icon: message.tool_icon, // Store icon from backend
                     status: 'executing' as const,
@@ -922,7 +924,7 @@ export const Chat = () => {
                         ? {
                             ...tool,
                             status: message.status as 'completed' | 'executing',
-                            result: message.result || 'No result provided',
+                            result: message.result || t('assistantMessage.noResult'),
                             query: query || tool.query, // Preserve query from executing state
                             displayName: message.tool_display_name || tool.displayName, // Preserve or update display name
                             icon: message.tool_icon || tool.icon, // Preserve or update icon
@@ -936,12 +938,12 @@ export const Chat = () => {
                     // Tool call completed without seeing executing state - add it directly
                     const newToolCall = {
                       id: toolId,
-                      name: message.tool_name || 'Unknown tool',
+                      name: message.tool_name || t('assistantMessage.unknownTool'),
                       displayName: message.tool_display_name, // Store display name from backend
                       icon: message.tool_icon, // Store icon from backend
                       status: message.status as 'completed' | 'executing',
                       query,
-                      result: message.result || 'No result provided',
+                      result: message.result || t('assistantMessage.noResult'),
                       timestamp: Date.now(),
                     };
                     state.updateMessage(currentChatId, streamingMessage.id, {
@@ -1282,16 +1284,16 @@ export const Chat = () => {
             const streamingId = state.streamingMessageId;
             if (currentChat && streamingId) {
               const statusMap: Record<string, string> = {
-                routing_skill: 'Finding the right skill...',
+                routing_skill: t('status.routing'),
                 skill_matched: message.arguments?.skill_name
-                  ? `Using ${message.arguments.skill_name}`
-                  : 'Skill matched',
-                selecting_tools: 'Selecting tools...',
-                predicting_tools: 'Analyzing which tools to use...',
+                  ? t('status.skillMatched', { skill: message.arguments.skill_name })
+                  : t('status.skillMatched', { skill: '' }).replace(' ', ''),
+                selecting_tools: t('status.selectingTools'),
+                predicting_tools: t('status.predictingTools'),
                 tools_ready: message.arguments?.count
-                  ? `${message.arguments.count} tools ready`
-                  : 'Tools ready',
-                generating: 'Generating response...',
+                  ? t('status.toolsReady', { count: message.arguments.count })
+                  : t('status.toolsReady', { count: 0 }).replace('0', ''),
+                generating: t('status.generating'),
               };
               const statusText = statusMap[message.status] || message.status;
               state.updateMessage(currentChat.id, streamingId, {
@@ -2143,7 +2145,7 @@ export const Chat = () => {
       <Snowfall fadeAfter={5000} />
       {/* Sidebar */}
       <Sidebar
-        brandName="Chat"
+        brandName={t('sidebar.brand')}
         navItems={navItems}
         recentChats={recentChats}
         onNewChat={handleNewChat}
@@ -2159,7 +2161,7 @@ export const Chat = () => {
           <button
             className={styles.floatingMenuButton}
             onClick={() => setIsSidebarOpen(true)}
-            aria-label="Open menu"
+            aria-label={t('sidebar.openMenu')}
           >
             <Menu size={20} />
           </button>
@@ -2176,7 +2178,7 @@ export const Chat = () => {
           onSubmit={handleApiKeySubmit}
           providerName={
             useSettingsStore.getState().customProviders.find(p => p.id === pendingProviderId)
-              ?.name || 'Custom Provider'
+              ?.name || t('command.customProvider')
           }
         />
 
@@ -2185,7 +2187,7 @@ export const Chat = () => {
           <div className={styles.errorMessage} role="alert" aria-live="assertive">
             <AlertCircle size={16} aria-hidden="true" />
             <span className={styles.errorText}>{error}</span>
-            <button className={styles.closeButton} onClick={clearError} aria-label="Dismiss error">
+            <button className={styles.closeButton} onClick={clearError} aria-label={t('chat.dismissError')}>
               <X size={16} />
             </button>
           </div>
@@ -2209,7 +2211,7 @@ export const Chat = () => {
           // Loading state when fetching chat from URL (shared link)
           <div className={styles.urlChatLoading}>
             <CustomSpinner size={48} />
-            <p className={styles.urlChatLoadingText}>Loading conversation...</p>
+            <p className={styles.urlChatLoadingText}>{t('chat.loadingConversation')}</p>
           </div>
         ) : activeNav === 'artifacts' && !chat ? (
           // Artifacts Gallery View
@@ -2233,14 +2235,14 @@ export const Chat = () => {
           <div className={styles.chatListContainer}>
             {/* Header */}
             <div className={styles.chatListHeader}>
-              <h1 className={styles.chatListTitle}>Chats</h1>
+              <h1 className={styles.chatListTitle}>{t('chatList.title')}</h1>
               <button
                 className={styles.newChatButton}
                 onClick={handleNewChat}
-                aria-label="Start new chat"
+                aria-label={t('sidebar.startNewChat')}
               >
                 <Plus size={16} strokeWidth={2} aria-hidden="true" />
-                New chat
+                {t('sidebar.newChat')}
               </button>
             </div>
 
@@ -2250,11 +2252,11 @@ export const Chat = () => {
                 <Search size={18} className={styles.searchIcon} aria-hidden="true" />
                 <input
                   type="search"
-                  placeholder="Search your chats..."
+                  placeholder={t('chatList.searchPlaceholder')}
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
                   className={styles.searchInput}
-                  aria-label="Search chats"
+                  aria-label={t('chatList.searchPlaceholder')}
                 />
               </div>
             </div>
@@ -2264,38 +2266,38 @@ export const Chat = () => {
               {isSelectionMode ? (
                 <>
                   <span className={styles.chatCount} aria-live="polite">
-                    {selectedChatIds.size} selected
+                    {t('chatList.selected', { count: selectedChatIds.size })}
                   </span>
                   <div className={styles.selectionActions}>
-                    <button
-                      className={styles.deleteSelectedButton}
-                      onClick={confirmBulkDelete}
-                      disabled={selectedChatIds.size === 0}
-                      aria-label={`Delete ${selectedChatIds.size} selected chats`}
-                    >
-                      <Trash2 size={16} />
-                      Delete
-                    </button>
-                    <button
-                      className={styles.cancelButton}
-                      onClick={toggleSelectionMode}
-                      aria-label="Cancel selection"
-                    >
-                      Cancel
-                    </button>
+                <button
+                  className={styles.deleteSelectedButton}
+                  onClick={confirmBulkDelete}
+                  disabled={selectedChatIds.size === 0}
+                  aria-label={t('chatList.deleteAria', { count: selectedChatIds.size })}
+                >
+                  <Trash2 size={16} />
+                  {t('chatList.delete')}
+                </button>
+                <button
+                  className={styles.cancelButton}
+                  onClick={toggleSelectionMode}
+                  aria-label={t('chatList.cancelAria')}
+                >
+                  {t('chatList.cancel')}
+                </button>
                   </div>
                 </>
               ) : (
                 <>
                   <span className={styles.chatCount} aria-live="polite">
-                    {chatList.length} {chatList.length === 1 ? 'chat' : 'chats'}
+                    {chatList.length} {chatList.length === 1 ? t('chatList.countSingular') : t('chatList.countPlural')}
                   </span>
                   <button
                     className={styles.selectButton}
                     onClick={toggleSelectionMode}
-                    aria-label="Select chats"
+                    aria-label={t('chatList.selectAria')}
                   >
-                    Select
+                    {t('chatList.select')}
                   </button>
                 </>
               )}
@@ -2313,11 +2315,13 @@ export const Chat = () => {
                     }
                     className={`${styles.chatItem} ${isSelected ? styles.chatItemSelected : ''}`}
                     role="listitem"
-                    aria-label={
-                      isSelectionMode
-                        ? `${isSelected ? 'Deselect' : 'Select'} chat: ${chat.title}`
-                        : `Open chat: ${chat.title}`
-                    }
+                      aria-label={
+                        isSelectionMode
+                          ? isSelected
+                            ? t('chatList.deselectChat', { title: chat.title })
+                            : t('chatList.selectChat', { title: chat.title })
+                          : t('chatList.openChat', { title: chat.title })
+                      }
                   >
                     {isSelectionMode && (
                       <div className={styles.chatItemCheckbox}>
@@ -2331,7 +2335,7 @@ export const Chat = () => {
                     <div className={styles.chatItemContent}>
                       <div className={styles.chatItemTitle}>{chat.title}</div>
                       <div className={styles.chatItemTimestamp}>
-                        Last message {formatRelativeTime(chat.updatedAt)}
+                        {t('chatList.lastMessage', { time: formatRelativeTime(chat.updatedAt) })}
                       </div>
                     </div>
                   </button>
@@ -2343,10 +2347,9 @@ export const Chat = () => {
           // Empty state
           <div className={styles.emptyState}>
             <div className={styles.emptyStateContent}>
-              <div className={styles.emptyStateTitle}>Start a new conversation</div>
+              <div className={styles.emptyStateTitle}>{t('chat.startNew')}</div>
               <p className={styles.emptyStateDescription}>
-                Select "New chat" to begin a conversation, or choose a chat from the list to
-                continue an existing conversation.
+                {t('chat.startNewDesc')}
               </p>
             </div>
           </div>
@@ -2366,7 +2369,7 @@ export const Chat = () => {
                   // New chat - CommandCenter in centered mode with dynamic greeting
                   <CommandCenter
                     mode="centered"
-                    greeting={dynamicGreeting || 'Golden hour thinking'}
+                    greeting={dynamicGreeting || t('command.greeting')}
                     onSendMessage={handleSendMessage}
                     activePrompt={activePrompt}
                     onPromptSubmit={answers => {
@@ -2393,42 +2396,37 @@ export const Chat = () => {
                     }}
                     suggestions={[
                       {
-                        label: 'Write',
+                        label: t('command.suggestion.write'),
                         icon: <PenLine size={16} />,
-                        prompt:
-                          "I'd like to write something. Could you help me get started? Please ask me what kind of content I want to create.",
+                        prompt: t('command.suggestion.writePrompt'),
                         systemInstruction:
                           'You are an expert writing assistant. Help the user draft, edit, and refine content. Start by understanding their goals.',
                       },
                       {
-                        label: 'Learn',
+                        label: t('command.suggestion.learn'),
                         icon: <GraduationCap size={16} />,
-                        prompt:
-                          "I want to learn something new. Please act as a tutor and ask me what topic I'm interested in.",
+                        prompt: t('command.suggestion.learnPrompt'),
                         systemInstruction:
                           "You are a knowledgeable and patient tutor. Explain concepts clearly and adapt to the user's understanding.",
                       },
                       {
-                        label: 'Code',
+                        label: t('command.suggestion.code'),
                         icon: <Code2 size={16} />,
-                        prompt:
-                          "I have a coding task. Please act as a senior developer and ask me about the programming language and the problem I'm solving.",
+                        prompt: t('command.suggestion.codePrompt'),
                         systemInstruction:
                           'You are an expert software engineer. Provide secure, efficient, and idiomatic code solutions.',
                       },
                       {
-                        label: 'Life stuff',
+                        label: t('command.suggestion.life'),
                         icon: <Coffee size={16} />,
-                        prompt:
-                          "I'd like some advice on life. Please act as a supportive coach and ask me what's on my mind.",
+                        prompt: t('command.suggestion.lifePrompt'),
                         systemInstruction:
                           'You are a supportive and empathetic life coach. Listen actively and offer constructive advice.',
                       },
                       {
-                        label: "Clara's choice",
+                        label: t('command.suggestion.clarasChoice'),
                         icon: <Sparkles size={16} />,
-                        prompt:
-                          'Surprise me with something interesting! It could be a fun fact, a short story, or a creative idea.',
+                        prompt: t('command.suggestion.clarasChoicePrompt'),
                         systemInstruction:
                           'You are Clara, a creative and entertaining AI assistant. Be spontaneous and engaging.',
                       },
@@ -2465,7 +2463,7 @@ export const Chat = () => {
                           }}
                           autoFocus
                           className={styles.titleInput}
-                          aria-label="Edit chat title"
+                          aria-label={t('chat.editTitleInput')}
                         />
                       ) : (
                         <button
@@ -2474,25 +2472,25 @@ export const Chat = () => {
                             setIsEditingTitle(true);
                           }}
                           className={styles.titleButton}
-                          aria-label="Click to edit chat title"
+                          aria-label={t('chat.editTitle')}
                         >
                           <span>{isAnimatingTitle ? displayTitle : chatTitle}</span>
                           {chatPrivacyMode === 'cloud' ? (
-                            <Tooltip
-                              content="Encrypted & synced across your devices"
-                              position="bottom"
-                            >
-                              <Cloud
-                                size={14}
-                                aria-label="Synced to cloud"
+                              <Tooltip
+                                content={t('chat.syncedCloud')}
+                                position="bottom"
+                              >
+                                <Cloud
+                                  size={14}
+                                  aria-label={t('chat.syncedIcon')}
                                 className={styles.privacyIcon}
                               />
                             </Tooltip>
                           ) : (
-                            <Tooltip content="Stored only on this device" position="bottom">
+                            <Tooltip content={t('chat.storedLocal')} position="bottom">
                               <Smartphone
                                 size={14}
-                                aria-label="Stored locally"
+                                aria-label={t('chat.localIcon')}
                                 className={styles.privacyIcon}
                               />
                             </Tooltip>
@@ -2568,7 +2566,7 @@ export const Chat = () => {
                     <button
                       className={styles.scrollToBottomButton}
                       onClick={scrollToBottom}
-                      aria-label="Scroll to bottom"
+                      aria-label={t('chat.scrollToBottom')}
                       style={{
                         opacity: showScrollButton ? 1 : 0,
                         pointerEvents: showScrollButton ? 'auto' : 'none',
@@ -2656,14 +2654,19 @@ export const Chat = () => {
           setChatToDelete(null);
         }}
         onConfirm={isSelectionMode ? deleteSelectedChats : confirmDelete}
-        title={isSelectionMode ? 'Delete Chats' : 'Delete Chat'}
+        title={isSelectionMode ? t('chat.deleteChats') : t('chat.deleteChat')}
         message={
           isSelectionMode
-            ? `Are you sure you want to delete ${selectedChatIds.size} ${selectedChatIds.size === 1 ? 'chat' : 'chats'}? This action cannot be undone.`
-            : 'Are you sure you want to delete this chat? This action cannot be undone.'
+            ? t('chat.confirmDeleteBulk', {
+                count: selectedChatIds.size,
+                chatOrChats: selectedChatIds.size === 1
+                  ? t('chatList.countSingular')
+                  : t('chatList.countPlural')
+              })
+            : t('chat.confirmDelete')
         }
-        confirmText="Delete"
-        cancelText="Cancel"
+        confirmText={t('chatList.delete')}
+        cancelText={t('chatList.cancel')}
         variant="danger"
       />
 
@@ -2676,7 +2679,7 @@ export const Chat = () => {
         }}
         onRename={confirmRename}
         currentTitle={chatToRename?.title || ''}
-        title="Rename Chat"
+        title={t('chat.renameChat')}
       />
 
       {/* Mobile Image Gallery Modal */}

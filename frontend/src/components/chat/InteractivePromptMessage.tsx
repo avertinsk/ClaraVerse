@@ -39,10 +39,10 @@ function validateQuestion(
 ): string | null {
   if (question.required) {
     if (!answer || answer.value === '' || answer.value === null || answer.value === undefined) {
-      return t('chat.interactivePrompt.fieldRequired');
+      return t('interactivePrompt.fieldRequired');
     }
     if (Array.isArray(answer.value) && answer.value.length === 0) {
-      return t('chat.interactivePrompt.selectAtLeastOne');
+      return t('interactivePrompt.selectAtLeastOne');
     }
   }
 
@@ -54,22 +54,22 @@ function validateQuestion(
   if (question.type === 'text') {
     const v = String(answer.value);
     if (validation.min_length && v.length < validation.min_length) {
-      return t('chat.interactivePrompt.minChars', { min: validation.min_length });
+      return t('interactivePrompt.minChars', { min: validation.min_length });
     }
     if (validation.max_length && v.length > validation.max_length) {
-      return t('chat.interactivePrompt.maxChars', { max: validation.max_length });
+      return t('interactivePrompt.maxChars', { max: validation.max_length });
     }
     if (validation.pattern && !new RegExp(validation.pattern).test(v)) {
-      return t('chat.interactivePrompt.invalidFormat');
+      return t('interactivePrompt.invalidFormat');
     }
   }
 
   if (question.type === 'number') {
     const n = Number(answer.value);
     if (validation.min !== undefined && n < validation.min)
-      return t('chat.interactivePrompt.minValue', { min: validation.min });
+      return t('interactivePrompt.minValue', { min: validation.min });
     if (validation.max !== undefined && n > validation.max)
-      return t('chat.interactivePrompt.maxValue', { max: validation.max });
+      return t('interactivePrompt.maxValue', { max: validation.max });
   }
 
   return null;
@@ -402,7 +402,7 @@ export function InteractivePromptMessage({
               <input
                 ref={otherInputRef}
                 className={styles.otherInput}
-                placeholder={t('chat.interactivePrompt.somethingElse')}
+                placeholder={t('interactivePrompt.somethingElse')}
                 value={currentAnswer?.otherText || ''}
                 onChange={e => setAnswer(q.id, e.target.value, true, e.target.value)}
                 onKeyDown={handleOtherKeyDown}
@@ -410,7 +410,7 @@ export function InteractivePromptMessage({
               />
             ) : (
               <span className={styles.optionLabel} style={{ opacity: 0.5 }}>
-                {t('chat.interactivePrompt.somethingElse')}
+                {t('interactivePrompt.somethingElse')}
               </span>
             )}
           </div>
@@ -461,7 +461,7 @@ export function InteractivePromptMessage({
               <input
                 ref={otherInputRef}
                 className={styles.otherInput}
-                placeholder={t('chat.interactivePrompt.somethingElse')}
+                placeholder={t('interactivePrompt.somethingElse')}
                 value={currentAnswer?.otherText || ''}
                 onChange={e => {
                   const text = e.target.value;
@@ -477,7 +477,7 @@ export function InteractivePromptMessage({
               />
             ) : (
               <span className={styles.optionLabel} style={{ opacity: 0.5 }}>
-                {t('chat.interactivePrompt.somethingElse')}
+                {t('interactivePrompt.somethingElse')}
               </span>
             )}
           </div>
@@ -496,7 +496,7 @@ export function InteractivePromptMessage({
           ref={textInputRef}
           type={q.type === 'number' ? 'number' : 'text'}
           className={`${styles.textInput} ${hasError ? styles.textInputError : ''}`}
-          placeholder={q.placeholder || t('chat.interactivePrompt.typeAnswer')}
+          placeholder={q.placeholder || t('interactivePrompt.typeAnswer')}
           value={val}
           onChange={e => {
             const v = q.type === 'number' ? e.target.valueAsNumber || 0 : e.target.value;
@@ -562,15 +562,15 @@ export function InteractivePromptMessage({
     if (q.type === 'select') {
       return (
         <>
-          <span>{t('chat.interactivePrompt.keyboard.navigate')}</span>
+          <span>{t('interactivePrompt.keyboard.navigate')}</span>
           <span className={styles.hintSep}>·</span>
-          <span>{t('chat.interactivePrompt.keyboard.select')}</span>
+          <span>{t('interactivePrompt.keyboard.select')}</span>
           <span className={styles.hintSep}>·</span>
-          <span>{t('chat.interactivePrompt.keyboard.prevNext')}</span>
+          <span>{t('interactivePrompt.keyboard.prevNext')}</span>
           {prompt.allowSkip && (
             <>
               <span className={styles.hintSep}>·</span>
-              <span>{t('chat.interactivePrompt.keyboard.skip')}</span>
+              <span>{t('interactivePrompt.keyboard.skip')}</span>
             </>
           )}
         </>
@@ -579,17 +579,17 @@ export function InteractivePromptMessage({
     if (q.type === 'multi-select') {
       return (
         <>
-          <span>{t('chat.interactivePrompt.keyboard.navigate')}</span>
+          <span>{t('interactivePrompt.keyboard.navigate')}</span>
           <span className={styles.hintSep}>·</span>
-          <span>{t('chat.interactivePrompt.keyboard.toggle')}</span>
+          <span>{t('interactivePrompt.keyboard.toggle')}</span>
           <span className={styles.hintSep}>·</span>
-          <span>{t('chat.interactivePrompt.keyboard.prevNext')}</span>
+          <span>{t('interactivePrompt.keyboard.prevNext')}</span>
           <span className={styles.hintSep}>·</span>
-          <span>{t('chat.interactivePrompt.keyboard.submit')}</span>
+          <span>{t('interactivePrompt.keyboard.submit')}</span>
           {prompt.allowSkip && (
             <>
               <span className={styles.hintSep}>·</span>
-              <span>{t('chat.interactivePrompt.keyboard.skip')}</span>
+              <span>{t('interactivePrompt.keyboard.skip')}</span>
             </>
           )}
         </>
@@ -598,11 +598,11 @@ export function InteractivePromptMessage({
     if (q.type === 'text' || q.type === 'number') {
       return (
         <>
-          <span>{t('chat.interactivePrompt.keyboard.continue')}</span>
+          <span>{t('interactivePrompt.keyboard.continue')}</span>
           {prompt.allowSkip && (
             <>
               <span className={styles.hintSep}>·</span>
-              <span>{t('chat.interactivePrompt.keyboard.skip')}</span>
+              <span>{t('interactivePrompt.keyboard.skip')}</span>
             </>
           )}
         </>
@@ -611,13 +611,13 @@ export function InteractivePromptMessage({
     if (q.type === 'checkbox') {
       return (
         <>
-          <span>{t('chat.interactivePrompt.keyboard.toggleSpace')}</span>
+          <span>{t('interactivePrompt.keyboard.toggleSpace')}</span>
           <span className={styles.hintSep}>·</span>
-          <span>{t('chat.interactivePrompt.keyboard.prevNext')}</span>
+          <span>{t('interactivePrompt.keyboard.prevNext')}</span>
           {prompt.allowSkip && (
             <>
               <span className={styles.hintSep}>·</span>
-              <span>{t('chat.interactivePrompt.keyboard.skip')}</span>
+              <span>{t('interactivePrompt.keyboard.skip')}</span>
             </>
           )}
         </>
@@ -654,12 +654,12 @@ export function InteractivePromptMessage({
             className={styles.navButton}
             onClick={goPrev}
             disabled={isFirst || isSubmitting}
-            aria-label={t('chat.interactivePrompt.prevQuestion')}
+            aria-label={t('interactivePrompt.prevQuestion')}
           >
             <ChevronLeft size={16} />
           </button>
           <span className={styles.counter}>
-            {t('chat.interactivePrompt.questionCounter', {
+            {t('interactivePrompt.questionCounter', {
               current: currentIndex + 1,
               total: totalQuestions,
             })}
@@ -670,8 +670,8 @@ export function InteractivePromptMessage({
             disabled={isSubmitting}
             aria-label={
               isLast
-                ? t('chat.interactivePrompt.submitAnswers')
-                : t('chat.interactivePrompt.nextQuestion')
+                ? t('interactivePrompt.submitAnswers')
+                : t('interactivePrompt.nextQuestion')
             }
           >
             {isLast ? <ArrowRight size={16} /> : <ChevronRight size={16} />}
@@ -681,7 +681,7 @@ export function InteractivePromptMessage({
               className={styles.closeButton}
               onClick={onSkip}
               disabled={isSubmitting}
-              aria-label={t('chat.interactivePrompt.skipPrompt')}
+              aria-label={t('interactivePrompt.skipPrompt')}
             >
               <X size={16} />
             </button>
@@ -715,7 +715,7 @@ export function InteractivePromptMessage({
         <div className={styles.footerLeft}>
           {currentQuestion.type === 'multi-select' && multiSelectCount > 0 && (
             <span className={styles.selectedCount}>
-              {t('chat.interactivePrompt.selectedCount', { count: multiSelectCount })}
+              {t('interactivePrompt.selectedCount', { count: multiSelectCount })}
             </span>
           )}
           {errors[currentQuestion.id] && (
@@ -725,7 +725,7 @@ export function InteractivePromptMessage({
         <div className={styles.footerRight}>
           {prompt.allowSkip && (
             <button className={styles.skipButton} onClick={onSkip} disabled={isSubmitting}>
-              {t('chat.interactivePrompt.skip')}
+              {t('interactivePrompt.skip')}
             </button>
           )}
           {currentQuestion.type === 'multi-select' && (
@@ -735,8 +735,8 @@ export function InteractivePromptMessage({
               disabled={isSubmitting}
               aria-label={
                 isLast
-                  ? t('chat.interactivePrompt.submitAnswers')
-                  : t('chat.interactivePrompt.nextQuestion')
+                  ? t('interactivePrompt.submitAnswers')
+                  : t('interactivePrompt.nextQuestion')
               }
             >
               <ArrowRight size={14} />

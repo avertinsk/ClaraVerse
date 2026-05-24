@@ -281,6 +281,9 @@ func registerBuiltInTools(r *Registry) {
 	// Register Microsoft Teams tools
 	_ = r.Register(NewTeamsTool())
 
+	// Register document conversion tool (Docling)
+	_ = r.Register(NewConvertDocumentTool())
+
 	// Register GitLab tools
 	_ = r.Register(NewGitLabProjectsTool())
 	_ = r.Register(NewGitLabIssuesTool())

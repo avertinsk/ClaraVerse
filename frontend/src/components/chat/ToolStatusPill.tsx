@@ -164,7 +164,7 @@ export const ToolStatusPill = memo(function ToolStatusPill({
                 </div>
                 <span className={styles.collapsedLabel}>
                   +{hiddenCount}{' '}
-                  {hiddenCount === 1 ? t('chat.toolStatus.step') : t('chat.toolStatus.steps')}
+                  {hiddenCount === 1 ? t('toolStatus.step') : t('toolStatus.steps')}
                 </span>
               </motion.div>
             )}
@@ -333,7 +333,7 @@ export const ToolStatusPill = memo(function ToolStatusPill({
                       <CheckCircle2 size={14} />
                     </div>
                   </div>
-                  <span className={styles.completedStepText}>{t('chat.toolStatus.done')}</span>
+                  <span className={styles.completedStepText}>{t('toolStatus.done')}</span>
                 </div>
               </motion.div>
             )}
