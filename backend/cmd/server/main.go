@@ -533,6 +533,38 @@ func main() {
 	// Wire health reporter into audio service
 	initAudioHealthReporter()
 
+	// Initialize Docling service (for OCR document recognition)
+	doclingURL := os.Getenv("DOCLING_URL")
+	if doclingURL == "" {
+		doclingURL = "http://docling:5001"
+	}
+	if os.Getenv("DOCLING_ENABLED") != "false" {
+		services.InitDoclingService(doclingURL)
+	} else {
+		log.Println("[DOCLING] Explicitly disabled via DOCLING_ENABLED=false")
+	}
+
+	// Initialize Qdrant vector database (for semantic document search)
+	qdrantURL := os.Getenv("QDRANT_URL")
+	if qdrantURL == "" {
+		qdrantURL = "http://qdrant:6333"
+	}
+	services.InitQdrantService(qdrantURL)
+
+	// Initialize embedding service (via Ollama)
+	ollamaBaseURL := os.Getenv("OLLAMA_BASE_URL")
+	if ollamaBaseURL == "" {
+		ollamaBaseURL = "http://host.docker.internal:11434"
+	}
+	embeddingModel := os.Getenv("EMBEDDING_MODEL")
+	if embeddingModel == "" {
+		embeddingModel = "nomic-embed-text:v1.5"
+	}
+	services.InitEmbeddingService(ollamaBaseURL, embeddingModel)
+
+	// Register the search_documents AI tool
+	services.RegisterSearchTool()
+
 	// NOTE: providers.json file watcher removed - all provider management now in MySQL
 
 	// Start background model refresh job (refreshes from database)

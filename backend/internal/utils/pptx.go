@@ -133,7 +133,7 @@ func ExtractPPTXText(data []byte) (*PPTXMetadata, error) {
 		extractedText = extractedText[:MaxExtractedTextSize] + "\n... [Content truncated]"
 	}
 
-	wordCount := countWords(extractedText)
+	wordCount := 	CountWords(extractedText)
 
 	return &PPTXMetadata{
 		SlideCount: slideCount,

@@ -8,6 +8,7 @@ import (
 	"claraverse/internal/utils"
 	"encoding/csv"
 	"fmt"
+	"hash/fnv"
 	"io"
 	"log"
 	"mime/multipart"
@@ -281,15 +282,47 @@ func (h *UploadHandler) handlePDFUpload(c *fiber.Ctx, fileID, userID, conversati
 		})
 	}
 
-	// Extract text from PDF (in memory)
+	// Extract text from PDF (in memory) — fallback to Docling OCR if needed
 	metadata, err := utils.ExtractPDFText(fileData)
-	if err != nil {
-		// Clean up temp file before returning
+	if err != nil || metadata.WordCount < 50 {
+		if err != nil {
+			log.Printf("⚠️ [UPLOAD] Primary PDF extraction failed: %v — trying Docling OCR fallback", err)
+		} else {
+			log.Printf("⚠️ [UPLOAD] Primary PDF extraction returned only %d words — trying Docling OCR fallback", metadata.WordCount)
+		}
+
+		doclingSvc := services.GetDoclingService()
+		if doclingSvc != nil && doclingSvc.IsAvailable() {
+			if doclingResult, dErr := doclingSvc.ConvertPDF(fileData); dErr == nil && doclingResult.Markdown != "" {
+				wordCount := utils.CountWords(doclingResult.Markdown)
+				pageCount := 1
+				// Clean up temp file before proceeding
+				security.SecureDeleteFile(tempEncryptedPath)
+				log.Printf("✅ [UPLOAD] Docling OCR fallback succeeded: %d words", wordCount)
+				metadata = &utils.PDFMetadata{
+					PageCount: pageCount,
+					WordCount: wordCount,
+					Text:      doclingResult.Markdown,
+				}
+				goto afterExtraction
+			} else {
+				log.Printf("❌ [UPLOAD] Docling fallback also failed: %v", dErr)
+			}
+		} else {
+			log.Printf("ℹ️ [UPLOAD] Docling service not available — skipping OCR fallback")
+		}
+
+		// Both primary and fallback failed
 		security.SecureDeleteFile(tempEncryptedPath)
-		log.Printf("❌ [UPLOAD] Failed to extract PDF text: %v", err)
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Failed to extract text from PDF. File may be corrupted or scanned.",
 		})
+	}
+
+afterExtraction:
+	// Index in Qdrant for semantic search (async — don't block upload)
+	if metadata != nil && metadata.Text != "" {
+		go indexDocumentInQdrant(metadata.Text, fileHeader.Filename)
 	}
 
 	// Delete encrypted file immediately (max 3 seconds on disk)
@@ -298,7 +331,7 @@ func (h *UploadHandler) handlePDFUpload(c *fiber.Ctx, fileID, userID, conversati
 		// Continue anyway - file is encrypted
 	}
 
-	log.Printf("🗑️  [UPLOAD] Encrypted temp file deleted (file was on disk < 3 seconds)")
+	log.Printf("🗑️ [UPLOAD] Encrypted temp file deleted (file was on disk < 3 seconds)")
 
 	// Store in memory cache only
 	cachedFile := &filecache.CachedFile{
@@ -915,4 +948,54 @@ func (h *UploadHandler) Delete(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{
 		"message": "File deleted successfully",
 	})
+}
+
+func indexDocumentInQdrant(text, filename string) {
+	embedSvc := services.GetEmbeddingService()
+	qdrantSvc := services.GetQdrantService()
+	if embedSvc == nil || qdrantSvc == nil || !embedSvc.IsAvailable() || !qdrantSvc.IsAvailable() {
+		log.Printf("ℹ️ [QDRANT] Skipping index — services not ready")
+		return
+	}
+
+	chunks := services.ChunkDocument(text, filename)
+	if len(chunks) == 0 {
+		return
+	}
+
+	if err := qdrantSvc.EnsureCollection("documents", embedSvc.VectorSize()); err != nil {
+		log.Printf("⚠️ [QDRANT] Failed to create collection: %v", err)
+		return
+	}
+
+	log.Printf("📊 [QDRANT] Indexing %d chunks from %s", len(chunks), filename)
+
+	for _, chunk := range chunks {
+		vec, err := embedSvc.EmbedDocument(chunk.Text)
+		if err != nil {
+			log.Printf("⚠️ [QDRANT] Embedding failed for chunk %d: %v", chunk.Index, err)
+			continue
+		}
+		// Generate unique uint64 ID from filename + chunk index
+		h := fnv.New64a()
+		h.Write([]byte(filename))
+		h.Write([]byte{0})
+		h.Write([]byte(fmt.Sprintf("%d", chunk.Index)))
+		pointID := h.Sum64()
+
+		point := services.QdrantPoint{
+			ID:     pointID,
+			Vector: vec,
+			Payload: map[string]interface{}{
+				"text":        chunk.Text,
+				"source":      chunk.Source,
+				"chunk_index": chunk.Index,
+				"word_count":  chunk.WordCount,
+			},
+		}
+		if err := qdrantSvc.UpsertPoints("documents", []services.QdrantPoint{point}); err != nil {
+			log.Printf("⚠️ [QDRANT] Upsert failed for chunk %d: %v", chunk.Index, err)
+		}
+	}
+	log.Printf("✅ [QDRANT] Finished indexing %s", filename)
 }

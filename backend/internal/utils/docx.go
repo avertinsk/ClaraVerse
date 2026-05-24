@@ -91,7 +91,7 @@ func ExtractDOCXText(data []byte) (*DOCXMetadata, error) {
 		extractedText = extractedText[:MaxExtractedTextSize] + "\n... [Content truncated]"
 	}
 
-	wordCount := countWords(extractedText)
+	wordCount := 	CountWords(extractedText)
 
 	// Estimate page count (roughly 500 words per page)
 	pageCount := (wordCount / 500) + 1
