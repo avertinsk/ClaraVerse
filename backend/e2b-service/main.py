@@ -1,50 +1,56 @@
 #!/usr/bin/env python3
 """
-E2B Code Executor Microservice for ClaraVerse
-Provides REST API for executing Python code in E2B sandboxes
+Local Python Code Executor for ClaraVerse
+Replaces E2B cloud sandbox with local subprocess execution in isolated temp directories.
 """
 
 import os
+import re
+import sys
+import io
 import base64
+import json
+import shutil
+import subprocess
+import tempfile
+import time
+import logging
+import glob as glob_module
 from typing import List, Optional, Dict, Any
+from pathlib import Path
+
 from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from e2b_code_interpreter import Sandbox
-import logging
 
-# Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# E2B API key: optional at startup, can be provided per-request via X-E2B-API-Key header
-E2B_API_KEY = os.getenv("E2B_API_KEY", "")
-
 app = FastAPI(
-    title="E2B Code Executor Service",
-    description="Microservice for executing Python code in isolated E2B sandboxes",
+    title="Local Python Executor",
+    description="Executes Python code locally in isolated temp directories",
     version="1.0.0"
 )
 
-# CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, restrict to backend service
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 
-# Request/Response Models
+# Request/Response Models (identical to original E2B interface)
+
 class ExecuteRequest(BaseModel):
     code: str
-    timeout: Optional[int] = 30  # seconds
+    timeout: Optional[int] = 30
 
 
 class PlotResult(BaseModel):
-    format: str  # "png", "svg", etc.
-    data: str  # base64 encoded
+    format: str
+    data: str
 
 
 class ExecuteResponse(BaseModel):
@@ -56,22 +62,16 @@ class ExecuteResponse(BaseModel):
     execution_time: Optional[float] = None
 
 
-class FileUploadRequest(BaseModel):
-    code: str
-    timeout: Optional[int] = 30
-
-
-# Advanced execution models (with dependencies and output files)
 class AdvancedExecuteRequest(BaseModel):
     code: str
     timeout: Optional[int] = 30
-    dependencies: List[str] = []  # pip packages to install
-    output_files: List[str] = []  # files to retrieve after execution
+    dependencies: List[str] = []
+    output_files: List[str] = []
 
 
 class FileResult(BaseModel):
     filename: str
-    data: str  # base64 encoded
+    data: str
     size: int
 
 
@@ -86,396 +86,373 @@ class AdvancedExecuteResponse(BaseModel):
     install_output: str = ""
 
 
-def get_api_key(request: Request) -> str:
-    """Get E2B API key from request header or fall back to env var."""
-    key = request.headers.get("X-E2B-API-Key", "").strip()
-    if key:
-        return key
-    if E2B_API_KEY:
-        return E2B_API_KEY
-    return ""
+# ---------------------------------------------------------------------------
+# Local execution helpers
+# ---------------------------------------------------------------------------
 
+def _execute_in_subprocess(
+    code: str,
+    timeout: int,
+    workdir: Path,
+    env: Optional[Dict[str, str]] = None,
+) -> tuple[str, str, Optional[str], List[PlotResult]]:
+    """Run Python code in workdir, return (stdout, stderr, error, plots)."""
+    code_path = workdir / "code.py"
 
-def create_sandbox(api_key: str):
-    """Create an E2B sandbox with the given API key."""
-    if not api_key:
-        raise HTTPException(
-            status_code=400,
-            detail="E2B API key not configured. Set it in Admin > Code Execution or via E2B_API_KEY env var."
+    # Inject plot capture: redirect matplotlib/pyplot to savefig before show
+    # so any generated plots are preserved as PNG in workdir.
+    preamble = """\
+import sys, os, base64, json
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
+_saved_plot_paths = []
+
+# -- intercept matplotlib --
+try:
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as _plt
+    _original_show = _plt.show
+    _plot_counter = [0]
+    def _capture_show(*args, **kwargs):
+        path = os.path.join(os.getcwd(), f"_plot_{_plot_counter[0]:04d}.png")
+        _plt.savefig(path, dpi=100, bbox_inches='tight')
+        _plt.close()
+        _saved_plot_paths.append(path)
+        _plot_counter[0] += 1
+    _plt.show = _capture_show
+except ImportError:
+    pass
+
+# -- intercept PIL Image.show() --
+try:
+    from PIL import Image as _PILImage
+    _original_image_show = _PILImage.Image.show
+    _plot_counter_pil = [0]
+    def _capture_pil_show(self):
+        path = os.path.join(os.getcwd(), f"_plot_pil_{_plot_counter_pil[0]:04d}.png")
+        self.save(path)
+        _saved_plot_paths.append(path)
+        _plot_counter_pil[0] += 1
+    _PILImage.Image.show = _capture_pil_show
+except ImportError:
+    pass
+
+# -- intercept plotnine --
+try:
+    import plotnine as _p9
+    _original_save = _p9.ggplot.save
+    _plot_counter_p9 = [0]
+    def _capture_plotnine_save(self, filename=None, **kwargs):
+        if filename is None:
+            path = os.path.join(os.getcwd(), f"_plot_p9_{_plot_counter_p9[0]:04d}.png")
+            _original_save(self, path, **kwargs)
+            _saved_plot_paths.append(path)
+            _plot_counter_p9[0] += 1
+        else:
+            _original_save(self, filename, **kwargs)
+    _p9.ggplot.save = _capture_plotnine_save
+except ImportError:
+    pass
+
+# -- intercept altair --
+try:
+    import altair as _alt
+    _original_alt_save = _alt.Chart.save
+    _plot_counter_alt = [0]
+    def _capture_altair_save(self, fp, **kwargs):
+        _original_alt_save(self, fp, **kwargs)
+        path = os.path.join(os.getcwd(), f"_plot_alt_{_plot_counter_alt[0]:04d}.png")
+        _saved_plot_paths.append(path)
+        _plot_counter_alt[0] += 1
+    _alt.Chart.save = _capture_altair_save
+except ImportError:
+    pass
+
+# -- intercept bokeh --
+try:
+    from bokeh.io import export_png as _bokeh_export
+    import bokeh.plotting as _bokeh_plot
+    _original_bokeh_show = _bokeh_plot.show
+    _plot_counter_bk = [0]
+    def _capture_bokeh_show(obj, **kwargs):
+        if hasattr(obj, 'figure'):
+            fig = obj.figure
+        else:
+            fig = obj
+        path = os.path.join(os.getcwd(), f"_plot_bk_{_plot_counter_bk[0]:04d}.png")
+        _bokeh_export(fig, filename=path)
+        _saved_plot_paths.append(path)
+        _plot_counter_bk[0] += 1
+    _bokeh_plot.show = _capture_bokeh_show
+except ImportError:
+    pass
+
+# -- intercept seaborn (uses matplotlib under the hood, already handled) --
+"""
+
+    # Epilogue: dump plot paths as JSON so the parent can read them
+    epilogue = """\
+_plot_data = []
+for _p in _saved_plot_paths:
+    if os.path.exists(_p):
+        with open(_p, 'rb') as _fh:
+            _b64 = base64.b64encode(_fh.read()).decode('utf-8')
+        _plot_data.append({"format": _p.rsplit('.', 1)[-1], "data": _b64})
+print("__PLOTS__" + json.dumps(_plot_data))
+"""
+
+    full_code = preamble + "\n# --- user code ---\n" + code + "\n# --- end user code ---\n" + epilogue
+
+    code_path.write_text(full_code, encoding="utf-8")
+
+    merged_env = os.environ.copy()
+    if env:
+        merged_env.update(env)
+    merged_env.setdefault("PYTHONUNBUFFERED", "1")
+    merged_env.setdefault("PYTHONDONTWRITEBYTECODE", "1")
+    merged_env.setdefault("MPLBACKEND", "Agg")
+
+    start = time.perf_counter()
+    try:
+        proc = subprocess.run(
+            [sys.executable, str(code_path)],
+            cwd=str(workdir),
+            env=merged_env,
+            capture_output=True,
+            text=True,
+            timeout=timeout,
         )
-    return Sandbox.create(api_key=api_key)
+        elapsed = time.perf_counter() - start
+        stdout = proc.stdout or ""
+        stderr = proc.stderr or ""
+    except subprocess.TimeoutExpired:
+        elapsed = time.perf_counter() - start
+        return (
+            "",
+            "",
+            f"Execution timed out after {timeout} seconds",
+            [],
+        )
+    except Exception as exc:
+        elapsed = time.perf_counter() - start
+        return ("", "", str(exc), [])
+
+    # Separate plot JSON from stdout
+    plots: List[PlotResult] = []
+    cleaned_stdout = stdout
+    match = re.search(r'__PLOTS__(\[.*\])\s*$', stdout, re.DOTALL)
+    if match:
+        try:
+            plot_list = json.loads(match.group(1))
+            for p in plot_list:
+                plots.append(PlotResult(format=p.get("format", "png"), data=p.get("data", "")))
+        except (json.JSONDecodeError, KeyError):
+            pass
+        cleaned_stdout = stdout[: match.start()].rstrip()
+
+    # Also scan workdir for any PNG files not already captured
+    existing_paths = {p.data[:50] for p in plots}  # rough dedup
+    for png_path in sorted(glob_module.glob(str(workdir / "_plot_*.png"))):
+        with open(png_path, "rb") as fh:
+            b64 = base64.b64encode(fh.read()).decode("utf-8")
+        if b64[:50] not in existing_paths:
+            plots.append(PlotResult(format="png", data=b64))
+            existing_paths.add(b64[:50])
+
+    # If proc returned non-zero but we still have stdout, treat as partial success
+    error: Optional[str] = None
+    if proc.returncode != 0:
+        error = f"Process exited with code {proc.returncode}"
+        if stderr:
+            error += f": {stderr.strip()[:500]}"
+
+    return cleaned_stdout, stderr, error, plots
 
 
-# Health check endpoint
+def _detect_files(workdir: Path, requested: List[str]) -> List[FileResult]:
+    """Collect output files from workdir."""
+    results: List[FileResult] = []
+    seen = set()
+
+    for pattern in requested:
+        for path in sorted(glob_module.glob(str(workdir / pattern))):
+            p = Path(path)
+            if not p.is_file():
+                continue
+            if p.name in seen:
+                continue
+            seen.add(p.name)
+            data = p.read_bytes()
+            results.append(FileResult(
+                filename=p.name,
+                data=base64.b64encode(data).decode("utf-8"),
+                size=len(data),
+            ))
+
+    # Also collect auto-detected PNG/SVG files not in requested
+    for ext in ("*.png", "*.svg", "*.jpg", "*.jpeg", "*.gif", "*.csv", "*.json", "*.txt", "*.html", "*.pdf"):
+        for path in sorted(glob_module.glob(str(workdir / ext))):
+            p = Path(path)
+            if not p.is_file() or p.name.startswith("_plot_") or p.name == "code.py":
+                continue
+            if p.name in seen:
+                continue
+            seen.add(p.name)
+            data = p.read_bytes()
+            results.append(FileResult(
+                filename=p.name,
+                data=base64.b64encode(data).decode("utf-8"),
+                size=len(data),
+            ))
+
+    return results
+
+
+# ---------------------------------------------------------------------------
+# Endpoints
+# ---------------------------------------------------------------------------
+
 @app.get("/health")
-async def health_check(request: Request):
-    """Health check endpoint"""
-    key = get_api_key(request)
+async def health_check():
     return {
         "status": "healthy",
-        "service": "e2b-executor",
-        "e2b_api_key_set": bool(key)
+        "service": "local-python-executor",
+        "mode": "local",
     }
 
 
-# Execute Python code endpoint
 @app.post("/execute", response_model=ExecuteResponse)
-async def execute_code(request: ExecuteRequest, raw_request: Request):
-    """
-    Execute Python code in an E2B sandbox
-
-    Returns:
-        - stdout: Standard output
-        - stderr: Standard error
-        - plots: List of generated plots (base64 encoded)
-        - error: Error message if execution failed
-    """
-    logger.info(f"Executing code (length: {len(request.code)} chars)")
-    api_key = get_api_key(raw_request)
-
+async def execute_code(request: ExecuteRequest):
+    logger.info(f"Executing code (length: {len(request.code)} chars, timeout: {request.timeout}s)")
+    workdir = None
     try:
-        # Create sandbox
-        with create_sandbox(api_key) as sandbox:
-            # Run code
-            execution = sandbox.run_code(request.code)
-
-            # Collect stdout
-            stdout = ""
-            if execution.logs.stdout:
-                stdout = "\n".join(execution.logs.stdout)
-
-            # Collect stderr
-            stderr = ""
-            if execution.logs.stderr:
-                stderr = "\n".join(execution.logs.stderr)
-
-            # Check for execution errors
-            error_msg = None
-            if execution.error:
-                error_msg = str(execution.error)
-                logger.warning(f"Execution error: {error_msg}")
-
-            # Collect plots and text results
-            plots = []
-            result_texts = []
-            for i, result in enumerate(execution.results):
-                if hasattr(result, 'png') and result.png:
-                    plots.append(PlotResult(
-                        format="png",
-                        data=result.png  # Already base64 encoded
-                    ))
-                    logger.info(f"Found plot {i}: {len(result.png)} bytes (base64)")
-                elif hasattr(result, 'text') and result.text:
-                    result_texts.append(result.text)
-                    logger.info(f"Found text result {i}: {result.text[:100]}...")
-
-            # Append result texts to stdout (captures last expression like Jupyter)
-            if result_texts:
-                result_output = "\n".join(result_texts)
-                if stdout:
-                    stdout = stdout + "\n" + result_output
-                else:
-                    stdout = result_output
-
-            response = ExecuteResponse(
-                success=error_msg is None,
-                stdout=stdout,
-                stderr=stderr,
-                error=error_msg,
-                plots=plots
-            )
-
-            logger.info(f"Execution completed: success={response.success}, plots={len(plots)}")
-            return response
-
-    except Exception as e:
-        logger.error(f"Sandbox execution failed: {str(e)}")
-        raise HTTPException(
-            status_code=500,
-            detail=f"Sandbox execution failed: {str(e)}"
+        workdir = Path(tempfile.mkdtemp(prefix="claraverse_exec_"))
+        stdout, stderr, error, plots = _execute_in_subprocess(
+            request.code, request.timeout, workdir
         )
+        elapsed = time.perf_counter()
+        return ExecuteResponse(
+            success=error is None,
+            stdout=stdout,
+            stderr=stderr,
+            error=error,
+            plots=plots,
+        )
+    except Exception as e:
+        logger.error(f"Execution failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Execution failed: {str(e)}")
+    finally:
+        if workdir and workdir.exists():
+            shutil.rmtree(workdir, ignore_errors=True)
 
 
-# Execute with file upload endpoint
 @app.post("/execute-with-files", response_model=ExecuteResponse)
 async def execute_with_files(
-    raw_request: Request,
     code: str = Form(...),
     files: List[UploadFile] = File(...),
-    timeout: int = Form(30)
+    timeout: int = Form(30),
 ):
-    """
-    Execute Python code with uploaded files
-
-    Files are uploaded to the sandbox and can be accessed by filename in the code
-    """
-    logger.info(f"Executing code with {len(files)} files")
-    api_key = get_api_key(raw_request)
-
+    logger.info(f"Executing code with {len(files)} files (timeout: {timeout}s)")
+    workdir = None
     try:
-        # Create sandbox
-        with create_sandbox(api_key) as sandbox:
-            # Upload files to sandbox
-            for file in files:
-                content = await file.read()
-                sandbox.files.write(file.filename, content)
-                logger.info(f"Uploaded file: {file.filename} ({len(content)} bytes)")
+        workdir = Path(tempfile.mkdtemp(prefix="claraverse_exec_"))
 
-            # Run code
-            execution = sandbox.run_code(code)
+        # Write uploaded files to workdir
+        for file in files:
+            content = await file.read()
+            dest = workdir / (file.filename or "upload.bin")
+            dest.write_bytes(content)
+            logger.info(f"Uploaded file: {dest.name} ({len(content)} bytes)")
 
-            # Collect stdout
-            stdout = ""
-            if execution.logs.stdout:
-                stdout = "\n".join(execution.logs.stdout)
-
-            # Collect stderr
-            stderr = ""
-            if execution.logs.stderr:
-                stderr = "\n".join(execution.logs.stderr)
-
-            # Check for errors
-            error_msg = None
-            if execution.error:
-                error_msg = str(execution.error)
-                logger.warning(f"Execution error: {error_msg}")
-
-            # Collect plots
-            plots = []
-            for i, result in enumerate(execution.results):
-                if hasattr(result, 'png') and result.png:
-                    plots.append(PlotResult(
-                        format="png",
-                        data=result.png
-                    ))
-                    logger.info(f"Found plot {i}")
-
-            response = ExecuteResponse(
-                success=error_msg is None,
-                stdout=stdout,
-                stderr=stderr,
-                error=error_msg,
-                plots=plots
-            )
-
-            logger.info(f"Execution with files completed: success={response.success}")
-            return response
-
-    except Exception as e:
-        logger.error(f"Sandbox execution failed: {str(e)}")
-        raise HTTPException(
-            status_code=500,
-            detail=f"Sandbox execution failed: {str(e)}"
+        stdout, stderr, error, plots = _execute_in_subprocess(
+            code, timeout, workdir
         )
+        return ExecuteResponse(
+            success=error is None,
+            stdout=stdout,
+            stderr=stderr,
+            error=error,
+            plots=plots,
+        )
+    except Exception as e:
+        logger.error(f"Execution with files failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Execution failed: {str(e)}")
+    finally:
+        if workdir and workdir.exists():
+            shutil.rmtree(workdir, ignore_errors=True)
 
 
-# Execute with dependencies and output file retrieval
 @app.post("/execute-advanced", response_model=AdvancedExecuteResponse)
-async def execute_advanced(request: AdvancedExecuteRequest, raw_request: Request):
-    """
-    Execute Python code with pip dependencies and output file retrieval.
-
-    - Install pip packages before running code
-    - Run user code (max 30 seconds)
-    - Auto-detect and retrieve ALL generated files (plus any explicitly specified)
-    """
-    import time
-
-    logger.info(f"Advanced execution: code={len(request.code)} chars, deps={request.dependencies}, output_files={request.output_files}")
-    api_key = get_api_key(raw_request)
+async def execute_advanced(request: AdvancedExecuteRequest):
+    logger.info(
+        f"Advanced execution: code={len(request.code)} chars, "
+        f"deps={request.dependencies}, output_files={request.output_files}, "
+        f"timeout={request.timeout}s"
+    )
+    workdir = None
+    install_output = ""
+    start_time = time.perf_counter()
 
     try:
-        with create_sandbox(api_key) as sandbox:
-            start_time = time.time()
-            install_output = ""
+        workdir = Path(tempfile.mkdtemp(prefix="claraverse_exec_"))
 
-            # 1. Install dependencies (if any)
-            if request.dependencies:
-                deps_str = " ".join(request.dependencies)
-                logger.info(f"Installing dependencies: {deps_str}")
-                try:
-                    result = sandbox.commands.run(f"pip install -q {deps_str}", timeout=60)
-                    install_output = (result.stdout or "") + (result.stderr or "")
-                    logger.info(f"Dependencies installed: {install_output[:200]}")
-                except Exception as e:
-                    logger.error(f"Dependency installation failed: {e}")
-                    return AdvancedExecuteResponse(
-                        success=False,
-                        stdout="",
-                        stderr="",
-                        error=f"Failed to install dependencies: {str(e)}",
-                        plots=[],
-                        files=[],
-                        execution_time=time.time() - start_time,
-                        install_output=str(e)
-                    )
-
-            # 2. List files BEFORE execution to detect new files later
-            files_before = set()
+        # Install dependencies
+        if request.dependencies:
+            deps_str = " ".join(request.dependencies)
+            logger.info(f"Installing dependencies: {deps_str}")
             try:
-                result = sandbox.commands.run("find /home/user -maxdepth 2 -type f 2>/dev/null || ls -la /home/user", timeout=10)
-                if result.stdout:
-                    for line in result.stdout.strip().split('\n'):
-                        line = line.strip()
-                        if line and not line.startswith('total'):
-                            # Handle both find output (full paths) and ls output
-                            if line.startswith('/'):
-                                files_before.add(line)
-                            else:
-                                # ls -la format: permissions links owner group size date name
-                                parts = line.split()
-                                if len(parts) >= 9:
-                                    files_before.add(parts[-1])
-                logger.info(f"Files before execution: {len(files_before)}")
-            except Exception as e:
-                logger.warning(f"Could not list files before execution: {e}")
-
-            # 3. Run user code
-            execution = sandbox.run_code(request.code)
-
-            # Collect stdout
-            stdout = ""
-            if execution.logs.stdout:
-                stdout = "\n".join(execution.logs.stdout)
-
-            # Collect stderr
-            stderr = ""
-            if execution.logs.stderr:
-                stderr = "\n".join(execution.logs.stderr)
-
-            # Check for errors
-            error_msg = None
-            if execution.error:
-                error_msg = str(execution.error)
-                logger.warning(f"Execution error: {error_msg}")
-
-            # Collect plots and text results from execution.results
-            # E2B results contain last expression value (like Jupyter)
-            plots = []
-            result_texts = []
-            for i, result in enumerate(execution.results):
-                if hasattr(result, 'png') and result.png:
-                    plots.append(PlotResult(
-                        format="png",
-                        data=result.png
-                    ))
-                    logger.info(f"Found plot {i}")
-                elif hasattr(result, 'text') and result.text:
-                    # Capture text output from last expression (like Jupyter Out[])
-                    result_texts.append(result.text)
-                    logger.info(f"Found text result {i}: {result.text[:100]}...")
-
-            # Append result texts to stdout if no explicit print was used
-            if result_texts:
-                result_output = "\n".join(result_texts)
-                if stdout:
-                    stdout = stdout + "\n" + result_output
+                result = subprocess.run(
+                    [sys.executable, "-m", "pip", "install", "-q"] + request.dependencies,
+                    capture_output=True,
+                    text=True,
+                    timeout=120,
+                )
+                install_output = (result.stdout or "") + (result.stderr or "")
+                if result.returncode != 0:
+                    logger.warning(f"Dependency install had issues: {install_output[:200]}")
                 else:
-                    stdout = result_output
+                    logger.info(f"Dependencies installed")
 
-            # 4. List files AFTER execution to detect new files
-            files_after = set()
-            new_files = []
-            try:
-                result = sandbox.commands.run("find /home/user -maxdepth 2 -type f 2>/dev/null || ls -la /home/user", timeout=10)
-                if result.stdout:
-                    for line in result.stdout.strip().split('\n'):
-                        line = line.strip()
-                        if line and not line.startswith('total'):
-                            if line.startswith('/'):
-                                files_after.add(line)
-                            else:
-                                parts = line.split()
-                                if len(parts) >= 9:
-                                    files_after.add(parts[-1])
-                # Find new files (created during execution)
-                new_files = list(files_after - files_before)
-                # Filter out common unwanted files
-                excluded_patterns = ['.pyc', '__pycache__', '.ipynb_checkpoints', '.cache']
-                new_files = [f for f in new_files if not any(p in f for p in excluded_patterns)]
-                logger.info(f"Files after execution: {len(files_after)}, new files detected: {new_files}")
-            except Exception as e:
-                logger.warning(f"Could not list files after execution: {e}")
+                # Also write requirements.txt for reproducibility
+                (workdir / "requirements.txt").write_text("\n".join(request.dependencies))
+            except subprocess.TimeoutExpired:
+                install_output = "Dependency installation timed out after 120s"
+                logger.error(install_output)
+                return AdvancedExecuteResponse(
+                    success=False,
+                    stdout="",
+                    stderr="",
+                    error="Dependency installation timed out",
+                    execution_time=time.perf_counter() - start_time,
+                    install_output=install_output,
+                )
 
-            # 5. Collect output files (auto-detected + explicitly requested)
-            files = []
-            collected_filenames = set()
-
-            # First collect explicitly requested files
-            for filepath in request.output_files:
-                try:
-                    content = sandbox.files.read(filepath)
-                    # Handle both string and bytes
-                    if isinstance(content, str):
-                        content = content.encode('utf-8')
-                    filename = os.path.basename(filepath)
-                    files.append(FileResult(
-                        filename=filename,
-                        data=base64.b64encode(content).decode('utf-8'),
-                        size=len(content)
-                    ))
-                    collected_filenames.add(filename)
-                    logger.info(f"Retrieved requested file: {filepath} ({len(content)} bytes)")
-                except Exception as e:
-                    logger.warning(f"Could not retrieve file {filepath}: {e}")
-
-            # Then collect auto-detected new files (if not already collected)
-            for filepath in new_files:
-                filename = os.path.basename(filepath)
-                if filename in collected_filenames:
-                    continue  # Already collected
-                try:
-                    # Try both the full path and just the filename
-                    content = None
-                    for try_path in [filepath, f"/home/user/{filename}", filename]:
-                        try:
-                            content = sandbox.files.read(try_path)
-                            break
-                        except:
-                            continue
-
-                    if content is not None:
-                        if isinstance(content, str):
-                            content = content.encode('utf-8')
-                        files.append(FileResult(
-                            filename=filename,
-                            data=base64.b64encode(content).decode('utf-8'),
-                            size=len(content)
-                        ))
-                        collected_filenames.add(filename)
-                        logger.info(f"Retrieved auto-detected file: {filename} ({len(content)} bytes)")
-                except Exception as e:
-                    logger.warning(f"Could not retrieve auto-detected file {filepath}: {e}")
-
-            execution_time = time.time() - start_time
-
-            response = AdvancedExecuteResponse(
-                success=error_msg is None,
-                stdout=stdout,
-                stderr=stderr,
-                error=error_msg,
-                plots=plots,
-                files=files,
-                execution_time=execution_time,
-                install_output=install_output
-            )
-
-            logger.info(f"Advanced execution completed: success={response.success}, plots={len(plots)}, files={len(files)}, time={execution_time:.2f}s")
-            return response
-
-    except Exception as e:
-        logger.error(f"Advanced sandbox execution failed: {str(e)}")
-        raise HTTPException(
-            status_code=500,
-            detail=f"Sandbox execution failed: {str(e)}"
+        stdout, stderr, error, plots = _execute_in_subprocess(
+            request.code, request.timeout, workdir
         )
+
+        # Collect output files
+        files = _detect_files(workdir, request.output_files)
+
+        elapsed = time.perf_counter() - start_time
+        return AdvancedExecuteResponse(
+            success=error is None,
+            stdout=stdout,
+            stderr=stderr,
+            error=error,
+            plots=plots,
+            files=files,
+            execution_time=elapsed,
+            install_output=install_output,
+        )
+    except Exception as e:
+        logger.error(f"Advanced execution failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Execution failed: {str(e)}")
+    finally:
+        if workdir and workdir.exists():
+            shutil.rmtree(workdir, ignore_errors=True)
 
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(
-        app,
-        host="0.0.0.0",
-        port=8001,
-        log_level="info"
-    )
+    uvicorn.run(app, host="0.0.0.0", port=8001, log_level="info")

@@ -128,6 +128,25 @@ services:
       - claraverse-network
 
   # ============================
+  # E2B Code Executor — локальное исполнение Python кода
+  # ============================
+  e2b-service:
+    build:
+      context: ./backend/e2b-service
+    container_name: claraverse-e2b
+    ports:
+      - "8001:8001"
+    restart: unless-stopped
+    networks:
+      - claraverse-network
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/health')"]
+      interval: 30s
+      timeout: 10s
+      start_period: 10s
+      retries: 3
+
+  # ============================
   # ClaraVerse (сборка из исходников + host.docker.internal)
   # ============================
   claraverse:
@@ -153,6 +172,7 @@ services:
       - REDIS_URL=redis://redis:6380
       - SEARXNG_URL=http://searxng:8080
       - SEARXNG_URLS=http://searxng:8080
+      - E2B_SERVICE_URL=http://e2b-service:8001
       - DOCLING_URL=http://docling:5001
       - FRONTEND_URL=http://10.10.0.1:3000
       - BACKEND_URL=http://10.10.0.1:3000
@@ -174,6 +194,8 @@ services:
         condition: service_healthy
       searxng:
         condition: service_healthy
+      e2b-service:
+        condition: service_started
       docling:
         condition: service_started
     restart: unless-stopped
