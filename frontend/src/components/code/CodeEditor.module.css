@@ -1,0 +1,326 @@
+:root {
+  --code-bg: #1e1e2e;
+  --code-text: #cdd6f4;
+  --code-line: #313244;
+  --code-comment: #6c7086;
+  --code-keyword: #cba6f7;
+  --code-string: #a6e3a1;
+  --code-number: #fab387;
+  --code-function: #89b4fa;
+}
+
+.editorContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.toolbarTitle {
+  font-size: 14px;
+  font-weight: 600;
+  margin-right: auto;
+}
+
+.depsInput {
+  flex: 0 1 300px;
+  padding: 4px 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 12px;
+  background: var(--input-bg);
+  color: var(--text-primary);
+}
+
+.depsInput::placeholder {
+  color: var(--text-tertiary);
+}
+
+.runButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  border: none;
+  border-radius: 6px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.runButton:hover {
+  opacity: 0.9;
+}
+
+.runButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.saveButton {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.splitPane {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.editorPane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-right: 1px solid var(--border-color);
+}
+
+.outputPane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.codeEditor {
+  flex: 1;
+  width: 100%;
+  padding: 16px;
+  border: none;
+  background: var(--code-bg);
+  color: var(--code-text);
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  resize: none;
+  outline: none;
+  tab-size: 2;
+}
+
+.codeEditor::placeholder {
+  color: var(--code-comment);
+}
+
+.editorLineNum {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 40px;
+  padding: 16px 8px;
+  text-align: right;
+  color: var(--code-comment);
+  font-family: monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  user-select: none;
+  pointer-events: none;
+}
+
+.outputHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.outputStatus {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 400;
+}
+
+.outputStatusSuccess {
+  composes: outputStatus;
+  color: var(--success);
+}
+
+.outputStatusError {
+  composes: outputStatus;
+  color: var(--danger);
+}
+
+.outputStatusRunning {
+  composes: outputStatus;
+  color: var(--accent);
+}
+
+.outputStatusIdle {
+  composes: outputStatus;
+  color: var(--text-tertiary);
+}
+
+.outputContent {
+  flex: 1;
+  padding: 12px;
+  overflow: auto;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.stdoutText {
+  color: var(--text-primary);
+}
+
+.stderrText {
+  color: #f38ba8;
+}
+
+.installOutput {
+  color: var(--code-comment);
+  font-style: italic;
+}
+
+.emptyOutput {
+  color: var(--text-tertiary);
+  font-style: italic;
+}
+
+.plotGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 12px;
+  padding: 12px;
+}
+
+.plotCard {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.plotImage {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.plotTime {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  padding: 6px 12px;
+  border-top: 1px solid var(--border-color);
+}
+
+.tabBar {
+  display: flex;
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.tab {
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--text-tertiary);
+  border-bottom: 2px solid transparent;
+}
+
+.tabActive {
+  composes: tab;
+  color: var(--text-primary);
+  border-bottom-color: var(--accent);
+}
+
+.fileList {
+  padding: 8px 12px;
+}
+
+.fileItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.saveDialog {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.saveDialogContent {
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 24px;
+  width: 400px;
+}
+
+.saveDialogTitle {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.saveDialogInput {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 14px;
+  margin-bottom: 16px;
+  background: var(--input-bg);
+  color: var(--text-primary);
+  box-sizing: border-box;
+}
+
+.saveDialogActions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.saveDialogCancel {
+  padding: 8px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.saveDialogConfirm {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+}

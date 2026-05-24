@@ -65,6 +65,8 @@ import {
 import { copyAsFormattedText } from '@/utils/markdownToPlainText';
 import { extractArtifacts } from '@/utils/artifactParser';
 import { ArtifactPane, ArtifactsGallery } from '@/components/artifacts';
+import { CodeEditor } from '@/components/code/CodeEditor';
+import { ProjectsPanel } from '@/components/code/ProjectsPanel';
 import type { Artifact } from '@/types/artifact';
 import { useDocumentTitle } from '@/hooks';
 import { ImageGalleryModal } from '@/components/chat/ImageGalleryModal';
@@ -1472,8 +1474,6 @@ export const Chat = () => {
       icon: FolderKanban,
       isActive: activeNav === 'projects',
       onClick: () => setActiveNav('projects'),
-      disabled: true,
-      tooltip: t('common:comingSoon', { ns: ['chat', 'common'] }),
     },
     {
       id: 'code',
@@ -1481,8 +1481,6 @@ export const Chat = () => {
       icon: Code2,
       isActive: activeNav === 'code',
       onClick: () => setActiveNav('code'),
-      disabled: true,
-      tooltip: t('common:comingSoon', { ns: ['chat', 'common'] }),
     },
   ];
 
@@ -2220,6 +2218,16 @@ export const Chat = () => {
             onNewArtifact={handleNewChat}
             onNavigateToChat={chatId => navigate(`/chat/${chatId}`)}
           />
+        ) : activeNav === 'projects' && !chat ? (
+          // Projects View
+          <ProjectsPanel
+            onLoadSnippet={(snippet) => {
+              setActiveNav('code');
+            }}
+          />
+        ) : activeNav === 'code' && !chat ? (
+          // Code View
+          <CodeEditor />
         ) : activeNav === 'chats' && !chat && !isNewChat ? (
           // Chat List View
           <div className={styles.chatListContainer}>
