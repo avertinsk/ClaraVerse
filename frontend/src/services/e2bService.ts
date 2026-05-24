@@ -8,6 +8,28 @@ export interface E2BSettings {
   api_key_masked: string;
 }
 
+export interface E2BPlotResult {
+  format: string;
+  data: string;
+}
+
+export interface E2BFileResult {
+  filename: string;
+  data: string;
+  size: number;
+}
+
+export interface E2BExecuteResponse {
+  success: boolean;
+  stdout: string;
+  stderr: string;
+  error: string | null;
+  plots: E2BPlotResult[];
+  files: E2BFileResult[];
+  execution_time: number | null;
+  install_output?: string;
+}
+
 /**
  * Fetch current E2B settings
  */
@@ -36,4 +58,29 @@ export async function updateE2BApiKey(apiKey: string): Promise<void> {
   if (!response.ok) {
     throw new Error(`Failed to update E2B settings: ${response.statusText}`);
   }
+}
+
+/**
+ * Execute Python code via the local E2B executor
+ */
+export async function executePythonCode(
+  code: string,
+  options?: { timeout?: number; dependencies?: string[] }
+): Promise<E2BExecuteResponse> {
+  const response = await apiClient.post(
+    `${API_BASE_URL}/api/e2b/execute`,
+    {
+      code,
+      timeout: options?.timeout ?? 30,
+      dependencies: options?.dependencies ?? [],
+    },
+    { requiresAuth: true }
+  );
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({ error: response.statusText }));
+    throw new Error(err.error || 'Code execution failed');
+  }
+
+  return await response.json();
 }

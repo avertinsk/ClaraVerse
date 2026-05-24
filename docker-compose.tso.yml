@@ -86,11 +86,11 @@ services:
     networks:
       - claraverse-network
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5001/health"]
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5001/health')"]
       interval: 30s
       timeout: 10s
-      start_period: 120s
-      retries: 3
+      start_period: 180s
+      retries: 6
 
   searxng:
     image: searxng/searxng:latest
@@ -141,6 +141,12 @@ services:
     restart: unless-stopped
     networks:
       - claraverse-network
+    healthcheck:
+      test: ["CMD", "pidof", "qdrant"]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
 
   # ============================
   # E2B Code Executor — локальное исполнение Python кода
