@@ -177,6 +177,14 @@ Built-in tools for PPT, PDF, CSV and much more.
   <img src="https://github.com/user-attachments/assets/ce881510-b7f2-4262-a3c9-f02e7c9e8e1f" width="80%" />
 </p>
 
+### Document OCR & Semantic Search (RAG)
+
+Upload scanned PDFs — Docling OCR extracts text and Markdown. Documents are automatically chunked, embedded via Ollama (nomic-embed-text), and indexed in Qdrant vector database. Ask questions about your documents — Clara finds relevant passages using semantic search, not keyword matching.
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/ce881510-b7f2-4262-a3c9-f02e7c9e8e1f" width="80%" />
+</p>
+
 ### Interactive Chat UI (Human in the Loop)
 
 The AI asks you visual questions when it needs your input.
@@ -221,6 +229,8 @@ Use workflows with your web apps, schedule daily messages, automate repetitive t
 | **MCP Bridge**              | Native Model Context Protocol support for seamless tool connections          |
 | **Interactive Prompts**     | AI asks clarifying questions mid-conversation with typed forms               |
 | **Memory System**           | Clara remembers context across conversations, auto-archives old memories     |
+| **Document OCR (Docling)**  | OCR-based text extraction from scanned PDFs with Markdown output             |
+| **Semantic Search (RAG)**   | Uploaded documents are auto-indexed in Qdrant vector DB for AI-powered semantic search |
 | **BYOK**                    | Bring your own API keys or use free local models                             |
 
 ---
@@ -265,7 +275,7 @@ Or install manually from [GitHub Releases](https://github.com/claraverse-space/C
 | **Frontend** | React 19, TypeScript, Vite 7, Tailwind CSS 4, Zustand |
 | **Backend**  | Go 1.24, Fiber, WebSocket streaming                   |
 | **Database** | MySQL, MongoDB, Redis (all bundled in Docker Compose) |
-| **Search**   | SearXNG (private, self-hosted)                        |
+| **Search & RAG** | SearXNG (web search), Qdrant (vector DB), Ollama Embeddings (nomic-embed-text) |
 | **Auth**     | Local JWT with Argon2id password hashing              |
 
 ---
