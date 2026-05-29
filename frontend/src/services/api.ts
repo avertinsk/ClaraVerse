@@ -1,4 +1,5 @@
 import { useSubscriptionStore } from '@/store/useSubscriptionStore';
+import { useAuthStore } from '@/store/useAuthStore';
 import { authClient } from '@/lib/auth';
 import { getApiBaseUrl } from '@/lib/config';
 
@@ -107,6 +108,21 @@ async function fetchWithRetry(
         try {
           console.log('🔄 Token expired, refreshing...');
           await authClient.refreshToken();
+
+          // Sync new token to Zustand store
+          const newToken = authClient.getAccessToken();
+          const user = authClient.getUser();
+          if (newToken && user) {
+            const payload = JSON.parse(atob(newToken.split('.')[1]));
+            const expiresAt = payload.exp || 0;
+            useAuthStore.getState().setSession({
+              access_token: newToken,
+              refresh_token: '',
+              expires_at: expiresAt,
+              expires_in: Math.max(0, expiresAt - Math.floor(Date.now() / 1000)),
+              user,
+            });
+          }
 
           // Retry request with new token
           const newHeaders = createHeaders(

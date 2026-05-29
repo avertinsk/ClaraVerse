@@ -74,7 +74,7 @@ export function isAuthenticated(): boolean {
     const authStorage = localStorage.getItem('auth-storage');
     if (authStorage) {
       const { state } = JSON.parse(authStorage);
-      return !!state?.accessToken;
+      return !!state?.isAuthenticated;
     }
   } catch {
     // Invalid JSON

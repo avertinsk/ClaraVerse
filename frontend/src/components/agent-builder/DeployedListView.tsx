@@ -654,6 +654,7 @@ function AgentSection({
   isExpanded,
   onToggle,
 }: AgentSectionProps) {
+  const { t } = useTranslation('agents');
   if (agents.length === 0) return null;
 
   return (

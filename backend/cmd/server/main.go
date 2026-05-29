@@ -565,6 +565,17 @@ func main() {
 	// Register the search_documents AI tool
 	services.RegisterSearchTool()
 
+	// Register document indexing tool (chunk → embed → Qdrant)
+	tools.GetRegistry().Register(services.NewIndexDocumentTool())
+
+	// Register Bolid knowledge base tools if MongoDB is available
+	if mongoDB != nil {
+		services.InitBolidStoreService(mongoDB)
+		tools.GetRegistry().Register(services.NewStoreDeviceMetadataTool())
+		tools.GetRegistry().Register(services.NewStoreProtocolSchemaTool())
+		log.Println("✅ [BOLID] Registered store_device_metadata and store_protocol_schema tools")
+	}
+
 	// Discover and register sidecar tools (filesystem, etc.)
 	services.InitSidecarService(tools.GetRegistry())
 

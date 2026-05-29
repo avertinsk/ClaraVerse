@@ -82,8 +82,18 @@ import i18n from '@/i18n';
 
 /** Footer links for chat page - Home and Agents */
 const CHAT_FOOTER_LINKS: FooterLink[] = [
-  { href: '/', label: i18n.t('chat:sidebar.home'), icon: Home, ariaLabel: i18n.t('chat:sidebar.navigateHome') },
-  { href: '/agents', label: i18n.t('chat:sidebar.agents'), icon: Bot, ariaLabel: i18n.t('chat:sidebar.navigateAgents') },
+  {
+    href: '/',
+    label: i18n.t('chat:sidebar.home'),
+    icon: Home,
+    ariaLabel: i18n.t('chat:sidebar.navigateHome'),
+  },
+  {
+    href: '/agents',
+    label: i18n.t('chat:sidebar.agents'),
+    icon: Bot,
+    ariaLabel: i18n.t('chat:sidebar.navigateAgents'),
+  },
 ];
 
 export const Chat = () => {
@@ -276,7 +286,13 @@ export const Chat = () => {
   const messages = useMemo(() => chat?.messages || [], [chat?.messages]);
 
   // Update document title based on current state
-  useDocumentTitle(chat?.title ? chat.title : activeNav === 'artifacts' ? t('sidebar.artifacts') : t('sidebar.brand'));
+  useDocumentTitle(
+    chat?.title
+      ? chat.title
+      : activeNav === 'artifacts'
+        ? t('sidebar.artifacts')
+        : t('sidebar.brand')
+  );
 
   // Handle URL-based navigation (like ChatGPT/Claude - fetch from cloud if not local)
   useEffect(() => {
@@ -2187,7 +2203,11 @@ export const Chat = () => {
           <div className={styles.errorMessage} role="alert" aria-live="assertive">
             <AlertCircle size={16} aria-hidden="true" />
             <span className={styles.errorText}>{error}</span>
-            <button className={styles.closeButton} onClick={clearError} aria-label={t('chat.dismissError')}>
+            <button
+              className={styles.closeButton}
+              onClick={clearError}
+              aria-label={t('chat.dismissError')}
+            >
               <X size={16} />
             </button>
           </div>
@@ -2223,7 +2243,7 @@ export const Chat = () => {
         ) : activeNav === 'projects' && !chat ? (
           // Projects View
           <ProjectsPanel
-            onLoadSnippet={(snippet) => {
+            onLoadSnippet={snippet => {
               setActiveNav('code');
             }}
           />
@@ -2269,28 +2289,31 @@ export const Chat = () => {
                     {t('chatList.selected', { count: selectedChatIds.size })}
                   </span>
                   <div className={styles.selectionActions}>
-                <button
-                  className={styles.deleteSelectedButton}
-                  onClick={confirmBulkDelete}
-                  disabled={selectedChatIds.size === 0}
-                  aria-label={t('chatList.deleteAria', { count: selectedChatIds.size })}
-                >
-                  <Trash2 size={16} />
-                  {t('chatList.delete')}
-                </button>
-                <button
-                  className={styles.cancelButton}
-                  onClick={toggleSelectionMode}
-                  aria-label={t('chatList.cancelAria')}
-                >
-                  {t('chatList.cancel')}
-                </button>
+                    <button
+                      className={styles.deleteSelectedButton}
+                      onClick={confirmBulkDelete}
+                      disabled={selectedChatIds.size === 0}
+                      aria-label={t('chatList.deleteAria', { count: selectedChatIds.size })}
+                    >
+                      <Trash2 size={16} />
+                      {t('chatList.delete')}
+                    </button>
+                    <button
+                      className={styles.cancelButton}
+                      onClick={toggleSelectionMode}
+                      aria-label={t('chatList.cancelAria')}
+                    >
+                      {t('chatList.cancel')}
+                    </button>
                   </div>
                 </>
               ) : (
                 <>
                   <span className={styles.chatCount} aria-live="polite">
-                    {chatList.length} {chatList.length === 1 ? t('chatList.countSingular') : t('chatList.countPlural')}
+                    {chatList.length}{' '}
+                    {chatList.length === 1
+                      ? t('chatList.countSingular')
+                      : t('chatList.countPlural')}
                   </span>
                   <button
                     className={styles.selectButton}
@@ -2315,13 +2338,13 @@ export const Chat = () => {
                     }
                     className={`${styles.chatItem} ${isSelected ? styles.chatItemSelected : ''}`}
                     role="listitem"
-                      aria-label={
-                        isSelectionMode
-                          ? isSelected
-                            ? t('chatList.deselectChat', { title: chat.title })
-                            : t('chatList.selectChat', { title: chat.title })
-                          : t('chatList.openChat', { title: chat.title })
-                      }
+                    aria-label={
+                      isSelectionMode
+                        ? isSelected
+                          ? t('chatList.deselectChat', { title: chat.title })
+                          : t('chatList.selectChat', { title: chat.title })
+                        : t('chatList.openChat', { title: chat.title })
+                    }
                   >
                     {isSelectionMode && (
                       <div className={styles.chatItemCheckbox}>
@@ -2348,9 +2371,7 @@ export const Chat = () => {
           <div className={styles.emptyState}>
             <div className={styles.emptyStateContent}>
               <div className={styles.emptyStateTitle}>{t('chat.startNew')}</div>
-              <p className={styles.emptyStateDescription}>
-                {t('chat.startNewDesc')}
-              </p>
+              <p className={styles.emptyStateDescription}>{t('chat.startNewDesc')}</p>
             </div>
           </div>
         ) : (
@@ -2476,13 +2497,10 @@ export const Chat = () => {
                         >
                           <span>{isAnimatingTitle ? displayTitle : chatTitle}</span>
                           {chatPrivacyMode === 'cloud' ? (
-                              <Tooltip
-                                content={t('chat.syncedCloud')}
-                                position="bottom"
-                              >
-                                <Cloud
-                                  size={14}
-                                  aria-label={t('chat.syncedIcon')}
+                            <Tooltip content={t('chat.syncedCloud')} position="bottom">
+                              <Cloud
+                                size={14}
+                                aria-label={t('chat.syncedIcon')}
                                 className={styles.privacyIcon}
                               />
                             </Tooltip>
@@ -2659,9 +2677,10 @@ export const Chat = () => {
           isSelectionMode
             ? t('chat.confirmDeleteBulk', {
                 count: selectedChatIds.size,
-                chatOrChats: selectedChatIds.size === 1
-                  ? t('chatList.countSingular')
-                  : t('chatList.countPlural')
+                chatOrChats:
+                  selectedChatIds.size === 1
+                    ? t('chatList.countSingular')
+                    : t('chatList.countPlural'),
               })
             : t('chat.confirmDelete')
         }
@@ -2692,8 +2711,6 @@ export const Chat = () => {
     </div>
   );
 };
-
-import i18n from '@/i18n';
 
 /**
  * Get a random thinking verb for the thinking pane

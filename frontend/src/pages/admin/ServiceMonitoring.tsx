@@ -56,7 +56,8 @@ export const ServiceMonitoring = () => {
   }, [fetchStatus]);
 
   const handleClearRag = async () => {
-    if (!confirm('Delete all indexed documents from the RAG database? This cannot be undone.')) return;
+    if (!confirm('Delete all indexed documents from the RAG database? This cannot be undone.'))
+      return;
     try {
       setClearing(true);
       const resp = await apiClient.post(
@@ -79,15 +80,21 @@ export const ServiceMonitoring = () => {
   };
 
   const StatusIcon = ({ available }: { available: boolean }) =>
-    available ? <CheckCircle2 size={16} className="text-green-500" /> : <XCircle size={16} className="text-red-500" />;
+    available ? (
+      <CheckCircle2 size={16} className="text-green-500" />
+    ) : (
+      <XCircle size={16} className="text-red-500" />
+    );
 
-  const cardClass = "border border-[var(--border-color)] rounded-xl p-5 bg-[var(--color-surface)]";
+  const cardClass = 'border border-[var(--border-color)] rounded-xl p-5 bg-[var(--color-surface)]';
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">Service Monitoring</h1>
+          <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">
+            Service Monitoring
+          </h1>
           <p className="text-[var(--color-text-secondary)] mt-2">
             Status of backend services: Docling OCR, Qdrant vector database, and Embedding provider
           </p>
@@ -116,7 +123,9 @@ export const ServiceMonitoring = () => {
               </div>
               <div>
                 <h3 className="font-semibold text-[var(--color-text-primary)]">Docling OCR</h3>
-                <p className="text-xs text-[var(--color-text-tertiary)]">Document text extraction</p>
+                <p className="text-xs text-[var(--color-text-tertiary)]">
+                  Document text extraction
+                </p>
               </div>
               <div className="ml-auto">
                 {data?.services?.docling ? (
@@ -130,7 +139,9 @@ export const ServiceMonitoring = () => {
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-[var(--color-text-secondary)]">Status</span>
-                  <span className={data.services.docling.available ? 'text-green-500' : 'text-red-500'}>
+                  <span
+                    className={data.services.docling.available ? 'text-green-500' : 'text-red-500'}
+                  >
                     {data.services.docling.status}
                   </span>
                 </div>
@@ -146,7 +157,9 @@ export const ServiceMonitoring = () => {
               </div>
               <div>
                 <h3 className="font-semibold text-[var(--color-text-primary)]">Embedding</h3>
-                <p className="text-xs text-[var(--color-text-tertiary)]">Vector embeddings (Ollama)</p>
+                <p className="text-xs text-[var(--color-text-tertiary)]">
+                  Vector embeddings (Ollama)
+                </p>
               </div>
               <div className="ml-auto">
                 {data?.services?.embedding ? (
@@ -160,7 +173,11 @@ export const ServiceMonitoring = () => {
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-[var(--color-text-secondary)]">Status</span>
-                  <span className={data.services.embedding.available ? 'text-green-500' : 'text-red-500'}>
+                  <span
+                    className={
+                      data.services.embedding.available ? 'text-green-500' : 'text-red-500'
+                    }
+                  >
                     {data.services.embedding.status}
                   </span>
                 </div>
@@ -198,7 +215,9 @@ export const ServiceMonitoring = () => {
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-[var(--color-text-secondary)]">Status</span>
-                  <span className={data.services.qdrant.available ? 'text-green-500' : 'text-red-500'}>
+                  <span
+                    className={data.services.qdrant.available ? 'text-green-500' : 'text-red-500'}
+                  >
                     {data.services.qdrant.status}
                   </span>
                 </div>

@@ -261,6 +261,7 @@ function AutoFillButton({
   block: Block;
   onConfigUpdate: (config: Record<string, unknown>) => void;
 }) {
+  const { t } = useTranslation('agents');
   const { workflow, blockStates, blockOutputCache } = useAgentBuilderStore();
   const [isLoading, setIsLoading] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -453,6 +454,7 @@ function AutoFillButton({
 // =============================================================================
 
 function TestBlockButton({ block }: { block: Block }) {
+  const { t } = useTranslation('agents');
   const { workflow, blockStates, updateBlockExecution } = useAgentBuilderStore();
   const [isTesting, setIsTesting] = useState(false);
   const [testResult, setTestResult] = useState<{
@@ -672,6 +674,7 @@ function ForEachIterationBrowser({ blockId }: { blockId: string }) {
 
 // Iteration Browser Component for for-each blocks
 function IterationBrowser({ state }: { state: ForEachIterationState | undefined }) {
+  const { t } = useTranslation('agents');
   const [selectedIdx, setSelectedIdx] = useState(0);
 
   if (!state || state.iterations.length === 0) {

@@ -11,7 +11,7 @@ func NewSearchDocumentsTool() *tools.Tool {
 	return &tools.Tool{
 		Name:        "search_documents",
 		DisplayName: "Search Documents",
-		Description: "Performs semantic search across uploaded PDF documents. Use this to find relevant content from previously uploaded documents by describing what you're looking for.",
+		Description: "Performs semantic search across indexed documents. Optionally filter by device_type, section, or tags. Use this to find relevant content from documents by describing what you're looking for.",
 		Icon:        "Search",
 		Parameters: map[string]interface{}{
 			"type": "object",
@@ -25,13 +25,28 @@ func NewSearchDocumentsTool() *tools.Tool {
 					"description": "Maximum number of results to return (default 5, max 20)",
 					"default":     5,
 				},
+				"device_type": map[string]interface{}{
+					"type":        "string",
+					"description": "Optional: filter by device type (e.g., PPKP, izveshatel, controller)",
+				},
+				"section": map[string]interface{}{
+					"type":        "string",
+					"description": "Optional: filter by document section (e.g., characteristics, wiring, protocol, certificate)",
+				},
+				"tags": map[string]interface{}{
+					"type":        "array",
+					"description": "Optional: filter by tags (any match)",
+					"items": map[string]interface{}{
+						"type": "string",
+					},
+				},
 			},
 			"required": []string{"query"},
 		},
 		Execute:  executeSearchDocuments,
 		Source:   tools.ToolSourceBuiltin,
 		Category: "data_sources",
-		Keywords: []string{"search", "documents", "semantic", "vector", "rag", "find", "query", "pdf", "content"},
+		Keywords: []string{"search", "documents", "semantic", "vector", "rag", "find", "query", "pdf", "content", "bolid"},
 	}
 }
 
@@ -65,7 +80,15 @@ func executeSearchDocuments(args map[string]interface{}) (string, error) {
 		return "", fmt.Errorf("failed to process search query: %w", err)
 	}
 
-	results, err := qdrantSvc.Search("documents", vec, limit)
+	// Build optional Qdrant filter
+	filter := buildSearchFilter(args)
+
+	var results []qdrantSearchResult
+	if filter != nil {
+		results, err = qdrantSvc.SearchWithFilter("documents", vec, limit, *filter)
+	} else {
+		results, err = qdrantSvc.Search("documents", vec, limit)
+	}
 	if err != nil {
 		log.Printf("❌ [SEARCH-DOCS] Search failed: %v", err)
 		return "", fmt.Errorf("search failed: %w", err)
@@ -118,6 +141,50 @@ func executeSearchDocuments(args map[string]interface{}) (string, error) {
 	}
 
 	return string(responseJSON), nil
+}
+
+// buildSearchFilter constructs a Qdrant filter from optional search parameters.
+// Returns nil if no filters are needed.
+func buildSearchFilter(args map[string]interface{}) *map[string]interface{} {
+	var must []interface{}
+
+	if dt, ok := args["device_type"].(string); ok && dt != "" {
+		must = append(must, map[string]interface{}{
+			"key":   "device_type",
+			"match": map[string]interface{}{"value": dt},
+		})
+	}
+	if section, ok := args["section"].(string); ok && section != "" {
+		must = append(must, map[string]interface{}{
+			"key":   "section",
+			"match": map[string]interface{}{"value": section},
+		})
+	}
+	if rawTags, ok := args["tags"].([]interface{}); ok && len(rawTags) > 0 {
+		var tagStrs []string
+		for _, t := range rawTags {
+			if s, ok := t.(string); ok {
+				tagStrs = append(tagStrs, s)
+			}
+		}
+		if len(tagStrs) > 0 {
+			must = append(must, map[string]interface{}{
+				"key": "tags",
+				"match": map[string]interface{}{
+					"any": tagStrs,
+				},
+			})
+		}
+	}
+
+	if len(must) == 0 {
+		return nil
+	}
+
+	filter := map[string]interface{}{
+		"must": must,
+	}
+	return &filter
 }
 
 func RegisterSearchTool() {

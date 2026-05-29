@@ -248,9 +248,7 @@ export function ImageGalleryModal({
               ref={imageRef}
               key={currentIndex}
               src={currentImage.src}
-              alt={
-                currentImage.title || t('imageGallery.imageLabel', { index: currentIndex + 1 })
-              }
+              alt={currentImage.title || t('imageGallery.imageLabel', { index: currentIndex + 1 })}
               className={styles.image}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}

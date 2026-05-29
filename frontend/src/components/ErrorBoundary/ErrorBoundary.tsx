@@ -182,7 +182,7 @@ ${errorInfo?.componentStack || 'No component stack available'}
   render(): ReactNode {
     const { hasError, error, errorInfo, showDetails, copySuccess, sendingReport, sendDiagnostics } =
       this.state;
-    const { children } = this.props;
+    const { children, t } = this.props;
 
     if (!hasError) {
       return children;
@@ -240,7 +240,7 @@ ${errorInfo?.componentStack || 'No component stack available'}
             {copySuccess ? (
               <>
                 <Check size={18} />
-                {t('common.actions.copied')}
+                {t('actions.copied')}
               </>
             ) : (
               <>

@@ -110,7 +110,10 @@ export function CodeEditor({ initialCode, snippetId, onBack }: CodeEditorProps) 
       id: Date.now().toString(),
       name: snippetName.trim(),
       code,
-      dependencies: deps.split(',').map(d => d.trim()).filter(Boolean),
+      dependencies: deps
+        .split(',')
+        .map(d => d.trim())
+        .filter(Boolean),
       createdAt: new Date().toISOString(),
     });
     saveSnippets(snippets);
@@ -127,7 +130,9 @@ export function CodeEditor({ initialCode, snippetId, onBack }: CodeEditorProps) 
   return (
     <div className={styles.editorContainer}>
       <div className={styles.toolbar}>
-        <span className={styles.toolbarTitle}>Python {result?.execution_time != null && `— ${result.execution_time.toFixed(2)}s`}</span>
+        <span className={styles.toolbarTitle}>
+          Python {result?.execution_time != null && `— ${result.execution_time.toFixed(2)}s`}
+        </span>
         <input
           className={styles.depsInput}
           placeholder="Dependencies (comma-separated, e.g. numpy, pandas)"
@@ -142,13 +147,10 @@ export function CodeEditor({ initialCode, snippetId, onBack }: CodeEditorProps) 
           <Save size={14} />
           Save
         </button>
-        <button
-          className={styles.runButton}
-          onClick={runCode}
-          disabled={running || !code.trim()}
-        >
+        <button className={styles.runButton} onClick={runCode} disabled={running || !code.trim()}>
           {running ? <Loader2 size={14} className="animate-spin" /> : <Play size={14} />}
-          {running ? 'Running...' : 'Run'} <span style={{fontSize:11,opacity:0.6}}>Ctrl+Enter</span>
+          {running ? 'Running...' : 'Run'}{' '}
+          <span style={{ fontSize: 11, opacity: 0.6 }}>Ctrl+Enter</span>
         </button>
       </div>
 
@@ -170,7 +172,7 @@ export function CodeEditor({ initialCode, snippetId, onBack }: CodeEditorProps) 
               className={outputTab === 'output' ? styles.tabActive : styles.tab}
               onClick={() => setOutputTab('output')}
             >
-              <Terminal size={12} style={{marginRight:4}} />
+              <Terminal size={12} style={{ marginRight: 4 }} />
               Output
             </button>
             <button
@@ -183,7 +185,7 @@ export function CodeEditor({ initialCode, snippetId, onBack }: CodeEditorProps) 
               className={outputTab === 'files' ? styles.tabActive : styles.tab}
               onClick={() => setOutputTab('files')}
             >
-              <FileDown size={12} style={{marginRight:4}} />
+              <FileDown size={12} style={{ marginRight: 4 }} />
               Files {result && result.files.length > 0 && `(${result.files.length})`}
             </button>
           </div>
@@ -195,9 +197,11 @@ export function CodeEditor({ initialCode, snippetId, onBack }: CodeEditorProps) 
                   <>
                     {result.install_output && (
                       <div className={styles.installOutput}>
-                        $ pip install ...<br />
+                        $ pip install ...
+                        <br />
                         {result.install_output}
-                        <br /><br />
+                        <br />
+                        <br />
                       </div>
                     )}
                     {result.stdout ? (
@@ -206,31 +210,37 @@ export function CodeEditor({ initialCode, snippetId, onBack }: CodeEditorProps) 
                       <div className={styles.emptyOutput}>No stdout output</div>
                     )}
                     {result.stderr && (
-                      <div className={styles.stderrText}><br />{result.stderr}</div>
+                      <div className={styles.stderrText}>
+                        <br />
+                        {result.stderr}
+                      </div>
                     )}
                     {result.error && (
-                      <div className={styles.stderrText}><br />Error: {result.error}</div>
+                      <div className={styles.stderrText}>
+                        <br />
+                        Error: {result.error}
+                      </div>
                     )}
                   </>
                 ) : (
-                  <div className={styles.emptyOutput}>
-                    Press Run or Ctrl+Enter to execute code
-                  </div>
+                  <div className={styles.emptyOutput}>Press Run or Ctrl+Enter to execute code</div>
                 )}
               </>
             )}
 
             {outputTab === 'plots' && result && (
               <div className={styles.plotGrid}>
-                {result.plots.length > 0 ? result.plots.map((plot, i) => (
-                  <div key={i} className={styles.plotCard}>
-                    <img
-                      className={styles.plotImage}
-                      src={`data:image/${plot.format};base64,${plot.data}`}
-                      alt={`Plot ${i + 1}`}
-                    />
-                  </div>
-                )) : (
+                {result.plots.length > 0 ? (
+                  result.plots.map((plot, i) => (
+                    <div key={i} className={styles.plotCard}>
+                      <img
+                        className={styles.plotImage}
+                        src={`data:image/${plot.format};base64,${plot.data}`}
+                        alt={`Plot ${i + 1}`}
+                      />
+                    </div>
+                  ))
+                ) : (
                   <div className={styles.emptyOutput}>No plots generated</div>
                 )}
               </div>
@@ -238,19 +248,26 @@ export function CodeEditor({ initialCode, snippetId, onBack }: CodeEditorProps) 
 
             {outputTab === 'files' && result && (
               <div className={styles.fileList}>
-                {result.files.length > 0 ? result.files.map((file, i) => (
-                  <div key={i} className={styles.fileItem}>
-                    <FileDown size={14} />
-                    {file.filename} — {(file.size / 1024).toFixed(1)} KB
-                    <a
-                      href={`data:application/octet-stream;base64,${file.data}`}
-                      download={file.filename}
-                      style={{marginLeft:'auto',color:'var(--accent)',textDecoration:'none',fontSize:11}}
-                    >
-                      Download
-                    </a>
-                  </div>
-                )) : (
+                {result.files.length > 0 ? (
+                  result.files.map((file, i) => (
+                    <div key={i} className={styles.fileItem}>
+                      <FileDown size={14} />
+                      {file.filename} — {(file.size / 1024).toFixed(1)} KB
+                      <a
+                        href={`data:application/octet-stream;base64,${file.data}`}
+                        download={file.filename}
+                        style={{
+                          marginLeft: 'auto',
+                          color: 'var(--accent)',
+                          textDecoration: 'none',
+                          fontSize: 11,
+                        }}
+                      >
+                        Download
+                      </a>
+                    </div>
+                  ))
+                ) : (
                   <div className={styles.emptyOutput}>No files generated</div>
                 )}
               </div>
@@ -273,11 +290,15 @@ export function CodeEditor({ initialCode, snippetId, onBack }: CodeEditorProps) 
             />
             <div className={styles.saveDialogActions}>
               <button className={styles.saveDialogCancel} onClick={() => setShowSaveDialog(false)}>
-                <X size={14} style={{marginRight:4}} />
+                <X size={14} style={{ marginRight: 4 }} />
                 Cancel
               </button>
-              <button className={styles.saveDialogConfirm} onClick={handleSave} disabled={!snippetName.trim()}>
-                <Save size={14} style={{marginRight:4}} />
+              <button
+                className={styles.saveDialogConfirm}
+                onClick={handleSave}
+                disabled={!snippetName.trim()}
+              >
+                <Save size={14} style={{ marginRight: 4 }} />
                 Save
               </button>
             </div>

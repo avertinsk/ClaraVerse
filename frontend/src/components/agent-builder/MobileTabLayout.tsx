@@ -288,6 +288,7 @@ export function MobileTabLayout({ onOpenSidebar, onCloseSidebar }: MobileTabLayo
  * Full-screen modal wrapper for BlockSettingsPanel on mobile
  */
 function MobileBlockSettingsModal({ onClose }: { onClose: () => void }) {
+  const { t } = useTranslation('agents');
   return (
     <div className="fixed inset-0 z-50 flex flex-col">
       {/* Solid background layer to ensure opacity */}

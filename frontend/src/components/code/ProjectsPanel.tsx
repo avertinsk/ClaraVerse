@@ -56,10 +56,13 @@ export function ProjectsPanel({ onLoadSnippet }: ProjectsPanelProps) {
     toast.success('Snippet deleted', 'Projects');
   }, []);
 
-  const handleLoad = useCallback((snippet: SavedSnippet) => {
-    onLoadSnippet(snippet);
-    toast.success(`Loaded "${snippet.name}"`, 'Projects');
-  }, [onLoadSnippet]);
+  const handleLoad = useCallback(
+    (snippet: SavedSnippet) => {
+      onLoadSnippet(snippet);
+      toast.success(`Loaded "${snippet.name}"`, 'Projects');
+    },
+    [onLoadSnippet]
+  );
 
   return (
     <div className={styles.container}>
@@ -81,14 +84,10 @@ export function ProjectsPanel({ onLoadSnippet }: ProjectsPanelProps) {
       ) : (
         <div className={styles.grid}>
           {[...snippets].reverse().map(snippet => (
-            <div
-              key={snippet.id}
-              className={styles.card}
-              onClick={() => handleLoad(snippet)}
-            >
+            <div key={snippet.id} className={styles.card} onClick={() => handleLoad(snippet)}>
               <h3 className={styles.cardTitle}>{snippet.name}</h3>
               <div className={styles.cardDate}>
-                <Clock size={10} style={{marginRight:4,verticalAlign:'middle'}} />
+                <Clock size={10} style={{ marginRight: 4, verticalAlign: 'middle' }} />
                 {formatDate(snippet.createdAt)}
               </div>
               <div className={styles.cardPreview}>
@@ -96,7 +95,7 @@ export function ProjectsPanel({ onLoadSnippet }: ProjectsPanelProps) {
                 {snippet.code.length > 200 ? '...' : ''}
               </div>
               {snippet.dependencies.length > 0 && (
-                <div style={{fontSize:11,color:'var(--text-tertiary)',marginTop:8}}>
+                <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 8 }}>
                   deps: {snippet.dependencies.join(', ')}
                 </div>
               )}

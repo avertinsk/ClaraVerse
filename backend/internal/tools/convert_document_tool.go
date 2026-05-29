@@ -12,18 +12,20 @@ import (
 	"time"
 )
 
-type doclingResult struct {
-	Markdown string `json:"markdown"`
-	Text     string `json:"text"`
-	Status   string `json:"status"`
+type doclingDocument struct {
+	Filename     string `json:"filename"`
+	MDContent    string `json:"md_content"`
+	JSONContent  *json.RawMessage `json:"json_content"`
+	HTMLContent  *string          `json:"html_content"`
+	TextContent  *string          `json:"text_content"`
+	DocTagsContent *string        `json:"doctags_content"`
 }
 
 type doclingResponse struct {
-	Documents []doclingDocument `json:"documents"`
-}
-
-type doclingDocument struct {
-	Content string `json:"content"`
+	Document       doclingDocument `json:"document"`
+	Status         string          `json:"status"`
+	Errors         []string        `json:"errors"`
+	ProcessingTime float64         `json:"processing_time"`
 }
 
 func NewConvertDocumentTool() *Tool {
@@ -64,7 +66,13 @@ func executeConvertDocument(args map[string]interface{}) (string, error) {
 	if format == "" {
 		format = "markdown"
 	}
-	if format != "markdown" && format != "text" {
+	var doclingFormat string
+	switch format {
+	case "markdown":
+		doclingFormat = "md"
+	case "text":
+		doclingFormat = "text"
+	default:
 		return "", fmt.Errorf("format must be 'markdown' or 'text', got %q", format)
 	}
 
@@ -99,7 +107,7 @@ func executeConvertDocument(args map[string]interface{}) (string, error) {
 	}
 
 	_ = w.WriteField("do_ocr", "true")
-	_ = w.WriteField("to_formats", format)
+	_ = w.WriteField("to_formats", doclingFormat)
 	_ = w.WriteField("pdf_backend", "dlparse_v2")
 	_ = w.WriteField("table_mode", "fast")
 
@@ -128,13 +136,25 @@ func executeConvertDocument(args map[string]interface{}) (string, error) {
 		return "", fmt.Errorf("failed to parse docling response: %w", err)
 	}
 
-	if len(docResp.Documents) == 0 {
-		return "", fmt.Errorf("docling returned no documents")
+	if docResp.Status != "success" {
+		errMsg := fmt.Sprintf("docling returned status %q", docResp.Status)
+		if len(docResp.Errors) > 0 {
+			errMsg += fmt.Sprintf(": %v", docResp.Errors)
+		}
+		return "", fmt.Errorf(errMsg)
 	}
 
-	content := docResp.Documents[0].Content
+	var content string
+	switch format {
+	case "markdown":
+		content = docResp.Document.MDContent
+	case "text":
+		if docResp.Document.TextContent != nil {
+			content = *docResp.Document.TextContent
+		}
+	}
 	if content == "" {
-		return "", fmt.Errorf("docling returned empty content")
+		return "", fmt.Errorf("docling returned empty %s content", format)
 	}
 
 	log.Printf("✅ [CONVERT-DOCUMENT] Converted %s: %d chars of %s", filePath, len(content), format)

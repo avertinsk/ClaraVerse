@@ -163,8 +163,7 @@ export const ToolStatusPill = memo(function ToolStatusPill({
                   <span className={styles.dot} />
                 </div>
                 <span className={styles.collapsedLabel}>
-                  +{hiddenCount}{' '}
-                  {hiddenCount === 1 ? t('toolStatus.step') : t('toolStatus.steps')}
+                  +{hiddenCount} {hiddenCount === 1 ? t('toolStatus.step') : t('toolStatus.steps')}
                 </span>
               </motion.div>
             )}

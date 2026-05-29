@@ -1787,6 +1787,7 @@ interface WelcomeMessageProps {
 }
 
 function WelcomeMessage({ agentName, onSuggestionSelect, isDisabled }: WelcomeMessageProps) {
+  const { t } = useTranslation('agents');
   // Get credentials from store (stable reference)
   const credentials = useCredentials();
 
@@ -1856,6 +1857,7 @@ interface MessageBubbleProps {
 }
 
 function MessageBubble({ message, onDeploy }: MessageBubbleProps) {
+  const { t } = useTranslation('agents');
   const isUser = message.role === 'user';
   const isSystem = message.role === 'system';
   const { user } = useAuthStore();

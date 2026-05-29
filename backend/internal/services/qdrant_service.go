@@ -37,10 +37,11 @@ type qdrantSearchResult struct {
 }
 
 type qdrantSearchRequest struct {
-	Vector    []float64 `json:"vector"`
-	Limit     int       `json:"limit"`
-	WithPayload bool    `json:"with_payload"`
-	WithVector bool     `json:"with_vector"`
+	Vector      []float64               `json:"vector"`
+	Limit       int                     `json:"limit"`
+	WithPayload bool                    `json:"with_payload"`
+	WithVector  bool                    `json:"with_vector"`
+	Filter      *map[string]interface{} `json:"filter,omitempty"`
 }
 
 type qdrantUpsertRequest struct {
@@ -172,6 +173,54 @@ func (s *QdrantService) Search(collection string, vector []float64, limit int) (
 		Limit:       limit,
 		WithPayload: true,
 		WithVector:  false,
+	}
+	body, err := json.Marshal(reqBody)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal search request: %w", err)
+	}
+
+	req, err := http.NewRequest("POST", s.baseURL+"/collections/"+collection+"/points/search", bytes.NewReader(body))
+	if err != nil {
+		return nil, fmt.Errorf("failed to create request: %w", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := s.httpClient.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("qdrant search failed: %w", err)
+	}
+	defer resp.Body.Close()
+
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read search response: %w", err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("qdrant search returned %d: %s", resp.StatusCode, string(respBody))
+	}
+
+	var result struct {
+		Result []qdrantSearchResult `json:"result"`
+	}
+	if err := json.Unmarshal(respBody, &result); err != nil {
+		return nil, fmt.Errorf("failed to parse search results: %w", err)
+	}
+
+	return result.Result, nil
+}
+
+func (s *QdrantService) SearchWithFilter(collection string, vector []float64, limit int, filter map[string]interface{}) ([]qdrantSearchResult, error) {
+	if !s.IsAvailable() {
+		return nil, fmt.Errorf("qdrant not available")
+	}
+	filterCopy := filter
+	reqBody := qdrantSearchRequest{
+		Vector:      vector,
+		Limit:       limit,
+		WithPayload: true,
+		WithVector:  false,
+		Filter:      &filterCopy,
 	}
 	body, err := json.Marshal(reqBody)
 	if err != nil {

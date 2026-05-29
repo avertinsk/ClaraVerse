@@ -669,9 +669,7 @@ export function InteractivePromptMessage({
             onClick={goNext}
             disabled={isSubmitting}
             aria-label={
-              isLast
-                ? t('interactivePrompt.submitAnswers')
-                : t('interactivePrompt.nextQuestion')
+              isLast ? t('interactivePrompt.submitAnswers') : t('interactivePrompt.nextQuestion')
             }
           >
             {isLast ? <ArrowRight size={16} /> : <ChevronRight size={16} />}
@@ -734,9 +732,7 @@ export function InteractivePromptMessage({
               onClick={goNext}
               disabled={isSubmitting}
               aria-label={
-                isLast
-                  ? t('interactivePrompt.submitAnswers')
-                  : t('interactivePrompt.nextQuestion')
+                isLast ? t('interactivePrompt.submitAnswers') : t('interactivePrompt.nextQuestion')
               }
             >
               <ArrowRight size={14} />
