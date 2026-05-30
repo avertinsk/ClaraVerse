@@ -13,18 +13,19 @@ import (
 
 // CachedFile represents a file stored in memory cache
 type CachedFile struct {
-	FileID         string
-	UserID         string
-	ConversationID string
-	ExtractedText  *security.SecureString // For PDFs
-	FileHash       security.Hash
-	Filename       string
-	MimeType       string
-	Size           int64
-	PageCount      int    // For PDFs
-	WordCount      int    // For PDFs
-	FilePath       string // For images (disk location)
-	UploadedAt     time.Time
+	FileID           string
+	UserID           string
+	ConversationID   string
+	ExtractedText    *security.SecureString // For PDFs
+	FileHash         security.Hash
+	Filename         string
+	MimeType         string
+	Size             int64
+	PageCount        int    // For PDFs
+	WordCount        int    // For PDFs
+	FilePath         string // For images (disk location)
+	ProcessingStatus string // "pending" | "processing" | "completed" | "failed"
+	UploadedAt       time.Time
 }
 
 // Service manages uploaded files in memory

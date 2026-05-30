@@ -3,6 +3,7 @@ package handlers
 import (
 	"bytes"
 	"claraverse/internal/filecache"
+	"claraverse/internal/models"
 	"claraverse/internal/security"
 	"claraverse/internal/services"
 	"claraverse/internal/utils"
@@ -20,6 +21,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/mongo/gridfs"
 )
 
 // UploadHandler handles file upload requests
@@ -31,10 +33,12 @@ type UploadHandler struct {
 	allowedTypes map[string]bool
 	fileCache    *filecache.Service
 	usageLimiter *services.UsageLimiterService
+	gridFS       *gridfs.Bucket // for async doc processing
+	docProcessor *services.DocumentProcessor
 }
 
 // NewUploadHandler creates a new upload handler
-func NewUploadHandler(uploadDir string, usageLimiter *services.UsageLimiterService) *UploadHandler {
+func NewUploadHandler(uploadDir string, usageLimiter *services.UsageLimiterService, gridFS *gridfs.Bucket, docProcessor *services.DocumentProcessor) *UploadHandler {
 	// Ensure upload directory exists with restricted permissions
 	if err := os.MkdirAll(uploadDir, 0700); err != nil {
 		log.Printf("⚠️  Warning: Could not create upload directory: %v", err)
@@ -73,7 +77,9 @@ func NewUploadHandler(uploadDir string, usageLimiter *services.UsageLimiterServi
 			"audio/ogg":     true, // .ogg
 			"audio/flac":    true, // .flac
 		},
-		fileCache: filecache.GetService(),
+		fileCache:    filecache.GetService(),
+		gridFS:       gridFS,
+		docProcessor: docProcessor,
 	}
 }
 
@@ -84,6 +90,7 @@ type UploadResponse struct {
 	MimeType       string      `json:"mime_type"`
 	Size           int64       `json:"size"`
 	Hash           string      `json:"hash,omitempty"`
+	Status         string      `json:"status,omitempty"` // "processing" for async docs
 	PageCount      int         `json:"page_count,omitempty"`
 	WordCount      int         `json:"word_count,omitempty"`
 	Preview        string      `json:"preview,omitempty"`
@@ -242,240 +249,91 @@ func (h *UploadHandler) Upload(c *fiber.Ctx) error {
 	return h.handleImageUpload(c, fileID, userID, fileHeader, fileData, mimeType, fileHash)
 }
 
-// handlePDFUpload processes PDF files with maximum security
+// handlePDFUpload saves raw bytes to GridFS for async processing.
 func (h *UploadHandler) handlePDFUpload(c *fiber.Ctx, fileID, userID, conversationID string, fileHeader *multipart.FileHeader, fileData []byte, fileHash *security.Hash) error {
-	log.Printf("📄 [UPLOAD] Processing PDF: %s (user: %s, size: %d bytes)", fileHeader.Filename, userID, len(fileData))
+	log.Printf("📄 [UPLOAD] Enqueuing PDF: %s (user: %s, size: %d bytes)", fileHeader.Filename, userID, len(fileData))
 
-	// Validate PDF structure
 	if err := utils.ValidatePDF(fileData); err != nil {
-		log.Printf("❌ [UPLOAD] Invalid PDF: %v", err)
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid or corrupted PDF file",
-		})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid or corrupted PDF file"})
 	}
 
-	// Create temporary encrypted file
-	tempDir := os.TempDir()
-	tempEncryptedPath := filepath.Join(tempDir, fileID+".encrypted")
+	if h.docProcessor == nil {
+		return c.Status(fiber.StatusServiceUnavailable).JSON(fiber.Map{"error": "Document processing not available (MongoDB required)"})
+	}
 
-	// Write encrypted file temporarily
-	encKey, err := security.GenerateKey()
+	cacheID, err := h.docProcessor.EnqueueJob(c.Context(), userID, conversationID, fileHeader.Filename, "application/pdf", fileData)
 	if err != nil {
-		log.Printf("❌ [UPLOAD] Failed to generate encryption key: %v", err)
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Failed to process file",
-		})
+		log.Printf("❌ [UPLOAD] Failed to enqueue PDF: %v", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to queue document for processing"})
 	}
-
-	encryptedData, err := security.EncryptData(fileData, encKey)
-	if err != nil {
-		log.Printf("❌ [UPLOAD] Failed to encrypt file: %v", err)
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Failed to process file",
-		})
-	}
-
-	if err := os.WriteFile(tempEncryptedPath, encryptedData, 0600); err != nil {
-		log.Printf("❌ [UPLOAD] Failed to write temp file: %v", err)
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Failed to process file",
-		})
-	}
-
-	// Extract text from PDF (in memory) — fallback to Docling OCR if needed
-	metadata, err := utils.ExtractPDFText(fileData)
-	if err != nil || metadata.WordCount < 50 {
-		if err != nil {
-			log.Printf("⚠️ [UPLOAD] Primary PDF extraction failed: %v — trying Docling OCR fallback", err)
-		} else {
-			log.Printf("⚠️ [UPLOAD] Primary PDF extraction returned only %d words — trying Docling OCR fallback", metadata.WordCount)
-		}
-
-		doclingSvc := services.GetDoclingService()
-		if doclingSvc != nil && doclingSvc.IsAvailable() {
-			if doclingResult, dErr := doclingSvc.ConvertPDF(fileData); dErr == nil && doclingResult.Markdown != "" {
-				wordCount := utils.CountWords(doclingResult.Markdown)
-				pageCount := 1
-				// Clean up temp file before proceeding
-				security.SecureDeleteFile(tempEncryptedPath)
-				log.Printf("✅ [UPLOAD] Docling OCR fallback succeeded: %d words", wordCount)
-				metadata = &utils.PDFMetadata{
-					PageCount: pageCount,
-					WordCount: wordCount,
-					Text:      doclingResult.Markdown,
-				}
-				goto afterExtraction
-			} else {
-				log.Printf("❌ [UPLOAD] Docling fallback also failed: %v", dErr)
-			}
-		} else {
-			log.Printf("ℹ️ [UPLOAD] Docling service not available — skipping OCR fallback")
-		}
-
-		// Both primary and fallback failed
-		security.SecureDeleteFile(tempEncryptedPath)
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Failed to extract text from PDF. File may be corrupted or scanned.",
-		})
-	}
-
-afterExtraction:
-	// Index in Qdrant for semantic search (async — don't block upload)
-	if metadata != nil && metadata.Text != "" {
-		go indexDocumentInQdrant(metadata.Text, fileHeader.Filename)
-	}
-
-	// Delete encrypted file immediately (max 3 seconds on disk)
-	if err := security.SecureDeleteFile(tempEncryptedPath); err != nil {
-		log.Printf("⚠️  [UPLOAD] Failed to securely delete temp file: %v", err)
-		// Continue anyway - file is encrypted
-	}
-
-	log.Printf("🗑️ [UPLOAD] Encrypted temp file deleted (file was on disk < 3 seconds)")
-
-	// Store in memory cache only
-	cachedFile := &filecache.CachedFile{
-		FileID:         fileID,
-		UserID:         userID,
-		ConversationID: conversationID,
-		ExtractedText:  security.NewSecureString(metadata.Text),
-		FileHash:       *fileHash,
-		Filename:       fileHeader.Filename,
-		MimeType:       "application/pdf",
-		Size:           fileHeader.Size,
-		PageCount:      metadata.PageCount,
-		WordCount:      metadata.WordCount,
-		UploadedAt:     time.Now(),
-	}
-
-	h.fileCache.Store(cachedFile)
-
-	// Generate preview
-	preview := utils.GetPDFPreview(metadata.Text, 200)
-
-	log.Printf("✅ [UPLOAD] PDF uploaded successfully: %s (pages: %d, words: %d)", fileHeader.Filename, metadata.PageCount, metadata.WordCount)
 
 	return c.Status(fiber.StatusCreated).JSON(UploadResponse{
-		FileID:         fileID,
+		FileID:         cacheID,
 		Filename:       fileHeader.Filename,
 		MimeType:       "application/pdf",
 		Size:           fileHeader.Size,
 		Hash:           fileHash.String(),
-		PageCount:      metadata.PageCount,
-		WordCount:      metadata.WordCount,
-		Preview:        preview,
+		Status:         models.DocStatusProcessing,
 		ConversationID: conversationID,
 	})
 }
 
-// handleDOCXUpload processes DOCX files with secure text extraction
+// handleDOCXUpload saves raw bytes to GridFS for async processing.
 func (h *UploadHandler) handleDOCXUpload(c *fiber.Ctx, fileID, userID, conversationID string, fileHeader *multipart.FileHeader, fileData []byte, fileHash *security.Hash) error {
-	log.Printf("📄 [UPLOAD] Processing DOCX: %s (user: %s, size: %d bytes)", fileHeader.Filename, userID, len(fileData))
+	log.Printf("📄 [UPLOAD] Enqueuing DOCX: %s (user: %s, size: %d bytes)", fileHeader.Filename, userID, len(fileData))
 
-	// Validate DOCX structure
 	if err := utils.ValidateDOCX(fileData); err != nil {
-		log.Printf("❌ [UPLOAD] Invalid DOCX: %v", err)
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid or corrupted DOCX file",
-		})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid or corrupted DOCX file"})
 	}
 
-	// Extract text from DOCX (in memory)
-	metadata, err := utils.ExtractDOCXText(fileData)
+	if h.docProcessor == nil {
+		return c.Status(fiber.StatusServiceUnavailable).JSON(fiber.Map{"error": "Document processing not available (MongoDB required)"})
+	}
+
+	cacheID, err := h.docProcessor.EnqueueJob(c.Context(), userID, conversationID, fileHeader.Filename,
+		"application/vnd.openxmlformats-officedocument.wordprocessingml.document", fileData)
 	if err != nil {
-		log.Printf("❌ [UPLOAD] Failed to extract DOCX text: %v", err)
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Failed to extract text from DOCX. File may be corrupted.",
-		})
+		log.Printf("❌ [UPLOAD] Failed to enqueue DOCX: %v", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to queue document for processing"})
 	}
-
-	// Store in memory cache only
-	cachedFile := &filecache.CachedFile{
-		FileID:         fileID,
-		UserID:         userID,
-		ConversationID: conversationID,
-		ExtractedText:  security.NewSecureString(metadata.Text),
-		FileHash:       *fileHash,
-		Filename:       fileHeader.Filename,
-		MimeType:       "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-		Size:           fileHeader.Size,
-		PageCount:      metadata.PageCount,
-		WordCount:      metadata.WordCount,
-		UploadedAt:     time.Now(),
-	}
-
-	h.fileCache.Store(cachedFile)
-
-	// Generate preview
-	preview := utils.GetDOCXPreview(metadata.Text, 200)
-
-	log.Printf("✅ [UPLOAD] DOCX uploaded successfully: %s (pages: %d, words: %d)", fileHeader.Filename, metadata.PageCount, metadata.WordCount)
 
 	return c.Status(fiber.StatusCreated).JSON(UploadResponse{
-		FileID:         fileID,
+		FileID:         cacheID,
 		Filename:       fileHeader.Filename,
 		MimeType:       "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 		Size:           fileHeader.Size,
 		Hash:           fileHash.String(),
-		PageCount:      metadata.PageCount,
-		WordCount:      metadata.WordCount,
-		Preview:        preview,
+		Status:         models.DocStatusProcessing,
 		ConversationID: conversationID,
 	})
 }
 
-// handlePPTXUpload processes PPTX files with secure text extraction
+// handlePPTXUpload saves raw bytes to GridFS for async processing.
 func (h *UploadHandler) handlePPTXUpload(c *fiber.Ctx, fileID, userID, conversationID string, fileHeader *multipart.FileHeader, fileData []byte, fileHash *security.Hash) error {
-	log.Printf("📊 [UPLOAD] Processing PPTX: %s (user: %s, size: %d bytes)", fileHeader.Filename, userID, len(fileData))
+	log.Printf("📊 [UPLOAD] Enqueuing PPTX: %s (user: %s, size: %d bytes)", fileHeader.Filename, userID, len(fileData))
 
-	// Validate PPTX structure
 	if err := utils.ValidatePPTX(fileData); err != nil {
-		log.Printf("❌ [UPLOAD] Invalid PPTX: %v", err)
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid or corrupted PPTX file",
-		})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid or corrupted PPTX file"})
 	}
 
-	// Extract text from PPTX (in memory)
-	metadata, err := utils.ExtractPPTXText(fileData)
+	if h.docProcessor == nil {
+		return c.Status(fiber.StatusServiceUnavailable).JSON(fiber.Map{"error": "Document processing not available (MongoDB required)"})
+	}
+
+	cacheID, err := h.docProcessor.EnqueueJob(c.Context(), userID, conversationID, fileHeader.Filename,
+		"application/vnd.openxmlformats-officedocument.presentationml.presentation", fileData)
 	if err != nil {
-		log.Printf("❌ [UPLOAD] Failed to extract PPTX text: %v", err)
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Failed to extract text from PPTX. File may be corrupted.",
-		})
+		log.Printf("❌ [UPLOAD] Failed to enqueue PPTX: %v", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to queue document for processing"})
 	}
-
-	// Store in memory cache only
-	cachedFile := &filecache.CachedFile{
-		FileID:         fileID,
-		UserID:         userID,
-		ConversationID: conversationID,
-		ExtractedText:  security.NewSecureString(metadata.Text),
-		FileHash:       *fileHash,
-		Filename:       fileHeader.Filename,
-		MimeType:       "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-		Size:           fileHeader.Size,
-		PageCount:      metadata.SlideCount, // Use SlideCount as PageCount
-		WordCount:      metadata.WordCount,
-		UploadedAt:     time.Now(),
-	}
-
-	h.fileCache.Store(cachedFile)
-
-	// Generate preview
-	preview := utils.GetPPTXPreview(metadata.Text, 200)
-
-	log.Printf("✅ [UPLOAD] PPTX uploaded successfully: %s (slides: %d, words: %d)", fileHeader.Filename, metadata.SlideCount, metadata.WordCount)
 
 	return c.Status(fiber.StatusCreated).JSON(UploadResponse{
-		FileID:         fileID,
+		FileID:         cacheID,
 		Filename:       fileHeader.Filename,
 		MimeType:       "application/vnd.openxmlformats-officedocument.presentationml.presentation",
 		Size:           fileHeader.Size,
 		Hash:           fileHash.String(),
-		PageCount:      metadata.SlideCount,
-		WordCount:      metadata.WordCount,
-		Preview:        preview,
+		Status:         models.DocStatusProcessing,
 		ConversationID: conversationID,
 	})
 }

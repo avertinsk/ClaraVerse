@@ -81,7 +81,7 @@ services:
     environment:
       - DOCLING_SERVE_ENABLE_UI=0
       - DOCLING_SERVE_WORKERS=1
-      - DOCLING_SERVE_TIMEOUT=300
+      - DOCLING_SERVE_TIMEOUT=600
     restart: unless-stopped
     networks:
       - claraverse-network

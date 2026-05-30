@@ -16,3 +16,4 @@ export { Skills } from './Skills';
 export { SkillEditor } from './SkillEditor';
 export { Nexus } from './Nexus';
 export { DeviceAuth } from './DeviceAuth';
+export { Files } from './Files';

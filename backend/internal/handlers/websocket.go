@@ -346,6 +346,18 @@ func (h *WebSocketHandler) handleChatMessage(userConn *models.UserConnection, cl
 					continue
 				}
 
+				if cachedFile.ProcessingStatus == "pending" || cachedFile.ProcessingStatus == "processing" {
+					log.Printf("⚠️  Document %s is still processing (status: %s)", att.FileID, cachedFile.ProcessingStatus)
+					expiredFiles = append(expiredFiles, fmt.Sprintf("%s (processing)", att.Filename))
+					continue
+				}
+
+				if cachedFile.ExtractedText == nil {
+					log.Printf("⚠️  Document %s has no extracted text", att.FileID)
+					expiredFiles = append(expiredFiles, att.Filename)
+					continue
+				}
+
 				// Build document context
 				documentContext.WriteString(fmt.Sprintf("\n\n[Document: %s]\n", att.Filename))
 				documentContext.WriteString(fmt.Sprintf("Pages: %d | Words: %d\n\n", cachedFile.PageCount, cachedFile.WordCount))

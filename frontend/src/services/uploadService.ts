@@ -17,6 +17,7 @@ export interface UploadedFile {
   mime_type: string;
   size: number;
   hash?: string;
+  status?: string; // "processing" for async documents
   page_count?: number; // For PDFs
   word_count?: number; // For PDFs
   preview?: string; // For PDFs

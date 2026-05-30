@@ -38,6 +38,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/joho/godotenv"
+	"go.mongodb.org/mongo-driver/mongo/gridfs"
 )
 
 func main() {
@@ -668,13 +669,44 @@ func main() {
 	app.Use("/api", middleware.GlobalAPIRateLimiter(rateLimitConfig))
 	log.Println("🛡️  [RATE-LIMIT] Global API rate limiter enabled")
 
+	// Initialize GridFS bucket and document processor (requires MongoDB)
+	var gridFSBucket *gridfs.Bucket
+	var docProcessor *services.DocumentProcessor
+	if mongoDB != nil {
+		bucket, err := gridfs.NewBucket(mongoDB.Database())
+		if err != nil {
+			log.Printf("⚠️ Failed to create GridFS bucket: %v (async doc processing disabled)", err)
+		} else {
+			gridFSBucket = bucket
+			doclingSvc := services.GetDoclingService()
+			docProcessor = services.NewDocumentProcessor(mongoDB.Database(), gridFSBucket, doclingSvc, filecache.GetService(), func(userID, fileID, status, filename, preview string) {
+				msg := models.ServerMessage{
+					Type: "document_processed",
+					Content: filename,
+					Status: status,
+				}
+				for _, conn := range connManager.GetByUserID(userID) {
+					conn.SafeSend(msg)
+				}
+			})
+			go docProcessor.Start(context.Background())
+			log.Println("✅ Document processing service initialized (async)")
+		}
+	}
+
 	// Initialize handlers
 	healthHandler := handlers.NewHealthHandler(connManager)
 	providerHandler := handlers.NewProviderHandler(providerService)
 	modelHandler := handlers.NewModelHandler(modelService)
-	uploadHandler := handlers.NewUploadHandler("./uploads", usageLimiter)
+	uploadHandler := handlers.NewUploadHandler("./uploads", usageLimiter, gridFSBucket, docProcessor)
 	downloadHandler := handlers.NewDownloadHandler()
 	secureDownloadHandler := handlers.NewSecureDownloadHandler()
+	var filesHandler *handlers.FilesHandler
+	if mongoDB != nil {
+		filesHandler = handlers.NewFilesHandler(mongoDB.Database(), filecache.GetService(), secureDownloadHandler)
+	} else {
+		filesHandler = handlers.NewFilesHandler(nil, filecache.GetService(), secureDownloadHandler)
+	}
 	conversationHandler := handlers.NewConversationHandler(chatService, builderConvService)
 	userHandler := handlers.NewUserHandler(chatService, userService)
 	wsHandler := handlers.NewWebSocketHandler(connManager, chatService, analyticsService, usageLimiter)
@@ -1066,7 +1098,8 @@ func main() {
 		// Secure file downloads (access code based - no auth required for download)
 		api.Get("/files/:id", secureDownloadHandler.Download)                                           // Download with access code
 		api.Get("/files/:id/info", secureDownloadHandler.GetInfo)                                       // Get file info with access code
-		api.Get("/files", middleware.LocalAuthMiddleware(jwtAuth), secureDownloadHandler.ListUserFiles) // List user's files
+		api.Get("/files/:id/status", middleware.LocalAuthMiddleware(jwtAuth), filesHandler.GetFileStatus) // Document processing status
+		api.Get("/files", middleware.LocalAuthMiddleware(jwtAuth), filesHandler.ListFiles)                  // List all user's files (documents + secure)
 		api.Delete("/files/:id", middleware.LocalAuthMiddleware(jwtAuth), secureDownloadHandler.Delete) // Delete file (owner only)
 
 		// User preferences endpoints (requires authentication)
@@ -1697,6 +1730,11 @@ func main() {
 		// Marks Nexus tasks/daemons stuck in "executing" for >15 min as failed
 		nexusCleanupJob := jobs.NewNexusTaskCleanupJob(mongoDB, 5*time.Minute, 15*time.Minute)
 		jobScheduler.Register("nexus_task_cleanup", nexusCleanupJob)
+
+		// Register document processing cleanup job (runs every 5 minutes)
+		// Marks document jobs stuck in "pending"/"processing" for >15 min as failed
+		docCleanupJob := jobs.NewDocumentCleanupJob(mongoDB, 5*time.Minute, 15*time.Minute)
+		jobScheduler.Register("document_cleanup", docCleanupJob)
 	} else {
 		log.Println("⚠️  MongoDB-dependent jobs disabled (requires MongoDB, TierService, UserService)")
 	}

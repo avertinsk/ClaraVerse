@@ -22,6 +22,7 @@ import {
   Smartphone,
   Home,
   Bot,
+  HardDrive,
 } from 'lucide-react';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import type { NavItem, RecentChat, FooterLink } from '@/components/ui';
@@ -44,13 +45,14 @@ import { useChatStore } from '@/store/useChatStore';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useModelStore } from '@/store/useModelStore';
 import { useArtifactStore } from '@/store/useArtifactStore';
+import { useFileStore } from '@/store/useFileStore';
 import { useSettingsStore } from '@/store/useSettingsStore';
 import type { Message, ToolCall, RetryType } from '@/types/chat';
 import type { ActivePrompt } from '@/types/interactivePrompt';
 import { generateChatTitle, validateMessage } from '@/services/chatService';
 import { websocketService } from '@/services/websocketService';
 import type { ServerMessage, Attachment } from '@/types/websocket';
-import { uploadFiles, toAttachment } from '@/services/uploadService';
+import { uploadFiles, toAttachment, type UploadedFile } from '@/services/uploadService';
 import { checkConversationStatus, isConversationStale } from '@/services/conversationService';
 import {
   hasUserName,
@@ -109,8 +111,18 @@ export const Chat = () => {
 
   // Loading state for fetching chat from URL (when not found locally)
   const [isLoadingUrlChat, setIsLoadingUrlChat] = useState(false);
-  // Track if we've already handled this chatId to prevent re-fetching
-  const handledChatIdRef = useRef<string | null>(null);
+// Track if we've already handled this chatId to prevent re-fetching
+const handledChatIdRef = useRef<string | null>(null);
+
+// Pending send for async document processing
+interface PendingSend {
+  text: string;
+  conversationId: string;
+  uploadedFiles: UploadedFile[];
+  isDeepThinking: boolean;
+  systemInstruction?: string;
+}
+const pendingSendRef = useRef<PendingSend | null>(null);
 
   // Zustand stores
   const {
@@ -1441,6 +1453,26 @@ export const Chat = () => {
           setLoading(false);
           break;
 
+        case 'document_processed':
+          useFileStore.getState().fetchFiles();
+          if (pendingSendRef.current) {
+            const pending = pendingSendRef.current;
+            const store = useChatStore.getState();
+            const modelId = useModelStore.getState().selectedModelId || '';
+            const currentChat = store.selectedChat();
+            const history = currentChat ? currentChat.messages.slice(-20).map(m => ({ role: m.role as 'user' | 'assistant', content: m.content })) : [];
+            websocketService.sendMessageWithHistory(
+              pending.text,
+              modelId,
+              pending.conversationId,
+              history,
+              pending.systemInstruction || undefined,
+              undefined
+            );
+            pendingSendRef.current = null;
+          }
+          break;
+
         default:
           console.log('Unhandled message type:', (message as ServerMessage).type);
       }
@@ -1499,6 +1531,16 @@ export const Chat = () => {
       icon: Code2,
       isActive: activeNav === 'code',
       onClick: () => setActiveNav('code'),
+    },
+    {
+      id: 'files',
+      label: t('sidebar.files'),
+      icon: HardDrive,
+      isActive: activeNav === 'files',
+      onClick: () => {
+        navigate('/files');
+        setActiveNav('files');
+      },
     },
   ];
 
@@ -1705,6 +1747,7 @@ export const Chat = () => {
 
         // Upload files if present
         let attachments: Attachment[] | undefined;
+        let hasProcessingFiles = false;
         if (files && files.length > 0) {
           try {
             console.log('📤 [FILE UPLOAD] Using conversation_id:', conversationIdToUse);
@@ -1716,10 +1759,20 @@ export const Chat = () => {
                 file_id: f.file_id,
                 filename: f.filename,
                 type: f.mime_type,
+                status: f.status,
               }))
             );
 
-            attachments = uploadedFiles.map(toAttachment);
+            // Separate ready files from processing files
+            const readyFiles = uploadedFiles.filter(f => f.status !== 'processing');
+            const processingFiles = uploadedFiles.filter(f => f.status === 'processing');
+            hasProcessingFiles = processingFiles.length > 0;
+
+            if (hasProcessingFiles) {
+              console.log('⏳ [FILE UPLOAD] Some files are processing, will send when ready:', processingFiles.map(f => f.filename));
+            }
+
+            attachments = readyFiles.map(toAttachment);
             console.log(
               '📤 [FILE UPLOAD] Created attachments:',
               attachments.map(a => ({ type: a.type, file_id: a.file_id, filename: a.filename }))
@@ -1733,6 +1786,30 @@ export const Chat = () => {
             }
             return false;
           }
+        }
+
+        // If some files are still processing, defer the send
+        if (hasProcessingFiles && attachments && attachments.length === 0) {
+          pendingSendRef.current = {
+            text,
+            conversationId: conversationIdToUse,
+            uploadedFiles: [],
+            isDeepThinking,
+            systemInstruction,
+          };
+          setLoading(false);
+          setError(t('error.pendingDocumentProcessing'));
+          return false;
+        }
+
+        if (hasProcessingFiles && attachments && attachments.length > 0) {
+          pendingSendRef.current = {
+            text: `\n\n*(waiting for document processing: ${text})*`,
+            conversationId: conversationIdToUse,
+            uploadedFiles: [],
+            isDeepThinking,
+            systemInstruction,
+          };
         }
 
         // Add deep thinking prefix if enabled
@@ -2769,5 +2846,5 @@ function formatRelativeTime(date: Date | undefined | null): string {
     return dateObj.toLocaleDateString();
   } catch {
     return i18n.t('common:unknown', { ns: ['chat', 'common'] });
-  }
-}
+          }
+        }

@@ -305,6 +305,15 @@ export interface StatusUpdateMessage {
   };
 }
 
+// Document processing notification (async docling completion)
+export interface DocumentProcessedMessage {
+  type: 'document_processed';
+  content: string; // filename
+  status: string; // "completed" | "failed"
+  fileId?: string; // file ID
+  preview?: string; // text preview
+}
+
 export type ServerMessage =
   | ConnectedMessage
   | ConversationResetMessage
@@ -323,7 +332,8 @@ export type ServerMessage =
   | InteractivePromptMessage
   | PromptTimeoutMessage
   | PromptValidationErrorMessage
-  | StatusUpdateMessage;
+  | StatusUpdateMessage
+  | DocumentProcessedMessage;
 
 // WebSocket connection state
 export type WebSocketState = 'connecting' | 'connected' | 'disconnected' | 'error';

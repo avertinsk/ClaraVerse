@@ -77,3 +77,7 @@ Or use the shortcut: `./dev-docker.sh` (requires `.env` at root).
 - `ENCRYPTION_MASTER_KEY` must be set and preserved — losing it means losing all encrypted data.
 - First registered user becomes admin. Additional superadmins via `SUPERADMIN_USER_IDS` (comma-separated).
 - Root `package.json` only holds shared dependencies — do not add frontend deps there.
+
+## Language
+
+- All общение с пользователем должно вестись на **русском языке**. Отвечай только по-русски, если пользователь не попросил иначе.

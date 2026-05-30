@@ -77,6 +77,9 @@ func NewDeviceService(mongodb *database.MongoDB, db *database.DB) *DeviceService
 
 	appURL := os.Getenv("APP_URL")
 	if appURL == "" {
+		appURL = os.Getenv("FRONTEND_URL")
+	}
+	if appURL == "" {
 		appURL = "http://localhost:3000"
 	}
 

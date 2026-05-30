@@ -220,6 +220,7 @@
   "error.selectModel": "Сначала выберите модель",
   "error.notConnected": "Нет соединения с сервером. Попробуйте снова.",
   "error.enterMessage": "Введите сообщение или прикрепите файл",
+  "error.pendingDocumentProcessing": "Документ обрабатывается. Сообщение будет отправлено автоматически после завершения.",
   "error.genericError": "Произошла непредвиденная ошибка. Попробуйте ещё раз.",
   "error.promptTimeout": "Время ожидания ответа истекло",
   "error.validationError": "Ошибка валидации: {{message}}",

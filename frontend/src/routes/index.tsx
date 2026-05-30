@@ -16,6 +16,7 @@ import {
   SkillEditor,
   Nexus,
   DeviceAuth,
+  Files,
 } from '@/pages';
 import { ResetPassword } from '@/pages/ResetPassword';
 import { ProtectedRoute, AdminRoute } from '@/components/auth';
@@ -164,6 +165,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Credentials />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/files',
+        element: (
+          <ProtectedRoute>
+            <Files />
           </ProtectedRoute>
         ),
       },

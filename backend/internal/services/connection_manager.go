@@ -65,3 +65,17 @@ func (cm *ConnectionManager) GetAll() []*models.UserConnection {
 	}
 	return conns
 }
+
+// GetByUserID returns all active connections for a given user.
+func (cm *ConnectionManager) GetByUserID(userID string) []*models.UserConnection {
+	cm.mutex.RLock()
+	defer cm.mutex.RUnlock()
+
+	var conns []*models.UserConnection
+	for _, conn := range cm.connections {
+		if conn.UserID == userID {
+			conns = append(conns, conn)
+		}
+	}
+	return conns
+}

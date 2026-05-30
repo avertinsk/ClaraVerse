@@ -220,6 +220,7 @@
   "error.selectModel": "Please select a model first",
   "error.notConnected": "Not connected to server. Please try again.",
   "error.enterMessage": "Please enter a message or attach a file",
+  "error.pendingDocumentProcessing": "Document is being processed. Message will be sent automatically when ready.",
   "error.genericError": "An unexpected error occurred. Please try again.",
   "error.promptTimeout": "Prompt timed out",
   "error.validationError": "Validation error: {{message}}",
