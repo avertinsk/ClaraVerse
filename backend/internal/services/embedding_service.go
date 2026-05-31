@@ -120,6 +120,13 @@ func (s *EmbeddingService) EmbedQuery(query string) ([]float64, error) {
 }
 
 func (s *EmbeddingService) EmbedDocument(text string) ([]float64, error) {
+	const maxPromptRunes = 2000
+	runes := []rune(text)
+	if n := len(runes); n > maxPromptRunes {
+		runes = runes[:maxPromptRunes]
+		text = string(runes)
+		log.Printf("[EMBED] Truncated from %d to %d runes", n, maxPromptRunes)
+	}
 	return s.Embed("search_document: " + text)
 }
 

@@ -1,0 +1,29 @@
+{
+  "title": "Files",
+  "knowledgeBase": "Knowledge Base",
+  "allFiles": "All Files",
+  "viewKnowledgeBase": "View knowledge base",
+  "viewAllFiles": "View all files",
+  "loading": "Loading files...",
+  "knowledgeBaseEmpty": "Knowledge base is empty",
+  "knowledgeBaseEmptyDesc": "Upload a document and wait for it to be processed. Processed documents are indexed into the knowledge base for search.",
+  "noFiles": "No files",
+  "noFilesDesc": "Upload a PDF, DOCX, or PPTX document to see it here.",
+  "documents": "documents",
+  "files": "files",
+  "file": "file",
+  "filesCount": "{{count}} {{plural}}",
+  "openInChat": "Open in chat",
+  "addToKnowledgeBase": "Add to knowledge base",
+  "removeFromKnowledgeBase": "Remove from knowledge base",
+  "pages": "pages",
+  "words": "words",
+  "status": {
+    "all": "All",
+    "pending": "Pending",
+    "processing": "Processing",
+    "completed": "Ready",
+    "failed": "Failed",
+    "available": "Available"
+  }
+}

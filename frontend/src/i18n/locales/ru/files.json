@@ -1,0 +1,29 @@
+{
+  "title": "Файлы",
+  "knowledgeBase": "База знаний",
+  "allFiles": "Все файлы",
+  "viewKnowledgeBase": "Просмотр базы знаний",
+  "viewAllFiles": "Просмотр всех файлов",
+  "loading": "Загрузка файлов...",
+  "knowledgeBaseEmpty": "База знаний пуста",
+  "knowledgeBaseEmptyDesc": "Загрузите документ и дождитесь его обработки. Обработанные документы индексируются в базу знаний для поиска.",
+  "noFiles": "Нет файлов",
+  "noFilesDesc": "Загрузите PDF, DOCX или PPTX документ, чтобы он появился здесь.",
+  "documents": "документов",
+  "files": "файлов",
+  "file": "файл",
+  "filesCount": "{{count}} {{plural}}",
+  "openInChat": "Открыть в чате",
+  "addToKnowledgeBase": "Добавить в базу знаний",
+  "removeFromKnowledgeBase": "Удалить из базы знаний",
+  "pages": "стр.",
+  "words": "слов",
+  "status": {
+    "all": "Все",
+    "pending": "Ожидание",
+    "processing": "Обработка",
+    "completed": "Готово",
+    "failed": "Ошибка",
+    "available": "Доступен"
+  }
+}

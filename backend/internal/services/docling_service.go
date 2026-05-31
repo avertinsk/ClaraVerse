@@ -61,7 +61,7 @@ func InitDoclingService(baseURL string) {
 		doclingInstance = &DoclingService{
 			baseURL: baseURL,
 			httpClient: &http.Client{
-				Timeout: 300 * time.Second,
+				Timeout: 600 * time.Second,
 			},
 		}
 

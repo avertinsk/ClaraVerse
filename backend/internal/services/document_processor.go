@@ -22,7 +22,7 @@ import (
 
 const (
 	docProcessorTick     = 5 * time.Second
-	docProcessorMaxWait  = 15 * time.Minute
+	docProcessorMaxWait  = 30 * time.Minute
 	docProcessorMaxRetry = 3
 )
 
@@ -229,7 +229,7 @@ func (p *DocumentProcessor) processJob(ctx context.Context, job *models.Document
 
 	p.deleteGridFSFile(job)
 
-	go p.indexAndNotify(ctx, job, text, preview, cachedFile)
+	p.indexAndNotify(ctx, job, text, preview, cachedFile)
 
 	log.Printf("[DOC-PROC] Completed %s: %s (%d words)", job.FileID, job.Filename, wordCount)
 }
@@ -333,7 +333,7 @@ func (p *DocumentProcessor) updateCacheStatus(fileID, status string) {
 }
 
 func (p *DocumentProcessor) indexInQdrant(text, filename, fileID, userID string, cachedFile *filecache.CachedFile) {
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 1800*time.Second)
 	defer cancel()
 
 	embedSvc := GetEmbeddingService()

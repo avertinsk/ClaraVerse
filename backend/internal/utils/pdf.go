@@ -11,7 +11,7 @@ import (
 
 const (
 	// MaxPDFPages limits the number of pages to process
-	MaxPDFPages = 2000
+	MaxPDFPages = 5000
 
 	// MaxExtractedTextSize limits the extracted text size (10MB)
 	MaxExtractedTextSize = 10 * 1024 * 1024

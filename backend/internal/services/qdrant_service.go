@@ -103,6 +103,20 @@ func (s *QdrantService) EnsureCollection(name string, vectorSize int) error {
 	if name == "" {
 		return fmt.Errorf("collection name is required")
 	}
+
+	getReq, err := http.NewRequest("GET", s.baseURL+"/collections/"+name, nil)
+	if err != nil {
+		return fmt.Errorf("failed to create request: %w", err)
+	}
+	getResp, err := s.httpClient.Do(getReq)
+	if err != nil {
+		return fmt.Errorf("qdrant get collection failed: %w", err)
+	}
+	getResp.Body.Close()
+	if getResp.StatusCode == http.StatusOK {
+		return nil
+	}
+
 	reqBody := qdrantCreateCollectionRequest{
 		Vectors: qdrantVectorConfig{
 			Size:     vectorSize,

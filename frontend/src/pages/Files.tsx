@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   FileText,
   FileSpreadsheet,
@@ -25,17 +26,17 @@ import './Files.css';
 
 const statusConfig: Record<
   string,
-  { label: string; variant: 'default' | 'success' | 'warning' | 'error'; icon: typeof Clock }
+  { variant: 'default' | 'success' | 'warning' | 'error'; icon: typeof Clock }
 > = {
-  pending: { label: 'Pending', variant: 'default', icon: Clock },
-  processing: { label: 'Processing', variant: 'warning', icon: Loader2 },
-  completed: { label: 'Ready', variant: 'success', icon: CheckCircle2 },
-  failed: { label: 'Failed', variant: 'error', icon: XCircle },
-  available: { label: 'Available', variant: 'success', icon: CheckCircle2 },
+  pending: { variant: 'default', icon: Clock },
+  processing: { variant: 'warning', icon: Loader2 },
+  completed: { variant: 'success', icon: CheckCircle2 },
+  failed: { variant: 'error', icon: XCircle },
+  available: { variant: 'success', icon: CheckCircle2 },
 };
 
 function getStatusConfig(status: string) {
-  return statusConfig[status] ?? { label: status, variant: 'default' as const, icon: AlertCircle };
+  return statusConfig[status] ?? { variant: 'default' as const, icon: AlertCircle };
 }
 
 function mimeIcon(mimeType: string) {
@@ -66,6 +67,7 @@ function formatDate(iso: string) {
 
 export const Files = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation('files');
   const { files, loading, loaded, fetchFiles } = useFileStore();
   const { isAuthenticated } = useAuthStore();
   const [filter, setFilter] = useState<string | null>(null);
@@ -98,12 +100,12 @@ export const Files = () => {
       <div className="files-page">
         <div className="files-header">
           <h1>
-            <HardDrive size={24} /> Files
+            <HardDrive size={24} /> {t('title')}
           </h1>
         </div>
         <div className="files-loading">
           <Loader2 className="spin" size={32} />
-          <span>Loading files...</span>
+          <span>{t('loading')}</span>
         </div>
       </div>
     );
@@ -117,20 +119,20 @@ export const Files = () => {
         </button>
         <h1>
           {viewMode === 'knowledge' ? <Database size={24} /> : <HardDrive size={24} />}
-          {viewMode === 'knowledge' ? 'База знаний' : 'Files'}
+          {viewMode === 'knowledge' ? t('knowledgeBase') : t('title')}
         </h1>
         <span className="files-count">
           {viewMode === 'knowledge'
-            ? `${files.filter(f => f.indexed).length} documents`
-            : `${files.length} file${files.length !== 1 ? 's' : ''}`}
+            ? t('filesCount', { count: files.filter(f => f.indexed).length, plural: t('documents') })
+            : t('filesCount', { count: files.length, plural: files.length === 1 ? t('file') : t('files') })}
         </span>
         <button
           className="files-kb-toggle"
           onClick={() => setViewMode(v => (v === 'all' ? 'knowledge' : 'all'))}
-          title={viewMode === 'all' ? 'View knowledge base' : 'View all files'}
+          title={viewMode === 'all' ? t('viewKnowledgeBase') : t('viewAllFiles')}
         >
           <BookOpen size={16} />
-          {viewMode === 'all' ? 'Knowledge Base' : 'All Files'}
+          {viewMode === 'all' ? t('knowledgeBase') : t('allFiles')}
         </button>
       </div>
 
@@ -145,7 +147,7 @@ export const Files = () => {
                 className={`files-filter-btn ${filter === key ? 'active' : ''}`}
                 onClick={() => setFilter(key)}
               >
-                {s === 'all' ? 'All' : s.charAt(0).toUpperCase() + s.slice(1)}
+                {s === 'all' ? t('status.all') : t('status.' + s, s.charAt(0).toUpperCase() + s.slice(1))}
                 <span className="files-filter-count">{count}</span>
               </button>
             );
@@ -154,12 +156,12 @@ export const Files = () => {
 
       {displayed.length === 0 ? (
         <EmptyState
-          icon={viewMode === 'knowledge' ? Database : HardDrive}
-          title={viewMode === 'knowledge' ? 'База знаний пуста' : 'No files'}
+          icon={viewMode === 'knowledge' ? <Database /> : <HardDrive />}
+          title={viewMode === 'knowledge' ? t('knowledgeBaseEmpty') : t('noFiles')}
           description={
             viewMode === 'knowledge'
-              ? 'Загрузите документ и дождитесь его обработки. Обработанные документы индексируются в базу знаний для поиска.'
-              : 'Upload a PDF, DOCX, or PPTX document to see it here.'
+              ? t('knowledgeBaseEmptyDesc')
+              : t('noFilesDesc')
           }
         />
       ) : (
@@ -201,11 +203,11 @@ export const Files = () => {
                     file.status === 'completed' &&
                     file.pageCount !== undefined && (
                       <div className="file-card-stats">
-                        <span>{file.pageCount} pages</span>
+                        <span>{file.pageCount} {t('pages')}</span>
                         {file.wordCount !== undefined && (
                           <>
                             <span className="file-card-dot">·</span>
-                            <span>{file.wordCount.toLocaleString()} words</span>
+                            <span>{file.wordCount.toLocaleString()} {t('words')}</span>
                           </>
                         )}
                       </div>
@@ -222,7 +224,7 @@ export const Files = () => {
                       )
                     }
                   >
-                    {cfg.label}
+                    {t('status.' + file.status, file.status)}
                   </Badge>
                   {file.status === 'completed' && file.preview && (
                     <div className="file-card-preview">{file.preview}</div>
@@ -232,7 +234,7 @@ export const Files = () => {
                       <button
                         className="file-card-action-btn"
                         onClick={() => navigate(`/chat/${file.conversationId}`)}
-                        title="Open in chat"
+                        title={t('openInChat')}
                       >
                         <MessageSquare size={14} />
                       </button>
@@ -248,9 +250,7 @@ export const Files = () => {
                           }
                           fetchFiles();
                         }}
-                        title={
-                          file.indexed ? 'Remove from knowledge base' : 'Add to knowledge base'
-                        }
+                        title={file.indexed ? t('removeFromKnowledgeBase') : t('addToKnowledgeBase')}
                       >
                         <Database size={14} />
                       </button>

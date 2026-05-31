@@ -36,6 +36,8 @@ import memoryEn from './locales/en/memory.json';
 import memoryRu from './locales/ru/memory.json';
 import artifactsEn from './locales/en/artifacts.json';
 import artifactsRu from './locales/ru/artifacts.json';
+import filesEn from './locales/en/files.json';
+import filesRu from './locales/ru/files.json';
 
 const resources = {
   en: {
@@ -56,25 +58,11 @@ const resources = {
     credentials: credentialsEn,
     memory: memoryEn,
     artifacts: artifactsEn,
+    files: filesEn,
   },
   ru: {
-    common: commonRu,
-    auth: authRu,
-    chat: chatRu,
-    onboarding: onboardingRu,
-    dashboard: dashboardRu,
-    settings: settingsRu,
-    subscription: subscriptionRu,
-    agents: agentsRu,
-    nexus: nexusRu,
-    skills: skillsRu,
-    admin: adminRu,
-    errors: errorsRu,
-    privacy: privacyRu,
-    ui: uiRu,
-    credentials: credentialsRu,
-    memory: memoryRu,
     artifacts: artifactsRu,
+    files: filesRu,
   },
 };
 
@@ -106,6 +94,7 @@ i18n
       'credentials',
       'memory',
       'artifacts',
+      'files',
     ],
     defaultNS: 'common',
     detection: {

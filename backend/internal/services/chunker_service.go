@@ -6,8 +6,8 @@ import (
 )
 
 const (
-	ChunkTargetTokens = 512
-	ChunkOverlap      = 50
+	ChunkTargetTokens = 256
+	ChunkOverlap      = 25
 )
 
 type DocumentChunk struct {
