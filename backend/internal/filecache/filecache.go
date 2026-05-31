@@ -25,6 +25,10 @@ type CachedFile struct {
 	WordCount        int    // For PDFs
 	FilePath         string // For images (disk location)
 	ProcessingStatus string // "pending" | "processing" | "completed" | "failed"
+	Indexed          bool   // true when indexed in Qdrant
+	ProgressDetail   string // human-readable status like "Extracting page 15/672..."
+	ProcessedPages   int
+	TotalPages       int
 	UploadedAt       time.Time
 }
 

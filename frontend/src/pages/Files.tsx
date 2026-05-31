@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   FileText,
@@ -13,11 +13,14 @@ import {
   MessageSquare,
   ChevronLeft,
   HardDrive,
+  BookOpen,
+  Database,
 } from 'lucide-react';
 import { Badge } from '@/components/design-system';
 import { EmptyState } from '@/components/design-system';
 import { useFileStore } from '@/store/useFileStore';
 import { useAuthStore } from '@/store/useAuthStore';
+import { fileService } from '@/services/fileService';
 import './Files.css';
 
 const statusConfig: Record<
@@ -66,6 +69,7 @@ export const Files = () => {
   const { files, loading, loaded, fetchFiles } = useFileStore();
   const { isAuthenticated } = useAuthStore();
   const [filter, setFilter] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<'all' | 'knowledge'>('all');
 
   useEffect(() => {
     if (isAuthenticated && !loaded) {
@@ -73,7 +77,16 @@ export const Files = () => {
     }
   }, [isAuthenticated, loaded, fetchFiles]);
 
-  const filtered = filter ? files.filter(f => f.status === filter) : files;
+  const displayed = useMemo(() => {
+    let items = files;
+    if (viewMode === 'knowledge') {
+      items = items.filter(f => f.status === 'completed' && f.indexed);
+    }
+    if (filter) {
+      items = items.filter(f => f.status === filter);
+    }
+    return items;
+  }, [files, viewMode, filter]);
 
   const statusCounts = files.reduce<Record<string, number>>((acc, f) => {
     acc[f.status] = (acc[f.status] || 0) + 1;
@@ -103,44 +116,63 @@ export const Files = () => {
           <ChevronLeft size={20} />
         </button>
         <h1>
-          <HardDrive size={24} /> Files
+          {viewMode === 'knowledge' ? <Database size={24} /> : <HardDrive size={24} />}
+          {viewMode === 'knowledge' ? 'База знаний' : 'Files'}
         </h1>
         <span className="files-count">
-          {files.length} file{files.length !== 1 ? 's' : ''}
+          {viewMode === 'knowledge'
+            ? `${files.filter(f => f.indexed).length} documents`
+            : `${files.length} file${files.length !== 1 ? 's' : ''}`}
         </span>
+        <button
+          className="files-kb-toggle"
+          onClick={() => setViewMode(v => (v === 'all' ? 'knowledge' : 'all'))}
+          title={viewMode === 'all' ? 'View knowledge base' : 'View all files'}
+        >
+          <BookOpen size={16} />
+          {viewMode === 'all' ? 'Knowledge Base' : 'All Files'}
+        </button>
       </div>
 
       <div className="files-filters">
-        {['all', 'processing', 'completed', 'failed', 'available'].map(s => {
-          const key = s === 'all' ? null : s;
-          const count = s === 'all' ? files.length : (statusCounts[s] ?? 0);
-          return (
-            <button
-              key={s}
-              className={`files-filter-btn ${filter === key ? 'active' : ''}`}
-              onClick={() => setFilter(key)}
-            >
-              {s === 'all' ? 'All' : s.charAt(0).toUpperCase() + s.slice(1)}
-              <span className="files-filter-count">{count}</span>
-            </button>
-          );
-        })}
+        {viewMode === 'all' &&
+          ['all', 'processing', 'completed', 'failed', 'available'].map(s => {
+            const key = s === 'all' ? null : s;
+            const count = s === 'all' ? files.length : (statusCounts[s] ?? 0);
+            return (
+              <button
+                key={s}
+                className={`files-filter-btn ${filter === key ? 'active' : ''}`}
+                onClick={() => setFilter(key)}
+              >
+                {s === 'all' ? 'All' : s.charAt(0).toUpperCase() + s.slice(1)}
+                <span className="files-filter-count">{count}</span>
+              </button>
+            );
+          })}
       </div>
 
-      {filtered.length === 0 ? (
+      {displayed.length === 0 ? (
         <EmptyState
-          icon={HardDrive}
-          title="No files"
-          description="Upload a PDF, DOCX, or PPTX document to see it here."
+          icon={viewMode === 'knowledge' ? Database : HardDrive}
+          title={viewMode === 'knowledge' ? 'База знаний пуста' : 'No files'}
+          description={
+            viewMode === 'knowledge'
+              ? 'Загрузите документ и дождитесь его обработки. Обработанные документы индексируются в базу знаний для поиска.'
+              : 'Upload a PDF, DOCX, or PPTX document to see it here.'
+          }
         />
       ) : (
         <div className="files-list">
-          {filtered.map(file => {
+          {displayed.map(file => {
             const Icon = mimeIcon(file.mimeType);
             const cfg = getStatusConfig(file.status);
             const StatusIcon = cfg.icon;
             return (
-              <div key={file.fileId} className="file-card">
+              <div
+                key={file.fileId}
+                className={`file-card ${file.status === 'processing' ? 'file-card-processing' : ''}`}
+              >
                 <div className="file-card-icon">
                   <Icon size={24} />
                 </div>
@@ -153,24 +185,77 @@ export const Files = () => {
                     <span className="file-card-dot">·</span>
                     <span>{formatDate(file.createdAt)}</span>
                   </div>
+                  {file.progressDetail && file.status === 'processing' && (
+                    <div className="file-card-progress">
+                      <Loader2 size={12} className="spin" />
+                      <span>{file.progressDetail}</span>
+                      {file.totalPages !== undefined && file.totalPages > 0 && (
+                        <span className="file-card-pages">
+                          {file.processedPages ?? 0}/{file.totalPages}
+                        </span>
+                      )}
+                    </div>
+                  )}
                   {file.error && <div className="file-card-error">{file.error}</div>}
+                  {viewMode === 'knowledge' &&
+                    file.status === 'completed' &&
+                    file.pageCount !== undefined && (
+                      <div className="file-card-stats">
+                        <span>{file.pageCount} pages</span>
+                        {file.wordCount !== undefined && (
+                          <>
+                            <span className="file-card-dot">·</span>
+                            <span>{file.wordCount.toLocaleString()} words</span>
+                          </>
+                        )}
+                      </div>
+                    )}
                 </div>
                 <div className="file-card-status">
-                  <Badge variant={cfg.variant} icon={<StatusIcon size={12} />}>
+                  <Badge
+                    variant={cfg.variant}
+                    icon={
+                      file.status === 'processing' ? (
+                        <Loader2 size={12} className="spin" />
+                      ) : (
+                        <StatusIcon size={12} />
+                      )
+                    }
+                  >
                     {cfg.label}
                   </Badge>
                   {file.status === 'completed' && file.preview && (
                     <div className="file-card-preview">{file.preview}</div>
                   )}
-                  {file.conversationId && (
-                    <button
-                      className="file-card-chat"
-                      onClick={() => navigate(`/chat/${file.conversationId}`)}
-                      title="Open in chat"
-                    >
-                      <MessageSquare size={14} />
-                    </button>
-                  )}
+                  <div className="file-card-actions">
+                    {file.status === 'completed' && file.conversationId && (
+                      <button
+                        className="file-card-action-btn"
+                        onClick={() => navigate(`/chat/${file.conversationId}`)}
+                        title="Open in chat"
+                      >
+                        <MessageSquare size={14} />
+                      </button>
+                    )}
+                    {file.status === 'completed' && (
+                      <button
+                        className={`file-card-action-btn ${file.indexed ? 'active' : ''}`}
+                        onClick={async () => {
+                          if (file.indexed) {
+                            await fileService.knowledgeBase.delete(file.fileId);
+                          } else {
+                            // Re-index: just trigger a re-fetch for now
+                          }
+                          fetchFiles();
+                        }}
+                        title={
+                          file.indexed ? 'Remove from knowledge base' : 'Add to knowledge base'
+                        }
+                      >
+                        <Database size={14} />
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             );

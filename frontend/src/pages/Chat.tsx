@@ -23,6 +23,8 @@ import {
   Home,
   Bot,
   HardDrive,
+  Loader2,
+  FileText,
 } from 'lucide-react';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import type { NavItem, RecentChat, FooterLink } from '@/components/ui';
@@ -111,18 +113,28 @@ export const Chat = () => {
 
   // Loading state for fetching chat from URL (when not found locally)
   const [isLoadingUrlChat, setIsLoadingUrlChat] = useState(false);
-// Track if we've already handled this chatId to prevent re-fetching
-const handledChatIdRef = useRef<string | null>(null);
+  // Track if we've already handled this chatId to prevent re-fetching
+  const handledChatIdRef = useRef<string | null>(null);
 
-// Pending send for async document processing
-interface PendingSend {
-  text: string;
-  conversationId: string;
-  uploadedFiles: UploadedFile[];
-  isDeepThinking: boolean;
-  systemInstruction?: string;
-}
-const pendingSendRef = useRef<PendingSend | null>(null);
+  // Pending send for async document processing
+  interface PendingSend {
+    text: string;
+    conversationId: string;
+    uploadedFiles: UploadedFile[];
+    isDeepThinking: boolean;
+    systemInstruction?: string;
+  }
+  const pendingSendRef = useRef<PendingSend | null>(null);
+
+  // Processing files state for showing doc processing progress
+  interface ProcessingFileInfo {
+    fileId: string;
+    filename: string;
+    detail: string;
+    processedPages?: number;
+    totalPages?: number;
+  }
+  const [processingFiles, setProcessingFiles] = useState<ProcessingFileInfo[]>([]);
 
   // Zustand stores
   const {
@@ -1455,21 +1467,55 @@ const pendingSendRef = useRef<PendingSend | null>(null);
 
         case 'document_processed':
           useFileStore.getState().fetchFiles();
-          if (pendingSendRef.current) {
-            const pending = pendingSendRef.current;
-            const store = useChatStore.getState();
-            const modelId = useModelStore.getState().selectedModelId || '';
-            const currentChat = store.selectedChat();
-            const history = currentChat ? currentChat.messages.slice(-20).map(m => ({ role: m.role as 'user' | 'assistant', content: m.content })) : [];
-            websocketService.sendMessageWithHistory(
-              pending.text,
-              modelId,
-              pending.conversationId,
-              history,
-              pending.systemInstruction || undefined,
-              undefined
-            );
-            pendingSendRef.current = null;
+          if (message.status === 'processing' && message.fileId && message.detail) {
+            useFileStore
+              .getState()
+              .updateFileProgress(
+                message.fileId,
+                message.detail,
+                message.processedPages,
+                message.totalPages
+              );
+            setProcessingFiles(prev => {
+              const idx = prev.findIndex(f => f.fileId === message.fileId);
+              const info: ProcessingFileInfo = {
+                fileId: message.fileId!,
+                filename: message.content,
+                detail: message.detail!,
+                processedPages: message.processedPages,
+                totalPages: message.totalPages,
+              };
+              if (idx >= 0) {
+                const next = [...prev];
+                next[idx] = info;
+                return next;
+              }
+              return [...prev, info];
+            });
+          } else if (message.status === 'completed') {
+            if (message.fileId) {
+              setProcessingFiles(prev => prev.filter(f => f.fileId !== message.fileId));
+            }
+            if (pendingSendRef.current) {
+              const pending = pendingSendRef.current;
+              const store = useChatStore.getState();
+              const modelId = useModelStore.getState().selectedModelId || '';
+              const currentChat = store.selectedChat();
+              const history = currentChat
+                ? currentChat.messages
+                    .slice(-20)
+                    .map(m => ({ role: m.role as 'user' | 'assistant', content: m.content }))
+                : [];
+              websocketService.sendMessageWithHistory(
+                pending.text,
+                modelId,
+                pending.conversationId,
+                history,
+                pending.systemInstruction || undefined,
+                undefined
+              );
+              pendingSendRef.current = null;
+            }
           }
           break;
 
@@ -1765,11 +1811,23 @@ const pendingSendRef = useRef<PendingSend | null>(null);
 
             // Separate ready files from processing files
             const readyFiles = uploadedFiles.filter(f => f.status !== 'processing');
-            const processingFiles = uploadedFiles.filter(f => f.status === 'processing');
-            hasProcessingFiles = processingFiles.length > 0;
+            const processingUploaded = uploadedFiles.filter(f => f.status === 'processing');
+            hasProcessingFiles = processingUploaded.length > 0;
 
             if (hasProcessingFiles) {
-              console.log('⏳ [FILE UPLOAD] Some files are processing, will send when ready:', processingFiles.map(f => f.filename));
+              console.log(
+                '⏳ [FILE UPLOAD] Some files are processing, will send when ready:',
+                processingUploaded.map(f => f.filename)
+              );
+              // Show processing indicator immediately
+              setProcessingFiles(prev => [
+                ...prev,
+                ...processingUploaded.map(f => ({
+                  fileId: f.file_id,
+                  filename: f.filename,
+                  detail: 'В очереди на обработку',
+                })),
+              ]);
             }
 
             attachments = readyFiles.map(toAttachment);
@@ -2670,6 +2728,54 @@ const pendingSendRef = useRef<PendingSend | null>(null);
                       <ArrowDown size={18} />
                     </button>
 
+                    {/* Processing files indicator */}
+                    {processingFiles.length > 0 && (
+                      <div
+                        style={{
+                          padding: '8px 16px',
+                          background: 'var(--bg-secondary)',
+                          borderTop: '1px solid var(--border-color)',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '4px',
+                          fontSize: '13px',
+                        }}
+                      >
+                        {processingFiles.map(f => (
+                          <div
+                            key={f.fileId}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '8px',
+                              color: 'var(--text-secondary)',
+                            }}
+                          >
+                            <Loader2 size={14} className="animate-spin" />
+                            <FileText size={14} />
+                            <span
+                              style={{
+                                flex: 1,
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                              }}
+                            >
+                              {f.filename}
+                            </span>
+                            <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                              {f.detail}
+                            </span>
+                            {f.totalPages !== undefined && f.totalPages > 0 && (
+                              <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                                {f.processedPages ?? '?'}/{f.totalPages}
+                              </span>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
                     {/* CommandCenter at bottom */}
                     <CommandCenter
                       ref={commandCenterRef}
@@ -2846,5 +2952,5 @@ function formatRelativeTime(date: Date | undefined | null): string {
     return dateObj.toLocaleDateString();
   } catch {
     return i18n.t('common:unknown', { ns: ['chat', 'common'] });
-          }
-        }
+  }
+}

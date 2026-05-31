@@ -86,12 +86,16 @@ type ServerMessage struct {
 	Result          string                 `json:"result,omitempty"`
 	Plots           []PlotData             `json:"plots,omitempty"`           // Visualization plots from E2B tools
 	ConversationID  string                 `json:"conversation_id,omitempty"`
+	FileID          string                 `json:"fileId,omitempty"`           // For document_processed: file identifier
 	Tokens          *TokenUsage            `json:"tokens,omitempty"`
 	ErrorCode       string                 `json:"code,omitempty"`
 	ErrorMessage    string                 `json:"message,omitempty"`
 	IsComplete      bool                   `json:"is_complete,omitempty"`      // For stream_resume: whether generation completed
 	Reason          string                 `json:"reason,omitempty"`           // For stream_missed: "expired" or "not_found"
 	Progress        int                    `json:"progress,omitempty"`         // For context_optimizing: progress percentage (0-100)
+	Detail          string                 `json:"detail,omitempty"`           // For document_processed: human-readable progress
+	ProcessedPages  int                    `json:"processedPages,omitempty"`   // For document_processed: pages processed so far
+	TotalPages      int                    `json:"totalPages,omitempty"`       // For document_processed: total pages to process
 
 	// Interactive prompt fields
 	PromptID    string                 `json:"prompt_id,omitempty"`    // Unique prompt ID

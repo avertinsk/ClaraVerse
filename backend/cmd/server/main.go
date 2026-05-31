@@ -679,11 +679,18 @@ func main() {
 		} else {
 			gridFSBucket = bucket
 			doclingSvc := services.GetDoclingService()
-			docProcessor = services.NewDocumentProcessor(mongoDB.Database(), gridFSBucket, doclingSvc, filecache.GetService(), func(userID, fileID, status, filename, preview string) {
+			docProcessor = services.NewDocumentProcessor(mongoDB.Database(), gridFSBucket, doclingSvc, filecache.GetService(), func(userID, fileID, status, filename, preview, detail string, processedPages, totalPages int) {
 				msg := models.ServerMessage{
-					Type: "document_processed",
-					Content: filename,
-					Status: status,
+					Type:           "document_processed",
+					Content:        filename,
+					Status:         status,
+					FileID:         fileID,
+					Detail:         detail,
+					ProcessedPages: processedPages,
+					TotalPages:     totalPages,
+				}
+				for _, conn := range connManager.GetByUserID(userID) {
+					conn.SafeSend(msg)
 				}
 				for _, conn := range connManager.GetByUserID(userID) {
 					conn.SafeSend(msg)
@@ -1101,6 +1108,8 @@ func main() {
 		api.Get("/files/:id/status", middleware.LocalAuthMiddleware(jwtAuth), filesHandler.GetFileStatus) // Document processing status
 		api.Get("/files", middleware.LocalAuthMiddleware(jwtAuth), filesHandler.ListFiles)                  // List all user's files (documents + secure)
 		api.Delete("/files/:id", middleware.LocalAuthMiddleware(jwtAuth), secureDownloadHandler.Delete) // Delete file (owner only)
+		api.Get("/knowledge-base", middleware.LocalAuthMiddleware(jwtAuth), filesHandler.ListKnowledgeBase)      // List knowledge base documents
+		api.Delete("/knowledge-base/:id", middleware.LocalAuthMiddleware(jwtAuth), filesHandler.DeleteKnowledgeBase) // Remove from knowledge base
 
 		// User preferences endpoints (requires authentication)
 		api.Get("/user/preferences", middleware.LocalAuthMiddleware(jwtAuth), userHandler.GetPreferences)

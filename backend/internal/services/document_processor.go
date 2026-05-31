@@ -27,7 +27,7 @@ const (
 )
 
 // NotifyFunc is called when a document's processing status changes.
-type NotifyFunc func(userID, fileID, status, filename, preview string)
+type NotifyFunc func(userID, fileID, status, filename, preview, detail string, processedPages, totalPages int)
 
 // DocumentProcessor handles async document processing via Docling.
 type DocumentProcessor struct {
@@ -173,12 +173,15 @@ func (p *DocumentProcessor) processJob(ctx context.Context, job *models.Document
 		"$set": bson.M{"status": models.DocStatusProcessing, "updatedAt": now},
 	})
 	p.updateCacheStatus(job.FileID, models.DocStatusProcessing)
+	p.notify(job.UserID, job.FileID, "processing", job.Filename, "", "Начинаю обработку...", 0, 0)
 
 	log.Printf("[DOC-PROC] Processing %s: %s (%s)", job.FileID, job.Filename, job.MimeType)
 
 	var text string
 	var pageCount, wordCount int
 	var procErr error
+
+	p.notify(job.UserID, job.FileID, "processing", job.Filename, "", "Извлекаю текст...", 0, 0)
 
 	switch job.MimeType {
 	case "application/pdf":
@@ -193,11 +196,13 @@ func (p *DocumentProcessor) processJob(ctx context.Context, job *models.Document
 
 	if procErr != nil {
 		p.markFailed(ctx, job, procErr.Error())
-		p.notify(job.UserID, job.FileID, models.DocStatusFailed, job.Filename, "")
+		p.notify(job.UserID, job.FileID, models.DocStatusFailed, job.Filename, "", procErr.Error(), 0, 0)
 		return
 	}
 
 	preview := utils.GetPDFPreview(text, 200)
+	totalPages := pageCount
+
 	cachedFile := &filecache.CachedFile{
 		FileID:           job.FileID,
 		UserID:           job.UserID,
@@ -208,20 +213,31 @@ func (p *DocumentProcessor) processJob(ctx context.Context, job *models.Document
 		Size:             job.Size,
 		PageCount:        pageCount,
 		WordCount:        wordCount,
+		TotalPages:       totalPages,
+		ProcessedPages:   totalPages,
+		ProgressDetail:   "Извлечение завершено",
 		ProcessingStatus: models.DocStatusCompleted,
 		UploadedAt:       time.Now(),
 	}
 	p.fileCache.Store(cachedFile)
 
 	p.jobColl.UpdateOne(ctx, bson.M{"_id": job.ID}, bson.M{
-		"$set": bson.M{"status": models.DocStatusCompleted, "updatedAt": time.Now()},
+		"$set": bson.M{"status": models.DocStatusCompleted, "totalPages": totalPages, "processedPages": totalPages, "progressDetail": "Извлечение завершено", "updatedAt": time.Now()},
 	})
+
+	p.notify(job.UserID, job.FileID, "processing", job.Filename, "", "Индексирую в базу знаний...", totalPages, totalPages)
+
 	p.deleteGridFSFile(job)
 
-	go p.indexInQdrant(text, job.Filename)
+	go p.indexAndNotify(ctx, job, text, preview, cachedFile)
 
 	log.Printf("[DOC-PROC] Completed %s: %s (%d words)", job.FileID, job.Filename, wordCount)
-	p.notify(job.UserID, job.FileID, models.DocStatusCompleted, job.Filename, preview)
+}
+
+func (p *DocumentProcessor) indexAndNotify(ctx context.Context, job *models.DocumentProcessingJob, text, preview string, cachedFile *filecache.CachedFile) {
+	p.indexInQdrant(text, job.Filename, job.FileID, job.UserID, cachedFile)
+
+	p.notify(job.UserID, job.FileID, models.DocStatusCompleted, job.Filename, preview, "Готово!", cachedFile.ProcessedPages, cachedFile.TotalPages)
 }
 
 func (p *DocumentProcessor) processPDF(ctx context.Context, job *models.DocumentProcessingJob) (string, int, int, error) {
@@ -316,7 +332,7 @@ func (p *DocumentProcessor) updateCacheStatus(fileID, status string) {
 	}
 }
 
-func (p *DocumentProcessor) indexInQdrant(text, filename string) {
+func (p *DocumentProcessor) indexInQdrant(text, filename, fileID, userID string, cachedFile *filecache.CachedFile) {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
@@ -364,6 +380,8 @@ func (p *DocumentProcessor) indexInQdrant(text, filename string) {
 				"source":      chunk.Source,
 				"chunk_index": chunk.Index,
 				"word_count":  chunk.WordCount,
+				"file_id":     fileID,
+				"user_id":     userID,
 			},
 		}
 
@@ -373,4 +391,14 @@ func (p *DocumentProcessor) indexInQdrant(text, filename string) {
 	}
 
 	log.Printf("[DOC-PROC] Indexed %d chunks in Qdrant for %s", len(chunks), filename)
+
+	if cachedFile != nil {
+		cachedFile.Indexed = true
+		p.fileCache.Store(cachedFile)
+	}
+	if fileID != "" {
+		p.jobColl.UpdateOne(context.Background(), bson.M{"fileId": fileID}, bson.M{
+			"$set": bson.M{"indexed": true, "progressDetail": "Проиндексировано", "updatedAt": time.Now()},
+		})
+	}
 }

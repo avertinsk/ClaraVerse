@@ -26,6 +26,10 @@ type DocumentProcessingJob struct {
 	Status         string             `bson:"status" json:"status"` // pending → processing → completed / failed
 	Error          string             `bson:"error,omitempty" json:"error,omitempty"`
 	RetryCount     int                `bson:"retryCount" json:"retryCount"`
+	Indexed        bool               `bson:"indexed" json:"indexed"`                   // true when indexed in Qdrant
+	ProgressDetail string             `bson:"progressDetail,omitempty" json:"progressDetail,omitempty"` // human-readable status
+	ProcessedPages int                `bson:"processedPages,omitempty" json:"processedPages,omitempty"`
+	TotalPages     int                `bson:"totalPages,omitempty" json:"totalPages,omitempty"`
 	CreatedAt      time.Time          `bson:"createdAt" json:"createdAt"`
 	UpdatedAt      time.Time          `bson:"updatedAt" json:"updatedAt"`
 }
@@ -39,6 +43,10 @@ type FileInfo struct {
 	Status         string `json:"status"` // processing / completed / failed
 	Error          string `json:"error,omitempty"`
 	ConversationID string `json:"conversationId,omitempty"`
+	Indexed        bool   `json:"indexed"`
+	ProgressDetail string `json:"progressDetail,omitempty"`
+	ProcessedPages int    `json:"processedPages,omitempty"`
+	TotalPages     int    `json:"totalPages,omitempty"`
 	Preview        string `json:"preview,omitempty"`
 	PageCount      int    `json:"pageCount,omitempty"`
 	WordCount      int    `json:"wordCount,omitempty"`

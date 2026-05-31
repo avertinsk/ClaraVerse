@@ -77,6 +77,26 @@ Or use the shortcut: `./dev-docker.sh` (requires `.env` at root).
 - `ENCRYPTION_MASTER_KEY` must be set and preserved — losing it means losing all encrypted data.
 - First registered user becomes admin. Additional superadmins via `SUPERADMIN_USER_IDS` (comma-separated).
 - Root `package.json` only holds shared dependencies — do not add frontend deps there.
+- **Redis port**: Host port `6380` maps to container port `6379` in `docker-compose.yml` to avoid conflict with host Redis on 6379. TSO compose uses `6380:6380` directly.
+- **Docling timeout**: `DOCLING_SERVE_TIMEOUT=600s`. Lazy health check retries `checkHealth()` before falling back.
+- **Max limits**: `MaxPDFPages=2000`, `MaxExtractedTextSize=10MB`, `maxPDFSize/maxDocSize=50MB`.
+
+## Document Processing
+
+- **Async flow**: Upload → GridFS (raw bytes) → MongoDB `document_processing_jobs` → `DocumentProcessor` polls every 5s → `ExtractPDFText` (go-pdf, primary) → Docling fallback (OCR/scans, lazy health check) → filecache → Qdrant `"documents"` collection → WS `document_processed` notify
+- **Progress**: `DocumentProcessor` sends WS messages at stages: "Начинаю обработку..." → "Извлекаю текст..." → "Индексирую в базу знаний..." → "Готово!". Frontend shows live progress indicator above CommandCenter.
+- **Qdrant indexing**: Async goroutine after extraction. Points store `file_id`, `user_id` in payload. MongDB job + filecache flag set to `indexed: true` on success.
+- **Knowledge base API**: `GET /api/knowledge-base` (completed+indexed docs), `DELETE /api/knowledge-base/:id` (remove from KB). Frontend Files page has KB toggle mode.
+- **WS message fields**: `document_processed` now includes `fileId`, `detail` (ru), `processedPages`, `totalPages`.
+
+## Key Files
+
+- `backend/internal/services/document_processor.go` — `processJob`, `indexAndNotify`, `indexInQdrant`
+- `backend/internal/handlers/files.go` — `ListKnowledgeBase`, `DeleteKnowledgeBase`
+- `backend/internal/models/websocket.go:94-97` — `Detail`, `ProcessedPages`, `TotalPages` on `ServerMessage`
+- `frontend/src/pages/Chat.tsx` — `processingFiles` state, WS progress handler, indicator UI
+- `frontend/src/pages/Files.tsx` — KB toggle, progress display, index/unindex actions
+- `frontend/src/store/useFileStore.ts` — `updateFileProgress`, `markFileIndexed`
 
 ## Language
 

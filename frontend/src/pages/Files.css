@@ -34,6 +34,27 @@
   color: var(--text-primary);
 }
 
+.files-kb-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: transparent;
+  font-size: 0.85rem;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all 0.15s;
+  margin-left: auto;
+}
+
+.files-kb-toggle:hover {
+  border-color: var(--accent);
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
 .files-count {
   font-size: 0.85rem;
   color: var(--text-secondary);
@@ -176,6 +197,63 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.file-card-progress {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.file-card-pages {
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+.file-card-stats {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.file-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.file-card-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.file-card-action-btn:hover {
+  background: var(--bg-hover);
+  color: var(--accent);
+}
+
+.file-card-action-btn.active {
+  color: var(--accent);
+}
+
+.file-card-processing {
+  border-color: var(--accent-muted, var(--accent));
+  opacity: 0.85;
 }
 
 .file-card-chat {

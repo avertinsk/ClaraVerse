@@ -309,9 +309,12 @@ export interface StatusUpdateMessage {
 export interface DocumentProcessedMessage {
   type: 'document_processed';
   content: string; // filename
-  status: string; // "completed" | "failed"
+  status: string; // "processing" | "completed" | "failed"
   fileId?: string; // file ID
   preview?: string; // text preview
+  detail?: string; // human-readable progress description
+  processedPages?: number; // pages processed so far
+  totalPages?: number; // total pages to process
 }
 
 export type ServerMessage =
