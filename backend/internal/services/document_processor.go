@@ -236,10 +236,15 @@ func (p *DocumentProcessor) processPDF(ctx context.Context, job *models.Document
 	}
 
 	if p.docling == nil || !p.docling.IsAvailable() {
-		if err != nil {
-			return "", 0, 0, err
+		if p.docling != nil {
+			p.docling.checkHealth()
 		}
-		return meta.Text, meta.PageCount, meta.WordCount, nil
+		if p.docling == nil || !p.docling.IsAvailable() {
+			if err != nil {
+				return "", 0, 0, err
+			}
+			return meta.Text, meta.PageCount, meta.WordCount, nil
+		}
 	}
 
 	result, dErr := p.docling.ConvertPDF(data)
