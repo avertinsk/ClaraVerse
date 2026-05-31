@@ -47,8 +47,8 @@ func NewUploadHandler(uploadDir string, usageLimiter *services.UsageLimiterServi
 	return &UploadHandler{
 		uploadDir:    uploadDir,
 		maxImageSize: 20 * 1024 * 1024, // 20MB for images
-		maxPDFSize:   50 * 1024 * 1024, // 50MB for PDFs
-		maxDocSize:   50 * 1024 * 1024, // 50MB for DOCX/PPTX
+		maxPDFSize:   100 * 1024 * 1024, // 100MB for PDFs
+		maxDocSize:   100 * 1024 * 1024, // 100MB for DOCX/PPTX
 		usageLimiter: usageLimiter,
 		allowedTypes: map[string]bool{
 			"image/jpeg":                                                       true,

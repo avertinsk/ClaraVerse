@@ -613,7 +613,7 @@ func main() {
 		ReadTimeout:    900 * time.Second, // 15 minutes — local models (Ollama) can take 5+ min to cold start
 		WriteTimeout:   900 * time.Second, // 15 minutes — streaming responses from large local models
 		IdleTimeout:    900 * time.Second, // 15 minutes — keep connections alive during long inference
-		BodyLimit:      50 * 1024 * 1024,  // 50MB limit for chat messages with images and large conversations
+		BodyLimit:      100 * 1024 * 1024, // 100MB limit for chat messages with images and large conversations
 		ReadBufferSize: 16384,             // 16KB for request headers (Brave/privacy browsers send extra headers)
 		UnescapePath:   true,              // Decode URL-encoded path parameters (e.g., %2F -> /)
 	})
