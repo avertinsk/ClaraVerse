@@ -11,10 +11,10 @@ import (
 
 const (
 	// MaxPDFPages limits the number of pages to process
-	MaxPDFPages = 100
+	MaxPDFPages = 2000
 
-	// MaxExtractedTextSize limits the extracted text size (1MB)
-	MaxExtractedTextSize = 1024 * 1024
+	// MaxExtractedTextSize limits the extracted text size (10MB)
+	MaxExtractedTextSize = 10 * 1024 * 1024
 )
 
 // PDFMetadata contains information about a PDF
