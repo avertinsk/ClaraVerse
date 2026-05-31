@@ -50,7 +50,7 @@ func NewDownloadFileTool() *Tool {
 // Size limits for different file types
 const (
 	maxImageSize    = 20 * 1024 * 1024 // 20MB for images
-	maxDocSize      = 10 * 1024 * 1024 // 10MB for documents
+	maxDocSize      = 100 * 1024 * 1024 // 100MB for documents
 	maxAudioSize    = 25 * 1024 * 1024 // 25MB for audio (Whisper limit)
 	maxDefaultSize  = 10 * 1024 * 1024 // 10MB default
 	downloadTimeout = 30 * time.Second

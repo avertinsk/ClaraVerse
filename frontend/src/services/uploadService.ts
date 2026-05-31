@@ -91,7 +91,7 @@ export async function uploadFile(file: File, conversationId: string): Promise<Up
   let fileTypeLabel: string;
 
   if (isDocument) {
-    maxSize = 10 * 1024 * 1024; // 10MB for documents (PDF, DOCX, PPTX)
+    maxSize = 100 * 1024 * 1024; // 100MB for documents (PDF, DOCX, PPTX)
     fileTypeLabel = 'documents (PDF/DOCX/PPTX)';
   } else if (isAudio) {
     maxSize = 25 * 1024 * 1024; // 25MB for audio (OpenAI Whisper limit)
