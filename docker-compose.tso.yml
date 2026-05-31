@@ -74,7 +74,7 @@ services:
   # Docling — document recognition (OCR, PDF structure, Markdown output)
   # ============================
   docling:
-    image: quay.io/docling-project/docling-serve:latest
+    image: quay.io/docling-project/docling-serve-cpu:latest
     container_name: claraverse-docling
     ports:
       - "5001:5001"
@@ -82,8 +82,6 @@ services:
       - DOCLING_SERVE_ENABLE_UI=0
       - DOCLING_SERVE_WORKERS=1
       - DOCLING_SERVE_TIMEOUT=600
-      - NVIDIA_VISIBLE_DEVICES=all
-    runtime: nvidia
     restart: unless-stopped
     networks:
       - claraverse-network
