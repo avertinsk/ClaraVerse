@@ -64,6 +64,7 @@ type UserPreferences struct {
 	ChatPrivacyMode         ChatPrivacyMode `bson:"chatPrivacyMode,omitempty" json:"chat_privacy_mode,omitempty"`
 	Theme                   string          `bson:"theme,omitempty" json:"theme,omitempty"`
 	FontSize                string          `bson:"fontSize,omitempty" json:"font_size,omitempty"`
+	Language                string          `bson:"language,omitempty" json:"language,omitempty"`
 
 	// Memory system preferences
 	MemoryEnabled             bool   `bson:"memoryEnabled" json:"memory_enabled"`                                       // Default: false (opt-in)
@@ -81,6 +82,7 @@ type UpdateUserPreferencesRequest struct {
 	ChatPrivacyMode         *ChatPrivacyMode `json:"chat_privacy_mode,omitempty"`
 	Theme                   *string          `json:"theme,omitempty"`
 	FontSize                *string          `json:"font_size,omitempty"`
+	Language                *string          `json:"language,omitempty"`
 
 	// Memory system preferences
 	MemoryEnabled             *bool   `json:"memory_enabled,omitempty"`

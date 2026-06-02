@@ -72,6 +72,7 @@ export const Files = () => {
   const { isAuthenticated } = useAuthStore();
   const [filter, setFilter] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'all' | 'knowledge'>('all');
+  const [reindexing, setReindexing] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (isAuthenticated && !loaded) {
@@ -123,8 +124,14 @@ export const Files = () => {
         </h1>
         <span className="files-count">
           {viewMode === 'knowledge'
-            ? t('filesCount', { count: files.filter(f => f.indexed).length, plural: t('documents') })
-            : t('filesCount', { count: files.length, plural: files.length === 1 ? t('file') : t('files') })}
+            ? t('filesCount', {
+                count: files.filter(f => f.indexed).length,
+                plural: t('documents'),
+              })
+            : t('filesCount', {
+                count: files.length,
+                plural: files.length === 1 ? t('file') : t('files'),
+              })}
         </span>
         <button
           className="files-kb-toggle"
@@ -147,7 +154,9 @@ export const Files = () => {
                 className={`files-filter-btn ${filter === key ? 'active' : ''}`}
                 onClick={() => setFilter(key)}
               >
-                {s === 'all' ? t('status.all') : t('status.' + s, s.charAt(0).toUpperCase() + s.slice(1))}
+                {s === 'all'
+                  ? t('status.all')
+                  : t('status.' + s, s.charAt(0).toUpperCase() + s.slice(1))}
                 <span className="files-filter-count">{count}</span>
               </button>
             );
@@ -158,11 +167,7 @@ export const Files = () => {
         <EmptyState
           icon={viewMode === 'knowledge' ? <Database /> : <HardDrive />}
           title={viewMode === 'knowledge' ? t('knowledgeBaseEmpty') : t('noFiles')}
-          description={
-            viewMode === 'knowledge'
-              ? t('knowledgeBaseEmptyDesc')
-              : t('noFilesDesc')
-          }
+          description={viewMode === 'knowledge' ? t('knowledgeBaseEmptyDesc') : t('noFilesDesc')}
         />
       ) : (
         <div className="files-list">
@@ -203,11 +208,15 @@ export const Files = () => {
                     file.status === 'completed' &&
                     file.pageCount !== undefined && (
                       <div className="file-card-stats">
-                        <span>{file.pageCount} {t('pages')}</span>
+                        <span>
+                          {file.pageCount} {t('pages')}
+                        </span>
                         {file.wordCount !== undefined && (
                           <>
                             <span className="file-card-dot">·</span>
-                            <span>{file.wordCount.toLocaleString()} {t('words')}</span>
+                            <span>
+                              {file.wordCount.toLocaleString()} {t('words')}
+                            </span>
                           </>
                         )}
                       </div>
@@ -242,15 +251,29 @@ export const Files = () => {
                     {file.status === 'completed' && (
                       <button
                         className={`file-card-action-btn ${file.indexed ? 'active' : ''}`}
+                        disabled={reindexing.has(file.fileId)}
                         onClick={async () => {
                           if (file.indexed) {
                             await fileService.knowledgeBase.delete(file.fileId);
                           } else {
-                            // Re-index: just trigger a re-fetch for now
+                            setReindexing(prev => new Set(prev).add(file.fileId));
+                            try {
+                              await fileService.knowledgeBase.add(file.fileId);
+                            } catch {
+                              console.error('Failed to add to knowledge base');
+                            } finally {
+                              setReindexing(prev => {
+                                const next = new Set(prev);
+                                next.delete(file.fileId);
+                                return next;
+                              });
+                            }
                           }
                           fetchFiles();
                         }}
-                        title={file.indexed ? t('removeFromKnowledgeBase') : t('addToKnowledgeBase')}
+                        title={
+                          file.indexed ? t('removeFromKnowledgeBase') : t('addToKnowledgeBase')
+                        }
                       >
                         <Database size={14} />
                       </button>

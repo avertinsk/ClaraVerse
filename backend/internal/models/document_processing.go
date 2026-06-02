@@ -27,6 +27,7 @@ type DocumentProcessingJob struct {
 	Error          string             `bson:"error,omitempty" json:"error,omitempty"`
 	RetryCount     int                `bson:"retryCount" json:"retryCount"`
 	Indexed        bool               `bson:"indexed" json:"indexed"`                   // true when indexed in Qdrant
+	ExtractedText  string             `bson:"extractedText,omitempty" json:"-"`           // extracted text for re-indexing
 	ProgressDetail string             `bson:"progressDetail,omitempty" json:"progressDetail,omitempty"` // human-readable status
 	ProcessedPages int                `bson:"processedPages,omitempty" json:"processedPages,omitempty"`
 	TotalPages     int                `bson:"totalPages,omitempty" json:"totalPages,omitempty"`

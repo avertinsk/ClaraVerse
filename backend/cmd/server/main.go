@@ -710,9 +710,9 @@ func main() {
 	secureDownloadHandler := handlers.NewSecureDownloadHandler()
 	var filesHandler *handlers.FilesHandler
 	if mongoDB != nil {
-		filesHandler = handlers.NewFilesHandler(mongoDB.Database(), filecache.GetService(), secureDownloadHandler)
+		filesHandler = handlers.NewFilesHandler(mongoDB.Database(), filecache.GetService(), secureDownloadHandler, docProcessor)
 	} else {
-		filesHandler = handlers.NewFilesHandler(nil, filecache.GetService(), secureDownloadHandler)
+		filesHandler = handlers.NewFilesHandler(nil, filecache.GetService(), secureDownloadHandler, docProcessor)
 	}
 	conversationHandler := handlers.NewConversationHandler(chatService, builderConvService)
 	userHandler := handlers.NewUserHandler(chatService, userService)
@@ -1110,6 +1110,7 @@ func main() {
 		api.Delete("/files/:id", middleware.LocalAuthMiddleware(jwtAuth), secureDownloadHandler.Delete) // Delete file (owner only)
 		api.Get("/knowledge-base", middleware.LocalAuthMiddleware(jwtAuth), filesHandler.ListKnowledgeBase)      // List knowledge base documents
 		api.Delete("/knowledge-base/:id", middleware.LocalAuthMiddleware(jwtAuth), filesHandler.DeleteKnowledgeBase) // Remove from knowledge base
+		api.Post("/knowledge-base/:id/reindex", middleware.LocalAuthMiddleware(jwtAuth), filesHandler.ReindexKnowledgeBase) // Re-index into Qdrant
 
 		// User preferences endpoints (requires authentication)
 		api.Get("/user/preferences", middleware.LocalAuthMiddleware(jwtAuth), userHandler.GetPreferences)

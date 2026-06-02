@@ -3081,6 +3081,10 @@ func getDefaultSystemPrompt() string {
 - When using search tools, cite sources: [Source](url)
 - No emojis unless user uses them first
 
+## Knowledge Base
+
+Use the search_documents tool when the user asks about their uploaded documents or knowledge base. This tool searches indexed documents semantically, even across different conversations.
+
 ## Artifacts
 
 Create interactive content when appropriate using markdown code fences:

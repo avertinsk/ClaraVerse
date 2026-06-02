@@ -9,6 +9,7 @@ export interface UserPreferences {
   chat_privacy_mode?: ChatPrivacyMode;
   theme?: string;
   font_size?: string;
+  language?: string;
 
   // Memory system preferences
   memory_enabled?: boolean;
@@ -25,6 +26,7 @@ export interface UpdatePreferencesRequest {
   chat_privacy_mode?: ChatPrivacyMode;
   theme?: string;
   font_size?: string;
+  language?: string;
 
   // Memory system preferences
   memory_enabled?: boolean;

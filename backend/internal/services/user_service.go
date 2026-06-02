@@ -144,6 +144,9 @@ func (s *UserService) UpdatePreferences(ctx context.Context, supabaseUserID stri
 	if req.FontSize != nil {
 		updateFields["preferences.fontSize"] = *req.FontSize
 	}
+	if req.Language != nil {
+		updateFields["preferences.language"] = *req.Language
+	}
 
 	// Memory system preferences
 	if req.MemoryEnabled != nil {

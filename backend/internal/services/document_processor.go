@@ -222,7 +222,16 @@ func (p *DocumentProcessor) processJob(ctx context.Context, job *models.Document
 	p.fileCache.Store(cachedFile)
 
 	p.jobColl.UpdateOne(ctx, bson.M{"_id": job.ID}, bson.M{
-		"$set": bson.M{"status": models.DocStatusCompleted, "totalPages": totalPages, "processedPages": totalPages, "progressDetail": "Извлечение завершено", "updatedAt": time.Now()},
+		"$set": bson.M{
+			"status":          models.DocStatusCompleted,
+			"totalPages":      totalPages,
+			"processedPages":  totalPages,
+			"pageCount":       pageCount,
+			"wordCount":       wordCount,
+			"extractedText":   text,
+			"progressDetail":  "Извлечение завершено",
+			"updatedAt":       time.Now(),
+		},
 	})
 
 	p.notify(job.UserID, job.FileID, "processing", job.Filename, "", "Индексирую в базу знаний...", totalPages, totalPages)
@@ -330,6 +339,49 @@ func (p *DocumentProcessor) updateCacheStatus(fileID, status string) {
 		f.ProcessingStatus = status
 		p.fileCache.Store(f)
 	}
+}
+
+// ReindexFile re-indexes a previously completed file into Qdrant from the filecache, MongoDB, or Qdrant itself.
+func (p *DocumentProcessor) ReindexFile(fileID, userID string) error {
+	// 1. Try filecache
+	if cachedFile, ok := p.fileCache.Get(fileID); ok && cachedFile.ExtractedText != nil {
+		text := cachedFile.ExtractedText.String()
+		if text != "" {
+			p.indexInQdrant(text, cachedFile.Filename, fileID, userID, cachedFile)
+			return nil
+		}
+	}
+
+	// 2. Try MongoDB extractedText
+	if p.jobColl != nil {
+		var job models.DocumentProcessingJob
+		err := p.jobColl.FindOne(context.Background(), bson.M{"fileId": fileID, "userId": userID}).Decode(&job)
+		if err == nil && job.ExtractedText != "" {
+			p.indexInQdrant(job.ExtractedText, job.Filename, fileID, userID, nil)
+			return nil
+		}
+	}
+
+	// 3. Try Qdrant — check if points already exist for this file
+	qdrantSvc := GetQdrantService()
+	if qdrantSvc != nil && qdrantSvc.IsAvailable() {
+		exists, err := qdrantSvc.PointsExistForFile("documents", fileID)
+		if err == nil && exists {
+			log.Printf("[DOC-PROC] Qdrant points already exist for %s, setting indexed=true", fileID)
+			if p.jobColl != nil {
+				p.jobColl.UpdateOne(context.Background(), bson.M{"fileId": fileID}, bson.M{
+					"$set": bson.M{"indexed": true, "progressDetail": "Проиндексировано", "updatedAt": time.Now()},
+				})
+			}
+			if cachedFile, ok := p.fileCache.Get(fileID); ok {
+				cachedFile.Indexed = true
+				p.fileCache.Store(cachedFile)
+			}
+			return nil
+		}
+	}
+
+	return fmt.Errorf("file %s not found in cache, database, or Qdrant", fileID)
 }
 
 func (p *DocumentProcessor) indexInQdrant(text, filename, fileID, userID string, cachedFile *filecache.CachedFile) {

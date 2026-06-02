@@ -6,6 +6,7 @@ import (
 
 	"claraverse/internal/filecache"
 	"claraverse/internal/models"
+	"claraverse/internal/services"
 
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
@@ -13,17 +14,22 @@ import (
 )
 
 type FilesHandler struct {
-	jobColl    *mongo.Collection
-	fileCache  *filecache.Service
-	secureFile *SecureDownloadHandler
+	jobColl     *mongo.Collection
+	fileCache   *filecache.Service
+	secureFile  *SecureDownloadHandler
+	docProcessor *services.DocumentProcessor
 }
 
-func NewFilesHandler(db *mongo.Database, fileCache *filecache.Service, secureFile *SecureDownloadHandler) *FilesHandler {
-	return &FilesHandler{
-		jobColl:    db.Collection("document_processing_jobs"),
-		fileCache:  fileCache,
-		secureFile: secureFile,
+func NewFilesHandler(db *mongo.Database, fileCache *filecache.Service, secureFile *SecureDownloadHandler, docProcessor *services.DocumentProcessor) *FilesHandler {
+	h := &FilesHandler{
+		fileCache:     fileCache,
+		secureFile:    secureFile,
+		docProcessor:  docProcessor,
 	}
+	if db != nil {
+		h.jobColl = db.Collection("document_processing_jobs")
+	}
+	return h
 }
 
 type FileItem struct {
@@ -251,4 +257,29 @@ func (h *FilesHandler) DeleteKnowledgeBase(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{"status": "ok"})
+}
+
+// ReindexKnowledgeBase indexes a completed file into Qdrant.
+// POST /api/knowledge-base/:id/reindex
+func (h *FilesHandler) ReindexKnowledgeBase(c *fiber.Ctx) error {
+	fileID := c.Params("id")
+	if fileID == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "file_id required"})
+	}
+
+	userID, ok := c.Locals("user_id").(string)
+	if !ok || userID == "" {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Authentication required"})
+	}
+
+	if h.docProcessor == nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Document processor not available"})
+	}
+
+	if err := h.docProcessor.ReindexFile(fileID, userID); err != nil {
+		log.Printf("[KNOWLEDGE-BASE] Reindex failed for %s: %v", fileID, err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.JSON(fiber.Map{"status": "ok", "indexed": true})
 }

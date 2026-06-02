@@ -44,6 +44,8 @@ export const fileService = {
   list: () => api.get<FilesResponse>('/api/files'),
   knowledgeBase: {
     list: () => api.get<KnowledgeBaseResponse>('/api/knowledge-base'),
+    add: (fileId: string) =>
+      api.post<{ status: string; indexed: boolean }>(`/api/knowledge-base/${fileId}/reindex`, {}),
     delete: (fileId: string) => api.delete(`/api/knowledge-base/${fileId}`),
   },
 };

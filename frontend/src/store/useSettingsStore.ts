@@ -291,6 +291,12 @@ export const useSettingsStore = create<SettingsState>()(
           import('@/i18n').then(({ default: i18n }) => {
             i18n.changeLanguage(language);
           });
+          // Sync to backend if authenticated
+          if (userPreferencesService.isAuthenticated()) {
+            userPreferencesService.updatePreferences({ language }).catch(error => {
+              console.error('Failed to sync language to backend:', error);
+            });
+          }
         },
 
         setChatPrivacyMode: (mode: ChatPrivacyMode) => {
@@ -397,6 +403,7 @@ export const useSettingsStore = create<SettingsState>()(
               chatPrivacyMode: ChatPrivacyMode;
               theme: 'dark' | 'light' | 'system';
               fontSize: 'small' | 'medium' | 'large';
+              language: 'en' | 'ru';
               toolPredictorModelId: string | null;
               memoryEnabled: boolean;
               memoryExtractionThreshold: number;
@@ -413,6 +420,9 @@ export const useSettingsStore = create<SettingsState>()(
             }
             if (prefs.font_size && ['small', 'medium', 'large'].includes(prefs.font_size)) {
               updates.fontSize = prefs.font_size as 'small' | 'medium' | 'large';
+            }
+            if (prefs.language && ['en', 'ru'].includes(prefs.language)) {
+              updates.language = prefs.language as 'en' | 'ru';
             }
             if (prefs.tool_predictor_model_id) {
               updates.toolPredictorModelId = prefs.tool_predictor_model_id;
@@ -436,6 +446,13 @@ export const useSettingsStore = create<SettingsState>()(
             if (Object.keys(updates).length > 0) {
               set(updates);
               console.log('Settings synced from backend:', updates);
+            }
+
+            // Sync language from backend to i18n if it was loaded
+            if (prefs.language && ['en', 'ru'].includes(prefs.language)) {
+              import('@/i18n').then(({ default: i18n }) => {
+                i18n.changeLanguage(prefs.language as 'en' | 'ru');
+              });
             }
           } catch (error) {
             console.error('Failed to fetch preferences from backend:', error);

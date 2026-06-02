@@ -272,6 +272,41 @@ func (s *QdrantService) SearchWithFilter(collection string, vector []float64, li
 	return result.Result, nil
 }
 
+type countResponse struct {
+	Result struct {
+		Count int `json:"count"`
+	} `json:"result"`
+}
+
+// PointsExistForFile checks if any Qdrant points exist for the given fileID.
+func (s *QdrantService) PointsExistForFile(collection, fileID string) (bool, error) {
+	body := map[string]interface{}{
+		"exact": true,
+		"filter": map[string]interface{}{
+			"must": []map[string]interface{}{
+				{
+					"key":   "file_id",
+					"match": map[string]interface{}{"value": fileID},
+				},
+			},
+		},
+	}
+	data, _ := json.Marshal(body)
+	resp, err := s.httpClient.Post(s.baseURL+"/collections/"+collection+"/points/count", "application/json", bytes.NewReader(data))
+	if err != nil {
+		return false, err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return false, fmt.Errorf("qdrant count request failed: %d", resp.StatusCode)
+	}
+	var result countResponse
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return false, err
+	}
+	return result.Result.Count > 0, nil
+}
+
 func (s *QdrantService) checkHealth() error {
 	resp, err := s.httpClient.Get(s.baseURL + "/healthz")
 	if err != nil {
